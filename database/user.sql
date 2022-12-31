@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user`
+(
+    `id`       int(11) NOT NULL AUTO_INCREMENT,
+    `username` varchar(255) NOT NULL,
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
