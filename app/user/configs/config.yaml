@@ -8,8 +8,11 @@ server:
 data:
   database:
     driver: mysql
-    source: root:root@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=true&loc=Local
+    source: root:test1234@tcp(127.0.0.1:3306)/galileo?charset=utf8mb4&parseTime=true&loc=Local
   redis:
     addr: 127.0.0.1:6379
+    dial_timeout: 1s
     read_timeout: 0.2s
     write_timeout: 0.2s
+trace:
+  endpoint: http://127.0.0.1:6180/api/trace

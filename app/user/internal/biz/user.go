@@ -7,15 +7,17 @@ import (
 )
 
 type User struct {
-	ID        uint32    `json:"id"`
-	Username  string    `json:"name"`
-	Email     string    `json:"email"`
-	Phone     string    `json:"phone"`
-	Nickname  string    `json:"nickname"`
-	Avatar    string    `json:"avatar"`
-	Status    int32     `json:"status"`
-	UpdateAt  time.Time `json:"update_at"`
-	CreatedAt time.Time `json:"created_at"`
+	ID             uint32    `json:"id"`
+	Username       string    `json:"name"`
+	ChineseName    string    `json:"chinese_name"`
+	Nickname       string    `json:"nickname"`
+	HashedPassword []byte    `json:"hashed_password"`
+	Avatar         string    `json:"avatar"`
+	Email          string    `json:"email"`
+	Phone          string    `json:"phone"`
+	Status         int32     `json:"status"`
+	UpdateAt       time.Time `json:"update_at"`
+	CreatedAt      time.Time `json:"created_at"`
 }
 
 type UserRepo interface {
@@ -23,21 +25,21 @@ type UserRepo interface {
 	Get(context.Context, uint32) (*User, error)
 }
 
-type UserCase struct {
+type UserUseCase struct {
 	repo UserRepo
 	log  *log.Helper
 }
 
-func NewUserCase(repo UserRepo, logger log.Logger) *UserCase {
-	return &UserCase{repo: repo, log: log.NewHelper(logger)}
+func NewUserCase(repo UserRepo, logger log.Logger) *UserUseCase {
+	return &UserUseCase{repo: repo, log: log.NewHelper(logger)}
 }
 
-func (uc *UserCase) CreateUser(ctx context.Context, user *User) (*User, error) {
-	uc.log.WithContext(ctx).Infof("CreateUser: %v", user.ID)
+func (uc *UserUseCase) CreateUser(ctx context.Context, user *User) (*User, error) {
+	uc.log.WithContext(ctx).Infof("CreateUser: %v", user)
 	return uc.repo.Save(ctx, user)
 }
 
-func (uc *UserCase) Get(ctx context.Context, id uint32) (*User, error) {
+func (uc *UserUseCase) Get(ctx context.Context, id uint32) (*User, error) {
 	uc.log.WithContext(ctx).Infof("GetUser: %v", id)
 	return uc.repo.Get(ctx, id)
 }

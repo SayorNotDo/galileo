@@ -6,7 +6,7 @@ info:
     title: User API
     version: 0.0.1
 paths:
-    /hello/{name}:
+    v1/api/hello/{name}:
         get:
             tags:
                 - User
@@ -30,7 +30,31 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    /user/{id}:
+    v1/api/user:
+        post:
+            tags:
+                - User
+            operationId: User_CreateUser
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateUserRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateUserReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/{id}:
         get:
             tags:
                 - User
@@ -57,10 +81,28 @@ paths:
                                 $ref: '#/components/schemas/Status'
 components:
     schemas:
+        CreateUserReply:
+            type: object
+            properties:
+                message:
+                    type: string
+        CreateUserRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+                email:
+                    type: string
+                phone:
+                    type: string
         GetUserReply:
             type: object
             properties:
                 username:
+                    type: string
+                nickname:
                     type: string
                 status:
                     type: integer

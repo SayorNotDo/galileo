@@ -62,7 +62,7 @@ func (UnimplementedGreeterServer) SayHello(context.Context, *HelloRequest) (*Hel
 func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
 
 // UnsafeGreeterServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to GreeterServer will
+// Use of this interfaces is not recommended, as added methods to GreeterServer will
 // result in compilation errors.
 type UnsafeGreeterServer interface {
 	mustEmbedUnimplementedGreeterServer()
