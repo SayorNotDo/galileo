@@ -3,26 +3,24 @@ package biz
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
-	"time"
 )
 
 type User struct {
-	ID             uint32    `json:"id"`
-	Username       string    `json:"name"`
-	ChineseName    string    `json:"chinese_name"`
-	Nickname       string    `json:"nickname"`
-	HashedPassword []byte    `json:"hashed_password"`
-	Avatar         string    `json:"avatar"`
-	Email          string    `json:"email"`
-	Phone          string    `json:"phone"`
-	Status         int32     `json:"status"`
-	UpdateAt       time.Time `json:"update_at"`
-	CreatedAt      time.Time `json:"created_at"`
+	ID             uint32 `json:"id"`
+	Username       string `json:"name"`
+	ChineseName    string `json:"chinese_name"`
+	Nickname       string `json:"nickname"`
+	HashedPassword []byte `json:"hashed_password"`
+	Avatar         string `json:"avatar"`
+	Email          string `json:"email"`
+	Phone          string `json:"phone"`
+	Status         int32  `json:"status"`
 }
 
 type UserRepo interface {
 	Save(context.Context, *User) (*User, error)
 	Get(context.Context, uint32) (*User, error)
+	Create(context.Context, *User) (*User, error)
 }
 
 type UserUseCase struct {
@@ -36,7 +34,7 @@ func NewUserCase(repo UserRepo, logger log.Logger) *UserUseCase {
 
 func (uc *UserUseCase) CreateUser(ctx context.Context, user *User) (*User, error) {
 	uc.log.WithContext(ctx).Infof("CreateUser: %v", user)
-	return uc.repo.Save(ctx, user)
+	return uc.repo.Create(ctx, user)
 }
 
 func (uc *UserUseCase) Get(ctx context.Context, id uint32) (*User, error) {
