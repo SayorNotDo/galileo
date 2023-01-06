@@ -15,13 +15,14 @@ type User struct {
 	ChineseName    string    `json:"chinese_name" gorm:"varchar(25)"`
 	Nickname       string    `json:"nickname" gorm:"varchar(25)"`
 	HashedPassword []byte    `json:"hashed_password" gorm:"varchar(255); not null"`
+	Role           string    `json:"role"`
 	Avatar         string    `json:"avatar"`
 	Email          string    `json:"email"`
 	Phone          string    `json:"phone"`
-	Status         int32     `json:"status"`
-	UpdateAt       time.Time `json:"update_at" gorm:"update_time"`
+	Status         int32     `json:"status" gorm:"default: 1"`
+	UpdateAt       time.Time `json:"update_at" gorm:"autoUpdateTime"`
 	LastLoginAt    time.Time `json:"last_login_at" gorm:""`
-	CreatedAt      time.Time `json:"created_at" gorm:"column:add_time"`
+	CreatedAt      time.Time `json:"created_at" gorm:"autoCreateTime"`
 }
 
 type userRepo struct {
@@ -43,9 +44,9 @@ func (repo *userRepo) Save(ctx context.Context, user *biz.User) (*biz.User, erro
 func (repo *userRepo) Get(ctx context.Context, id uint32) (*biz.User, error) {
 	var user *biz.User
 	repo.data.gormDB.Where("id = ?", id).First(&user)
-	repo.log.WithContext(ctx).Info("gormDB: GetUser, id: ", id)
 	return &biz.User{
 		ID:       user.ID,
+		Username: user.Username,
 		Nickname: user.Nickname,
 		Avatar:   user.Avatar,
 		Email:    user.Email,
@@ -56,7 +57,7 @@ func (repo *userRepo) Get(ctx context.Context, id uint32) (*biz.User, error) {
 
 func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error) {
 	var user User
-	res := repo.data.gormDB.Where(&biz.User{Phone: u.Phone}).Or(&biz.User{Username: u.Username}).Or(&biz.User{Email: u.Email}).First(&user)
+	res := repo.data.gormDB.Where("phone = ?", u.Phone).Or("username = ?", u.Username).Or("email = ?", u.Email).First(&user)
 	if res.RowsAffected == 1 {
 		return nil, status.Errorf(codes.AlreadyExists, "User already exists")
 	}
@@ -69,9 +70,9 @@ func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error
 	}
 	return &biz.User{
 		ID:       user.ID,
-		Nickname: user.Nickname,
-		Avatar:   user.Avatar,
+		Username: user.Username,
 		Email:    user.Email,
+		Phone:    user.Phone,
 		Status:   user.Status,
 	}, nil
 }

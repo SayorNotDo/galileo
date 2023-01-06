@@ -6,11 +6,14 @@ import (
 	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+	"os"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	slog "log"
 )
 
 // ProviderSet is data providers.
@@ -24,8 +27,18 @@ type Data struct {
 }
 
 func NewGormDB(c *conf.Data) (*gorm.DB, error) {
+	newLogger := logger.New(
+		slog.New(os.Stdout, "\r\n", slog.LstdFlags), // io writer
+		logger.Config{
+			SlowThreshold: time.Millisecond * 200, // 慢查询 SQL 阈值
+			Colorful:      true,                   // 禁用彩色打印
+			//IgnoreRecordNotFoundError: false,
+			LogLevel: logger.Info, // Log lever
+		},
+	)
 	dsn := c.Database.Source
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: newLogger,
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
 		},
@@ -44,11 +57,11 @@ func NewGormDB(c *conf.Data) (*gorm.DB, error) {
 }
 
 // NewData .
-func NewData(logger log.Logger, db *gorm.DB) (*Data, func(), error) {
+func NewData(c *conf.Data, logger log.Logger, db *gorm.DB, rdb *redis.Client) (*Data, func(), error) {
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
 	}
-	return &Data{gormDB: db}, cleanup, nil
+	return &Data{gormDB: db, redisDB: rdb}, cleanup, nil
 }
 
 // NewRedis .

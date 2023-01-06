@@ -26,11 +26,15 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 	if err != nil {
 		return nil, err
 	}
-	g, err := s.uc.CreateUser(ctx, &biz.User{Username: req.Username, Email: req.Email, Phone: req.Phone, HashedPassword: hashedPassword})
+	ret, err := s.uc.CreateUser(ctx, &biz.User{Username: req.Username, Email: req.Email, Phone: req.Phone, HashedPassword: hashedPassword})
 	if err != nil {
 		return nil, err
 	}
-	return &v1.CreateUserReply{Message: "Hello " + g.Username}, nil
+	userInfoRep := v1.CreateUserReply{
+		Id:    ret.ID,
+		Phone: ret.Phone,
+	}
+	return &userInfoRep, nil
 }
 func (s *UserService) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*v1.UpdateUserReply, error) {
 	return &v1.UpdateUserReply{}, nil
@@ -44,10 +48,15 @@ func (s *UserService) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.
 		return nil, err
 	}
 	return &v1.GetUserReply{
-		Id:       user.ID,
-		Status:   user.Status,
-		Username: user.Username,
-		Nickname: user.Nickname,
+		Code: 200,
+		Msg:  "success",
+		Data: &v1.Data{
+			Username: user.Username,
+			Status:   user.Status,
+			Nickname: user.Nickname,
+			Email:    user.Email,
+			Phone:    user.Phone,
+		},
 	}, nil
 }
 func (s *UserService) ListUser(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserReply, error) {

@@ -84,7 +84,14 @@ components:
         CreateUserReply:
             type: object
             properties:
-                message:
+                id:
+                    type: integer
+                    format: uint32
+                username:
+                    type: string
+                email:
+                    type: string
+                phone:
                     type: string
         CreateUserRequest:
             type: object
@@ -97,19 +104,30 @@ components:
                     type: string
                 phone:
                     type: string
-        GetUserReply:
+        Data:
             type: object
             properties:
                 username:
+                    type: string
+                email:
                     type: string
                 nickname:
                     type: string
                 status:
                     type: integer
                     format: int32
-                id:
+                phone:
+                    type: string
+        GetUserReply:
+            type: object
+            properties:
+                code:
                     type: integer
-                    format: uint32
+                    format: int32
+                msg:
+                    type: string
+                data:
+                    $ref: '#/components/schemas/Data'
         GoogleProtobufAny:
             type: object
             properties:
