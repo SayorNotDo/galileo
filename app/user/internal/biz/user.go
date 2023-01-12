@@ -21,6 +21,7 @@ type UserRepo interface {
 	Save(context.Context, *User) (*User, error)
 	Get(context.Context, uint32) (*User, error)
 	Create(context.Context, *User) (*User, error)
+	List(ctx context.Context, pageNum, pageSize int32) ([]*User, int32, error)
 }
 
 type UserUseCase struct {
@@ -32,12 +33,14 @@ func NewUserCase(repo UserRepo, logger log.Logger) *UserUseCase {
 	return &UserUseCase{repo: repo, log: log.NewHelper(logger)}
 }
 
-func (uc *UserUseCase) CreateUser(ctx context.Context, user *User) (*User, error) {
-	uc.log.WithContext(ctx).Infof("CreateUser: %v", user)
+func (uc *UserUseCase) Create(ctx context.Context, user *User) (*User, error) {
 	return uc.repo.Create(ctx, user)
 }
 
 func (uc *UserUseCase) Get(ctx context.Context, id uint32) (*User, error) {
-	uc.log.WithContext(ctx).Infof("GetUser: %v", id)
 	return uc.repo.Get(ctx, id)
+}
+
+func (uc *UserUseCase) List(ctx context.Context, pageNum, pageSize int32) ([]*User, int32, error) {
+	return uc.repo.List(ctx, pageNum, pageSize)
 }

@@ -26,7 +26,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 	if err != nil {
 		return nil, err
 	}
-	ret, err := s.uc.CreateUser(ctx, &biz.User{Username: req.Username, Email: req.Email, Phone: req.Phone, HashedPassword: hashedPassword})
+	ret, err := s.uc.Create(ctx, &biz.User{Username: req.Username, Email: req.Email, Phone: req.Phone, HashedPassword: hashedPassword})
 	if err != nil {
 		return nil, err
 	}
@@ -48,8 +48,8 @@ func (s *UserService) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.
 		return nil, err
 	}
 	return &v1.GetUserReply{
-		Code: 200,
-		Msg:  "success",
+		Code:    200,
+		Message: "success",
 		Data: &v1.UserInfo{
 			Username: user.Username,
 			Status:   user.Status,
@@ -60,14 +60,14 @@ func (s *UserService) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.
 	}, nil
 }
 func (s *UserService) ListUser(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserReply, error) {
+	users, total, err := s.uc.List(ctx, req.PageNum, req.PageSize)
+	println(users)
+	println(total)
+	println(err)
 	return &v1.ListUserReply{}, nil
 }
 
 // SayHello implements helloworld.GreeterServer.
 func (s *UserService) SayHello(ctx context.Context, in *v1.HelloRequest) (*v1.HelloReply, error) {
-	g, err := s.uc.CreateUser(ctx, &biz.User{Nickname: in.Name})
-	if err != nil {
-		return nil, err
-	}
-	return &v1.HelloReply{Message: "Hello " + g.Nickname}, nil
+	return &v1.HelloReply{Message: "Hello " + in.Name}, nil
 }

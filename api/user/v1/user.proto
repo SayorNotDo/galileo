@@ -23,7 +23,11 @@ service User {
       get : "v1/api/user/{id}",
     };
   };
-  rpc ListUser (ListUserRequest) returns (ListUserReply);
+  rpc ListUser (ListUserRequest) returns (ListUserReply){
+    option (google.api.http) = {
+      get : "v1/api/user/{pageNum}/{pageSize}"
+    };
+  };
   rpc SayHello(HelloRequest) returns (HelloReply) {
     option (google.api.http) = {
       get: "v1/api/hello/{name}"
@@ -72,12 +76,22 @@ message userInfo {
 
 message GetUserReply {
   int32 code = 1;
-  string msg = 2;
+  string message = 2;
   userInfo data = 3;
 }
 
 message ListUserRequest {
-  uint32  total = 1;
+  int32 pageNum = 1;
+  int32 pageSize = 2;
+}
+
+message listUserInfo {
+  uint32 total = 1;
   repeated userInfo data = 2;
 }
-message ListUserReply {}
+
+message ListUserReply {
+  int32 code = 1;
+  string message = 2;
+  listUserInfo data = 3;
+}

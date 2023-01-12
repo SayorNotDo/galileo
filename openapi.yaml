@@ -79,6 +79,37 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    v1/api/user/{pageNum}/{pageSize}:
+        get:
+            tags:
+                - User
+            operationId: User_ListUser
+            parameters:
+                - name: pageNum
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageSize
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListUserReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
 components:
     schemas:
         CreateUserReply:
@@ -110,7 +141,7 @@ components:
                 code:
                     type: integer
                     format: int32
-                msg:
+                message:
                     type: string
                 data:
                     $ref: '#/components/schemas/UserInfo'
@@ -127,6 +158,26 @@ components:
             properties:
                 message:
                     type: string
+        ListUserInfo:
+            type: object
+            properties:
+                total:
+                    type: integer
+                    format: uint32
+                data:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserInfo'
+        ListUserReply:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    format: int32
+                message:
+                    type: string
+                data:
+                    $ref: '#/components/schemas/ListUserInfo'
         Status:
             type: object
             properties:

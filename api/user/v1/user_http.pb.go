@@ -21,11 +21,13 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationUserCreateUser = "/api.user.User/CreateUser"
 const OperationUserGetUser = "/api.user.User/GetUser"
+const OperationUserListUser = "/api.user.User/ListUser"
 const OperationUserSayHello = "/api.user.User/SayHello"
 
 type UserHTTPServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserReply, error)
 	GetUser(context.Context, *GetUserRequest) (*GetUserReply, error)
+	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
 }
 
@@ -33,6 +35,7 @@ func RegisterUserHTTPServer(s *http.Server, srv UserHTTPServer) {
 	r := s.Route("/")
 	r.POST("v1/api/user", _User_CreateUser0_HTTP_Handler(srv))
 	r.GET("v1/api/user/{id}", _User_GetUser0_HTTP_Handler(srv))
+	r.GET("v1/api/user/{pageNum}/{pageSize}", _User_ListUser0_HTTP_Handler(srv))
 	r.GET("v1/api/hello/{name}", _User_SayHello0_HTTP_Handler(srv))
 }
 
@@ -77,6 +80,28 @@ func _User_GetUser0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) erro
 	}
 }
 
+func _User_ListUser0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListUserRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserListUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListUser(ctx, req.(*ListUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ListUserReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _User_SayHello0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in HelloRequest
@@ -102,6 +127,7 @@ func _User_SayHello0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) err
 type UserHTTPClient interface {
 	CreateUser(ctx context.Context, req *CreateUserRequest, opts ...http.CallOption) (rsp *CreateUserReply, err error)
 	GetUser(ctx context.Context, req *GetUserRequest, opts ...http.CallOption) (rsp *GetUserReply, err error)
+	ListUser(ctx context.Context, req *ListUserRequest, opts ...http.CallOption) (rsp *ListUserReply, err error)
 	SayHello(ctx context.Context, req *HelloRequest, opts ...http.CallOption) (rsp *HelloReply, err error)
 }
 
@@ -131,6 +157,19 @@ func (c *UserHTTPClientImpl) GetUser(ctx context.Context, in *GetUserRequest, op
 	pattern := "v1/api/user/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserGetUser))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *UserHTTPClientImpl) ListUser(ctx context.Context, in *ListUserRequest, opts ...http.CallOption) (*ListUserReply, error) {
+	var out ListUserReply
+	pattern := "v1/api/user/{pageNum}/{pageSize}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationUserListUser))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

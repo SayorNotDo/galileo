@@ -43,7 +43,10 @@ func (repo *userRepo) Save(ctx context.Context, user *biz.User) (*biz.User, erro
 
 func (repo *userRepo) Get(ctx context.Context, id uint32) (*biz.User, error) {
 	var user *biz.User
-	repo.data.gormDB.Where("id = ?", id).First(&user)
+	res := repo.data.gormDB.Where("id = ?", id).First(&user)
+	if res.RowsAffected == 0 {
+		return nil, status.Errorf(codes.NotFound, "User not found")
+	}
 	return &biz.User{
 		ID:       user.ID,
 		Username: user.Username,
@@ -55,9 +58,14 @@ func (repo *userRepo) Get(ctx context.Context, id uint32) (*biz.User, error) {
 	}, nil
 }
 
+func (repo *userRepo) List(ctx context.Context, pageNum, pageSize int32) ([]*biz.User, int32, error) {
+	log.Debug("pageNum: %d", pageNum)
+	log.Debug("pageSize: %d", pageSize)
+	return []*biz.User{}, 0, status.Errorf(codes.NotFound, "UserNotFound")
+}
+
 func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error) {
 	var user User
-	println("creating user")
 	res := repo.data.gormDB.Where("phone = ?", u.Phone).Or("username = ?", u.Username).Or("email = ?", u.Email).First(&user)
 	if res.RowsAffected == 1 {
 		return nil, status.Errorf(codes.AlreadyExists, "User already exists")
