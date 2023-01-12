@@ -50,7 +50,7 @@ func (s *UserService) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.
 	return &v1.GetUserReply{
 		Code: 200,
 		Msg:  "success",
-		Data: &v1.Data{
+		Data: &v1.UserInfo{
 			Username: user.Username,
 			Status:   user.Status,
 			Nickname: user.Nickname,

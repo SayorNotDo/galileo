@@ -62,7 +62,7 @@ message GetUserRequest {
   uint32 id = 1;
 }
 
-message data {
+message userInfo {
   string username = 1;
   string email = 2;
   string nickname = 3;
@@ -73,8 +73,11 @@ message data {
 message GetUserReply {
   int32 code = 1;
   string msg = 2;
-  data data = 3;
+  userInfo data = 3;
 }
 
-message ListUserRequest {}
+message ListUserRequest {
+  uint32  total = 1;
+  repeated userInfo data = 2;
+}
 message ListUserReply {}

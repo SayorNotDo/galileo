@@ -21,6 +21,7 @@ var Db *data.Data
 var ctx context.Context
 
 func initialize(db *gorm.DB) error {
+	db.Migrator().CurrentDatabase()
 	err := db.AutoMigrate(
 		&data.User{},
 	)

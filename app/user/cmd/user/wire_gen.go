@@ -28,7 +28,8 @@ func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Regist
 	if err != nil {
 		return nil, nil, err
 	}
-	dataData, cleanup, err := data.NewData(logger, db)
+	client := data.NewRedis(confData)
+	dataData, cleanup, err := data.NewData(confData, logger, db, client)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -57,6 +57,7 @@ func (repo *userRepo) Get(ctx context.Context, id uint32) (*biz.User, error) {
 
 func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error) {
 	var user User
+	println("creating user")
 	res := repo.data.gormDB.Where("phone = ?", u.Phone).Or("username = ?", u.Username).Or("email = ?", u.Email).First(&user)
 	if res.RowsAffected == 1 {
 		return nil, status.Errorf(codes.AlreadyExists, "User already exists")
@@ -66,7 +67,7 @@ func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error
 	user.Email = u.Email
 	user.HashedPassword = u.HashedPassword
 	if result := repo.data.gormDB.Create(&user); result.Error != nil {
-		return nil, status.Errorf(codes.Internal, res.Error.Error())
+		return nil, status.Errorf(codes.Internal, result.Error.Error())
 	}
 	return &biz.User{
 		ID:       user.ID,
