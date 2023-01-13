@@ -37,7 +37,14 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 	return &userInfoRep, nil
 }
 func (s *UserService) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*v1.UpdateUserReply, error) {
-	return &v1.UpdateUserReply{}, nil
+	_, err := s.uc.Update(ctx, &biz.User{ID: req.Id, Nickname: req.Nickname, Avatar: req.Avatar})
+	if err != nil {
+		return nil, err
+	}
+	return &v1.UpdateUserReply{
+		Code:    200,
+		Message: "success",
+	}, nil
 }
 func (s *UserService) DeleteUser(ctx context.Context, req *v1.DeleteUserRequest) (*v1.DeleteUserReply, error) {
 	return &v1.DeleteUserReply{}, nil
@@ -61,10 +68,17 @@ func (s *UserService) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.
 }
 func (s *UserService) ListUser(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserReply, error) {
 	users, total, err := s.uc.List(ctx, req.PageNum, req.PageSize)
-	println(users)
-	println(total)
-	println(err)
-	return &v1.ListUserReply{}, nil
+	if err != nil {
+		return nil, err
+	}
+	return &v1.ListUserReply{
+		Code:    200,
+		Message: "success",
+		Data: &v1.ListUserInfo{
+			Total:    total,
+			UserList: users,
+		},
+	}, nil
 }
 
 // SayHello implements helloworld.GreeterServer.

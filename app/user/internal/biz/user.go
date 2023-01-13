@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	v1 "galileo/api/user/v1"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -19,9 +20,9 @@ type User struct {
 
 type UserRepo interface {
 	Save(context.Context, *User) (*User, error)
-	Get(context.Context, uint32) (*User, error)
+	GetById(context.Context, uint32) (*User, error)
 	Create(context.Context, *User) (*User, error)
-	List(ctx context.Context, pageNum, pageSize int32) ([]*User, int32, error)
+	List(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserInfo, int32, error)
 }
 
 type UserUseCase struct {
@@ -38,9 +39,13 @@ func (uc *UserUseCase) Create(ctx context.Context, user *User) (*User, error) {
 }
 
 func (uc *UserUseCase) Get(ctx context.Context, id uint32) (*User, error) {
-	return uc.repo.Get(ctx, id)
+	return uc.repo.GetById(ctx, id)
 }
 
-func (uc *UserUseCase) List(ctx context.Context, pageNum, pageSize int32) ([]*User, int32, error) {
+func (uc *UserUseCase) List(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserInfo, int32, error) {
 	return uc.repo.List(ctx, pageNum, pageSize)
+}
+
+func (uc *UserUseCase) Update(ctx context.Context, user *User) (bool, error) {
+	panic("update user information")
 }

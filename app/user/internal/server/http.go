@@ -4,7 +4,6 @@ import (
 	. "galileo/api/user/v1"
 	"galileo/app/user/internal/conf"
 	"galileo/app/user/internal/service"
-
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/transport/http"
@@ -12,9 +11,13 @@ import (
 
 // NewHTTPServer new an HTTP server.
 func NewHTTPServer(c *conf.Server, user *service.UserService, logger log.Logger) *http.Server {
+	//secretKey := "check-secret"
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
+			//jwt.Server(func(token *jwtv4.Token) (interface{}, error) {
+			//	return []byte(secretKey), nil
+			//}),
 		),
 	}
 	if c.Http.Network != "" {

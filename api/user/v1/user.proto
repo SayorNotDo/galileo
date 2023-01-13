@@ -16,7 +16,12 @@ service User {
       body: "*"
     };
   };
-  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserReply);
+  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserReply){
+    option (google.api.http) = {
+      put : "v1/api/user/{id}",
+      body: "*"
+    };
+  };
   rpc DeleteUser (DeleteUserRequest) returns (DeleteUserReply);
   rpc GetUser (GetUserRequest) returns (GetUserReply){
     option (google.api.http) = {
@@ -56,8 +61,16 @@ message CreateUserReply {
   string phone = 4;
 }
 
-message UpdateUserRequest {}
-message UpdateUserReply {}
+message UpdateUserRequest {
+  uint32 id = 1;
+  string nickname = 2;
+  string avatar = 3;
+}
+message UpdateUserReply {
+  int32 code = 1;
+  string message = 2;
+  userInfo data = 3;
+}
 
 message DeleteUserRequest {}
 message DeleteUserReply {}
@@ -86,8 +99,8 @@ message ListUserRequest {
 }
 
 message listUserInfo {
-  uint32 total = 1;
-  repeated userInfo data = 2;
+  int32 total = 1;
+  repeated userInfo userList = 2;
 }
 
 message ListUserReply {

@@ -26,4 +26,13 @@ var _ = Describe("User", func() {
 		Ω(err).ShouldNot(HaveOccurred())
 		Ω(u.Phone).Should(Equal("16710790871"))
 	})
+
+	It("ListUser", func() {
+		user, total, err := ro.List(ctx, 1, 10)
+		Ω(err).ShouldNot(HaveOccurred())
+		Ω(user).ShouldNot(BeEmpty())
+		Ω(total).Should(Equal(1))
+		Ω(len(user)).Should(Equal(1))
+		Ω(user[0].Phone).Should(Equal("16710790871"))
+	})
 })
