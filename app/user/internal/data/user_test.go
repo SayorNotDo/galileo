@@ -31,7 +31,27 @@ var _ = Describe("User", func() {
 		user, total, err := ro.List(ctx, 1, 10)
 		Ω(err).ShouldNot(HaveOccurred())
 		Ω(user).ShouldNot(BeEmpty())
-		Ω(total).Should(Equal(1))
+		Ω(total).Should(Equal(int32(1)))
+		Ω(len(user)).Should(Equal(1))
+		Ω(user[0].Phone).Should(Equal("16710790871"))
+	})
+
+	It("UpdateUser", func() {
+		uD = &biz.User{
+			ID:       1,
+			Nickname: "Vince",
+			Avatar:   "AvatarTest",
+		}
+		ok, err := ro.Update(ctx, uD)
+		Ω(err).ShouldNot(HaveOccurred())
+		Ω(ok).Should(BeTrue())
+	})
+
+	It("ListUser", func() {
+		user, total, err := ro.List(ctx, 1, 10)
+		Ω(err).ShouldNot(HaveOccurred())
+		Ω(user).ShouldNot(BeEmpty())
+		Ω(total).Should(Equal(int32(1)))
 		Ω(len(user)).Should(Equal(1))
 		Ω(user[0].Phone).Should(Equal("16710790871"))
 	})

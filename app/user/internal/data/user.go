@@ -124,7 +124,7 @@ func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error
 
 func (repo *userRepo) Update(ctx context.Context, u *biz.User) (bool, error) {
 	var user User
-	res := repo.data.gormDB.Where("id = ?", u.ID)
+	res := repo.data.gormDB.Where("id = ?", u.ID).Find(&user)
 	if res.RowsAffected == 0 {
 		return false, status.Errorf(codes.NotFound, "User not found")
 	}

@@ -23,6 +23,7 @@ type UserRepo interface {
 	GetById(context.Context, uint32) (*User, error)
 	Create(context.Context, *User) (*User, error)
 	List(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserInfo, int32, error)
+	Update(context.Context, *User) (bool, error)
 }
 
 type UserUseCase struct {
@@ -47,5 +48,5 @@ func (uc *UserUseCase) List(ctx context.Context, pageNum, pageSize int32) ([]*v1
 }
 
 func (uc *UserUseCase) Update(ctx context.Context, user *User) (bool, error) {
-	panic("update user information")
+	return uc.repo.Update(ctx, user)
 }
