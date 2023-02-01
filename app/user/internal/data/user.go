@@ -4,10 +4,12 @@ import (
 	"context"
 	v1 "galileo/api/user/v1"
 	"galileo/app/user/internal/biz"
+	"galileo/app/user/internal/pkg/util"
 	"github.com/go-kratos/kratos/v2/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -16,7 +18,7 @@ type User struct {
 	Username       string    `json:"name" gorm:"varchar(255)"`
 	ChineseName    string    `json:"chinese_name" gorm:"varchar(25)"`
 	Nickname       string    `json:"nickname" gorm:"varchar(25)"`
-	HashedPassword []byte    `json:"hashed_password" gorm:"varchar(255); not null"`
+	HashedPassword string    `json:"hashed_password" gorm:"varchar(255); not null"`
 	Role           string    `json:"role"`
 	Avatar         string    `json:"avatar"`
 	Email          string    `json:"email"`
@@ -50,17 +52,28 @@ func (repo *userRepo) GetById(ctx context.Context, id uint32) (*biz.User, error)
 		return nil, status.Errorf(codes.NotFound, "User not found")
 	}
 	return &biz.User{
-		ID:       user.ID,
-		Username: user.Username,
-		Nickname: user.Nickname,
-		Avatar:   user.Avatar,
-		Email:    user.Email,
-		Status:   user.Status,
-		Phone:    user.Phone,
+		ID:             user.ID,
+		Username:       user.Username,
+		Nickname:       user.Nickname,
+		Avatar:         user.Avatar,
+		Email:          user.Email,
+		Status:         user.Status,
+		Phone:          user.Phone,
+		HashedPassword: user.HashedPassword,
 	}, nil
 }
 
-func (repo *userRepo) List(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserInfo, int32, error) {
+func (repo *userRepo) DeleteById(ctx context.Context, id uint32) (bool, error) {
+	var user *biz.User
+	result := repo.data.gormDB.Clauses(clause.Returning{}).Where("id = ?", id).Delete(&user)
+	if result.RowsAffected == 0 {
+		return false, status.Errorf(codes.Internal, result.Error.Error())
+	}
+	log.Debugf("Deleted User: %v", user)
+	return true, nil
+}
+
+func (repo *userRepo) List(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserInfoReply, int32, error) {
 	var users []User
 	result := repo.data.gormDB.Find(&users)
 	if result.Error != nil {
@@ -68,9 +81,9 @@ func (repo *userRepo) List(ctx context.Context, pageNum, pageSize int32) ([]*v1.
 	}
 	total := int32(result.RowsAffected)
 	repo.data.gormDB.Scopes(paginate(pageNum, pageSize)).Find(&users)
-	rv := make([]*v1.UserInfo, 0)
+	rv := make([]*v1.UserInfoReply, 0)
 	for _, u := range users {
-		rv = append(rv, &v1.UserInfo{
+		rv = append(rv, &v1.UserInfoReply{
 			Username: u.Username,
 			Nickname: u.Nickname,
 			Email:    u.Email,
@@ -134,4 +147,8 @@ func (repo *userRepo) Update(ctx context.Context, u *biz.User) (bool, error) {
 		return false, status.Errorf(codes.Internal, result.Error.Error())
 	}
 	return true, nil
+}
+
+func (repo *userRepo) CheckPassword(ctx context.Context, password, hashedPassword string) (bool, error) {
+	return util.ComparePassword(password, hashedPassword), nil
 }

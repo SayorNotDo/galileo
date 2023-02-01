@@ -6,6 +6,7 @@ import (
 	"galileo/app/user/internal/biz"
 	"galileo/app/user/internal/pkg/util"
 	"github.com/go-kratos/kratos/v2/log"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type UserService struct {
@@ -17,7 +18,7 @@ type UserService struct {
 func NewUserService(uc *biz.UserUseCase, logger log.Logger) *UserService {
 	return &UserService{
 		uc:     uc,
-		logger: log.NewHelper(logger),
+		logger: log.NewHelper(log.With(logger, "module", "user")),
 	}
 }
 
@@ -31,39 +32,44 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 		return nil, err
 	}
 	userInfoRep := v1.CreateUserReply{
-		Id:    ret.ID,
-		Phone: ret.Phone,
+		Id: ret.ID,
+		Data: &v1.UserInfoReply{
+			Username: ret.Username,
+			Status:   ret.Status,
+			Nickname: ret.Nickname,
+			Email:    ret.Email,
+			Phone:    ret.Phone,
+		},
 	}
 	return &userInfoRep, nil
 }
-func (s *UserService) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*v1.UpdateUserReply, error) {
+func (s *UserService) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*emptypb.Empty, error) {
 	_, err := s.uc.Update(ctx, &biz.User{ID: req.Id, Nickname: req.Nickname, Avatar: req.Avatar})
 	if err != nil {
 		return nil, err
 	}
-	return &v1.UpdateUserReply{
-		Code:    200,
-		Message: "success",
-	}, nil
+	return &emptypb.Empty{}, nil
 }
 func (s *UserService) DeleteUser(ctx context.Context, req *v1.DeleteUserRequest) (*v1.DeleteUserReply, error) {
-	return &v1.DeleteUserReply{}, nil
+	ok, err := s.uc.Delete(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.DeleteUserReply{
+		Deleted: ok,
+	}, nil
 }
-func (s *UserService) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.GetUserReply, error) {
+func (s *UserService) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.UserInfoReply, error) {
 	user, err := s.uc.Get(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
-	return &v1.GetUserReply{
-		Code:    200,
-		Message: "success",
-		Data: &v1.UserInfo{
-			Username: user.Username,
-			Status:   user.Status,
-			Nickname: user.Nickname,
-			Email:    user.Email,
-			Phone:    user.Phone,
-		},
+	return &v1.UserInfoReply{
+		Username: user.Username,
+		Status:   user.Status,
+		Nickname: user.Nickname,
+		Email:    user.Email,
+		Phone:    user.Phone,
 	}, nil
 }
 func (s *UserService) ListUser(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserReply, error) {
@@ -72,16 +78,21 @@ func (s *UserService) ListUser(ctx context.Context, req *v1.ListUserRequest) (*v
 		return nil, err
 	}
 	return &v1.ListUserReply{
-		Code:    200,
-		Message: "success",
-		Data: &v1.ListUserInfo{
-			Total:    total,
-			UserList: users,
-		},
+		Total: total,
+		Data:  users,
 	}, nil
 }
 
-// SayHello implements helloworld.GreeterServer.
 func (s *UserService) SayHello(ctx context.Context, in *v1.HelloRequest) (*v1.HelloReply, error) {
 	return &v1.HelloReply{Message: "Hello " + in.Name}, nil
+}
+
+func (s *UserService) CheckPassword(ctx context.Context, req *v1.CheckPasswordRequest) (*v1.CheckPasswordReply, error) {
+	ok, err := s.uc.CheckPassword(ctx, req.Password, req.HashedPassword)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.CheckPasswordReply{
+		Success: ok,
+	}, nil
 }

@@ -1,43 +1,31 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
 
 
-package api.user;
+package api.user.v1;
 
-option go_package = "galileo/api/user;user";
+option go_package = "galileo/api/user/v1;v1";
 option java_multiple_files = true;
 option java_package = "api.user";
 
 service User {
-  rpc CreateUser (CreateUserRequest) returns (CreateUserReply) {
-    option (google.api.http) = {
-      post : "v1/api/user",
-      body: "*"
-    };
-  };
-  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserReply){
-    option (google.api.http) = {
-      put : "v1/api/user/{id}",
-      body: "*"
-    };
-  };
-  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserReply);
-  rpc GetUser (GetUserRequest) returns (GetUserReply){
-    option (google.api.http) = {
-      get : "v1/api/user/{id}",
-    };
-  };
-  rpc ListUser (ListUserRequest) returns (ListUserReply){
-    option (google.api.http) = {
-      get : "v1/api/user/{pageNum}/{pageSize}"
-    };
-  };
-  rpc SayHello(HelloRequest) returns (HelloReply) {
-    option (google.api.http) = {
-      get: "v1/api/hello/{name}"
-    };
-  };
+  rpc CreateUser (CreateUserRequest) returns (CreateUserReply) {};
+  rpc UpdateUser (UpdateUserRequest) returns (google.protobuf.Empty){};
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserReply){};
+  rpc GetUser (GetUserRequest) returns (userInfoReply){};
+  rpc ListUser (ListUserRequest) returns (ListUserReply){};
+  rpc CheckPassword(CheckPasswordRequest) returns (CheckPasswordReply){}
+}
+
+message CheckPasswordRequest {
+  string hashedPassword = 1;
+  string password = 2;
+}
+
+message CheckPasswordReply {
+  bool success = 1;
 }
 
 message HelloRequest {
@@ -56,9 +44,7 @@ message CreateUserRequest {
 }
 message CreateUserReply {
   uint32 id = 1;
-  string username = 2;
-  string email = 3;
-  string phone = 4;
+  userInfoReply data = 2;
 }
 
 message UpdateUserRequest {
@@ -66,20 +52,19 @@ message UpdateUserRequest {
   string nickname = 2;
   string avatar = 3;
 }
-message UpdateUserReply {
-  int32 code = 1;
-  string message = 2;
-  userInfo data = 3;
-}
 
-message DeleteUserRequest {}
-message DeleteUserReply {}
+message DeleteUserRequest {
+  uint32 id = 1;
+}
+message DeleteUserReply {
+  bool deleted = 1;
+}
 
 message GetUserRequest {
   uint32 id = 1;
 }
 
-message userInfo {
+message userInfoReply {
   string username = 1;
   string email = 2;
   string nickname = 3;
@@ -87,24 +72,12 @@ message userInfo {
   string phone = 5;
 };
 
-message GetUserReply {
-  int32 code = 1;
-  string message = 2;
-  userInfo data = 3;
-}
-
 message ListUserRequest {
   int32 pageNum = 1;
   int32 pageSize = 2;
 }
 
-message listUserInfo {
-  int32 total = 1;
-  repeated userInfo userList = 2;
-}
-
 message ListUserReply {
-  int32 code = 1;
-  string message = 2;
-  listUserInfo data = 3;
+  int32  total = 1;
+  repeated userInfoReply data = 2;
 }

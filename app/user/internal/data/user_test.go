@@ -55,4 +55,22 @@ var _ = Describe("User", func() {
 		Ω(len(user)).Should(Equal(1))
 		Ω(user[0].Phone).Should(Equal("16710790871"))
 	})
+
+	It("CheckPassword", func() {
+		password := "1is*down9sky"
+		encryptedPassword := "$2a$10$2N1Hz4h26XbCB2epKk6pOu4/tGXXF1SKOwpIpPtaUxcCi1CxJP1oe"
+		ok, err := ro.CheckPassword(ctx, password, encryptedPassword)
+		Ω(err).ShouldNot(HaveOccurred())
+		Ω(ok).Should(BeTrue())
+		encryptedPassword1 := "$2a$10$2N1Hz4h26XbCB2epKk6pOu4/"
+		ok, err = ro.CheckPassword(ctx, password, encryptedPassword1)
+		Ω(err).ShouldNot(HaveOccurred())
+		Ω(ok).Should(BeFalse())
+	})
+
+	It("DeleteUser", func() {
+		ok, err := ro.DeleteById(ctx, 1)
+		Ω(err).ShouldNot(HaveOccurred())
+		Ω(ok).Should(BeTrue())
+	})
 })

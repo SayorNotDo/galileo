@@ -7,7 +7,7 @@ CREATE TABLE `user`
     `nickname`        varchar(255)                           DEFAULT NULL,
     `role`            varchar(255)                           DEFAULT NULL,
     `phone`           varchar(255)                           NOT NULL,
-    `hashed_password` tinyblob                               NOT NULL,
+    `hashed_password` varchar(255)                               NOT NULL,
     `avatar`          varchar(255)                           DEFAULT NULL,
     `email`           varchar(255)                           NOT NULL,
     `status`          int(11) NOT NULL,
