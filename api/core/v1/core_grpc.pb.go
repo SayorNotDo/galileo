@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -23,9 +24,10 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CoreClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
-	Unregister(ctx context.Context, in *UnregisterRequest, opts ...grpc.CallOption) (*UnregisterReply, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
+	Unregister(ctx context.Context, in *UnregisterRequest, opts ...grpc.CallOption) (*UnregisterReply, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutReply, error)
+	Detail(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserDetailReply, error)
 }
 
 type coreClient struct {
@@ -45,18 +47,18 @@ func (c *coreClient) Register(ctx context.Context, in *RegisterRequest, opts ...
 	return out, nil
 }
 
-func (c *coreClient) Unregister(ctx context.Context, in *UnregisterRequest, opts ...grpc.CallOption) (*UnregisterReply, error) {
-	out := new(UnregisterReply)
-	err := c.cc.Invoke(ctx, "/api.core.v1.Core/Unregister", in, out, opts...)
+func (c *coreClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error) {
+	out := new(LoginReply)
+	err := c.cc.Invoke(ctx, "/api.core.v1.Core/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *coreClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error) {
-	out := new(LoginReply)
-	err := c.cc.Invoke(ctx, "/api.core.v1.Core/Login", in, out, opts...)
+func (c *coreClient) Unregister(ctx context.Context, in *UnregisterRequest, opts ...grpc.CallOption) (*UnregisterReply, error) {
+	out := new(UnregisterReply)
+	err := c.cc.Invoke(ctx, "/api.core.v1.Core/Unregister", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -72,14 +74,24 @@ func (c *coreClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc
 	return out, nil
 }
 
+func (c *coreClient) Detail(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserDetailReply, error) {
+	out := new(UserDetailReply)
+	err := c.cc.Invoke(ctx, "/api.core.v1.Core/Detail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CoreServer is the server API for Core service.
 // All implementations must embed UnimplementedCoreServer
 // for forward compatibility
 type CoreServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
-	Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error)
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
+	Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutReply, error)
+	Detail(context.Context, *emptypb.Empty) (*UserDetailReply, error)
 	mustEmbedUnimplementedCoreServer()
 }
 
@@ -90,14 +102,17 @@ type UnimplementedCoreServer struct {
 func (UnimplementedCoreServer) Register(context.Context, *RegisterRequest) (*RegisterReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (UnimplementedCoreServer) Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Unregister not implemented")
-}
 func (UnimplementedCoreServer) Login(context.Context, *LoginRequest) (*LoginReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
+func (UnimplementedCoreServer) Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Unregister not implemented")
+}
 func (UnimplementedCoreServer) Logout(context.Context, *LogoutRequest) (*LogoutReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedCoreServer) Detail(context.Context, *emptypb.Empty) (*UserDetailReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
 }
 func (UnimplementedCoreServer) mustEmbedUnimplementedCoreServer() {}
 
@@ -130,24 +145,6 @@ func _Core_Register_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Core_Unregister_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UnregisterRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CoreServer).Unregister(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/api.core.v1.Core/Unregister",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).Unregister(ctx, req.(*UnregisterRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Core_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoginRequest)
 	if err := dec(in); err != nil {
@@ -162,6 +159,24 @@ func _Core_Login_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CoreServer).Login(ctx, req.(*LoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_Unregister_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnregisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).Unregister(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.core.v1.Core/Unregister",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).Unregister(ctx, req.(*UnregisterRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -184,6 +199,24 @@ func _Core_Logout_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Core_Detail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).Detail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.core.v1.Core/Detail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).Detail(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Core_ServiceDesc is the grpc.ServiceDesc for Core service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -196,16 +229,20 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Core_Register_Handler,
 		},
 		{
-			MethodName: "Unregister",
-			Handler:    _Core_Unregister_Handler,
-		},
-		{
 			MethodName: "Login",
 			Handler:    _Core_Login_Handler,
 		},
 		{
+			MethodName: "Unregister",
+			Handler:    _Core_Unregister_Handler,
+		},
+		{
 			MethodName: "Logout",
 			Handler:    _Core_Logout_Handler,
+		},
+		{
+			MethodName: "Detail",
+			Handler:    _Core_Detail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

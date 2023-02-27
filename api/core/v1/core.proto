@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "google/api/annotations.proto";
 import "validate/validate.proto";
+import "google/protobuf/empty.proto";
 
 package api.core.v1;
 
@@ -16,14 +17,29 @@ service Core {
       body: "*"
     };
   };
-  rpc Unregister (UnregisterRequest) returns (UnregisterReply){};
   rpc Login (LoginRequest) returns (LoginReply){
     option (google.api.http) = {
       post: "v1/api/user/login"
       body: "*"
     };
   };
-  rpc Logout (LogoutRequest) returns (LogoutReply){};
+  rpc Unregister (UnregisterRequest) returns (UnregisterReply){
+    option (google.api.http) = {
+      post: "v1/api/user/unregister"
+      body: "*"
+    };
+  };
+  rpc Logout (LogoutRequest) returns (LogoutReply){
+    option(google.api.http) = {
+      post: "v1/api/user/logout"
+      body: "*"
+    };
+  };
+  rpc Detail (google.protobuf.Empty) returns (UserDetailReply){
+    option(google.api.http) = {
+      get: "v1/api/user/detail"
+    };
+  }
 }
 
 message RegisterRequest {
@@ -55,5 +71,7 @@ message LoginReply{
   int64 expiredAt = 2;
 }
 
-message UnregisterRequest{}
-message UnregisterReply{}
+message UnregisterRequest {}
+message UnregisterReply {}
+
+message UserDetailReply {}

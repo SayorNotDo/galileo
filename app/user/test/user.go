@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	v1 "galileo/api/user/v1"
+
 	"google.golang.org/grpc"
 )
 
@@ -27,8 +28,8 @@ func testCreateUser() {
 	rsp, err := userClient.CreateUser(context.Background(), &v1.CreateUserRequest{
 		Phone:    fmt.Sprintf("1234567890%d", 1),
 		Password: "test1234",
-		Username: "wentao3.chen",
-		Email:    "wentao3.chen@gmail.com",
+		Username: "wentao5.chen",
+		Email:    "wentao5.chen@gmail.com",
 	})
 	if err != nil {
 		panic("grpc create user fail: " + err.Error())
