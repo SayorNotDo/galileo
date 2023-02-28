@@ -19,6 +19,6 @@ func NewCoreRepo(data *Data, logger log.Logger) biz.CoreRepo {
 }
 
 func (r *coreRepo) CreateUser(c context.Context, user *biz.User) (*biz.User, error) {
-	println("Creating user", user)
+	println("------------------debug: Creating user", user)
 	return &biz.User{}, nil
 }
