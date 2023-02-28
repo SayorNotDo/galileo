@@ -14,10 +14,11 @@ type coreRepo struct {
 func NewCoreRepo(data *Data, logger log.Logger) biz.CoreRepo {
 	return &coreRepo{
 		data: data,
-		log:  log.NewHelper(log.With(log.With(logger, "module", "repo/core"))),
+		log:  log.NewHelper(log.With(logger, "module", "repo/core")),
 	}
 }
 
 func (r *coreRepo) CreateUser(c context.Context, user *biz.User) (*biz.User, error) {
-	return nil, nil
+	println("Creating user", user)
+	return &biz.User{}, nil
 }

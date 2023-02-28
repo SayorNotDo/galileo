@@ -56,6 +56,9 @@ generate:
 	go get github.com/google/wire/cmd/wire@latest
 	go generate ./...
 
+wire:
+	cd cmd/galileo/ && wire
+
 .PHONY: all
 # generate all
 all:

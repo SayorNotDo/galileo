@@ -13,29 +13,6 @@ message Bootstrap {
   Service service = 5;
 }
 
-message Service {
-  message Core {
-    string endpoint = 1;
-  }
-  Core core = 1;
-}
-
-message Trace {
-  string endpoint = 1;
-}
-
-message Registry {
-  message Consul {
-    string address = 1;
-    string scheme = 2;
-  }
-  Consul consul = 1;
-}
-
-message Auth {
-  string jwt_key = 1;
-}
-
 message Server {
   message HTTP {
     string network = 1;
@@ -65,3 +42,30 @@ message Data {
   Database database = 1;
   Redis redis = 2;
 }
+
+message Service {
+  message User {
+    string endpoint = 1;
+  }
+  User user = 1;
+}
+
+message Trace {
+  string endpoint = 1;
+}
+
+message Registry {
+  message Consul {
+    string address = 1;
+    string scheme = 2;
+  }
+  Consul consul = 1;
+}
+
+message Auth {
+  string jwt_key = 1;
+}
+
+
+
+

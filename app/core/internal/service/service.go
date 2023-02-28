@@ -14,7 +14,7 @@ type CoreService struct {
 	v1.UnimplementedCoreServer
 
 	uc  *biz.CoreUseCase
-	log log.Helper
+	log *log.Helper
 }
 
 func NewCoreService(uc *biz.CoreUseCase, logger log.Logger) *CoreService {

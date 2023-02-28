@@ -1,10 +1,10 @@
 package server
 
 import (
-	. "galileo/api/user/v1"
+	v1 "galileo/api/user/v1"
 	"galileo/app/user/internal/conf"
 	"galileo/app/user/internal/service"
-	"github.com/go-kratos/kratos/v2/middleware/logging"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -16,7 +16,8 @@ func NewGRPCServer(c *conf.Server, user *service.UserService, logger log.Logger)
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
-			logging.Server(logger),
+			//logging.Server(logger),
+			tracing.Server(),
 		),
 	}
 	if c.Grpc.Network != "" {
@@ -29,6 +30,6 @@ func NewGRPCServer(c *conf.Server, user *service.UserService, logger log.Logger)
 		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
-	RegisterUserServer(srv, user)
+	v1.RegisterUserServer(srv, user)
 	return srv
 }

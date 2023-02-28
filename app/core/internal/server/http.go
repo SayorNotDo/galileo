@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	v1 "galileo/api/helloworld/v1"
+	v1 "galileo/api/core/v1"
 	"galileo/app/core/internal/conf"
 	"galileo/app/core/internal/service"
 	"github.com/go-kratos/kratos/v2/log"
@@ -10,6 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	jwt2 "github.com/golang-jwt/jwt/v4"
@@ -22,6 +23,7 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, s *service.CoreService, logger
 		http.Middleware(
 			recovery.Recovery(),
 			validate.Validator(),
+			tracing.Server(),
 			selector.Server(
 				jwt.Server(func(token *jwt2.Token) (interface{}, error) {
 					return []byte(ac.JwtKey), nil
@@ -31,6 +33,8 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, s *service.CoreService, logger
 		),
 		http.Filter(handlers.CORS(
 			handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
+			handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}),
+			handlers.AllowedOrigins([]string{"*"}),
 		)),
 	}
 	if c.Http.Network != "" {
