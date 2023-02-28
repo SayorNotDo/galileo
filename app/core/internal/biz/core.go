@@ -5,7 +5,9 @@ import (
 	"errors"
 	v1 "galileo/api/core/v1"
 	"galileo/app/core/internal/conf"
+	"galileo/app/core/internal/pkg/middleware/auth"
 	"github.com/go-kratos/kratos/v2/log"
+	jwt2 "github.com/golang-jwt/jwt/v4"
 	"time"
 )
 
@@ -13,6 +15,7 @@ var (
 	ErrPasswordInvalid = errors.New("password is invalid")
 	ErrUsernameInvalid = errors.New("username is invalid")
 	ErrPhoneInvalid    = errors.New("phone is invalid")
+	ErrEmailInvalid    = errors.New("email is invalid")
 )
 
 type CoreRepo interface {
@@ -23,7 +26,8 @@ type User struct {
 	Phone    string
 	Nickname string
 	Gender   string
-	Role     string
+	Email    string
+	Role     int
 	Password string
 	CreateAt time.Time
 }
@@ -47,8 +51,28 @@ func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (
 	if err != nil {
 		return nil, err
 	}
-	println("debug:", createUser)
-	return &v1.RegisterReply{}, nil
+	claims := auth.CustomClaims{
+		ID:          createUser.ID,
+		Nickname:    createUser.Nickname,
+		AuthorityId: createUser.Role,
+		RegisteredClaims: jwt2.RegisteredClaims{
+			NotBefore: jwt2.NewNumericDate(time.Now()),
+			ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 0, 30)),
+			Issuer:    "Gyl",
+		},
+	}
+	token, err := auth.CreateToken(claims, c.signingKey)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.RegisterReply{
+		Id:        createUser.ID,
+		Phone:     createUser.Phone,
+		Username:  createUser.Nickname,
+		Token:     token,
+		Email:     createUser.Email,
+		ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 0, 30)).Unix(),
+	}, nil
 }
 
 func NewUser(phone, username, password, email string) (User, error) {
@@ -61,9 +85,13 @@ func NewUser(phone, username, password, email string) (User, error) {
 	if len(password) <= 0 {
 		return User{}, ErrPasswordInvalid
 	}
+	if len(email) <= 0 {
+		return User{}, ErrEmailInvalid
+	}
 	return User{
 		Phone:    phone,
 		Nickname: username,
 		Password: password,
+		Email:    email,
 	}, nil
 }
