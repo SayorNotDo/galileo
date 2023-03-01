@@ -32,8 +32,8 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 		return nil, err
 	}
 	userInfoRep := v1.CreateUserReply{
-		Id: ret.ID,
 		Data: &v1.UserInfoReply{
+			Id:       ret.ID,
 			Username: ret.Username,
 			Status:   ret.Status,
 			Nickname: ret.Nickname,
@@ -59,6 +59,21 @@ func (s *UserService) DeleteUser(ctx context.Context, req *v1.DeleteUserRequest)
 		Deleted: ok,
 	}, nil
 }
+
+func (s *UserService) GetUserByUsername(ctx context.Context, req *v1.UsernameRequest) (*v1.UserInfoReply, error) {
+	if user, err := s.uc.GetByUsername(ctx, req.Username); err != nil {
+		return nil, err
+	} else {
+		return &v1.UserInfoReply{
+			Username: user.Username,
+			Email:    user.Email,
+			Nickname: user.Nickname,
+			Phone:    user.Phone,
+			Status:   user.Status,
+		}, nil
+	}
+}
+
 func (s *UserService) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.UserInfoReply, error) {
 	user, err := s.uc.Get(ctx, req.Id)
 	if err != nil {

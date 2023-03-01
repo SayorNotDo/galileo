@@ -14,3 +14,7 @@ func (c *CoreService) Register(ctx context.Context, req *v1.RegisterRequest) (*v
 	defer span.End()
 	return c.uc.CreateUser(ctx, req)
 }
+
+func (c *CoreService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginReply, error) {
+	return c.uc.Login(ctx, req)
+}

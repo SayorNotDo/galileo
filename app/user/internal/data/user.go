@@ -63,6 +63,15 @@ func (repo *userRepo) GetById(ctx context.Context, id uint32) (*biz.User, error)
 	}, nil
 }
 
+func (repo *userRepo) GetByUsername(ctx context.Context, username string) (*biz.User, error) {
+	var user *biz.User
+	res := repo.data.gormDB.Where("username = ?", username).First(&user)
+	if res.RowsAffected == 0 {
+		return nil, status.Errorf(codes.NotFound, "User not found")
+	}
+	return user, nil
+}
+
 func (repo *userRepo) DeleteById(ctx context.Context, id uint32) (bool, error) {
 	var user *biz.User
 	result := repo.data.gormDB.Clauses(clause.Returning{}).Where("id = ?", id).Delete(&user)

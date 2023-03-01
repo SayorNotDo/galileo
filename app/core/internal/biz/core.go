@@ -16,10 +16,14 @@ var (
 	ErrUsernameInvalid = errors.New("username is invalid")
 	ErrPhoneInvalid    = errors.New("phone is invalid")
 	ErrEmailInvalid    = errors.New("email is invalid")
+	ErrUserNotFound    = errors.New("user not found")
+	ErrLoginFailed     = errors.New("login failed")
 )
 
 type CoreRepo interface {
 	CreateUser(ctx context.Context, u *User) (*User, error)
+	CheckPassword(ctx context.Context, password, encryptedPassword string) (bool, error)
+	UserByUsername(ctx context.Context, username string) (*User, error)
 }
 type User struct {
 	ID       uint32
@@ -73,6 +77,44 @@ func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (
 		Email:     createUser.Email,
 		ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 0, 30)).Unix(),
 	}, nil
+}
+
+func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginReply, error) {
+	if len(req.Username) <= 0 {
+		return nil, ErrUsernameInvalid
+	}
+	if len(req.Password) <= 0 {
+		return nil, ErrPasswordInvalid
+	}
+	user, err := c.cRepo.UserByUsername(ctx, req.Username)
+	if err != nil {
+		return nil, ErrUserNotFound
+	}
+	passRsp, passErr := c.cRepo.CheckPassword(ctx, req.Password, user.Password)
+	if passErr != nil {
+		return nil, ErrPasswordInvalid
+	}
+	if passRsp {
+		claims := auth.CustomClaims{
+			ID:          user.ID,
+			Nickname:    user.Nickname,
+			AuthorityId: user.Role,
+			RegisteredClaims: jwt2.RegisteredClaims{
+				NotBefore: jwt2.NewNumericDate(time.Now()),
+				ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 0, 1)),
+				Issuer:    "Gyl",
+			},
+		}
+		token, err := auth.CreateToken(claims, c.signingKey)
+		if err != nil {
+			return nil, err
+		}
+		return &v1.LoginReply{
+			Token:     token,
+			ExpiredAt: time.Now().AddDate(0, 0, 1).Unix(),
+		}, nil
+	}
+	return nil, ErrLoginFailed
 }
 
 func NewUser(phone, username, password, email string) (User, error) {

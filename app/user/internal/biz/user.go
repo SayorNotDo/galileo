@@ -33,6 +33,7 @@ type User struct {
 type UserRepo interface {
 	Save(context.Context, *User) (*User, error)
 	GetById(context.Context, uint32) (*User, error)
+	GetByUsername(context.Context, string) (*User, error)
 	Create(context.Context, *User) (*User, error)
 	List(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserInfoReply, int32, error)
 	Update(context.Context, *User) (bool, error)
@@ -69,6 +70,10 @@ func (uc *UserUseCase) Update(ctx context.Context, user *User) (bool, error) {
 
 func (uc *UserUseCase) Delete(ctx context.Context, id uint32) (bool, error) {
 	return uc.repo.DeleteById(ctx, id)
+}
+
+func (uc *UserUseCase) GetByUsername(ctx context.Context, username string) (*User, error) {
+	return uc.repo.GetByUsername(ctx, username)
 }
 
 func (uc *UserUseCase) CheckPassword(ctx context.Context, password, hashedPassword string) (bool, error) {
