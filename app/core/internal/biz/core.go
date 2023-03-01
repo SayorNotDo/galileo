@@ -28,6 +28,7 @@ type CoreRepo interface {
 type User struct {
 	ID       uint32
 	Phone    string
+	Username string
 	Nickname string
 	Gender   string
 	Email    string
@@ -87,6 +88,7 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 		return nil, ErrPasswordInvalid
 	}
 	user, err := c.cRepo.UserByUsername(ctx, req.Username)
+	log.Debugf("UserByUsername: %v", user)
 	if err != nil {
 		return nil, ErrUserNotFound
 	}

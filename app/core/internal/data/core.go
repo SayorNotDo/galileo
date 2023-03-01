@@ -29,6 +29,7 @@ func (r *coreRepo) UserByUsername(c context.Context, username string) (*biz.User
 	return &biz.User{
 		ID:       user.Id,
 		Phone:    user.Phone,
+		Username: user.Username,
 		Nickname: user.Nickname,
 		Email:    user.Email,
 	}, nil

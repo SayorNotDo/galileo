@@ -16,5 +16,10 @@ func (c *CoreService) Register(ctx context.Context, req *v1.RegisterRequest) (*v
 }
 
 func (c *CoreService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginReply, error) {
+	// add trace
+	tr := otel.Tracer("service")
+	ctx, span := tr.Start(ctx, "login")
+	span.SpanContext()
+	defer span.End()
 	return c.uc.Login(ctx, req)
 }
