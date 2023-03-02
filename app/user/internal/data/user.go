@@ -14,19 +14,19 @@ import (
 )
 
 type User struct {
-	ID             uint32    `json:"id" gorm:"primaryKey"`
-	Username       string    `json:"name" gorm:"varchar(255)"`
-	ChineseName    string    `json:"chinese_name" gorm:"varchar(25)"`
-	Nickname       string    `json:"nickname" gorm:"varchar(25)"`
-	HashedPassword string    `json:"hashed_password" gorm:"varchar(255); not null"`
-	Role           string    `json:"role"`
-	Avatar         string    `json:"avatar"`
-	Email          string    `json:"email"`
-	Phone          string    `json:"phone"`
-	Status         int32     `json:"status" gorm:"default: 1"`
-	UpdateAt       time.Time `json:"update_at" gorm:"autoUpdateTime"`
-	LastLoginAt    time.Time `json:"last_login_at" gorm:""`
-	CreatedAt      time.Time `json:"created_at" gorm:"autoCreateTime"`
+	ID          uint32    `json:"id" gorm:"primaryKey"`
+	Username    string    `json:"name" gorm:"varchar(255)"`
+	ChineseName string    `json:"chinese_name" gorm:"varchar(25)"`
+	Nickname    string    `json:"nickname" gorm:"varchar(25)"`
+	Password    string    `json:"password" gorm:"varchar(255); not null"`
+	Role        string    `json:"role"`
+	Avatar      string    `json:"avatar"`
+	Email       string    `json:"email"`
+	Phone       string    `json:"phone"`
+	Status      int32     `json:"status" gorm:"default: 1"`
+	UpdateAt    time.Time `json:"update_at" gorm:"autoUpdateTime"`
+	LastLoginAt time.Time `json:"last_login_at" gorm:""`
+	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
 }
 
 type userRepo struct {
@@ -52,14 +52,14 @@ func (repo *userRepo) GetById(ctx context.Context, id uint32) (*biz.User, error)
 		return nil, status.Errorf(codes.NotFound, "User not found")
 	}
 	return &biz.User{
-		ID:             user.ID,
-		Username:       user.Username,
-		Nickname:       user.Nickname,
-		Avatar:         user.Avatar,
-		Email:          user.Email,
-		Status:         user.Status,
-		Phone:          user.Phone,
-		HashedPassword: user.HashedPassword,
+		ID:       user.ID,
+		Username: user.Username,
+		Nickname: user.Nickname,
+		Avatar:   user.Avatar,
+		Email:    user.Email,
+		Status:   user.Status,
+		Phone:    user.Phone,
+		Password: user.Password,
 	}, nil
 }
 
@@ -131,7 +131,7 @@ func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error
 	user.Phone = u.Phone
 	user.Username = u.Username
 	user.Email = u.Email
-	user.HashedPassword = u.HashedPassword
+	user.Password = u.Password
 	if result := repo.data.gormDB.Create(&user); result.Error != nil {
 		return nil, status.Errorf(codes.Internal, result.Error.Error())
 	}

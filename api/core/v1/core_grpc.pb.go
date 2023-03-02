@@ -26,8 +26,9 @@ type CoreClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
 	Unregister(ctx context.Context, in *UnregisterRequest, opts ...grpc.CallOption) (*UnregisterReply, error)
-	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutReply, error)
+	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*LogoutReply, error)
 	Detail(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserDetailReply, error)
+	Update(ctx context.Context, in *UserInfoUpdateRequest, opts ...grpc.CallOption) (*UserInfoUpdateReply, error)
 }
 
 type coreClient struct {
@@ -65,7 +66,7 @@ func (c *coreClient) Unregister(ctx context.Context, in *UnregisterRequest, opts
 	return out, nil
 }
 
-func (c *coreClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutReply, error) {
+func (c *coreClient) Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*LogoutReply, error) {
 	out := new(LogoutReply)
 	err := c.cc.Invoke(ctx, "/api.core.v1.Core/Logout", in, out, opts...)
 	if err != nil {
@@ -83,6 +84,15 @@ func (c *coreClient) Detail(ctx context.Context, in *emptypb.Empty, opts ...grpc
 	return out, nil
 }
 
+func (c *coreClient) Update(ctx context.Context, in *UserInfoUpdateRequest, opts ...grpc.CallOption) (*UserInfoUpdateReply, error) {
+	out := new(UserInfoUpdateReply)
+	err := c.cc.Invoke(ctx, "/api.core.v1.Core/Update", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CoreServer is the server API for Core service.
 // All implementations must embed UnimplementedCoreServer
 // for forward compatibility
@@ -90,8 +100,9 @@ type CoreServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error)
-	Logout(context.Context, *LogoutRequest) (*LogoutReply, error)
+	Logout(context.Context, *emptypb.Empty) (*LogoutReply, error)
 	Detail(context.Context, *emptypb.Empty) (*UserDetailReply, error)
+	Update(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error)
 	mustEmbedUnimplementedCoreServer()
 }
 
@@ -108,11 +119,14 @@ func (UnimplementedCoreServer) Login(context.Context, *LoginRequest) (*LoginRepl
 func (UnimplementedCoreServer) Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Unregister not implemented")
 }
-func (UnimplementedCoreServer) Logout(context.Context, *LogoutRequest) (*LogoutReply, error) {
+func (UnimplementedCoreServer) Logout(context.Context, *emptypb.Empty) (*LogoutReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
 func (UnimplementedCoreServer) Detail(context.Context, *emptypb.Empty) (*UserDetailReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Detail not implemented")
+}
+func (UnimplementedCoreServer) Update(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedCoreServer) mustEmbedUnimplementedCoreServer() {}
 
@@ -182,7 +196,7 @@ func _Core_Unregister_Handler(srv interface{}, ctx context.Context, dec func(int
 }
 
 func _Core_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LogoutRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -194,7 +208,7 @@ func _Core_Logout_Handler(srv interface{}, ctx context.Context, dec func(interfa
 		FullMethod: "/api.core.v1.Core/Logout",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).Logout(ctx, req.(*LogoutRequest))
+		return srv.(CoreServer).Logout(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -213,6 +227,24 @@ func _Core_Detail_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CoreServer).Detail(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserInfoUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.core.v1.Core/Update",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).Update(ctx, req.(*UserInfoUpdateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -243,6 +275,10 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Detail",
 			Handler:    _Core_Detail_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _Core_Update_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

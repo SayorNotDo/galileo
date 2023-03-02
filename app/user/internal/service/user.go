@@ -27,7 +27,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 	if err != nil {
 		return nil, err
 	}
-	ret, err := s.uc.Create(ctx, &biz.User{Username: req.Username, Email: req.Email, Phone: req.Phone, HashedPassword: hashedPassword})
+	ret, err := s.uc.Create(ctx, &biz.User{Username: req.Username, Email: req.Email, Phone: req.Phone, Password: hashedPassword})
 	if err != nil {
 		return nil, err
 	}
@@ -65,11 +65,13 @@ func (s *UserService) GetUserByUsername(ctx context.Context, req *v1.UsernameReq
 		return nil, err
 	} else {
 		return &v1.UserInfoReply{
+			Id:       user.ID,
 			Username: user.Username,
 			Email:    user.Email,
 			Nickname: user.Nickname,
 			Phone:    user.Phone,
 			Status:   user.Status,
+			Password: user.Password,
 		}, nil
 	}
 }

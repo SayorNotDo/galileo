@@ -25,22 +25,25 @@ const OperationCoreLogin = "/api.core.v1.Core/Login"
 const OperationCoreLogout = "/api.core.v1.Core/Logout"
 const OperationCoreRegister = "/api.core.v1.Core/Register"
 const OperationCoreUnregister = "/api.core.v1.Core/Unregister"
+const OperationCoreUpdate = "/api.core.v1.Core/Update"
 
 type CoreHTTPServer interface {
 	Detail(context.Context, *emptypb.Empty) (*UserDetailReply, error)
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
-	Logout(context.Context, *LogoutRequest) (*LogoutReply, error)
+	Logout(context.Context, *emptypb.Empty) (*LogoutReply, error)
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error)
+	Update(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error)
 }
 
 func RegisterCoreHTTPServer(s *http.Server, srv CoreHTTPServer) {
 	r := s.Route("/")
 	r.POST("v1/api/user/register", _Core_Register0_HTTP_Handler(srv))
 	r.POST("v1/api/user/login", _Core_Login0_HTTP_Handler(srv))
-	r.POST("v1/api/user/unregister", _Core_Unregister0_HTTP_Handler(srv))
+	r.DELETE("v1/api/user/unregister", _Core_Unregister0_HTTP_Handler(srv))
 	r.POST("v1/api/user/logout", _Core_Logout0_HTTP_Handler(srv))
 	r.GET("v1/api/user/detail", _Core_Detail0_HTTP_Handler(srv))
+	r.PUT("v1/api/user/update", _Core_Update0_HTTP_Handler(srv))
 }
 
 func _Core_Register0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
@@ -84,7 +87,7 @@ func _Core_Login0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error 
 func _Core_Unregister0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in UnregisterRequest
-		if err := ctx.Bind(&in); err != nil {
+		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, OperationCoreUnregister)
@@ -102,13 +105,13 @@ func _Core_Unregister0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) e
 
 func _Core_Logout0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in LogoutRequest
+		var in emptypb.Empty
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, OperationCoreLogout)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Logout(ctx, req.(*LogoutRequest))
+			return srv.Logout(ctx, req.(*emptypb.Empty))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -138,12 +141,32 @@ func _Core_Detail0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error
 	}
 }
 
+func _Core_Update0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UserInfoUpdateRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCoreUpdate)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Update(ctx, req.(*UserInfoUpdateRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UserInfoUpdateReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type CoreHTTPClient interface {
 	Detail(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *UserDetailReply, err error)
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *LoginReply, err error)
-	Logout(ctx context.Context, req *LogoutRequest, opts ...http.CallOption) (rsp *LogoutReply, err error)
+	Logout(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *LogoutReply, err error)
 	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *RegisterReply, err error)
 	Unregister(ctx context.Context, req *UnregisterRequest, opts ...http.CallOption) (rsp *UnregisterReply, err error)
+	Update(ctx context.Context, req *UserInfoUpdateRequest, opts ...http.CallOption) (rsp *UserInfoUpdateReply, err error)
 }
 
 type CoreHTTPClientImpl struct {
@@ -180,7 +203,7 @@ func (c *CoreHTTPClientImpl) Login(ctx context.Context, in *LoginRequest, opts .
 	return &out, err
 }
 
-func (c *CoreHTTPClientImpl) Logout(ctx context.Context, in *LogoutRequest, opts ...http.CallOption) (*LogoutReply, error) {
+func (c *CoreHTTPClientImpl) Logout(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*LogoutReply, error) {
 	var out LogoutReply
 	pattern := "v1/api/user/logout"
 	path := binding.EncodeURL(pattern, in, false)
@@ -209,10 +232,23 @@ func (c *CoreHTTPClientImpl) Register(ctx context.Context, in *RegisterRequest, 
 func (c *CoreHTTPClientImpl) Unregister(ctx context.Context, in *UnregisterRequest, opts ...http.CallOption) (*UnregisterReply, error) {
 	var out UnregisterReply
 	pattern := "v1/api/user/unregister"
-	path := binding.EncodeURL(pattern, in, false)
+	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCoreUnregister))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *CoreHTTPClientImpl) Update(ctx context.Context, in *UserInfoUpdateRequest, opts ...http.CallOption) (*UserInfoUpdateReply, error) {
+	var out UserInfoUpdateReply
+	pattern := "v1/api/user/update"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationCoreUpdate))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

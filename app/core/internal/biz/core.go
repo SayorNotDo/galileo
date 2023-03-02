@@ -8,6 +8,7 @@ import (
 	"galileo/app/core/internal/pkg/middleware/auth"
 	"github.com/go-kratos/kratos/v2/log"
 	jwt2 "github.com/golang-jwt/jwt/v4"
+	"net/http"
 	"time"
 )
 
@@ -80,6 +81,10 @@ func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (
 	}, nil
 }
 
+func (c *CoreUseCase) Logout(ctx context.Context) (*v1.LogoutReply, error) {
+	panic("not implemented")
+}
+
 func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginReply, error) {
 	if len(req.Username) <= 0 {
 		return nil, ErrUsernameInvalid
@@ -88,7 +93,6 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 		return nil, ErrPasswordInvalid
 	}
 	user, err := c.cRepo.UserByUsername(ctx, req.Username)
-	log.Debugf("UserByUsername: %v", user)
 	if err != nil {
 		return nil, ErrUserNotFound
 	}
@@ -112,8 +116,12 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 			return nil, err
 		}
 		return &v1.LoginReply{
-			Token:     token,
-			ExpiredAt: time.Now().AddDate(0, 0, 1).Unix(),
+			Code:    http.StatusOK,
+			Message: http.StatusText(http.StatusOK),
+			Data: &v1.TokenInfo{
+				Token:     token,
+				ExpiresAt: time.Now().AddDate(0, 0, 1).Unix(),
+			},
 		}, nil
 	}
 	return nil, ErrLoginFailed

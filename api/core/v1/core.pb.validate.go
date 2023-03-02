@@ -35,6 +35,297 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on UserInfoUpdateRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UserInfoUpdateRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserInfoUpdateRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UserInfoUpdateRequestMultiError, or nil if none found.
+func (m *UserInfoUpdateRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserInfoUpdateRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if l := utf8.RuneCountInString(m.GetNickname()); l < 1 || l > 24 {
+		err := UserInfoUpdateRequestValidationError{
+			field:  "Nickname",
+			reason: "value length must be between 1 and 24 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if err := m._validateEmail(m.GetEmail()); err != nil {
+		err = UserInfoUpdateRequestValidationError{
+			field:  "Email",
+			reason: "value must be a valid email address",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetPhone()) != 11 {
+		err := UserInfoUpdateRequestValidationError{
+			field:  "Phone",
+			reason: "value length must be 11 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
+
+	if len(errors) > 0 {
+		return UserInfoUpdateRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *UserInfoUpdateRequest) _validateHostname(host string) error {
+	s := strings.ToLower(strings.TrimSuffix(host, "."))
+
+	if len(host) > 253 {
+		return errors.New("hostname cannot exceed 253 characters")
+	}
+
+	for _, part := range strings.Split(s, ".") {
+		if l := len(part); l == 0 || l > 63 {
+			return errors.New("hostname part must be non-empty and cannot exceed 63 characters")
+		}
+
+		if part[0] == '-' {
+			return errors.New("hostname parts cannot begin with hyphens")
+		}
+
+		if part[len(part)-1] == '-' {
+			return errors.New("hostname parts cannot end with hyphens")
+		}
+
+		for _, r := range part {
+			if (r < 'a' || r > 'z') && (r < '0' || r > '9') && r != '-' {
+				return fmt.Errorf("hostname parts can only contain alphanumeric characters or hyphens, got %q", string(r))
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *UserInfoUpdateRequest) _validateEmail(addr string) error {
+	a, err := mail.ParseAddress(addr)
+	if err != nil {
+		return err
+	}
+	addr = a.Address
+
+	if len(addr) > 254 {
+		return errors.New("email addresses cannot exceed 254 characters")
+	}
+
+	parts := strings.SplitN(addr, "@", 2)
+
+	if len(parts[0]) > 64 {
+		return errors.New("email address local phrase cannot exceed 64 characters")
+	}
+
+	return m._validateHostname(parts[1])
+}
+
+// UserInfoUpdateRequestMultiError is an error wrapping multiple validation
+// errors returned by UserInfoUpdateRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UserInfoUpdateRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserInfoUpdateRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserInfoUpdateRequestMultiError) AllErrors() []error { return m }
+
+// UserInfoUpdateRequestValidationError is the validation error returned by
+// UserInfoUpdateRequest.Validate if the designated constraints aren't met.
+type UserInfoUpdateRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserInfoUpdateRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserInfoUpdateRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserInfoUpdateRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserInfoUpdateRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserInfoUpdateRequestValidationError) ErrorName() string {
+	return "UserInfoUpdateRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UserInfoUpdateRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserInfoUpdateRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserInfoUpdateRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserInfoUpdateRequestValidationError{}
+
+// Validate checks the field values on UserInfoUpdateReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UserInfoUpdateReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserInfoUpdateReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UserInfoUpdateReplyMultiError, or nil if none found.
+func (m *UserInfoUpdateReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserInfoUpdateReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Success
+
+	if len(errors) > 0 {
+		return UserInfoUpdateReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserInfoUpdateReplyMultiError is an error wrapping multiple validation
+// errors returned by UserInfoUpdateReply.ValidateAll() if the designated
+// constraints aren't met.
+type UserInfoUpdateReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserInfoUpdateReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserInfoUpdateReplyMultiError) AllErrors() []error { return m }
+
+// UserInfoUpdateReplyValidationError is the validation error returned by
+// UserInfoUpdateReply.Validate if the designated constraints aren't met.
+type UserInfoUpdateReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserInfoUpdateReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserInfoUpdateReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserInfoUpdateReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserInfoUpdateReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserInfoUpdateReplyValidationError) ErrorName() string {
+	return "UserInfoUpdateReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UserInfoUpdateReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserInfoUpdateReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserInfoUpdateReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserInfoUpdateReplyValidationError{}
+
 // Validate checks the field values on RegisterRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -685,9 +976,38 @@ func (m *LoginReply) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Token
+	// no validation rules for Code
 
-	// no validation rules for ExpiredAt
+	// no validation rules for Message
+
+	if all {
+		switch v := interface{}(m.GetData()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, LoginReplyValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, LoginReplyValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return LoginReplyValidationError{
+				field:  "Data",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return LoginReplyMultiError(errors)
@@ -765,6 +1085,109 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = LoginReplyValidationError{}
+
+// Validate checks the field values on TokenInfo with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *TokenInfo) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TokenInfo with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in TokenInfoMultiError, or nil
+// if none found.
+func (m *TokenInfo) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TokenInfo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Token
+
+	// no validation rules for ExpiresAt
+
+	if len(errors) > 0 {
+		return TokenInfoMultiError(errors)
+	}
+
+	return nil
+}
+
+// TokenInfoMultiError is an error wrapping multiple validation errors returned
+// by TokenInfo.ValidateAll() if the designated constraints aren't met.
+type TokenInfoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TokenInfoMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TokenInfoMultiError) AllErrors() []error { return m }
+
+// TokenInfoValidationError is the validation error returned by
+// TokenInfo.Validate if the designated constraints aren't met.
+type TokenInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TokenInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TokenInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TokenInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TokenInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TokenInfoValidationError) ErrorName() string { return "TokenInfoValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TokenInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTokenInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TokenInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TokenInfoValidationError{}
 
 // Validate checks the field values on UnregisterRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the

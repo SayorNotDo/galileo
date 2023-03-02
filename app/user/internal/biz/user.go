@@ -19,15 +19,15 @@ var (
 )
 
 type User struct {
-	ID             uint32 `json:"id"`
-	Username       string `json:"name"`
-	ChineseName    string `json:"chinese_name"`
-	Nickname       string `json:"nickname"`
-	HashedPassword string `json:"hashed_password"`
-	Avatar         string `json:"avatar"`
-	Email          string `json:"email"`
-	Phone          string `json:"phone"`
-	Status         int32  `json:"status"`
+	ID          uint32 `json:"id"`
+	Username    string `json:"name"`
+	ChineseName string `json:"chinese_name"`
+	Nickname    string `json:"nickname"`
+	Password    string `json:"password"`
+	Avatar      string `json:"avatar"`
+	Email       string `json:"email"`
+	Phone       string `json:"phone"`
+	Status      int32  `json:"status"`
 }
 
 type UserRepo interface {

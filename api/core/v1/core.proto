@@ -25,11 +25,10 @@ service Core {
   };
   rpc Unregister (UnregisterRequest) returns (UnregisterReply){
     option (google.api.http) = {
-      post: "v1/api/user/unregister"
-      body: "*"
+      delete: "v1/api/user/unregister"
     };
   };
-  rpc Logout (LogoutRequest) returns (LogoutReply){
+  rpc Logout (google.protobuf.Empty) returns (LogoutReply){
     option(google.api.http) = {
       post: "v1/api/user/logout"
       body: "*"
@@ -39,7 +38,23 @@ service Core {
     option(google.api.http) = {
       get: "v1/api/user/detail"
     };
+  };
+  rpc Update(UserInfoUpdateRequest) returns (UserInfoUpdateReply) {
+    option(google.api.http) = {
+      put: "v1/api/user/update"
+      body: "*"
+    };
   }
+}
+
+message UserInfoUpdateRequest {
+  string nickname = 1 [(validate.rules).string = {min_len:1, max_len:24}];
+  string email = 2 [(validate.rules).string.email = true];
+  string phone = 3 [(validate.rules).string.len = 11];
+}
+
+message UserInfoUpdateReply {
+  bool success = 1;
 }
 
 message RegisterRequest {
@@ -67,8 +82,14 @@ message LoginRequest{
 }
 
 message LoginReply{
+  int32 code = 1;
+  string message = 2;
+  TokenInfo data = 3;
+}
+
+message TokenInfo{
   string token = 1;
-  int64 expiredAt = 2;
+  int64 expiresAt = 2;
 }
 
 message UnregisterRequest {}
