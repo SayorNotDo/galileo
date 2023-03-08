@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package api.project.v1;
+
+option go_package = "galileo/api/project/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.project.v1";
+
+service Project {
+	rpc CreateProject (CreateProjectRequest) returns (CreateProjectReply);
+	rpc UpdateProject (UpdateProjectRequest) returns (UpdateProjectReply);
+	rpc DeleteProject (DeleteProjectRequest) returns (DeleteProjectReply);
+	rpc GetProject (GetProjectRequest) returns (GetProjectReply);
+	rpc ListProject (ListProjectRequest) returns (ListProjectReply);
+}
+
+message CreateProjectRequest {}
+message CreateProjectReply {}
+
+message UpdateProjectRequest {}
+message UpdateProjectReply {}
+
+message DeleteProjectRequest {}
+message DeleteProjectReply {}
+
+message GetProjectRequest {}
+message GetProjectReply {}
+
+message ListProjectRequest {}
+message ListProjectReply {}
