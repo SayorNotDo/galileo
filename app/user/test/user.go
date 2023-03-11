@@ -8,19 +8,26 @@ import (
 	"google.golang.org/grpc"
 )
 
-var userClient v1.UserClient
-var conn *grpc.ClientConn
+var (
+	userClient v1.UserClient
+	conn       *grpc.ClientConn
+)
 
 func init() {
 	var err error
 	conn, err = grpc.Dial("localhost:9000", grpc.WithInsecure())
 	if err != nil {
-		panic("grpc link error" + err.Error())
+		panic("grpc link errors" + err.Error())
 	}
 	userClient = v1.NewUserClient(conn)
 }
 func main() {
-	defer conn.Close()
+	defer func(conn *grpc.ClientConn) {
+		err := conn.Close()
+		if err != nil {
+			panic("grpc close errors" + err.Error())
+		}
+	}(conn)
 	testCreateUser()
 }
 

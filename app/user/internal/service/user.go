@@ -33,7 +33,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 	}
 	userInfoRep := v1.CreateUserReply{
 		Data: &v1.UserInfoReply{
-			Id:       ret.ID,
+			Id:       ret.Id,
 			Username: ret.Username,
 			Status:   ret.Status,
 			Nickname: ret.Nickname,
@@ -44,7 +44,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 	return &userInfoRep, nil
 }
 func (s *UserService) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*emptypb.Empty, error) {
-	_, err := s.uc.Update(ctx, &biz.User{ID: req.Id, Nickname: req.Nickname, Avatar: req.Avatar})
+	_, err := s.uc.Update(ctx, &biz.User{Id: req.Id, Nickname: req.Nickname, Avatar: req.Avatar})
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (s *UserService) GetUserByUsername(ctx context.Context, req *v1.UsernameReq
 		return nil, err
 	} else {
 		return &v1.UserInfoReply{
-			Id:       user.ID,
+			Id:       user.Id,
 			Username: user.Username,
 			Email:    user.Email,
 			Nickname: user.Nickname,
@@ -78,10 +78,12 @@ func (s *UserService) GetUserByUsername(ctx context.Context, req *v1.UsernameReq
 
 func (s *UserService) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.UserInfoReply, error) {
 	user, err := s.uc.Get(ctx, req.Id)
+	log.Debugf("UserService user: %v", user)
 	if err != nil {
 		return nil, err
 	}
 	return &v1.UserInfoReply{
+		Id:       user.Id,
 		Username: user.Username,
 		Status:   user.Status,
 		Nickname: user.Nickname,
@@ -89,6 +91,7 @@ func (s *UserService) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.
 		Phone:    user.Phone,
 	}, nil
 }
+
 func (s *UserService) ListUser(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserReply, error) {
 	users, total, err := s.uc.List(ctx, req.PageNum, req.PageSize)
 	if err != nil {
@@ -105,7 +108,7 @@ func (s *UserService) SayHello(ctx context.Context, in *v1.HelloRequest) (*v1.He
 }
 
 func (s *UserService) CheckPassword(ctx context.Context, req *v1.CheckPasswordRequest) (*v1.CheckPasswordReply, error) {
-	ok, err := s.uc.CheckPassword(ctx, req.Password, req.HashedPassword)
+	ok, err := s.uc.CheckPassword(req.Password, req.HashedPassword)
 	if err != nil {
 		return nil, err
 	}

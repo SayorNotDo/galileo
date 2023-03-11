@@ -2,24 +2,15 @@ package biz
 
 import (
 	"context"
-	"errors"
 	v1 "galileo/api/user/v1"
+	"galileo/app/user/internal/pkg/util"
 	"github.com/go-kratos/kratos/v2/log"
-)
-
-var (
-	ErrPasswordInvalid     = errors.New("password is invalid")
-	ErrUsernameInvalid     = errors.New("username is invalid")
-	ErrPhoneInvalid        = errors.New("phone is invalid")
-	ErrUserNotFound        = errors.New("user not found")
-	ErrLoginFailed         = errors.New("login failed")
-	ErrGenerateTokenFailed = errors.New("generate token failed")
-	ErrAuthFailed          = errors.New("authentication failed")
-	ErrEmailInvalid        = errors.New("email is invalid")
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type User struct {
-	ID          uint32 `json:"id"`
+	Id          uint32 `json:"id"`
 	Username    string `json:"name"`
 	ChineseName string `json:"chinese_name"`
 	Nickname    string `json:"nickname"`
@@ -38,7 +29,6 @@ type UserRepo interface {
 	List(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserInfoReply, int32, error)
 	Update(context.Context, *User) (bool, error)
 	DeleteById(context.Context, uint32) (bool, error)
-	CheckPassword(ctx context.Context, password string, hashedPassword string) (bool, error)
 }
 
 type UserUseCase struct {
@@ -76,6 +66,9 @@ func (uc *UserUseCase) GetByUsername(ctx context.Context, username string) (*Use
 	return uc.repo.GetByUsername(ctx, username)
 }
 
-func (uc *UserUseCase) CheckPassword(ctx context.Context, password, hashedPassword string) (bool, error) {
-	return uc.repo.CheckPassword(ctx, password, hashedPassword)
+func (uc *UserUseCase) CheckPassword(password, hashedPassword string) (bool, error) {
+	if ok := util.ComparePassword(password, hashedPassword); !ok {
+		return false, status.Errorf(codes.Unauthenticated, codes.Unauthenticated.String())
+	}
+	return true, nil
 }

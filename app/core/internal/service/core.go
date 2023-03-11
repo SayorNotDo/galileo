@@ -33,3 +33,7 @@ func (c *CoreService) Logout(ctx context.Context, req *emptypb.Empty) (*v1.Logou
 	defer span.End()
 	return c.uc.Logout(ctx)
 }
+
+func (c *CoreService) UserDetail(ctx context.Context, req *emptypb.Empty) (*v1.UserDetailReply, error) {
+	return c.uc.UserDetail(ctx, &emptypb.Empty{})
+}

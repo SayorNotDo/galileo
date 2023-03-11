@@ -14,6 +14,8 @@ CREATE TABLE `user`
     `last_login_at` datetime                               NOT NULL,
     `update_at`     datetime                               NOT NULL,
     `created_at`    datetime                               NOT NULL,
+    `deleted_at`    datetime,
+    `deleted_by`    int(11) unsigned,
     PRIMARY KEY (`id`),
     UNIQUE KEY (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;

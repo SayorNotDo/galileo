@@ -2,40 +2,35 @@ package biz
 
 import (
 	"context"
-	"errors"
 	v1 "galileo/api/core/v1"
 	"galileo/app/core/internal/conf"
 	"galileo/app/core/internal/pkg/middleware/auth"
+	. "galileo/internal/pkg/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	jwt2 "github.com/golang-jwt/jwt/v4"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"net/http"
 	"time"
-)
-
-var (
-	ErrPasswordInvalid = errors.New("password is invalid")
-	ErrUsernameInvalid = errors.New("username is invalid")
-	ErrPhoneInvalid    = errors.New("phone is invalid")
-	ErrEmailInvalid    = errors.New("email is invalid")
-	ErrUserNotFound    = errors.New("user not found")
-	ErrLoginFailed     = errors.New("login failed")
 )
 
 type CoreRepo interface {
 	CreateUser(ctx context.Context, u *User) (*User, error)
 	CheckPassword(ctx context.Context, password, encryptedPassword string) (bool, error)
 	UserByUsername(ctx context.Context, username string) (*User, error)
+	UserById(context.Context, uint32) (*User, error)
 }
 type User struct {
-	ID       uint32
-	Phone    string
-	Username string
-	Nickname string
-	Gender   string
-	Email    string
-	Role     int
-	Password string
-	CreateAt time.Time
+	Id          uint32
+	Phone       string
+	ChineseName string
+	Username    string
+	Nickname    string
+	Gender      string
+	Email       string
+	Role        int
+	Password    string
+	CreateAt    time.Time
 }
 
 type CoreUseCase struct {
@@ -45,7 +40,7 @@ type CoreUseCase struct {
 }
 
 func NewCoreUseCase(repo CoreRepo, logger log.Logger, conf *conf.Auth) *CoreUseCase {
-	helper := log.NewHelper(log.With(logger, "module", "useCase/user"))
+	helper := log.NewHelper(log.With(logger, "module", "useCase/core"))
 	return &CoreUseCase{cRepo: repo, log: helper, signingKey: conf.JwtKey}
 }
 func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterReply, error) {
@@ -58,8 +53,8 @@ func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (
 		return nil, err
 	}
 	claims := auth.CustomClaims{
-		ID:          createUser.ID,
-		Nickname:    createUser.Nickname,
+		ID:          createUser.Id,
+		Username:    createUser.Username,
 		AuthorityId: createUser.Role,
 		RegisteredClaims: jwt2.RegisteredClaims{
 			NotBefore: jwt2.NewNumericDate(time.Now()),
@@ -72,9 +67,9 @@ func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (
 		return nil, err
 	}
 	return &v1.RegisterReply{
-		Id:        createUser.ID,
+		Id:        createUser.Id,
 		Phone:     createUser.Phone,
-		Username:  createUser.Nickname,
+		Username:  createUser.Username,
 		Token:     token,
 		Email:     createUser.Email,
 		ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 0, 30)).Unix(),
@@ -94,37 +89,60 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	}
 	user, err := c.cRepo.UserByUsername(ctx, req.Username)
 	if err != nil {
-		return nil, ErrUserNotFound
+		return nil, err
 	}
-	passRsp, passErr := c.cRepo.CheckPassword(ctx, req.Password, user.Password)
-	if passErr != nil {
-		return nil, ErrPasswordInvalid
+	if _, passErr := c.cRepo.CheckPassword(ctx, req.Password, user.Password); passErr != nil {
+		return nil, passErr
 	}
-	if passRsp {
-		claims := auth.CustomClaims{
-			ID:          user.ID,
+	claims := auth.CustomClaims{
+		ID:          user.Id,
+		Username:    user.Username,
+		AuthorityId: user.Role,
+		RegisteredClaims: jwt2.RegisteredClaims{
+			NotBefore: jwt2.NewNumericDate(time.Now()),
+			ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 0, 1)),
+			Issuer:    "Gyl",
+		},
+	}
+	token, err := auth.CreateToken(claims, c.signingKey)
+	if err != nil {
+		return nil, ErrInternalServer
+	}
+	return &v1.LoginReply{
+		Code:    http.StatusOK,
+		Message: http.StatusText(http.StatusOK),
+		Data: &v1.TokenInfo{
+			Type:      "Bearer",
+			Token:     token,
+			ExpiresAt: time.Now().AddDate(0, 0, 1).Unix(),
+		},
+	}, nil
+}
+
+func (c *CoreUseCase) UserDetail(ctx context.Context, empty *emptypb.Empty) (*v1.UserDetailReply, error) {
+	userClaim, ok := jwt.FromContext(ctx)
+	if !ok {
+		return nil, ErrInternalServer
+	}
+	uid := uint32(userClaim.(jwt2.MapClaims)["ID"].(float64))
+	user, err := c.cRepo.UserById(ctx, uid)
+	log.Debugf("user: %v", user)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.UserDetailReply{
+		Code:    http.StatusOK,
+		Message: http.StatusText(http.StatusOK),
+		Data: &v1.UserDetail{
+			Id:          user.Id,
+			Username:    user.Username,
 			Nickname:    user.Nickname,
-			AuthorityId: user.Role,
-			RegisteredClaims: jwt2.RegisteredClaims{
-				NotBefore: jwt2.NewNumericDate(time.Now()),
-				ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 0, 1)),
-				Issuer:    "Gyl",
-			},
-		}
-		token, err := auth.CreateToken(claims, c.signingKey)
-		if err != nil {
-			return nil, err
-		}
-		return &v1.LoginReply{
-			Code:    http.StatusOK,
-			Message: http.StatusText(http.StatusOK),
-			Data: &v1.TokenInfo{
-				Token:     token,
-				ExpiresAt: time.Now().AddDate(0, 0, 1).Unix(),
-			},
-		}, nil
-	}
-	return nil, ErrLoginFailed
+			ChineseName: user.ChineseName,
+			Phone:       user.Phone,
+			Email:       user.Email,
+			Role:        int32(user.Role),
+		},
+	}, nil
 }
 
 func NewUser(phone, username, password, email string) (User, error) {

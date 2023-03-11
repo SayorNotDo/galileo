@@ -7,7 +7,7 @@ import (
 
 type CustomClaims struct {
 	ID          uint32
-	Nickname    string
+	Username    string
 	AuthorityId int
 	jwt.RegisteredClaims
 }

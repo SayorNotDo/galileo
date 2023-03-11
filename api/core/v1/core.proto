@@ -34,7 +34,7 @@ service Core {
       body: "*"
     };
   };
-  rpc Detail (google.protobuf.Empty) returns (UserDetailReply){
+  rpc UserDetail (google.protobuf.Empty) returns (UserDetailReply){
     option(google.api.http) = {
       get: "v1/api/user/detail"
     };
@@ -77,8 +77,8 @@ message LogoutRequest {}
 message LogoutReply {}
 
 message LoginRequest{
-  string username = 1 [(validate.rules).string = {min_len: 3, max_len: 16}];
-  string password = 2 [(validate.rules).string = {min_len: 8}];
+  string username = 1 ;
+  string password = 2 ;
 }
 
 message LoginReply{
@@ -88,11 +88,25 @@ message LoginReply{
 }
 
 message TokenInfo{
-  string token = 1;
-  int64 expiresAt = 2;
+  string type = 1;
+  string token = 2;
+  int64 expiresAt = 3;
 }
 
 message UnregisterRequest {}
 message UnregisterReply {}
 
-message UserDetailReply {}
+message UserDetail {
+  uint32 id = 1;
+  string username = 2;
+  string nickname = 3;
+  string chineseName = 4;
+  string phone = 5;
+  string email = 6;
+  int32 role = 7;
+}
+message UserDetailReply {
+  int32 code = 1;
+  string message = 2;
+  UserDetail data = 3;
+}

@@ -15,10 +15,10 @@ var _ = Describe("User", func() {
 		ro = data.NewUserRepo(Db, nil)
 		hashedPassword, _ := util.HashPassword("test1234")
 		uD = &biz.User{
-			Username:       "tester",
-			HashedPassword: hashedPassword,
-			Phone:          "16710790871",
-			Email:          "tester@tester.com",
+			Username: "tester",
+			Password: hashedPassword,
+			Phone:    "16710790871",
+			Email:    "tester@tester.com",
 		}
 	})
 	It("Create", func() {
@@ -38,7 +38,7 @@ var _ = Describe("User", func() {
 
 	It("UpdateUser", func() {
 		uD = &biz.User{
-			ID:       1,
+			Id:       1,
 			Nickname: "Vince",
 			Avatar:   "AvatarTest",
 		}
@@ -56,17 +56,17 @@ var _ = Describe("User", func() {
 		Ω(user[0].Phone).Should(Equal("16710790871"))
 	})
 
-	It("CheckPassword", func() {
-		password := "1is*down9sky"
-		encryptedPassword := "$2a$10$2N1Hz4h26XbCB2epKk6pOu4/tGXXF1SKOwpIpPtaUxcCi1CxJP1oe"
-		ok, err := ro.CheckPassword(ctx, password, encryptedPassword)
-		Ω(err).ShouldNot(HaveOccurred())
-		Ω(ok).Should(BeTrue())
-		encryptedPassword1 := "$2a$10$2N1Hz4h26XbCB2epKk6pOu4/"
-		ok, err = ro.CheckPassword(ctx, password, encryptedPassword1)
-		Ω(err).ShouldNot(HaveOccurred())
-		Ω(ok).Should(BeFalse())
-	})
+	//It("CheckPassword", func() {
+	//	password := "1is*down9sky"
+	//	encryptedPassword := "$2a$10$2N1Hz4h26XbCB2epKk6pOu4/tGXXF1SKOwpIpPtaUxcCi1CxJP1oe"
+	//	ok, err := ro.CheckPassword(ctx, password, encryptedPassword)
+	//	Ω(err).ShouldNot(HaveOccurred())
+	//	Ω(ok).Should(BeTrue())
+	//	encryptedPassword1 := "$2a$10$2N1Hz4h26XbCB2epKk6pOu4/"
+	//	ok, err = ro.CheckPassword(ctx, password, encryptedPassword1)
+	//	Ω(err).ShouldNot(HaveOccurred())
+	//	Ω(ok).Should(BeFalse())
+	//})
 
 	It("DeleteUser", func() {
 		ok, err := ro.DeleteById(ctx, 1)

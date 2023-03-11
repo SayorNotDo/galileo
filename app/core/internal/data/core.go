@@ -27,12 +27,27 @@ func (r *coreRepo) UserByUsername(c context.Context, username string) (*biz.User
 		return nil, err
 	}
 	return &biz.User{
-		ID:       user.Id,
+		Id:       user.Id,
 		Phone:    user.Phone,
 		Username: user.Username,
 		Nickname: user.Nickname,
 		Email:    user.Email,
 		Password: user.Password,
+	}, nil
+}
+
+func (r *coreRepo) UserById(c context.Context, id uint32) (*biz.User, error) {
+	user, err := r.data.uc.GetUser(c, &userService.GetUserRequest{Id: id})
+	if err != nil {
+		return nil, err
+	}
+	log.Debugf("UserById user: %v", user.Id)
+	return &biz.User{
+		Id:       user.Id,
+		Username: user.Username,
+		Phone:    user.Phone,
+		Nickname: user.Nickname,
+		Email:    user.Email,
 	}, nil
 }
 
@@ -47,7 +62,7 @@ func (r *coreRepo) CreateUser(c context.Context, user *biz.User) (*biz.User, err
 		return nil, err
 	}
 	return &biz.User{
-		ID:       createUser.Data.Id,
+		Id:       createUser.Data.Id,
 		Phone:    createUser.Data.Phone,
 		Nickname: createUser.Data.Nickname,
 		Email:    createUser.Data.Email,

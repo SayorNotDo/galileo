@@ -4,6 +4,8 @@ import (
 	v1 "galileo/api/project/v1"
 	"galileo/app/project/internal/conf"
 	"galileo/app/project/internal/service"
+	"github.com/go-kratos/kratos/v2/middleware/logging"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -15,6 +17,8 @@ func NewGRPCServer(c *conf.Server, project *service.ProjectService, logger log.L
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
+			logging.Server(logger),
+			tracing.Server(),
 		),
 	}
 	if c.Grpc.Network != "" {

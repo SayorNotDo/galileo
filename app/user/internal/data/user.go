@@ -2,9 +2,9 @@ package data
 
 import (
 	"context"
+	"errors"
 	v1 "galileo/api/user/v1"
 	"galileo/app/user/internal/biz"
-	"galileo/app/user/internal/pkg/util"
 	"github.com/go-kratos/kratos/v2/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -14,7 +14,7 @@ import (
 )
 
 type User struct {
-	ID          uint32    `json:"id" gorm:"primaryKey"`
+	Id          uint32    `json:"id" gorm:"primaryKey"`
 	Username    string    `json:"name" gorm:"varchar(255)"`
 	ChineseName string    `json:"chinese_name" gorm:"varchar(25)"`
 	Nickname    string    `json:"nickname" gorm:"varchar(25)"`
@@ -25,7 +25,7 @@ type User struct {
 	Phone       string    `json:"phone"`
 	Status      int32     `json:"status" gorm:"default: 1"`
 	UpdateAt    time.Time `json:"update_at" gorm:"autoUpdateTime"`
-	LastLoginAt time.Time `json:"last_login_at" gorm:""`
+	LastLoginAt time.Time `json:"last_login_at"`
 	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
 }
 
@@ -49,10 +49,11 @@ func (repo *userRepo) GetById(ctx context.Context, id uint32) (*biz.User, error)
 	var user *biz.User
 	res := repo.data.gormDB.Where("id = ?", id).First(&user)
 	if res.RowsAffected == 0 {
-		return nil, status.Errorf(codes.NotFound, "User not found")
+		return nil, res.Error
 	}
+	log.Debugf("GetById user: %v", user)
 	return &biz.User{
-		ID:       user.ID,
+		Id:       user.Id,
 		Username: user.Username,
 		Nickname: user.Nickname,
 		Avatar:   user.Avatar,
@@ -74,11 +75,10 @@ func (repo *userRepo) GetByUsername(ctx context.Context, username string) (*biz.
 
 func (repo *userRepo) DeleteById(ctx context.Context, id uint32) (bool, error) {
 	var user *biz.User
-	result := repo.data.gormDB.Clauses(clause.Returning{}).Where("id = ?", id).Delete(&user)
-	if result.RowsAffected == 0 {
-		return false, status.Errorf(codes.Internal, result.Error.Error())
+	ret := repo.data.gormDB.Clauses(clause.Returning{}).Where("id = ?", id).Delete(&user)
+	if ret.RowsAffected == 0 {
+		return false, ret.Error
 	}
-	log.Debugf("Deleted User: %v", user)
 	return true, nil
 }
 
@@ -126,7 +126,7 @@ func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error
 	var user User
 	res := repo.data.gormDB.Where("phone = ?", u.Phone).Or("username = ?", u.Username).Or("email = ?", u.Email).First(&user)
 	if res.RowsAffected == 1 {
-		return nil, status.Errorf(codes.AlreadyExists, "User already exists")
+		return nil, status.Errorf(codes.AlreadyExists, "duplicated field value exists")
 	}
 	user.Phone = u.Phone
 	user.Username = u.Username
@@ -136,7 +136,7 @@ func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error
 		return nil, status.Errorf(codes.Internal, result.Error.Error())
 	}
 	return &biz.User{
-		ID:       user.ID,
+		Id:       user.Id,
 		Username: user.Username,
 		Email:    user.Email,
 		Phone:    user.Phone,
@@ -146,9 +146,9 @@ func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error
 
 func (repo *userRepo) Update(ctx context.Context, u *biz.User) (bool, error) {
 	var user User
-	res := repo.data.gormDB.Where("id = ?", u.ID).Find(&user)
+	res := repo.data.gormDB.Where("id = ?", u.Id).Find(&user)
 	if res.RowsAffected == 0 {
-		return false, status.Errorf(codes.NotFound, "User not found")
+		return false, errors.New("record not found")
 	}
 	user.Nickname = u.Nickname
 	user.Avatar = u.Avatar
@@ -156,8 +156,4 @@ func (repo *userRepo) Update(ctx context.Context, u *biz.User) (bool, error) {
 		return false, status.Errorf(codes.Internal, result.Error.Error())
 	}
 	return true, nil
-}
-
-func (repo *userRepo) CheckPassword(ctx context.Context, password, hashedPassword string) (bool, error) {
-	return util.ComparePassword(password, hashedPassword), nil
 }
