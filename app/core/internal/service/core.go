@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	v1 "galileo/api/core/v1"
+	"github.com/go-kratos/kratos/v2/log"
 	"go.opentelemetry.io/otel"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -36,4 +37,13 @@ func (c *CoreService) Logout(ctx context.Context, req *emptypb.Empty) (*v1.Logou
 
 func (c *CoreService) UserDetail(ctx context.Context, req *emptypb.Empty) (*v1.UserDetailReply, error) {
 	return c.uc.UserDetail(ctx, &emptypb.Empty{})
+}
+
+func (c *CoreService) ListUser(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserReply, error) {
+	pageNum := req.PageNum
+	pageSize := req.PageSize
+	log.Debugf("ListUser pageNum: %v", pageNum)
+	log.Debugf("ListUser pageSize: %v", pageSize)
+	//return c.uc.ListUser(ctx, req.PageNum, pageSize)
+	return nil, nil
 }

@@ -145,6 +145,10 @@ func (c *CoreUseCase) UserDetail(ctx context.Context, empty *emptypb.Empty) (*v1
 	}, nil
 }
 
+func (c *CoreUseCase) ListUser(ctx context.Context, pageNum, pageSize int32) ([]*v1.ListUserReply, error) {
+	panic("not implemented")
+}
+
 func NewUser(phone, username, password, email string) (User, error) {
 	if len(phone) <= 0 {
 		return User{}, ErrPhoneInvalid

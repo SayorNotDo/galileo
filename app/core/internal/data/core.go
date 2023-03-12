@@ -76,3 +76,12 @@ func (r *coreRepo) CheckPassword(c context.Context, password, encryptedPassword 
 		return ret.Success, nil
 	}
 }
+
+func (r *coreRepo) ListUser(c context.Context, pageNum, pageSize int32) ([]*biz.User, error) {
+	userList, err := r.data.uc.ListUser(c, &userService.ListUserRequest{PageNum: pageNum, PageSize: pageSize})
+	if err != nil {
+		return nil, err
+	}
+	log.Debugf("%v", userList)
+	return nil, nil
+}

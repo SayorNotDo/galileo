@@ -29,6 +29,7 @@ type CoreClient interface {
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*LogoutReply, error)
 	UserDetail(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserDetailReply, error)
 	Update(ctx context.Context, in *UserInfoUpdateRequest, opts ...grpc.CallOption) (*UserInfoUpdateReply, error)
+	ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
 }
 
 type coreClient struct {
@@ -93,6 +94,15 @@ func (c *coreClient) Update(ctx context.Context, in *UserInfoUpdateRequest, opts
 	return out, nil
 }
 
+func (c *coreClient) ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error) {
+	out := new(ListUserReply)
+	err := c.cc.Invoke(ctx, "/api.core.v1.Core/ListUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CoreServer is the server API for Core service.
 // All implementations must embed UnimplementedCoreServer
 // for forward compatibility
@@ -103,6 +113,7 @@ type CoreServer interface {
 	Logout(context.Context, *emptypb.Empty) (*LogoutReply, error)
 	UserDetail(context.Context, *emptypb.Empty) (*UserDetailReply, error)
 	Update(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error)
+	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	mustEmbedUnimplementedCoreServer()
 }
 
@@ -127,6 +138,9 @@ func (UnimplementedCoreServer) UserDetail(context.Context, *emptypb.Empty) (*Use
 }
 func (UnimplementedCoreServer) Update(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedCoreServer) ListUser(context.Context, *ListUserRequest) (*ListUserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUser not implemented")
 }
 func (UnimplementedCoreServer) mustEmbedUnimplementedCoreServer() {}
 
@@ -249,6 +263,24 @@ func _Core_Update_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Core_ListUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).ListUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.core.v1.Core/ListUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).ListUser(ctx, req.(*ListUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Core_ServiceDesc is the grpc.ServiceDesc for Core service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -279,6 +311,10 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Update",
 			Handler:    _Core_Update_Handler,
+		},
+		{
+			MethodName: "ListUser",
+			Handler:    _Core_ListUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

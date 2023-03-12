@@ -19,7 +19,7 @@ type User struct {
 	ChineseName string    `json:"chinese_name" gorm:"varchar(25)"`
 	Nickname    string    `json:"nickname" gorm:"varchar(25)"`
 	Password    string    `json:"password" gorm:"varchar(255); not null"`
-	Role        string    `json:"role"`
+	Role        int32     `json:"role"`
 	Avatar      string    `json:"avatar"`
 	Email       string    `json:"email"`
 	Phone       string    `json:"phone"`
@@ -93,11 +93,14 @@ func (repo *userRepo) List(ctx context.Context, pageNum, pageSize int32) ([]*v1.
 	rv := make([]*v1.UserInfoReply, 0)
 	for _, u := range users {
 		rv = append(rv, &v1.UserInfoReply{
-			Username: u.Username,
-			Nickname: u.Nickname,
-			Email:    u.Email,
-			Phone:    u.Phone,
-			Status:   u.Status,
+			Id:          u.Id,
+			Username:    u.Username,
+			Nickname:    u.Nickname,
+			ChineseName: u.ChineseName,
+			Email:       u.Email,
+			Phone:       u.Phone,
+			Role:        u.Role,
+			Status:      u.Status,
 		})
 	}
 	log.Debugf("total: %v", total)

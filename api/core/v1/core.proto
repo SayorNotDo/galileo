@@ -44,7 +44,27 @@ service Core {
       put: "v1/api/user/update"
       body: "*"
     };
+  };
+  rpc ListUser (ListUserRequest) returns (ListUserReply){
+    option(google.api.http) = {
+      get: "v1/api/user/list/{pageNum}/{pageSize}"
+    };
   }
+}
+
+message ListUserRequest {
+  int32 pageNum = 1;
+  int32 pageSize = 2;
+}
+
+message ListUserReply {
+  int32 code = 1;
+  string message = 2;
+  message ListUser {
+    int32 total = 1;
+    repeated UserDetail userList = 2;
+  }
+  ListUser data = 3;
 }
 
 message UserInfoUpdateRequest {
