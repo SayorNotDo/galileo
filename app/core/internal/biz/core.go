@@ -21,6 +21,7 @@ type CoreRepo interface {
 	UserByUsername(ctx context.Context, username string) (*User, error)
 	UserById(context.Context, uint32) (*User, error)
 	ListUser(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserDetail, int32, error)
+	SoftDeleteUser(ctx context.Context, uid uint32) (bool, error)
 }
 type User struct {
 	Id          uint32
@@ -32,7 +33,10 @@ type User struct {
 	Email       string
 	Role        int32
 	Password    string
+	Status      bool
 	CreateAt    time.Time
+	DeleteAt    time.Time
+	DeleteBy    uint32
 }
 
 type CoreUseCase struct {
@@ -173,12 +177,19 @@ func (c *CoreUseCase) DeleteUser(ctx context.Context, uid uint32) (*v1.DeleteRep
 	} else if role < 5 {
 		return nil, errors.Forbidden(http.StatusText(403), "Permission denied")
 	}
-	user, err := c.cRepo.UserById(ctx, uid)
+	_, err := c.cRepo.UserById(ctx, uid)
 	if err != nil {
 		return nil, err
 	}
-	log.Debugf("CoreUseCase: %v", user)
-	return nil, nil
+	ok, err = c.cRepo.SoftDeleteUser(ctx, uid)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.DeleteReply{
+		Code:    http.StatusOK,
+		Message: http.StatusText(http.StatusOK),
+		Data:    nil,
+	}, nil
 }
 
 func NewUser(phone, username, password, email string) (User, error) {

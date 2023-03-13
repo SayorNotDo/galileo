@@ -7,19 +7,22 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"time"
 )
 
 type User struct {
-	Id          uint32 `json:"id"`
-	Username    string `json:"name"`
-	ChineseName string `json:"chinese_name"`
-	Nickname    string `json:"nickname"`
-	Password    string `json:"password"`
-	Avatar      string `json:"avatar"`
-	Email       string `json:"email"`
-	Phone       string `json:"phone"`
-	Status      int32  `json:"status"`
-	Role        int32  `json:"role"`
+	Id          uint32    `json:"id"`
+	Username    string    `json:"name"`
+	ChineseName string    `json:"chinese_name"`
+	Nickname    string    `json:"nickname"`
+	Password    string    `json:"password"`
+	Avatar      string    `json:"avatar"`
+	Email       string    `json:"email"`
+	Phone       string    `json:"phone"`
+	Status      bool      `json:"status"`
+	Role        int32     `json:"role"`
+	DeletedAt   time.Time `json:"deleted_at"`
+	DeletedBy   uint32    `json:"deleted_by"`
 }
 
 type UserRepo interface {

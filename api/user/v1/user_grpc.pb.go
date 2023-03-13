@@ -30,6 +30,7 @@ type UserClient interface {
 	GetUserByUsername(ctx context.Context, in *UsernameRequest, opts ...grpc.CallOption) (*UserInfoReply, error)
 	ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
 	CheckPassword(ctx context.Context, in *CheckPasswordRequest, opts ...grpc.CallOption) (*CheckPasswordReply, error)
+	SoftDeleteUser(ctx context.Context, in *SoftDeleteRequest, opts ...grpc.CallOption) (*SoftDeleteReply, error)
 }
 
 type userClient struct {
@@ -103,6 +104,15 @@ func (c *userClient) CheckPassword(ctx context.Context, in *CheckPasswordRequest
 	return out, nil
 }
 
+func (c *userClient) SoftDeleteUser(ctx context.Context, in *SoftDeleteRequest, opts ...grpc.CallOption) (*SoftDeleteReply, error) {
+	out := new(SoftDeleteReply)
+	err := c.cc.Invoke(ctx, "/api.user.v1.User/SoftDeleteUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
@@ -114,6 +124,7 @@ type UserServer interface {
 	GetUserByUsername(context.Context, *UsernameRequest) (*UserInfoReply, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	CheckPassword(context.Context, *CheckPasswordRequest) (*CheckPasswordReply, error)
+	SoftDeleteUser(context.Context, *SoftDeleteRequest) (*SoftDeleteReply, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -141,6 +152,9 @@ func (UnimplementedUserServer) ListUser(context.Context, *ListUserRequest) (*Lis
 }
 func (UnimplementedUserServer) CheckPassword(context.Context, *CheckPasswordRequest) (*CheckPasswordReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckPassword not implemented")
+}
+func (UnimplementedUserServer) SoftDeleteUser(context.Context, *SoftDeleteRequest) (*SoftDeleteReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SoftDeleteUser not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -281,6 +295,24 @@ func _User_CheckPassword_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_SoftDeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SoftDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).SoftDeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.user.v1.User/SoftDeleteUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).SoftDeleteUser(ctx, req.(*SoftDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -315,6 +347,10 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckPassword",
 			Handler:    _User_CheckPassword_Handler,
+		},
+		{
+			MethodName: "SoftDeleteUser",
+			Handler:    _User_SoftDeleteUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

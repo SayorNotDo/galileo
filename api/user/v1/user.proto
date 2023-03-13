@@ -17,8 +17,20 @@ service User {
   rpc GetUser (GetUserRequest) returns (userInfoReply){};
   rpc GetUserByUsername (UsernameRequest) returns (userInfoReply){};
   rpc ListUser (ListUserRequest) returns (ListUserReply){};
-  rpc CheckPassword(CheckPasswordRequest) returns (CheckPasswordReply){}
+  rpc CheckPassword(CheckPasswordRequest) returns (CheckPasswordReply){};
+  rpc SoftDeleteUser (SoftDeleteRequest) returns (SoftDeleteReply){};
 }
+
+message SoftDeleteRequest {
+  uint32 id = 1;
+}
+
+message SoftDeleteReply {
+  bool deleted = 1;
+  bool status = 2;
+  int64 deletedAt = 3;
+}
+
 
 message CheckPasswordRequest {
   string hashedPassword = 1;
@@ -74,7 +86,7 @@ message userInfoReply {
   string username = 3;
   string email = 4;
   string nickname = 5;
-  int32 status = 6;
+  bool status = 6;
   string phone = 7;
   int32 role = 8;
   string chineseName = 9;

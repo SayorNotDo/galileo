@@ -10,7 +10,7 @@ CREATE TABLE `user`
     `password`      varchar(255)                           NOT NULL,
     `avatar`        varchar(255)                           DEFAULT NULL,
     `email`         varchar(255)                           NOT NULL,
-    `status`        int(11) NOT NULL,
+    `status`        boolean                                DEFAULT true,
     `last_login_at` datetime                               NOT NULL,
     `update_at`     datetime                               NOT NULL,
     `created_at`    datetime                               NOT NULL,

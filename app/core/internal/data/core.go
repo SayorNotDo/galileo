@@ -101,6 +101,11 @@ func (r *coreRepo) ListUser(c context.Context, pageNum, pageSize int32) ([]*v1.U
 	return rv, total, nil
 }
 
-func (r *coreRepo) SoftDeleteUser(c context.Context, uid uint32) (*biz.User, error) {
-	return nil, nil
+func (r *coreRepo) SoftDeleteUser(c context.Context, uid uint32) (bool, error) {
+	log.Debugf("SoftDeleteUser: %v", c)
+	rsp, err := r.data.uc.SoftDeleteUser(c, &userService.SoftDeleteRequest{Id: uid})
+	if err != nil {
+		return false, err
+	}
+	return rsp.Deleted, nil
 }

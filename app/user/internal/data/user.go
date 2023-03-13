@@ -23,7 +23,7 @@ type User struct {
 	Avatar      string    `json:"avatar"`
 	Email       string    `json:"email"`
 	Phone       string    `json:"phone"`
-	Status      int32     `json:"status" gorm:"default: 1"`
+	Status      bool      `json:"status" gorm:"default: true"`
 	UpdateAt    time.Time `json:"update_at" gorm:"autoUpdateTime"`
 	LastLoginAt time.Time `json:"last_login_at"`
 	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
@@ -153,8 +153,6 @@ func (repo *userRepo) Update(ctx context.Context, u *biz.User) (bool, error) {
 	if res.RowsAffected == 0 {
 		return false, errors.New("record not found")
 	}
-	//user.Nickname = u.Nickname
-	//user.Avatar = u.Avatar
 	if result := repo.data.gormDB.Updates(&user); result.Error != nil {
 		return false, status.Errorf(codes.Internal, result.Error.Error())
 	}

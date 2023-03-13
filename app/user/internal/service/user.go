@@ -7,6 +7,7 @@ import (
 	"galileo/app/user/internal/pkg/util"
 	"github.com/go-kratos/kratos/v2/log"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"time"
 )
 
 type UserService struct {
@@ -57,6 +58,19 @@ func (s *UserService) DeleteUser(ctx context.Context, req *v1.DeleteUserRequest)
 	}
 	return &v1.DeleteUserReply{
 		Deleted: ok,
+	}, nil
+}
+
+func (s *UserService) SoftDeleteUser(ctx context.Context, req *v1.SoftDeleteRequest) (*v1.SoftDeleteReply, error) {
+	deleteAt := time.Now()
+	ok, err := s.uc.Update(ctx, &biz.User{Id: req.Id, Status: false, DeletedAt: deleteAt})
+	if err != nil {
+		return nil, err
+	}
+	return &v1.SoftDeleteReply{
+		DeletedAt: deleteAt.Unix(),
+		Deleted:   ok,
+		Status:    ok,
 	}, nil
 }
 
