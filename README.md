@@ -1,6 +1,6 @@
 # Galileo (AutoTest & Analysis)
 
-# develop by Kratos Framework from Bilibili.com
+# (develop by Kratos Framework from Bilibili.com)
 
 ## Install Kratos
 ```
