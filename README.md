@@ -1,4 +1,6 @@
-# Kratos Project Template
+# Galileo (AutoTest & Analysis)
+
+# develop by Kratos Framework from Bilibili.com
 
 ## Install Kratos
 ```
