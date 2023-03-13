@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	v1 "galileo/api/core/v1"
 	userService "galileo/api/user/v1"
 	"galileo/app/core/internal/biz"
 	"github.com/go-kratos/kratos/v2/log"
@@ -26,6 +27,7 @@ func (r *coreRepo) UserByUsername(c context.Context, username string) (*biz.User
 	if err != nil {
 		return nil, err
 	}
+	log.Debugf("UserByUsername %v", user)
 	return &biz.User{
 		Id:       user.Id,
 		Phone:    user.Phone,
@@ -33,6 +35,7 @@ func (r *coreRepo) UserByUsername(c context.Context, username string) (*biz.User
 		Nickname: user.Nickname,
 		Email:    user.Email,
 		Password: user.Password,
+		Role:     user.Role,
 	}, nil
 }
 
@@ -77,11 +80,27 @@ func (r *coreRepo) CheckPassword(c context.Context, password, encryptedPassword 
 	}
 }
 
-func (r *coreRepo) ListUser(c context.Context, pageNum, pageSize int32) ([]*biz.User, error) {
-	userList, err := r.data.uc.ListUser(c, &userService.ListUserRequest{PageNum: pageNum, PageSize: pageSize})
+func (r *coreRepo) ListUser(c context.Context, pageNum, pageSize int32) ([]*v1.UserDetail, int32, error) {
+	rsp, err := r.data.uc.ListUser(c, &userService.ListUserRequest{PageNum: pageNum, PageSize: pageSize})
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	log.Debugf("%v", userList)
+	rv := make([]*v1.UserDetail, 0)
+	for _, u := range rsp.Data {
+		rv = append(rv, &v1.UserDetail{
+			Id:          u.Id,
+			Username:    u.Username,
+			Nickname:    u.Nickname,
+			ChineseName: u.ChineseName,
+			Phone:       u.Phone,
+			Email:       u.Email,
+			Role:        u.Role,
+		})
+	}
+	total := rsp.Total
+	return rv, total, nil
+}
+
+func (r *coreRepo) SoftDeleteUser(c context.Context, uid uint32) (*biz.User, error) {
 	return nil, nil
 }

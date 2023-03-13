@@ -34,6 +34,11 @@ service Core {
       body: "*"
     };
   };
+  rpc DeleteUser (DeleteRequest) returns (DeleteReply){
+    option (google.api.http) = {
+      delete: "v1/api/user/delete/{id}"
+    };
+  };
   rpc UserDetail (google.protobuf.Empty) returns (UserDetailReply){
     option(google.api.http) = {
       get: "v1/api/user/detail"
@@ -50,6 +55,21 @@ service Core {
       get: "v1/api/user/list/{pageNum}/{pageSize}"
     };
   }
+}
+
+message DeleteRequest{
+  uint32 id = 1;
+}
+
+message DeleteReply{
+  int32 code = 1;
+  string message = 2;
+  message DeleteInfo{
+    uint32 id = 1;
+    int64 deleteAt = 2;
+    uint32 deleteBy = 3;
+  };
+  DeleteInfo data = 3;
 }
 
 message ListUserRequest {

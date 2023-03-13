@@ -19,6 +19,7 @@ type User struct {
 	Email       string `json:"email"`
 	Phone       string `json:"phone"`
 	Status      int32  `json:"status"`
+	Role        int32  `json:"role"`
 }
 
 type UserRepo interface {

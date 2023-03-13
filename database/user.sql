@@ -5,7 +5,7 @@ CREATE TABLE `user`
     `username`      varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
     `chinese_name`  varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `nickname`      varchar(255)                           DEFAULT NULL,
-    `role`          varchar(255)                           DEFAULT NULL,
+    `role`          int(2) DEFAULT NULL,
     `phone`         varchar(255)                           NOT NULL,
     `password`      varchar(255)                           NOT NULL,
     `avatar`        varchar(255)                           DEFAULT NULL,

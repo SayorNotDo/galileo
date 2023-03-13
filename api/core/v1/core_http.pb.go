@@ -20,6 +20,7 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationCoreDeleteUser = "/api.core.v1.Core/DeleteUser"
 const OperationCoreListUser = "/api.core.v1.Core/ListUser"
 const OperationCoreLogin = "/api.core.v1.Core/Login"
 const OperationCoreLogout = "/api.core.v1.Core/Logout"
@@ -29,6 +30,7 @@ const OperationCoreUpdate = "/api.core.v1.Core/Update"
 const OperationCoreUserDetail = "/api.core.v1.Core/UserDetail"
 
 type CoreHTTPServer interface {
+	DeleteUser(context.Context, *DeleteRequest) (*DeleteReply, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	Logout(context.Context, *emptypb.Empty) (*LogoutReply, error)
@@ -44,6 +46,7 @@ func RegisterCoreHTTPServer(s *http.Server, srv CoreHTTPServer) {
 	r.POST("v1/api/user/login", _Core_Login0_HTTP_Handler(srv))
 	r.DELETE("v1/api/user/unregister", _Core_Unregister0_HTTP_Handler(srv))
 	r.POST("v1/api/user/logout", _Core_Logout0_HTTP_Handler(srv))
+	r.DELETE("v1/api/user/delete/{id}", _Core_DeleteUser0_HTTP_Handler(srv))
 	r.GET("v1/api/user/detail", _Core_UserDetail0_HTTP_Handler(srv))
 	r.PUT("v1/api/user/update", _Core_Update0_HTTP_Handler(srv))
 	r.GET("v1/api/user/list/{pageNum}/{pageSize}", _Core_ListUser0_HTTP_Handler(srv))
@@ -125,6 +128,28 @@ func _Core_Logout0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error
 	}
 }
 
+func _Core_DeleteUser0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DeleteRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCoreDeleteUser)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DeleteUser(ctx, req.(*DeleteRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*DeleteReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _Core_UserDetail0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in emptypb.Empty
@@ -186,6 +211,7 @@ func _Core_ListUser0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) err
 }
 
 type CoreHTTPClient interface {
+	DeleteUser(ctx context.Context, req *DeleteRequest, opts ...http.CallOption) (rsp *DeleteReply, err error)
 	ListUser(ctx context.Context, req *ListUserRequest, opts ...http.CallOption) (rsp *ListUserReply, err error)
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *LoginReply, err error)
 	Logout(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *LogoutReply, err error)
@@ -201,6 +227,19 @@ type CoreHTTPClientImpl struct {
 
 func NewCoreHTTPClient(client *http.Client) CoreHTTPClient {
 	return &CoreHTTPClientImpl{client}
+}
+
+func (c *CoreHTTPClientImpl) DeleteUser(ctx context.Context, in *DeleteRequest, opts ...http.CallOption) (*DeleteReply, error) {
+	var out DeleteReply
+	pattern := "v1/api/user/delete/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationCoreDeleteUser))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
 }
 
 func (c *CoreHTTPClientImpl) ListUser(ctx context.Context, in *ListUserRequest, opts ...http.CallOption) (*ListUserReply, error) {

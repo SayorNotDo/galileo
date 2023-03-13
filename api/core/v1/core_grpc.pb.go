@@ -27,6 +27,7 @@ type CoreClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
 	Unregister(ctx context.Context, in *UnregisterRequest, opts ...grpc.CallOption) (*UnregisterReply, error)
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*LogoutReply, error)
+	DeleteUser(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteReply, error)
 	UserDetail(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserDetailReply, error)
 	Update(ctx context.Context, in *UserInfoUpdateRequest, opts ...grpc.CallOption) (*UserInfoUpdateReply, error)
 	ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
@@ -76,6 +77,15 @@ func (c *coreClient) Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc
 	return out, nil
 }
 
+func (c *coreClient) DeleteUser(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteReply, error) {
+	out := new(DeleteReply)
+	err := c.cc.Invoke(ctx, "/api.core.v1.Core/DeleteUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *coreClient) UserDetail(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserDetailReply, error) {
 	out := new(UserDetailReply)
 	err := c.cc.Invoke(ctx, "/api.core.v1.Core/UserDetail", in, out, opts...)
@@ -111,6 +121,7 @@ type CoreServer interface {
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error)
 	Logout(context.Context, *emptypb.Empty) (*LogoutReply, error)
+	DeleteUser(context.Context, *DeleteRequest) (*DeleteReply, error)
 	UserDetail(context.Context, *emptypb.Empty) (*UserDetailReply, error)
 	Update(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
@@ -132,6 +143,9 @@ func (UnimplementedCoreServer) Unregister(context.Context, *UnregisterRequest) (
 }
 func (UnimplementedCoreServer) Logout(context.Context, *emptypb.Empty) (*LogoutReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedCoreServer) DeleteUser(context.Context, *DeleteRequest) (*DeleteReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
 func (UnimplementedCoreServer) UserDetail(context.Context, *emptypb.Empty) (*UserDetailReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserDetail not implemented")
@@ -227,6 +241,24 @@ func _Core_Logout_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Core_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).DeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.core.v1.Core/DeleteUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).DeleteUser(ctx, req.(*DeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Core_UserDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -303,6 +335,10 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Logout",
 			Handler:    _Core_Logout_Handler,
+		},
+		{
+			MethodName: "DeleteUser",
+			Handler:    _Core_DeleteUser_Handler,
 		},
 		{
 			MethodName: "UserDetail",

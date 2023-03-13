@@ -72,6 +72,7 @@ func (s *UserService) GetUserByUsername(ctx context.Context, req *v1.UsernameReq
 			Phone:    user.Phone,
 			Status:   user.Status,
 			Password: user.Password,
+			Role:     user.Role,
 		}, nil
 	}
 }

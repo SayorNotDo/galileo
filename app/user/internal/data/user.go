@@ -153,8 +153,8 @@ func (repo *userRepo) Update(ctx context.Context, u *biz.User) (bool, error) {
 	if res.RowsAffected == 0 {
 		return false, errors.New("record not found")
 	}
-	user.Nickname = u.Nickname
-	user.Avatar = u.Avatar
+	//user.Nickname = u.Nickname
+	//user.Avatar = u.Avatar
 	if result := repo.data.gormDB.Updates(&user); result.Error != nil {
 		return false, status.Errorf(codes.Internal, result.Error.Error())
 	}

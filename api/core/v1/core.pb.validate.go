@@ -35,6 +35,240 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on DeleteRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *DeleteRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in DeleteRequestMultiError, or
+// nil if none found.
+func (m *DeleteRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return DeleteRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteRequestMultiError is an error wrapping multiple validation errors
+// returned by DeleteRequest.ValidateAll() if the designated constraints
+// aren't met.
+type DeleteRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteRequestMultiError) AllErrors() []error { return m }
+
+// DeleteRequestValidationError is the validation error returned by
+// DeleteRequest.Validate if the designated constraints aren't met.
+type DeleteRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteRequestValidationError) ErrorName() string { return "DeleteRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DeleteRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteRequestValidationError{}
+
+// Validate checks the field values on DeleteReply with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *DeleteReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteReply with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in DeleteReplyMultiError, or
+// nil if none found.
+func (m *DeleteReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Code
+
+	// no validation rules for Message
+
+	if all {
+		switch v := interface{}(m.GetData()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DeleteReplyValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DeleteReplyValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DeleteReplyValidationError{
+				field:  "Data",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return DeleteReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteReplyMultiError is an error wrapping multiple validation errors
+// returned by DeleteReply.ValidateAll() if the designated constraints aren't met.
+type DeleteReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteReplyMultiError) AllErrors() []error { return m }
+
+// DeleteReplyValidationError is the validation error returned by
+// DeleteReply.Validate if the designated constraints aren't met.
+type DeleteReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteReplyValidationError) ErrorName() string { return "DeleteReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DeleteReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteReplyValidationError{}
+
 // Validate checks the field values on ListUserRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -1857,6 +2091,114 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UserDetailReplyValidationError{}
+
+// Validate checks the field values on DeleteReply_DeleteInfo with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteReply_DeleteInfo) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteReply_DeleteInfo with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteReply_DeleteInfoMultiError, or nil if none found.
+func (m *DeleteReply_DeleteInfo) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteReply_DeleteInfo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for DeleteAt
+
+	// no validation rules for DeleteBy
+
+	if len(errors) > 0 {
+		return DeleteReply_DeleteInfoMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteReply_DeleteInfoMultiError is an error wrapping multiple validation
+// errors returned by DeleteReply_DeleteInfo.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteReply_DeleteInfoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteReply_DeleteInfoMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteReply_DeleteInfoMultiError) AllErrors() []error { return m }
+
+// DeleteReply_DeleteInfoValidationError is the validation error returned by
+// DeleteReply_DeleteInfo.Validate if the designated constraints aren't met.
+type DeleteReply_DeleteInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteReply_DeleteInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteReply_DeleteInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteReply_DeleteInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteReply_DeleteInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteReply_DeleteInfoValidationError) ErrorName() string {
+	return "DeleteReply_DeleteInfoValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteReply_DeleteInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteReply_DeleteInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteReply_DeleteInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteReply_DeleteInfoValidationError{}
 
 // Validate checks the field values on ListUserReply_ListUser with the rules
 // defined in the proto definition for this message. If any rules are

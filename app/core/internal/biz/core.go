@@ -6,6 +6,7 @@ import (
 	"galileo/app/core/internal/conf"
 	"galileo/app/core/internal/pkg/middleware/auth"
 	. "galileo/internal/pkg/errors"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	jwt2 "github.com/golang-jwt/jwt/v4"
@@ -19,6 +20,7 @@ type CoreRepo interface {
 	CheckPassword(ctx context.Context, password, encryptedPassword string) (bool, error)
 	UserByUsername(ctx context.Context, username string) (*User, error)
 	UserById(context.Context, uint32) (*User, error)
+	ListUser(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserDetail, int32, error)
 }
 type User struct {
 	Id          uint32
@@ -28,7 +30,7 @@ type User struct {
 	Nickname    string
 	Gender      string
 	Email       string
-	Role        int
+	Role        int32
 	Password    string
 	CreateAt    time.Time
 }
@@ -55,7 +57,7 @@ func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (
 	claims := auth.CustomClaims{
 		ID:          createUser.Id,
 		Username:    createUser.Username,
-		AuthorityId: createUser.Role,
+		AuthorityId: int(createUser.Role),
 		RegisteredClaims: jwt2.RegisteredClaims{
 			NotBefore: jwt2.NewNumericDate(time.Now()),
 			ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 0, 30)),
@@ -94,10 +96,11 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	if _, passErr := c.cRepo.CheckPassword(ctx, req.Password, user.Password); passErr != nil {
 		return nil, passErr
 	}
+	log.Debugf("%v", user)
 	claims := auth.CustomClaims{
 		ID:          user.Id,
 		Username:    user.Username,
-		AuthorityId: user.Role,
+		AuthorityId: int(user.Role),
 		RegisteredClaims: jwt2.RegisteredClaims{
 			NotBefore: jwt2.NewNumericDate(time.Now()),
 			ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 0, 1)),
@@ -126,7 +129,6 @@ func (c *CoreUseCase) UserDetail(ctx context.Context, empty *emptypb.Empty) (*v1
 	}
 	uid := uint32(userClaim.(jwt2.MapClaims)["ID"].(float64))
 	user, err := c.cRepo.UserById(ctx, uid)
-	log.Debugf("user: %v", user)
 	if err != nil {
 		return nil, err
 	}
@@ -145,8 +147,38 @@ func (c *CoreUseCase) UserDetail(ctx context.Context, empty *emptypb.Empty) (*v1
 	}, nil
 }
 
-func (c *CoreUseCase) ListUser(ctx context.Context, pageNum, pageSize int32) ([]*v1.ListUserReply, error) {
-	panic("not implemented")
+func (c *CoreUseCase) ListUser(ctx context.Context, pageNum, pageSize int32) (*v1.ListUserReply, error) {
+	user, total, err := c.cRepo.ListUser(ctx, pageNum, pageSize)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.ListUserReply{
+		Code:    http.StatusOK,
+		Message: http.StatusText(http.StatusOK),
+		Data: &v1.ListUserReply_ListUser{
+			Total:    total,
+			UserList: user,
+		},
+	}, nil
+}
+
+func (c *CoreUseCase) DeleteUser(ctx context.Context, uid uint32) (*v1.DeleteReply, error) {
+	userClaim, ok := jwt.FromContext(ctx)
+	if !ok {
+		return nil, ErrInternalServer
+	}
+	role := int(userClaim.(jwt2.MapClaims)["AuthorityId"].(float64))
+	if role == 0 {
+		return nil, errors.Forbidden(http.StatusText(403), "Role must be non-zero")
+	} else if role < 5 {
+		return nil, errors.Forbidden(http.StatusText(403), "Permission denied")
+	}
+	user, err := c.cRepo.UserById(ctx, uid)
+	if err != nil {
+		return nil, err
+	}
+	log.Debugf("CoreUseCase: %v", user)
+	return nil, nil
 }
 
 func NewUser(phone, username, password, email string) (User, error) {
