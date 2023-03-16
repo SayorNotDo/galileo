@@ -33,6 +33,7 @@ type UserRepo interface {
 	List(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserInfoReply, int32, error)
 	Update(context.Context, *User) (bool, error)
 	DeleteById(context.Context, uint32) (bool, error)
+	MapUpdate(ctx context.Context, u map[string]interface{}) (bool, error)
 }
 
 type UserUseCase struct {
@@ -60,6 +61,10 @@ func (uc *UserUseCase) List(ctx context.Context, pageNum, pageSize int32) ([]*v1
 
 func (uc *UserUseCase) Update(ctx context.Context, user *User) (bool, error) {
 	return uc.repo.Update(ctx, user)
+}
+
+func (uc *UserUseCase) MapUpdate(ctx context.Context, u map[string]interface{}) (bool, error) {
+	return uc.repo.MapUpdate(ctx, u)
 }
 
 func (uc *UserUseCase) Delete(ctx context.Context, id uint32) (bool, error) {

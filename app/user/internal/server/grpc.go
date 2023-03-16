@@ -5,6 +5,7 @@ import (
 	"galileo/app/user/internal/conf"
 	"galileo/app/user/internal/service"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
+	"github.com/go-kratos/kratos/v2/middleware/metadata"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -19,6 +20,7 @@ func NewGRPCServer(c *conf.Server, user *service.UserService, logger log.Logger)
 			recovery.Recovery(),
 			logging.Server(logger),
 			tracing.Server(),
+			metadata.Server(),
 		),
 	}
 	if c.Grpc.Network != "" {

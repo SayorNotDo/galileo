@@ -63,7 +63,8 @@ func (s *UserService) DeleteUser(ctx context.Context, req *v1.DeleteUserRequest)
 
 func (s *UserService) SoftDeleteUser(ctx context.Context, req *v1.SoftDeleteRequest) (*v1.SoftDeleteReply, error) {
 	deleteAt := time.Now()
-	ok, err := s.uc.Update(ctx, &biz.User{Id: req.Id, Status: false, DeletedAt: deleteAt})
+	u := map[string]interface{}{"id": req.Id, "deleted_at": deleteAt, "deleted_by": req.Id, "status": false}
+	ok, err := s.uc.MapUpdate(ctx, u)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +94,6 @@ func (s *UserService) GetUserByUsername(ctx context.Context, req *v1.UsernameReq
 
 func (s *UserService) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.UserInfoReply, error) {
 	user, err := s.uc.Get(ctx, req.Id)
-	log.Debugf("UserService user: %v", user)
 	if err != nil {
 		return nil, err
 	}

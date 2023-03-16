@@ -27,6 +27,8 @@ type User struct {
 	UpdateAt    time.Time `json:"update_at" gorm:"autoUpdateTime"`
 	LastLoginAt time.Time `json:"last_login_at"`
 	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
+	DeletedAt   time.Time `json:"deleted_at"`
+	DeletedBy   uint32    `json:"deleted_by"`
 }
 
 type userRepo struct {
@@ -51,7 +53,6 @@ func (repo *userRepo) GetById(ctx context.Context, id uint32) (*biz.User, error)
 	if res.RowsAffected == 0 {
 		return nil, res.Error
 	}
-	log.Debugf("GetById user: %v", user)
 	return &biz.User{
 		Id:       user.Id,
 		Username: user.Username,
@@ -153,8 +154,15 @@ func (repo *userRepo) Update(ctx context.Context, u *biz.User) (bool, error) {
 	if res.RowsAffected == 0 {
 		return false, errors.New("record not found")
 	}
-	if result := repo.data.gormDB.Updates(&user); result.Error != nil {
+	if result := repo.data.gormDB.Updates(&u); result.Error != nil {
 		return false, status.Errorf(codes.Internal, result.Error.Error())
+	}
+	return true, nil
+}
+
+func (repo *userRepo) MapUpdate(ctx context.Context, u map[string]interface{}) (bool, error) {
+	if res := repo.data.gormDB.Model(User{}).Where("id = ?", u["id"]).Updates(u); res.Error != nil {
+		return false, status.Errorf(codes.Internal, res.Error.Error())
 	}
 	return true, nil
 }

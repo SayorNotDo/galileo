@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
+import "errors/errors.proto";
 
 
 package api.user.v1;
@@ -9,6 +10,14 @@ package api.user.v1;
 option go_package = "galileo/api/user/v1;v1";
 option java_multiple_files = true;
 option java_package = "api.user";
+
+enum ErrorReason {
+  option (errors.default_code) = 500;
+
+  USER_NOT_FOUND = 0 [(errors.code) = 404];
+
+  CONTENT_MISSING = 1 [(errors.code) = 400];
+}
 
 service User {
   rpc CreateUser (CreateUserRequest) returns (CreateUserReply) {};

@@ -181,7 +181,8 @@ func (c *CoreUseCase) DeleteUser(ctx context.Context, uid uint32) (*v1.DeleteRep
 	if err != nil {
 		return nil, err
 	}
-	ok, err = c.cRepo.SoftDeleteUser(ctx, uid)
+	subCtx := context.WithValue(ctx, "text", "text")
+	ok, err = c.cRepo.SoftDeleteUser(subCtx, uid)
 	if err != nil {
 		return nil, err
 	}
