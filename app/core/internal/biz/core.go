@@ -5,7 +5,7 @@ import (
 	v1 "galileo/api/core/v1"
 	"galileo/app/core/internal/conf"
 	"galileo/app/core/internal/pkg/middleware/auth"
-	. "galileo/internal/pkg/errors"
+	. "galileo/pkg/errors"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
@@ -181,8 +181,7 @@ func (c *CoreUseCase) DeleteUser(ctx context.Context, uid uint32) (*v1.DeleteRep
 	if err != nil {
 		return nil, err
 	}
-	subCtx := context.WithValue(ctx, "text", "text")
-	ok, err = c.cRepo.SoftDeleteUser(subCtx, uid)
+	ok, err = c.cRepo.SoftDeleteUser(ctx, uid)
 	if err != nil {
 		return nil, err
 	}
