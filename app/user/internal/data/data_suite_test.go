@@ -4,10 +4,10 @@ import (
 	"context"
 	"galileo/app/user/internal/conf"
 	"galileo/app/user/internal/data"
+	"galileo/ent"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/pkg/errors"
-	"gorm.io/gorm"
 	"testing"
 )
 
@@ -20,11 +20,8 @@ var cleaner func()
 var Db *data.Data
 var ctx context.Context
 
-func initialize(db *gorm.DB) error {
-	db.Migrator().CurrentDatabase()
-	err := db.AutoMigrate(
-		&data.User{},
-	)
+func initialize(db *ent.Client) error {
+	err := db.Schema.Create(context.Background())
 	return errors.WithStack(err)
 }
 
@@ -32,7 +29,7 @@ var _ = BeforeSuite(func() {
 	con, f := data.DockerMysql("mariadb", "latest")
 	cleaner = f
 	config := &conf.Data{Database: &conf.Data_Database{Driver: "mysql", Source: con}}
-	db, err := data.NewGormDB(config)
+	db, err := data.NewEntDB(config)
 	if err != nil {
 		return
 	}
