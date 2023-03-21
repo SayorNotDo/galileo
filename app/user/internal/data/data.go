@@ -15,7 +15,6 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -25,8 +24,8 @@ var ProviderSet = wire.NewSet(NewData, NewEntDB, NewRedis, NewUserRepo)
 // Data .
 type Data struct {
 	// TODO wrapped database client
-	entDB   *ent.Client
-	gormDB  *gorm.DB
+	entDB *ent.Client
+	//gormDB  *gorm.DB
 	redisDB *redis.Client
 }
 

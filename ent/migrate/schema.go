@@ -29,31 +29,23 @@ var (
 		Columns:    ProjectsColumns,
 		PrimaryKey: []*schema.Column{ProjectsColumns[0]},
 	}
-	// TodosColumns holds the columns for the "todos" table.
-	TodosColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-	}
-	// TodosTable holds the schema information for the "todos" table.
-	TodosTable = &schema.Table{
-		Name:       "todos",
-		Columns:    TodosColumns,
-		PrimaryKey: []*schema.Column{TodosColumns[0]},
-	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "active", Type: field.TypeBool, Default: true},
 		{Name: "username", Type: field.TypeString, Unique: true},
+		{Name: "chinese_name", Type: field.TypeString, Nullable: true},
 		{Name: "nickname", Type: field.TypeString, Unique: true},
 		{Name: "password", Type: field.TypeString},
+		{Name: "phone", Type: field.TypeString, Unique: true},
 		{Name: "email", Type: field.TypeString, Unique: true},
-		{Name: "avatar", Type: field.TypeString, Size: 2147483647},
-		{Name: "role", Type: field.TypeUint8},
+		{Name: "avatar", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "role", Type: field.TypeUint8, Default: 3},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "deleted_at", Type: field.TypeTime},
-		{Name: "deleted_by", Type: field.TypeUint32},
-		{Name: "last_login_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
+		{Name: "last_login_at", Type: field.TypeTime, Nullable: true},
 		{Name: "uuid", Type: field.TypeUUID},
 	}
 	// UsersTable holds the schema information for the "users" table.
@@ -65,7 +57,6 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		ProjectsTable,
-		TodosTable,
 		UsersTable,
 	}
 )

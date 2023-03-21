@@ -19,10 +19,14 @@ const (
 	FieldActive = "active"
 	// FieldUsername holds the string denoting the username field in the database.
 	FieldUsername = "username"
+	// FieldChineseName holds the string denoting the chinesename field in the database.
+	FieldChineseName = "chinese_name"
 	// FieldNickname holds the string denoting the nickname field in the database.
 	FieldNickname = "nickname"
 	// FieldPassword holds the string denoting the password field in the database.
 	FieldPassword = "password"
+	// FieldPhone holds the string denoting the phone field in the database.
+	FieldPhone = "phone"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
 	// FieldAvatar holds the string denoting the avatar field in the database.
@@ -49,8 +53,10 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldActive,
 	FieldUsername,
+	FieldChineseName,
 	FieldNickname,
 	FieldPassword,
+	FieldPhone,
 	FieldEmail,
 	FieldAvatar,
 	FieldRole,
@@ -76,6 +82,10 @@ var (
 	DefaultCreatedAt func() time.Time
 	// DefaultActive holds the default value on creation for the "active" field.
 	DefaultActive bool
+	// DefaultRole holds the default value on creation for the "role" field.
+	DefaultRole uint8
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultUUID holds the default value on creation for the "uuid" field.

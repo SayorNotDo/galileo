@@ -2,14 +2,10 @@ package data
 
 import (
 	"context"
-	"errors"
 	v1 "galileo/api/user/v1"
 	"galileo/app/user/internal/biz"
+	"galileo/ent/user"
 	"github.com/go-kratos/kratos/v2/log"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -48,121 +44,122 @@ func (repo *userRepo) Save(ctx context.Context, user *biz.User) (*biz.User, erro
 }
 
 func (repo *userRepo) GetById(ctx context.Context, id uint32) (*biz.User, error) {
-	var user *biz.User
-	res := repo.data.gormDB.Where("id = ?", id).First(&user)
-	if res.RowsAffected == 0 {
-		return nil, res.Error
+	u, err := repo.data.entDB.User.Query().Where(user.ID(id)).Only(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return &biz.User{
-		Id:       user.Id,
-		Username: user.Username,
-		Nickname: user.Nickname,
-		Avatar:   user.Avatar,
-		Email:    user.Email,
-		Status:   user.Status,
-		Phone:    user.Phone,
-		Password: user.Password,
+		Id:       u.ID,
+		Username: u.Username,
+		Nickname: u.Nickname,
+		Avatar:   u.Avatar,
+		Email:    u.Email,
+		Status:   u.Active,
+		Phone:    u.Phone,
+		Password: u.Password,
 	}, nil
 }
 
 func (repo *userRepo) GetByUsername(ctx context.Context, username string) (*biz.User, error) {
-	var user *biz.User
-	res := repo.data.gormDB.Where("username = ?", username).First(&user)
-	if res.RowsAffected == 0 {
-		return nil, status.Errorf(codes.NotFound, "User not found")
+	u, err := repo.data.entDB.User.Query().Where(user.Username(username)).Only(ctx)
+	if err != nil {
+		return nil, err
 	}
-	return user, nil
+	return &biz.User{
+		Id:       u.ID,
+		Username: u.Username,
+		Nickname: u.Nickname,
+		Email:    u.Email,
+		Password: u.Password,
+		Phone:    u.Phone,
+		Status:   u.Active,
+		Role:     int32(u.Role),
+	}, nil
 }
 
 func (repo *userRepo) DeleteById(ctx context.Context, id uint32) (bool, error) {
-	var user *biz.User
-	ret := repo.data.gormDB.Clauses(clause.Returning{}).Where("id = ?", id).Delete(&user)
-	if ret.RowsAffected == 0 {
-		return false, ret.Error
+	_, err := repo.data.entDB.User.Delete().Where(user.ID(id)).Exec(ctx)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (repo *userRepo) SoftDeleteById(ctx context.Context, id uint32) (bool, error) {
+	_, err := repo.data.entDB.User.UpdateOneID(id).SetDeletedAt(time.Now()).SetActive(false).Save(ctx)
+	if err != nil {
+		return false, err
 	}
 	return true, nil
 }
 
 func (repo *userRepo) List(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserInfoReply, int32, error) {
-	var users []User
-	result := repo.data.gormDB.Find(&users)
-	if result.Error != nil {
-		return nil, 0, result.Error
+	if pageNum == 0 {
+		pageNum = 1
 	}
-	total := int32(result.RowsAffected)
-	repo.data.gormDB.Scopes(paginate(pageNum, pageSize)).Find(&users)
+	switch {
+	case pageSize > 100:
+		pageSize = 100
+	case pageSize <= 10:
+		pageSize = 10
+	}
+	offset := (pageNum - 1) * pageSize
+	userList, err := repo.data.entDB.User.Query().Offset(int(offset)).Limit(int(pageSize)).All(ctx)
+	if err != nil {
+		return nil, 0, err
+	}
+	total := len(userList)
 	rv := make([]*v1.UserInfoReply, 0)
-	for _, u := range users {
+	for _, u := range userList {
 		rv = append(rv, &v1.UserInfoReply{
-			Id:          u.Id,
+			Id:          u.ID,
 			Username:    u.Username,
 			Nickname:    u.Nickname,
 			ChineseName: u.ChineseName,
 			Email:       u.Email,
 			Phone:       u.Phone,
-			Role:        u.Role,
-			Status:      u.Status,
+			Role:        int32(u.Role),
+			Status:      u.Active,
 		})
 	}
-	log.Debugf("total: %v", total)
-	log.Debugf("userList: %v", rv)
-	log.Debugf("users: %v", users)
-	return rv, total, nil
-}
-
-func paginate(pageNum, pageSize int32) func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		if pageNum == 0 {
-			pageNum = 1
-		}
-		switch {
-		case pageSize > 100:
-			pageSize = 100
-		case pageSize <= 0:
-			pageSize = 10
-		}
-		offset := (pageNum - 1) * pageSize
-		return db.Offset(int(offset)).Limit(int(pageSize))
-	}
+	return rv, int32(total), nil
 }
 
 func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error) {
-	var user User
-	res := repo.data.gormDB.Where("phone = ?", u.Phone).Or("username = ?", u.Username).Or("email = ?", u.Email).First(&user)
-	if res.RowsAffected == 1 {
-		return nil, status.Errorf(codes.AlreadyExists, "duplicated field value exists")
-	}
-	user.Phone = u.Phone
-	user.Username = u.Username
-	user.Email = u.Email
-	user.Password = u.Password
-	if result := repo.data.gormDB.Create(&user); result.Error != nil {
-		return nil, status.Errorf(codes.Internal, result.Error.Error())
+	createUser, err := repo.data.entDB.User.Create().
+		SetUsername(u.Username).
+		SetEmail(u.Email).
+		SetPhone(u.Phone).
+		SetNickname(u.Username).
+		SetPassword(u.Password).
+		Save(ctx)
+	if err != nil {
+		return nil, err
 	}
 	return &biz.User{
-		Id:       user.Id,
-		Username: user.Username,
-		Email:    user.Email,
-		Phone:    user.Phone,
-		Status:   user.Status,
+		Id:       createUser.ID,
+		Username: createUser.Username,
+		Email:    createUser.Email,
+		Phone:    createUser.Phone,
+		Status:   createUser.Active,
 	}, nil
 }
 
 func (repo *userRepo) Update(ctx context.Context, u *biz.User) (bool, error) {
-	var user User
-	res := repo.data.gormDB.Where("id = ?", u.Id).Find(&user)
-	if res.RowsAffected == 0 {
-		return false, errors.New("record not found")
-	}
-	if result := repo.data.gormDB.Updates(&u); result.Error != nil {
-		return false, status.Errorf(codes.Internal, result.Error.Error())
-	}
+	//var user User
+	//res := repo.data.gormDB.Where("id = ?", u.Id).Find(&user)
+	//if res.RowsAffected == 0 {
+	//	return false, errors.New("record not found")
+	//}
+	//if result := repo.data.gormDB.Updates(&u); result.Error != nil {
+	//	return false, status.Errorf(codes.Internal, result.Error.Error())
+	//}
 	return true, nil
 }
 
 func (repo *userRepo) MapUpdate(ctx context.Context, u map[string]interface{}) (bool, error) {
-	if res := repo.data.gormDB.Model(User{}).Where("id = ?", u["id"]).Updates(u); res.Error != nil {
-		return false, status.Errorf(codes.Internal, res.Error.Error())
-	}
+	//if res := repo.data.gormDB.Model(User{}).Where("id = ?", u["id"]).Updates(u); res.Error != nil {
+	//	return false, status.Errorf(codes.Internal, res.Error.Error())
+	//}
 	return true, nil
 }

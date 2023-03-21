@@ -28,7 +28,12 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 	if err != nil {
 		return nil, err
 	}
-	ret, err := s.uc.Create(ctx, &biz.User{Username: req.Username, Email: req.Email, Phone: req.Phone, Password: hashedPassword})
+	ret, err := s.uc.Create(ctx, &biz.User{
+		Username: req.Username,
+		Email:    req.Email,
+		Phone:    req.Phone,
+		Password: hashedPassword,
+	})
 	if err != nil {
 		return nil, err
 	}

@@ -9,8 +9,5 @@ import (
 // Project is the predicate function for project builders.
 type Project func(*sql.Selector)
 
-// Todo is the predicate function for todo builders.
-type Todo func(*sql.Selector)
-
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

@@ -49,6 +49,26 @@ func (uu *UserUpdate) SetUsername(s string) *UserUpdate {
 	return uu
 }
 
+// SetChineseName sets the "chineseName" field.
+func (uu *UserUpdate) SetChineseName(s string) *UserUpdate {
+	uu.mutation.SetChineseName(s)
+	return uu
+}
+
+// SetNillableChineseName sets the "chineseName" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableChineseName(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetChineseName(*s)
+	}
+	return uu
+}
+
+// ClearChineseName clears the value of the "chineseName" field.
+func (uu *UserUpdate) ClearChineseName() *UserUpdate {
+	uu.mutation.ClearChineseName()
+	return uu
+}
+
 // SetNickname sets the "nickname" field.
 func (uu *UserUpdate) SetNickname(s string) *UserUpdate {
 	uu.mutation.SetNickname(s)
@@ -58,6 +78,12 @@ func (uu *UserUpdate) SetNickname(s string) *UserUpdate {
 // SetPassword sets the "password" field.
 func (uu *UserUpdate) SetPassword(s string) *UserUpdate {
 	uu.mutation.SetPassword(s)
+	return uu
+}
+
+// SetPhone sets the "phone" field.
+func (uu *UserUpdate) SetPhone(s string) *UserUpdate {
+	uu.mutation.SetPhone(s)
 	return uu
 }
 
@@ -73,10 +99,32 @@ func (uu *UserUpdate) SetAvatar(s string) *UserUpdate {
 	return uu
 }
 
+// SetNillableAvatar sets the "avatar" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableAvatar(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetAvatar(*s)
+	}
+	return uu
+}
+
+// ClearAvatar clears the value of the "avatar" field.
+func (uu *UserUpdate) ClearAvatar() *UserUpdate {
+	uu.mutation.ClearAvatar()
+	return uu
+}
+
 // SetRole sets the "role" field.
 func (uu *UserUpdate) SetRole(u uint8) *UserUpdate {
 	uu.mutation.ResetRole()
 	uu.mutation.SetRole(u)
+	return uu
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableRole(u *uint8) *UserUpdate {
+	if u != nil {
+		uu.SetRole(*u)
+	}
 	return uu
 }
 
@@ -98,10 +146,32 @@ func (uu *UserUpdate) SetDeletedAt(t time.Time) *UserUpdate {
 	return uu
 }
 
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableDeletedAt(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetDeletedAt(*t)
+	}
+	return uu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (uu *UserUpdate) ClearDeletedAt() *UserUpdate {
+	uu.mutation.ClearDeletedAt()
+	return uu
+}
+
 // SetDeletedBy sets the "deleted_by" field.
 func (uu *UserUpdate) SetDeletedBy(u uint32) *UserUpdate {
 	uu.mutation.ResetDeletedBy()
 	uu.mutation.SetDeletedBy(u)
+	return uu
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableDeletedBy(u *uint32) *UserUpdate {
+	if u != nil {
+		uu.SetDeletedBy(*u)
+	}
 	return uu
 }
 
@@ -111,9 +181,29 @@ func (uu *UserUpdate) AddDeletedBy(u int32) *UserUpdate {
 	return uu
 }
 
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (uu *UserUpdate) ClearDeletedBy() *UserUpdate {
+	uu.mutation.ClearDeletedBy()
+	return uu
+}
+
 // SetLastLoginAt sets the "last_login_at" field.
 func (uu *UserUpdate) SetLastLoginAt(t time.Time) *UserUpdate {
 	uu.mutation.SetLastLoginAt(t)
+	return uu
+}
+
+// SetNillableLastLoginAt sets the "last_login_at" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableLastLoginAt(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetLastLoginAt(*t)
+	}
+	return uu
+}
+
+// ClearLastLoginAt clears the value of the "last_login_at" field.
+func (uu *UserUpdate) ClearLastLoginAt() *UserUpdate {
+	uu.mutation.ClearLastLoginAt()
 	return uu
 }
 
@@ -187,17 +277,29 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.Username(); ok {
 		_spec.SetField(user.FieldUsername, field.TypeString, value)
 	}
+	if value, ok := uu.mutation.ChineseName(); ok {
+		_spec.SetField(user.FieldChineseName, field.TypeString, value)
+	}
+	if uu.mutation.ChineseNameCleared() {
+		_spec.ClearField(user.FieldChineseName, field.TypeString)
+	}
 	if value, ok := uu.mutation.Nickname(); ok {
 		_spec.SetField(user.FieldNickname, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 	}
+	if value, ok := uu.mutation.Phone(); ok {
+		_spec.SetField(user.FieldPhone, field.TypeString, value)
+	}
 	if value, ok := uu.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.Avatar(); ok {
 		_spec.SetField(user.FieldAvatar, field.TypeString, value)
+	}
+	if uu.mutation.AvatarCleared() {
+		_spec.ClearField(user.FieldAvatar, field.TypeString)
 	}
 	if value, ok := uu.mutation.Role(); ok {
 		_spec.SetField(user.FieldRole, field.TypeUint8, value)
@@ -211,14 +313,23 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.DeletedAt(); ok {
 		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
 	}
+	if uu.mutation.DeletedAtCleared() {
+		_spec.ClearField(user.FieldDeletedAt, field.TypeTime)
+	}
 	if value, ok := uu.mutation.DeletedBy(); ok {
 		_spec.SetField(user.FieldDeletedBy, field.TypeUint32, value)
 	}
 	if value, ok := uu.mutation.AddedDeletedBy(); ok {
 		_spec.AddField(user.FieldDeletedBy, field.TypeUint32, value)
 	}
+	if uu.mutation.DeletedByCleared() {
+		_spec.ClearField(user.FieldDeletedBy, field.TypeUint32)
+	}
 	if value, ok := uu.mutation.LastLoginAt(); ok {
 		_spec.SetField(user.FieldLastLoginAt, field.TypeTime, value)
+	}
+	if uu.mutation.LastLoginAtCleared() {
+		_spec.ClearField(user.FieldLastLoginAt, field.TypeTime)
 	}
 	if value, ok := uu.mutation.UUID(); ok {
 		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
@@ -263,6 +374,26 @@ func (uuo *UserUpdateOne) SetUsername(s string) *UserUpdateOne {
 	return uuo
 }
 
+// SetChineseName sets the "chineseName" field.
+func (uuo *UserUpdateOne) SetChineseName(s string) *UserUpdateOne {
+	uuo.mutation.SetChineseName(s)
+	return uuo
+}
+
+// SetNillableChineseName sets the "chineseName" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableChineseName(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetChineseName(*s)
+	}
+	return uuo
+}
+
+// ClearChineseName clears the value of the "chineseName" field.
+func (uuo *UserUpdateOne) ClearChineseName() *UserUpdateOne {
+	uuo.mutation.ClearChineseName()
+	return uuo
+}
+
 // SetNickname sets the "nickname" field.
 func (uuo *UserUpdateOne) SetNickname(s string) *UserUpdateOne {
 	uuo.mutation.SetNickname(s)
@@ -272,6 +403,12 @@ func (uuo *UserUpdateOne) SetNickname(s string) *UserUpdateOne {
 // SetPassword sets the "password" field.
 func (uuo *UserUpdateOne) SetPassword(s string) *UserUpdateOne {
 	uuo.mutation.SetPassword(s)
+	return uuo
+}
+
+// SetPhone sets the "phone" field.
+func (uuo *UserUpdateOne) SetPhone(s string) *UserUpdateOne {
+	uuo.mutation.SetPhone(s)
 	return uuo
 }
 
@@ -287,10 +424,32 @@ func (uuo *UserUpdateOne) SetAvatar(s string) *UserUpdateOne {
 	return uuo
 }
 
+// SetNillableAvatar sets the "avatar" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableAvatar(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetAvatar(*s)
+	}
+	return uuo
+}
+
+// ClearAvatar clears the value of the "avatar" field.
+func (uuo *UserUpdateOne) ClearAvatar() *UserUpdateOne {
+	uuo.mutation.ClearAvatar()
+	return uuo
+}
+
 // SetRole sets the "role" field.
 func (uuo *UserUpdateOne) SetRole(u uint8) *UserUpdateOne {
 	uuo.mutation.ResetRole()
 	uuo.mutation.SetRole(u)
+	return uuo
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableRole(u *uint8) *UserUpdateOne {
+	if u != nil {
+		uuo.SetRole(*u)
+	}
 	return uuo
 }
 
@@ -312,10 +471,32 @@ func (uuo *UserUpdateOne) SetDeletedAt(t time.Time) *UserUpdateOne {
 	return uuo
 }
 
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableDeletedAt(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetDeletedAt(*t)
+	}
+	return uuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (uuo *UserUpdateOne) ClearDeletedAt() *UserUpdateOne {
+	uuo.mutation.ClearDeletedAt()
+	return uuo
+}
+
 // SetDeletedBy sets the "deleted_by" field.
 func (uuo *UserUpdateOne) SetDeletedBy(u uint32) *UserUpdateOne {
 	uuo.mutation.ResetDeletedBy()
 	uuo.mutation.SetDeletedBy(u)
+	return uuo
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableDeletedBy(u *uint32) *UserUpdateOne {
+	if u != nil {
+		uuo.SetDeletedBy(*u)
+	}
 	return uuo
 }
 
@@ -325,9 +506,29 @@ func (uuo *UserUpdateOne) AddDeletedBy(u int32) *UserUpdateOne {
 	return uuo
 }
 
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (uuo *UserUpdateOne) ClearDeletedBy() *UserUpdateOne {
+	uuo.mutation.ClearDeletedBy()
+	return uuo
+}
+
 // SetLastLoginAt sets the "last_login_at" field.
 func (uuo *UserUpdateOne) SetLastLoginAt(t time.Time) *UserUpdateOne {
 	uuo.mutation.SetLastLoginAt(t)
+	return uuo
+}
+
+// SetNillableLastLoginAt sets the "last_login_at" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableLastLoginAt(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetLastLoginAt(*t)
+	}
+	return uuo
+}
+
+// ClearLastLoginAt clears the value of the "last_login_at" field.
+func (uuo *UserUpdateOne) ClearLastLoginAt() *UserUpdateOne {
+	uuo.mutation.ClearLastLoginAt()
 	return uuo
 }
 
@@ -431,17 +632,29 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if value, ok := uuo.mutation.Username(); ok {
 		_spec.SetField(user.FieldUsername, field.TypeString, value)
 	}
+	if value, ok := uuo.mutation.ChineseName(); ok {
+		_spec.SetField(user.FieldChineseName, field.TypeString, value)
+	}
+	if uuo.mutation.ChineseNameCleared() {
+		_spec.ClearField(user.FieldChineseName, field.TypeString)
+	}
 	if value, ok := uuo.mutation.Nickname(); ok {
 		_spec.SetField(user.FieldNickname, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 	}
+	if value, ok := uuo.mutation.Phone(); ok {
+		_spec.SetField(user.FieldPhone, field.TypeString, value)
+	}
 	if value, ok := uuo.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.Avatar(); ok {
 		_spec.SetField(user.FieldAvatar, field.TypeString, value)
+	}
+	if uuo.mutation.AvatarCleared() {
+		_spec.ClearField(user.FieldAvatar, field.TypeString)
 	}
 	if value, ok := uuo.mutation.Role(); ok {
 		_spec.SetField(user.FieldRole, field.TypeUint8, value)
@@ -455,14 +668,23 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if value, ok := uuo.mutation.DeletedAt(); ok {
 		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
 	}
+	if uuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(user.FieldDeletedAt, field.TypeTime)
+	}
 	if value, ok := uuo.mutation.DeletedBy(); ok {
 		_spec.SetField(user.FieldDeletedBy, field.TypeUint32, value)
 	}
 	if value, ok := uuo.mutation.AddedDeletedBy(); ok {
 		_spec.AddField(user.FieldDeletedBy, field.TypeUint32, value)
 	}
+	if uuo.mutation.DeletedByCleared() {
+		_spec.ClearField(user.FieldDeletedBy, field.TypeUint32)
+	}
 	if value, ok := uuo.mutation.LastLoginAt(); ok {
 		_spec.SetField(user.FieldLastLoginAt, field.TypeTime, value)
+	}
+	if uuo.mutation.LastLoginAtCleared() {
+		_spec.ClearField(user.FieldLastLoginAt, field.TypeTime)
 	}
 	if value, ok := uuo.mutation.UUID(); ok {
 		_spec.SetField(user.FieldUUID, field.TypeUUID, value)

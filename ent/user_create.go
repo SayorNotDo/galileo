@@ -55,6 +55,20 @@ func (uc *UserCreate) SetUsername(s string) *UserCreate {
 	return uc
 }
 
+// SetChineseName sets the "chineseName" field.
+func (uc *UserCreate) SetChineseName(s string) *UserCreate {
+	uc.mutation.SetChineseName(s)
+	return uc
+}
+
+// SetNillableChineseName sets the "chineseName" field if the given value is not nil.
+func (uc *UserCreate) SetNillableChineseName(s *string) *UserCreate {
+	if s != nil {
+		uc.SetChineseName(*s)
+	}
+	return uc
+}
+
 // SetNickname sets the "nickname" field.
 func (uc *UserCreate) SetNickname(s string) *UserCreate {
 	uc.mutation.SetNickname(s)
@@ -64,6 +78,12 @@ func (uc *UserCreate) SetNickname(s string) *UserCreate {
 // SetPassword sets the "password" field.
 func (uc *UserCreate) SetPassword(s string) *UserCreate {
 	uc.mutation.SetPassword(s)
+	return uc
+}
+
+// SetPhone sets the "phone" field.
+func (uc *UserCreate) SetPhone(s string) *UserCreate {
+	uc.mutation.SetPhone(s)
 	return uc
 }
 
@@ -79,9 +99,25 @@ func (uc *UserCreate) SetAvatar(s string) *UserCreate {
 	return uc
 }
 
+// SetNillableAvatar sets the "avatar" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAvatar(s *string) *UserCreate {
+	if s != nil {
+		uc.SetAvatar(*s)
+	}
+	return uc
+}
+
 // SetRole sets the "role" field.
 func (uc *UserCreate) SetRole(u uint8) *UserCreate {
 	uc.mutation.SetRole(u)
+	return uc
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (uc *UserCreate) SetNillableRole(u *uint8) *UserCreate {
+	if u != nil {
+		uc.SetRole(*u)
+	}
 	return uc
 }
 
@@ -91,9 +127,25 @@ func (uc *UserCreate) SetUpdatedAt(t time.Time) *UserCreate {
 	return uc
 }
 
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetUpdatedAt(*t)
+	}
+	return uc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (uc *UserCreate) SetDeletedAt(t time.Time) *UserCreate {
 	uc.mutation.SetDeletedAt(t)
+	return uc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableDeletedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetDeletedAt(*t)
+	}
 	return uc
 }
 
@@ -103,9 +155,25 @@ func (uc *UserCreate) SetDeletedBy(u uint32) *UserCreate {
 	return uc
 }
 
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (uc *UserCreate) SetNillableDeletedBy(u *uint32) *UserCreate {
+	if u != nil {
+		uc.SetDeletedBy(*u)
+	}
+	return uc
+}
+
 // SetLastLoginAt sets the "last_login_at" field.
 func (uc *UserCreate) SetLastLoginAt(t time.Time) *UserCreate {
 	uc.mutation.SetLastLoginAt(t)
+	return uc
+}
+
+// SetNillableLastLoginAt sets the "last_login_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableLastLoginAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetLastLoginAt(*t)
+	}
 	return uc
 }
 
@@ -172,6 +240,14 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultActive
 		uc.mutation.SetActive(v)
 	}
+	if _, ok := uc.mutation.Role(); !ok {
+		v := user.DefaultRole
+		uc.mutation.SetRole(v)
+	}
+	if _, ok := uc.mutation.UpdatedAt(); !ok {
+		v := user.DefaultUpdatedAt()
+		uc.mutation.SetUpdatedAt(v)
+	}
 	if _, ok := uc.mutation.UUID(); !ok {
 		v := user.DefaultUUID()
 		uc.mutation.SetUUID(v)
@@ -195,26 +271,17 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Password(); !ok {
 		return &ValidationError{Name: "password", err: errors.New(`ent: missing required field "User.password"`)}
 	}
+	if _, ok := uc.mutation.Phone(); !ok {
+		return &ValidationError{Name: "phone", err: errors.New(`ent: missing required field "User.phone"`)}
+	}
 	if _, ok := uc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`ent: missing required field "User.email"`)}
-	}
-	if _, ok := uc.mutation.Avatar(); !ok {
-		return &ValidationError{Name: "avatar", err: errors.New(`ent: missing required field "User.avatar"`)}
 	}
 	if _, ok := uc.mutation.Role(); !ok {
 		return &ValidationError{Name: "role", err: errors.New(`ent: missing required field "User.role"`)}
 	}
 	if _, ok := uc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "User.updated_at"`)}
-	}
-	if _, ok := uc.mutation.DeletedAt(); !ok {
-		return &ValidationError{Name: "deleted_at", err: errors.New(`ent: missing required field "User.deleted_at"`)}
-	}
-	if _, ok := uc.mutation.DeletedBy(); !ok {
-		return &ValidationError{Name: "deleted_by", err: errors.New(`ent: missing required field "User.deleted_by"`)}
-	}
-	if _, ok := uc.mutation.LastLoginAt(); !ok {
-		return &ValidationError{Name: "last_login_at", err: errors.New(`ent: missing required field "User.last_login_at"`)}
 	}
 	if _, ok := uc.mutation.UUID(); !ok {
 		return &ValidationError{Name: "uuid", err: errors.New(`ent: missing required field "User.uuid"`)}
@@ -263,6 +330,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldUsername, field.TypeString, value)
 		_node.Username = value
 	}
+	if value, ok := uc.mutation.ChineseName(); ok {
+		_spec.SetField(user.FieldChineseName, field.TypeString, value)
+		_node.ChineseName = value
+	}
 	if value, ok := uc.mutation.Nickname(); ok {
 		_spec.SetField(user.FieldNickname, field.TypeString, value)
 		_node.Nickname = value
@@ -270,6 +341,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 		_node.Password = value
+	}
+	if value, ok := uc.mutation.Phone(); ok {
+		_spec.SetField(user.FieldPhone, field.TypeString, value)
+		_node.Phone = value
 	}
 	if value, ok := uc.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)

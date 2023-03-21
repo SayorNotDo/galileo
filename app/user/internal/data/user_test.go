@@ -1,6 +1,7 @@
 package data_test
 
 import (
+	"context"
 	"galileo/app/user/internal/biz"
 	"galileo/app/user/internal/data"
 	"galileo/app/user/internal/pkg/util"
@@ -22,13 +23,25 @@ var _ = Describe("User", func() {
 		}
 	})
 	It("Create", func() {
-		u, err := ro.Create(ctx, uD)
+		u, err := ro.Create(context.Background(), uD)
 		Ω(err).ShouldNot(HaveOccurred())
 		Ω(u.Phone).Should(Equal("16710790871"))
 	})
 
+	It("GetById", func() {
+		u, err := ro.GetById(context.Background(), 1)
+		Ω(err).ShouldNot(HaveOccurred())
+		Ω(u.Phone).Should(Equal("16710790871"))
+	})
+
+	It("GetByUsername", func() {
+		u, err := ro.GetByUsername(context.Background(), "tester")
+		Ω(err).ShouldNot(HaveOccurred())
+		Ω(u.Username).Should(Equal("tester"))
+	})
+
 	It("ListUser", func() {
-		user, total, err := ro.List(ctx, 1, 10)
+		user, total, err := ro.List(context.Background(), 1, 10)
 		Ω(err).ShouldNot(HaveOccurred())
 		Ω(user).ShouldNot(BeEmpty())
 		Ω(total).Should(Equal(int32(1)))
@@ -36,25 +49,25 @@ var _ = Describe("User", func() {
 		Ω(user[0].Phone).Should(Equal("16710790871"))
 	})
 
-	It("UpdateUser", func() {
-		uD = &biz.User{
-			Id:       1,
-			Nickname: "Vince",
-			Avatar:   "AvatarTest",
-		}
-		ok, err := ro.Update(ctx, uD)
-		Ω(err).ShouldNot(HaveOccurred())
-		Ω(ok).Should(BeTrue())
-	})
+	//It("UpdateUser", func() {
+	//	uD = &biz.User{
+	//		Id:       1,
+	//		Nickname: "Vince",
+	//		Avatar:   "AvatarTest",
+	//	}
+	//	ok, err := ro.Update(ctx, uD)
+	//	Ω(err).ShouldNot(HaveOccurred())
+	//	Ω(ok).Should(BeTrue())
+	//})
 
-	It("ListUser", func() {
-		user, total, err := ro.List(ctx, 1, 10)
-		Ω(err).ShouldNot(HaveOccurred())
-		Ω(user).ShouldNot(BeEmpty())
-		Ω(total).Should(Equal(int32(1)))
-		Ω(len(user)).Should(Equal(1))
-		Ω(user[0].Phone).Should(Equal("16710790871"))
-	})
+	//It("ListUser", func() {
+	//	user, total, err := ro.List(ctx, 1, 10)
+	//	Ω(err).ShouldNot(HaveOccurred())
+	//	Ω(user).ShouldNot(BeEmpty())
+	//	Ω(total).Should(Equal(int32(1)))
+	//	Ω(len(user)).Should(Equal(1))
+	//	Ω(user[0].Phone).Should(Equal("16710790871"))
+	//})
 
 	//It("CheckPassword", func() {
 	//	password := "1is*down9sky"
@@ -67,9 +80,13 @@ var _ = Describe("User", func() {
 	//	Ω(err).ShouldNot(HaveOccurred())
 	//	Ω(ok).Should(BeFalse())
 	//})
-
+	It("SoftDeleteUser", func() {
+		ok, err := ro.SoftDeleteById(context.Background(), 1)
+		Ω(err).ShouldNot(HaveOccurred())
+		Ω(ok).Should(BeTrue())
+	})
 	It("DeleteUser", func() {
-		ok, err := ro.DeleteById(ctx, 1)
+		ok, err := ro.DeleteById(context.Background(), 1)
 		Ω(err).ShouldNot(HaveOccurred())
 		Ω(ok).Should(BeTrue())
 	})

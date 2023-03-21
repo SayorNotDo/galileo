@@ -33,6 +33,7 @@ type UserRepo interface {
 	List(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserInfoReply, int32, error)
 	Update(context.Context, *User) (bool, error)
 	DeleteById(context.Context, uint32) (bool, error)
+	SoftDeleteById(context.Context, uint32) (bool, error)
 	MapUpdate(ctx context.Context, u map[string]interface{}) (bool, error)
 }
 
