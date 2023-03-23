@@ -17,6 +17,8 @@ enum ErrorReason {
   USER_NOT_FOUND = 0 [(errors.code) = 404];
 
   CONTENT_MISSING = 1 [(errors.code) = 400];
+
+  UNAUTHENTICATED = 2 [(errors.code) = 401];
 }
 
 service User {
@@ -28,6 +30,16 @@ service User {
   rpc ListUser (ListUserRequest) returns (ListUserReply){};
   rpc CheckPassword(CheckPasswordRequest) returns (CheckPasswordReply){};
   rpc SoftDeleteUser (SoftDeleteRequest) returns (SoftDeleteReply){};
+  rpc SetToken(SetTokenRequest) returns (SetTokenReply){};
+}
+
+message SetTokenRequest{
+  string username = 1;
+  string token = 2;
+}
+
+message SetTokenReply{
+  bool success = 1;
 }
 
 message SoftDeleteRequest {

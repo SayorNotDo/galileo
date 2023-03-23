@@ -108,3 +108,11 @@ func (r *coreRepo) SoftDeleteUser(c context.Context, uid uint32) (bool, error) {
 	}
 	return rsp.Deleted, nil
 }
+
+func (r *coreRepo) SetToken(c context.Context, username string, token string) (bool, error) {
+	rsp, err := r.data.uc.SetToken(c, &userService.SetTokenRequest{Username: username, Token: token})
+	if err != nil {
+		return false, err
+	}
+	return rsp.Success, nil
+}

@@ -24,6 +24,7 @@ type CoreRepo interface {
 	UserById(context.Context, uint32) (*User, error)
 	ListUser(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserDetail, int32, error)
 	SoftDeleteUser(ctx context.Context, uid uint32) (bool, error)
+	SetToken(ctx context.Context, username string, token string) (bool, error)
 }
 type User struct {
 	Id          uint32
@@ -74,6 +75,9 @@ func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (
 	if err != nil {
 		return nil, err
 	}
+	if ok, _ := c.cRepo.SetToken(ctx, createUser.Username, token); !ok {
+		return nil, errors.InternalServer("InternalServer Error", "redis set token failed")
+	}
 	return &v1.RegisterReply{
 		Id:        createUser.Id,
 		Phone:     createUser.Phone,
@@ -102,7 +106,6 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	if _, passErr := c.cRepo.CheckPassword(ctx, req.Password, user.Password); passErr != nil {
 		return nil, passErr
 	}
-	log.Debugf("%v", user)
 	claims := auth.CustomClaims{
 		ID:          user.Id,
 		Username:    user.Username,
@@ -116,6 +119,9 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	token, err := auth.CreateToken(claims, c.signingKey)
 	if err != nil {
 		return nil, ErrInternalServer
+	}
+	if ok, _ := c.cRepo.SetToken(ctx, req.Username, token); !ok {
+		return nil, errors.InternalServer("InternalServer Error", "redis set token failed")
 	}
 	return &v1.LoginReply{
 		Code:    http.StatusOK,

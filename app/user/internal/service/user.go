@@ -141,3 +141,13 @@ func (s *UserService) CheckPassword(ctx context.Context, req *v1.CheckPasswordRe
 		Success: ok,
 	}, nil
 }
+
+func (s *UserService) SetToken(ctx context.Context, req *v1.SetTokenRequest) (*v1.SetTokenReply, error) {
+	ok, err := s.uc.SetToken(ctx, req.Username, req.Token)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.SetTokenReply{
+		Success: ok,
+	}, nil
+}

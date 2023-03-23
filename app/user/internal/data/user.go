@@ -2,12 +2,14 @@ package data
 
 import (
 	"context"
+	"fmt"
 	v1 "galileo/api/user/v1"
 	"galileo/app/user/internal/biz"
 	"galileo/ent"
 	"galileo/ent/user"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-redis/redis/v8"
 	"time"
 )
 
@@ -167,9 +169,17 @@ func (repo *userRepo) Update(ctx context.Context, u *biz.User) (bool, error) {
 	return true, nil
 }
 
-func (repo *userRepo) MapUpdate(ctx context.Context, u map[string]interface{}) (bool, error) {
-	//if res := repo.data.gormDB.Model(User{}).Where("id = ?", u["id"]).Updates(u); res.Error != nil {
-	//	return false, status.Errorf(codes.Internal, res.Error.Error())
-	//}
+func (repo *userRepo) SetToken(ctx context.Context, username string, token string) (bool, error) {
+	conn := repo.data.redisDB.Conn(ctx)
+	defer func(conn *redis.Conn) {
+		err := conn.Close()
+		if err != nil {
+			log.Error("redis client closed connection error")
+		}
+	}(conn)
+	res := conn.Set(ctx, fmt.Sprintf("%s:%s", username, "token"), token, time.Hour*24*30)
+	if res.Err() != nil {
+		return false, errors.InternalServer("InternalServer Error", res.Err().Error())
+	}
 	return true, nil
 }

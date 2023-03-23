@@ -81,7 +81,7 @@ var _ = Describe("User", func() {
 	//	Ω(ok).Should(BeFalse())
 	//})
 	It("SoftDeleteUser", func() {
-		ok, err := ro.SoftDeleteById(context.Background(), 1)
+		ok, err := ro.SoftDeleteById(context.Background(), 1, 5)
 		Ω(err).ShouldNot(HaveOccurred())
 		Ω(ok).Should(BeTrue())
 	})

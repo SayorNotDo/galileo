@@ -58,40 +58,11 @@ func NewEntDB(c *conf.Data) (*ent.Client, error) {
 	return client, nil
 }
 
-//func NewGormDB(c *conf.Data) (*gorm.DB, error) {
-//	newLogger := logger.New(
-//		slog.New(os.Stdout, "\r\n", slog.LstdFlags), // io writer
-//		logger.Config{
-//			SlowThreshold:             time.Millisecond * 200, // 慢查询 SQL 阈值
-//			Colorful:                  true,                   // 禁用彩色打印
-//			IgnoreRecordNotFoundError: false,
-//			LogLevel:                  logger.Info, // Log lever
-//		},
-//	)
-//	dsn := c.Database.Source
-//	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-//		Logger: newLogger,
-//		NamingStrategy: schema.NamingStrategy{
-//			SingularTable: true,
-//		},
-//	})
-//	if err != nil {
-//		return nil, err
-//	}
-//	sqlDB, err := db.DB()
-//	if err != nil {
-//		return nil, err
-//	}
-//	sqlDB.SetMaxIdleConns(50)
-//	sqlDB.SetMaxOpenConns(150)
-//	sqlDB.SetConnMaxLifetime(25 * time.Second)
-//	return db, nil
-//}
-
 // NewData .
 func NewData(c *conf.Data, logger log.Logger, db *ent.Client, rdb *redis.Client) (*Data, func(), error) {
+	newHelper := log.NewHelper(log.With(logger, "module", "userService/data"))
 	cleanup := func() {
-		log.NewHelper(logger).Info("closing the data resources")
+		newHelper.Info("closing the data resources")
 	}
 	return &Data{entDB: db, redisDB: rdb}, cleanup, nil
 }
@@ -105,10 +76,14 @@ func NewRedis(c *conf.Data) *redis.Client {
 		DialTimeout:  c.Redis.DialTimeout.AsDuration(),
 		WriteTimeout: c.Redis.WriteTimeout.AsDuration(),
 		ReadTimeout:  c.Redis.ReadTimeout.AsDuration(),
+		PoolSize:     10,
 	})
 	rdb.AddHook(redisotel.TracingHook{})
-	if err := rdb.Close(); err != nil {
-		log.Error(err)
+	timeout, cancelFunc := context.WithTimeout(context.Background(), time.Second*2)
+	defer cancelFunc()
+	err := rdb.Ping(timeout).Err()
+	if err != nil {
+		log.Fatalf("redis connect error: %v", err)
 	}
 	return rdb
 }

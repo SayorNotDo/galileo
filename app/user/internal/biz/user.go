@@ -5,8 +5,6 @@ import (
 	v1 "galileo/api/user/v1"
 	"galileo/app/user/internal/pkg/util"
 	"github.com/go-kratos/kratos/v2/log"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"time"
 )
 
@@ -34,7 +32,7 @@ type UserRepo interface {
 	Update(context.Context, *User) (bool, error)
 	DeleteById(context.Context, uint32) (bool, error)
 	SoftDeleteById(context.Context, uint32, uint32) (bool, error)
-	MapUpdate(ctx context.Context, u map[string]interface{}) (bool, error)
+	SetToken(context.Context, string, string) (bool, error)
 }
 
 type UserUseCase struct {
@@ -46,6 +44,10 @@ type UserUseCase struct {
 func NewUserUseCase(repo UserRepo, logger log.Logger) *UserUseCase {
 	helper := log.NewHelper(log.With(logger, "module", "useCase/user"))
 	return &UserUseCase{repo: repo, log: helper}
+}
+
+func (uc *UserUseCase) SetToken(ctx context.Context, username string, token string) (bool, error) {
+	return uc.repo.SetToken(ctx, username, token)
 }
 
 func (uc *UserUseCase) SoftDeleteById(ctx context.Context, uid, deleteId uint32) (bool, error) {
@@ -68,10 +70,6 @@ func (uc *UserUseCase) Update(ctx context.Context, user *User) (bool, error) {
 	return uc.repo.Update(ctx, user)
 }
 
-func (uc *UserUseCase) MapUpdate(ctx context.Context, u map[string]interface{}) (bool, error) {
-	return uc.repo.MapUpdate(ctx, u)
-}
-
 func (uc *UserUseCase) Delete(ctx context.Context, id uint32) (bool, error) {
 	return uc.repo.DeleteById(ctx, id)
 }
@@ -82,7 +80,7 @@ func (uc *UserUseCase) GetByUsername(ctx context.Context, username string) (*Use
 
 func (uc *UserUseCase) CheckPassword(password, hashedPassword string) (bool, error) {
 	if ok := util.ComparePassword(password, hashedPassword); !ok {
-		return false, status.Errorf(codes.Unauthenticated, codes.Unauthenticated.String())
+		return false, v1.ErrorUnauthenticated("password does not match")
 	}
 	return true, nil
 }

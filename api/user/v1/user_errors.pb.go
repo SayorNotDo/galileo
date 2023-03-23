@@ -34,3 +34,15 @@ func IsContentMissing(err error) bool {
 func ErrorContentMissing(format string, args ...interface{}) *errors.Error {
 	return errors.New(400, ErrorReason_CONTENT_MISSING.String(), fmt.Sprintf(format, args...))
 }
+
+func IsUnauthenticated(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_UNAUTHENTICATED.String() && e.Code == 401
+}
+
+func ErrorUnauthenticated(format string, args ...interface{}) *errors.Error {
+	return errors.New(401, ErrorReason_UNAUTHENTICATED.String(), fmt.Sprintf(format, args...))
+}
