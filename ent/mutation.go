@@ -1106,7 +1106,6 @@ type UserMutation struct {
 	deleted_by    *uint32
 	adddeleted_by *int32
 	is_deleted    *bool
-	last_login_at *time.Time
 	uuid          *uuid.UUID
 	clearedFields map[string]struct{}
 	done          bool
@@ -1828,55 +1827,6 @@ func (m *UserMutation) ResetIsDeleted() {
 	delete(m.clearedFields, user.FieldIsDeleted)
 }
 
-// SetLastLoginAt sets the "last_login_at" field.
-func (m *UserMutation) SetLastLoginAt(t time.Time) {
-	m.last_login_at = &t
-}
-
-// LastLoginAt returns the value of the "last_login_at" field in the mutation.
-func (m *UserMutation) LastLoginAt() (r time.Time, exists bool) {
-	v := m.last_login_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldLastLoginAt returns the old "last_login_at" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldLastLoginAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldLastLoginAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldLastLoginAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLastLoginAt: %w", err)
-	}
-	return oldValue.LastLoginAt, nil
-}
-
-// ClearLastLoginAt clears the value of the "last_login_at" field.
-func (m *UserMutation) ClearLastLoginAt() {
-	m.last_login_at = nil
-	m.clearedFields[user.FieldLastLoginAt] = struct{}{}
-}
-
-// LastLoginAtCleared returns if the "last_login_at" field was cleared in this mutation.
-func (m *UserMutation) LastLoginAtCleared() bool {
-	_, ok := m.clearedFields[user.FieldLastLoginAt]
-	return ok
-}
-
-// ResetLastLoginAt resets all changes to the "last_login_at" field.
-func (m *UserMutation) ResetLastLoginAt() {
-	m.last_login_at = nil
-	delete(m.clearedFields, user.FieldLastLoginAt)
-}
-
 // SetUUID sets the "uuid" field.
 func (m *UserMutation) SetUUID(u uuid.UUID) {
 	m.uuid = &u
@@ -1947,7 +1897,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -1990,9 +1940,6 @@ func (m *UserMutation) Fields() []string {
 	if m.is_deleted != nil {
 		fields = append(fields, user.FieldIsDeleted)
 	}
-	if m.last_login_at != nil {
-		fields = append(fields, user.FieldLastLoginAt)
-	}
 	if m.uuid != nil {
 		fields = append(fields, user.FieldUUID)
 	}
@@ -2032,8 +1979,6 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedBy()
 	case user.FieldIsDeleted:
 		return m.IsDeleted()
-	case user.FieldLastLoginAt:
-		return m.LastLoginAt()
 	case user.FieldUUID:
 		return m.UUID()
 	}
@@ -2073,8 +2018,6 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldDeletedBy(ctx)
 	case user.FieldIsDeleted:
 		return m.OldIsDeleted(ctx)
-	case user.FieldLastLoginAt:
-		return m.OldLastLoginAt(ctx)
 	case user.FieldUUID:
 		return m.OldUUID(ctx)
 	}
@@ -2184,13 +2127,6 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIsDeleted(v)
 		return nil
-	case user.FieldLastLoginAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetLastLoginAt(v)
-		return nil
 	case user.FieldUUID:
 		v, ok := value.(uuid.UUID)
 		if !ok {
@@ -2270,9 +2206,6 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldIsDeleted) {
 		fields = append(fields, user.FieldIsDeleted)
 	}
-	if m.FieldCleared(user.FieldLastLoginAt) {
-		fields = append(fields, user.FieldLastLoginAt)
-	}
 	return fields
 }
 
@@ -2301,9 +2234,6 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldIsDeleted:
 		m.ClearIsDeleted()
-		return nil
-	case user.FieldLastLoginAt:
-		m.ClearLastLoginAt()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -2354,9 +2284,6 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldIsDeleted:
 		m.ResetIsDeleted()
-		return nil
-	case user.FieldLastLoginAt:
-		m.ResetLastLoginAt()
 		return nil
 	case user.FieldUUID:
 		m.ResetUUID()

@@ -54,7 +54,7 @@ func init() {
 	// user.DefaultIsDeleted holds the default value on creation for the is_deleted field.
 	user.DefaultIsDeleted = userDescIsDeleted.Default.(bool)
 	// userDescUUID is the schema descriptor for uuid field.
-	userDescUUID := userFields[16].Descriptor()
+	userDescUUID := userFields[15].Descriptor()
 	// user.DefaultUUID holds the default value on creation for the uuid field.
 	user.DefaultUUID = userDescUUID.Default.(func() uuid.UUID)
 }

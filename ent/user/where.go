@@ -125,11 +125,6 @@ func IsDeleted(v bool) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldIsDeleted, v))
 }
 
-// LastLoginAt applies equality check predicate on the "last_login_at" field. It's identical to LastLoginAtEQ.
-func LastLoginAt(v time.Time) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldLastLoginAt, v))
-}
-
 // UUID applies equality check predicate on the "uuid" field. It's identical to UUIDEQ.
 func UUID(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldUUID, v))
@@ -858,56 +853,6 @@ func IsDeletedIsNil() predicate.User {
 // IsDeletedNotNil applies the NotNil predicate on the "is_deleted" field.
 func IsDeletedNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldIsDeleted))
-}
-
-// LastLoginAtEQ applies the EQ predicate on the "last_login_at" field.
-func LastLoginAtEQ(v time.Time) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldLastLoginAt, v))
-}
-
-// LastLoginAtNEQ applies the NEQ predicate on the "last_login_at" field.
-func LastLoginAtNEQ(v time.Time) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldLastLoginAt, v))
-}
-
-// LastLoginAtIn applies the In predicate on the "last_login_at" field.
-func LastLoginAtIn(vs ...time.Time) predicate.User {
-	return predicate.User(sql.FieldIn(FieldLastLoginAt, vs...))
-}
-
-// LastLoginAtNotIn applies the NotIn predicate on the "last_login_at" field.
-func LastLoginAtNotIn(vs ...time.Time) predicate.User {
-	return predicate.User(sql.FieldNotIn(FieldLastLoginAt, vs...))
-}
-
-// LastLoginAtGT applies the GT predicate on the "last_login_at" field.
-func LastLoginAtGT(v time.Time) predicate.User {
-	return predicate.User(sql.FieldGT(FieldLastLoginAt, v))
-}
-
-// LastLoginAtGTE applies the GTE predicate on the "last_login_at" field.
-func LastLoginAtGTE(v time.Time) predicate.User {
-	return predicate.User(sql.FieldGTE(FieldLastLoginAt, v))
-}
-
-// LastLoginAtLT applies the LT predicate on the "last_login_at" field.
-func LastLoginAtLT(v time.Time) predicate.User {
-	return predicate.User(sql.FieldLT(FieldLastLoginAt, v))
-}
-
-// LastLoginAtLTE applies the LTE predicate on the "last_login_at" field.
-func LastLoginAtLTE(v time.Time) predicate.User {
-	return predicate.User(sql.FieldLTE(FieldLastLoginAt, v))
-}
-
-// LastLoginAtIsNil applies the IsNil predicate on the "last_login_at" field.
-func LastLoginAtIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldLastLoginAt))
-}
-
-// LastLoginAtNotNil applies the NotNil predicate on the "last_login_at" field.
-func LastLoginAtNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldLastLoginAt))
 }
 
 // UUIDEQ applies the EQ predicate on the "uuid" field.

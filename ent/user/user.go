@@ -41,8 +41,6 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldIsDeleted holds the string denoting the is_deleted field in the database.
 	FieldIsDeleted = "is_deleted"
-	// FieldLastLoginAt holds the string denoting the last_login_at field in the database.
-	FieldLastLoginAt = "last_login_at"
 	// FieldUUID holds the string denoting the uuid field in the database.
 	FieldUUID = "uuid"
 	// Table holds the table name of the user in the database.
@@ -66,7 +64,6 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldIsDeleted,
-	FieldLastLoginAt,
 	FieldUUID,
 }
 

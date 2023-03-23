@@ -45,8 +45,6 @@ type User struct {
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// IsDeleted holds the value of the "is_deleted" field.
 	IsDeleted *bool `json:"is_deleted,omitempty"`
-	// LastLoginAt holds the value of the "last_login_at" field.
-	LastLoginAt time.Time `json:"last_login_at,omitempty"`
 	// UUID holds the value of the "uuid" field.
 	UUID uuid.UUID `json:"uuid,omitempty"`
 }
@@ -62,7 +60,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case user.FieldUsername, user.FieldChineseName, user.FieldNickname, user.FieldPassword, user.FieldPhone, user.FieldEmail, user.FieldAvatar:
 			values[i] = new(sql.NullString)
-		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldLastLoginAt:
+		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		case user.FieldUUID:
 			values[i] = new(uuid.UUID)
@@ -174,12 +172,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 				u.IsDeleted = new(bool)
 				*u.IsDeleted = value.Bool
 			}
-		case user.FieldLastLoginAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field last_login_at", values[i])
-			} else if value.Valid {
-				u.LastLoginAt = value.Time
-			}
 		case user.FieldUUID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field uuid", values[i])
@@ -261,9 +253,6 @@ func (u *User) String() string {
 		builder.WriteString("is_deleted=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
-	builder.WriteString(", ")
-	builder.WriteString("last_login_at=")
-	builder.WriteString(u.LastLoginAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("uuid=")
 	builder.WriteString(fmt.Sprintf("%v", u.UUID))

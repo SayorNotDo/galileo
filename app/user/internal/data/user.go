@@ -87,8 +87,13 @@ func (repo *userRepo) DeleteById(ctx context.Context, id uint32) (bool, error) {
 	return true, nil
 }
 
-func (repo *userRepo) SoftDeleteById(ctx context.Context, id uint32) (bool, error) {
-	_, err := repo.data.entDB.User.UpdateOneID(id).SetDeletedAt(time.Now()).SetIsDeleted(true).Save(ctx)
+func (repo *userRepo) SoftDeleteById(ctx context.Context, id, deleteId uint32) (bool, error) {
+	_, err := repo.data.entDB.User.
+		UpdateOneID(deleteId).
+		SetDeletedAt(time.Now()).
+		SetIsDeleted(true).
+		SetDeletedBy(id).
+		Save(ctx)
 	if err != nil {
 		return false, err
 	}

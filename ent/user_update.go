@@ -207,26 +207,6 @@ func (uu *UserUpdate) ClearIsDeleted() *UserUpdate {
 	return uu
 }
 
-// SetLastLoginAt sets the "last_login_at" field.
-func (uu *UserUpdate) SetLastLoginAt(t time.Time) *UserUpdate {
-	uu.mutation.SetLastLoginAt(t)
-	return uu
-}
-
-// SetNillableLastLoginAt sets the "last_login_at" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableLastLoginAt(t *time.Time) *UserUpdate {
-	if t != nil {
-		uu.SetLastLoginAt(*t)
-	}
-	return uu
-}
-
-// ClearLastLoginAt clears the value of the "last_login_at" field.
-func (uu *UserUpdate) ClearLastLoginAt() *UserUpdate {
-	uu.mutation.ClearLastLoginAt()
-	return uu
-}
-
 // SetUUID sets the "uuid" field.
 func (uu *UserUpdate) SetUUID(u uuid.UUID) *UserUpdate {
 	uu.mutation.SetUUID(u)
@@ -350,12 +330,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.IsDeletedCleared() {
 		_spec.ClearField(user.FieldIsDeleted, field.TypeBool)
-	}
-	if value, ok := uu.mutation.LastLoginAt(); ok {
-		_spec.SetField(user.FieldLastLoginAt, field.TypeTime, value)
-	}
-	if uu.mutation.LastLoginAtCleared() {
-		_spec.ClearField(user.FieldLastLoginAt, field.TypeTime)
 	}
 	if value, ok := uu.mutation.UUID(); ok {
 		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
@@ -558,26 +532,6 @@ func (uuo *UserUpdateOne) ClearIsDeleted() *UserUpdateOne {
 	return uuo
 }
 
-// SetLastLoginAt sets the "last_login_at" field.
-func (uuo *UserUpdateOne) SetLastLoginAt(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetLastLoginAt(t)
-	return uuo
-}
-
-// SetNillableLastLoginAt sets the "last_login_at" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableLastLoginAt(t *time.Time) *UserUpdateOne {
-	if t != nil {
-		uuo.SetLastLoginAt(*t)
-	}
-	return uuo
-}
-
-// ClearLastLoginAt clears the value of the "last_login_at" field.
-func (uuo *UserUpdateOne) ClearLastLoginAt() *UserUpdateOne {
-	uuo.mutation.ClearLastLoginAt()
-	return uuo
-}
-
 // SetUUID sets the "uuid" field.
 func (uuo *UserUpdateOne) SetUUID(u uuid.UUID) *UserUpdateOne {
 	uuo.mutation.SetUUID(u)
@@ -731,12 +685,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.IsDeletedCleared() {
 		_spec.ClearField(user.FieldIsDeleted, field.TypeBool)
-	}
-	if value, ok := uuo.mutation.LastLoginAt(); ok {
-		_spec.SetField(user.FieldLastLoginAt, field.TypeTime, value)
-	}
-	if uuo.mutation.LastLoginAtCleared() {
-		_spec.ClearField(user.FieldLastLoginAt, field.TypeTime)
 	}
 	if value, ok := uuo.mutation.UUID(); ok {
 		_spec.SetField(user.FieldUUID, field.TypeUUID, value)

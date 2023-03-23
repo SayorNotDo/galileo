@@ -2,15 +2,16 @@ package biz
 
 import (
 	"context"
+	"fmt"
 	v1 "galileo/api/core/v1"
 	"galileo/app/core/internal/conf"
 	"galileo/app/core/internal/pkg/middleware/auth"
 	. "galileo/pkg/errors"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/metadata"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	jwt2 "github.com/golang-jwt/jwt/v4"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"net/http"
 	"time"
@@ -173,13 +174,13 @@ func (c *CoreUseCase) DeleteUser(ctx context.Context, deleteId uint32) (*v1.Dele
 		return nil, ErrInternalServer
 	}
 	role := int(userClaim.(jwt2.MapClaims)["AuthorityId"].(float64))
-	username := userClaim.(jwt2.MapClaims)["Username"].(string)
+	uid := fmt.Sprintf("%v", userClaim.(jwt2.MapClaims)["ID"])
 	if role == 0 {
 		return nil, errors.Forbidden(http.StatusText(403), "Role must be non-zero")
 	} else if role < 5 {
 		return nil, errors.Forbidden(http.StatusText(403), "Permission denied")
 	}
-	ctx = metadata.AppendToOutgoingContext(ctx, "x-md-local-username", username)
+	ctx = metadata.AppendToClientContext(ctx, "x-md-local-uid", uid)
 	_, err := c.cRepo.UserById(ctx, deleteId)
 	if err != nil {
 		return nil, err

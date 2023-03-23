@@ -177,20 +177,6 @@ func (uc *UserCreate) SetNillableIsDeleted(b *bool) *UserCreate {
 	return uc
 }
 
-// SetLastLoginAt sets the "last_login_at" field.
-func (uc *UserCreate) SetLastLoginAt(t time.Time) *UserCreate {
-	uc.mutation.SetLastLoginAt(t)
-	return uc
-}
-
-// SetNillableLastLoginAt sets the "last_login_at" field if the given value is not nil.
-func (uc *UserCreate) SetNillableLastLoginAt(t *time.Time) *UserCreate {
-	if t != nil {
-		uc.SetLastLoginAt(*t)
-	}
-	return uc
-}
-
 // SetUUID sets the "uuid" field.
 func (uc *UserCreate) SetUUID(u uuid.UUID) *UserCreate {
 	uc.mutation.SetUUID(u)
@@ -391,10 +377,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.IsDeleted(); ok {
 		_spec.SetField(user.FieldIsDeleted, field.TypeBool, value)
 		_node.IsDeleted = &value
-	}
-	if value, ok := uc.mutation.LastLoginAt(); ok {
-		_spec.SetField(user.FieldLastLoginAt, field.TypeTime, value)
-		_node.LastLoginAt = value
 	}
 	if value, ok := uc.mutation.UUID(); ok {
 		_spec.SetField(user.FieldUUID, field.TypeUUID, value)

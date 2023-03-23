@@ -6,8 +6,9 @@ import (
 	"galileo/app/user/internal/biz"
 	"galileo/app/user/internal/pkg/util"
 	"github.com/go-kratos/kratos/v2/log"
-	"google.golang.org/grpc/metadata"
+	"github.com/go-kratos/kratos/v2/metadata"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"strconv"
 	"time"
 )
 
@@ -57,6 +58,7 @@ func (s *UserService) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest)
 	}
 	return &emptypb.Empty{}, nil
 }
+
 func (s *UserService) DeleteUser(ctx context.Context, req *v1.DeleteUserRequest) (*v1.DeleteUserReply, error) {
 	ok, err := s.uc.Delete(ctx, req.Id)
 	if err != nil {
@@ -68,10 +70,11 @@ func (s *UserService) DeleteUser(ctx context.Context, req *v1.DeleteUserRequest)
 }
 
 func (s *UserService) SoftDeleteUser(ctx context.Context, req *v1.SoftDeleteRequest) (*v1.SoftDeleteReply, error) {
-	log.Debug("SoftDeleteUser request: %v", ctx)
+	md, _ := metadata.FromServerContext(ctx)
+	uidStr := md.Get("x-md-local-uid")
 	deleteAt := time.Now()
-	u := map[string]interface{}{"id": req.Id, "deleted_at": deleteAt, "deleted_by": req.Id, "status": false}
-	ok, err := s.uc.MapUpdate(ctx, u)
+	uid, _ := strconv.ParseInt(uidStr, 10, 64)
+	ok, err := s.uc.SoftDeleteById(ctx, uint32(uid), req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -100,9 +103,6 @@ func (s *UserService) GetUserByUsername(ctx context.Context, req *v1.UsernameReq
 }
 
 func (s *UserService) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.UserInfoReply, error) {
-	md, _ := metadata.FromIncomingContext(ctx)
-	username := md.Get("x-md-local-username")
-	log.Info("GetUser: %v", username)
 	user, err := s.uc.Get(ctx, req.Id)
 	if err != nil {
 		return nil, err

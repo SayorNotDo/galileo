@@ -33,7 +33,7 @@ type UserRepo interface {
 	List(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserInfoReply, int32, error)
 	Update(context.Context, *User) (bool, error)
 	DeleteById(context.Context, uint32) (bool, error)
-	SoftDeleteById(context.Context, uint32) (bool, error)
+	SoftDeleteById(context.Context, uint32, uint32) (bool, error)
 	MapUpdate(ctx context.Context, u map[string]interface{}) (bool, error)
 }
 
@@ -46,6 +46,10 @@ type UserUseCase struct {
 func NewUserUseCase(repo UserRepo, logger log.Logger) *UserUseCase {
 	helper := log.NewHelper(log.With(logger, "module", "useCase/user"))
 	return &UserUseCase{repo: repo, log: helper}
+}
+
+func (uc *UserUseCase) SoftDeleteById(ctx context.Context, uid, deleteId uint32) (bool, error) {
+	return uc.repo.SoftDeleteById(ctx, uid, deleteId)
 }
 
 func (uc *UserUseCase) Create(ctx context.Context, user *User) (*User, error) {

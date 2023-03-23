@@ -47,7 +47,6 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "is_deleted", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "last_login_at", Type: field.TypeTime, Nullable: true},
 		{Name: "uuid", Type: field.TypeUUID},
 	}
 	// UserTable holds the schema information for the "user" table.

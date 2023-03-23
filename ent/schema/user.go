@@ -39,7 +39,6 @@ func (User) Fields() []ent.Field {
 		field.Time("deleted_at").Optional().Nillable(),
 		field.Uint32("deleted_by").Optional().Nillable(),
 		field.Bool("is_deleted").Optional().Nillable().Default(false),
-		field.Time("last_login_at").Optional(),
 		field.UUID("uuid", uuid.UUID{}).Default(uuid.New),
 	}
 }
