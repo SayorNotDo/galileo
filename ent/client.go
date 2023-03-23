@@ -414,7 +414,7 @@ func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
 }
 
-// Interceptors returns the client.
+// Interceptors returns the client interceptors.
 func (c *UserClient) Interceptors() []Interceptor {
 	return c.inters.User
 }

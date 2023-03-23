@@ -49,8 +49,12 @@ func init() {
 	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
 	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	user.UpdateDefaultUpdatedAt = userDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// userDescIsDeleted is the schema descriptor for is_deleted field.
+	userDescIsDeleted := userFields[14].Descriptor()
+	// user.DefaultIsDeleted holds the default value on creation for the is_deleted field.
+	user.DefaultIsDeleted = userDescIsDeleted.Default.(bool)
 	// userDescUUID is the schema descriptor for uuid field.
-	userDescUUID := userFields[15].Descriptor()
+	userDescUUID := userFields[16].Descriptor()
 	// user.DefaultUUID holds the default value on creation for the uuid field.
 	user.DefaultUUID = userDescUUID.Default.(func() uuid.UUID)
 }

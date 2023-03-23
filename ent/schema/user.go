@@ -2,6 +2,8 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"time"
@@ -10,6 +12,12 @@ import (
 // User holds the schema definition for the User entity.
 type User struct {
 	ent.Schema
+}
+
+func (User) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entsql.Annotation{Table: "user"},
+	}
 }
 
 // Fields of the User.
@@ -28,8 +36,9 @@ func (User) Fields() []ent.Field {
 		field.Text("avatar").Optional(),
 		field.Uint8("role").Default(3),
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),
-		field.Time("deleted_at").Optional(),
-		field.Uint32("deleted_by").Optional(),
+		field.Time("deleted_at").Optional().Nillable(),
+		field.Uint32("deleted_by").Optional().Nillable(),
+		field.Bool("is_deleted").Optional().Nillable().Default(false),
 		field.Time("last_login_at").Optional(),
 		field.UUID("uuid", uuid.UUID{}).Default(uuid.New),
 	}

@@ -2,6 +2,8 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	"time"
 )
@@ -9,6 +11,12 @@ import (
 // Project holds the schema definition for the Project entity.
 type Project struct {
 	ent.Schema
+}
+
+func (Project) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entsql.Annotation{Table: "project"},
+	}
 }
 
 // Fields of the Project.

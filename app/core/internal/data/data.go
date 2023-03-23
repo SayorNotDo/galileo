@@ -6,6 +6,7 @@ import (
 	"galileo/app/core/internal/conf"
 	consul "github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/metadata"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
@@ -40,6 +41,7 @@ func NewUserServiceClient(ac *conf.Auth, sr *conf.Service, rr registry.Discovery
 		grpc.WithMiddleware(
 			tracing.Client(), // 链路追踪
 			recovery.Recovery(),
+			metadata.Client(),
 		),
 		grpc.WithTimeout(2*time.Second),
 		grpc.WithOptions(grpcx.WithStatsHandler(&tracing.ClientHandler{})),

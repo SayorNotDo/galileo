@@ -34,7 +34,7 @@ const (
 	// FieldRemark holds the string denoting the remark field in the database.
 	FieldRemark = "remark"
 	// Table holds the table name of the project in the database.
-	Table = "projects"
+	Table = "project"
 )
 
 // Columns holds all SQL columns for project fields.

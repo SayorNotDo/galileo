@@ -6,6 +6,7 @@ import (
 	"galileo/app/user/internal/biz"
 	"galileo/app/user/internal/pkg/util"
 	"github.com/go-kratos/kratos/v2/log"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"time"
 )
@@ -67,6 +68,7 @@ func (s *UserService) DeleteUser(ctx context.Context, req *v1.DeleteUserRequest)
 }
 
 func (s *UserService) SoftDeleteUser(ctx context.Context, req *v1.SoftDeleteRequest) (*v1.SoftDeleteReply, error) {
+	log.Debug("SoftDeleteUser request: %v", ctx)
 	deleteAt := time.Now()
 	u := map[string]interface{}{"id": req.Id, "deleted_at": deleteAt, "deleted_by": req.Id, "status": false}
 	ok, err := s.uc.MapUpdate(ctx, u)
@@ -98,6 +100,9 @@ func (s *UserService) GetUserByUsername(ctx context.Context, req *v1.UsernameReq
 }
 
 func (s *UserService) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.UserInfoReply, error) {
+	md, _ := metadata.FromIncomingContext(ctx)
+	username := md.Get("x-md-local-username")
+	log.Info("GetUser: %v", username)
 	user, err := s.uc.Get(ctx, req.Id)
 	if err != nil {
 		return nil, err

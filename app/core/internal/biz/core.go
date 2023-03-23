@@ -10,6 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	jwt2 "github.com/golang-jwt/jwt/v4"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"net/http"
 	"time"
@@ -166,22 +167,24 @@ func (c *CoreUseCase) ListUser(ctx context.Context, pageNum, pageSize int32) (*v
 	}, nil
 }
 
-func (c *CoreUseCase) DeleteUser(ctx context.Context, uid uint32) (*v1.DeleteReply, error) {
+func (c *CoreUseCase) DeleteUser(ctx context.Context, deleteId uint32) (*v1.DeleteReply, error) {
 	userClaim, ok := jwt.FromContext(ctx)
 	if !ok {
 		return nil, ErrInternalServer
 	}
 	role := int(userClaim.(jwt2.MapClaims)["AuthorityId"].(float64))
+	username := userClaim.(jwt2.MapClaims)["Username"].(string)
 	if role == 0 {
 		return nil, errors.Forbidden(http.StatusText(403), "Role must be non-zero")
 	} else if role < 5 {
 		return nil, errors.Forbidden(http.StatusText(403), "Permission denied")
 	}
-	_, err := c.cRepo.UserById(ctx, uid)
+	ctx = metadata.AppendToOutgoingContext(ctx, "x-md-local-username", username)
+	_, err := c.cRepo.UserById(ctx, deleteId)
 	if err != nil {
 		return nil, err
 	}
-	ok, err = c.cRepo.SoftDeleteUser(ctx, uid)
+	ok, err = c.cRepo.SoftDeleteUser(ctx, deleteId)
 	if err != nil {
 		return nil, err
 	}

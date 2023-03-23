@@ -49,16 +49,16 @@ var _ = Describe("User", func() {
 		Ω(user[0].Phone).Should(Equal("16710790871"))
 	})
 
-	//It("UpdateUser", func() {
-	//	uD = &biz.User{
-	//		Id:       1,
-	//		Nickname: "Vince",
-	//		Avatar:   "AvatarTest",
-	//	}
-	//	ok, err := ro.Update(ctx, uD)
-	//	Ω(err).ShouldNot(HaveOccurred())
-	//	Ω(ok).Should(BeTrue())
-	//})
+	It("UpdateUser", func() {
+		uD = &biz.User{
+			Id:       1,
+			Nickname: "Vince",
+			Avatar:   "AvatarTest",
+		}
+		ok, err := ro.Update(context.Background(), uD)
+		Ω(err).ShouldNot(HaveOccurred())
+		Ω(ok).Should(BeTrue())
+	})
 
 	//It("ListUser", func() {
 	//	user, total, err := ro.List(ctx, 1, 10)

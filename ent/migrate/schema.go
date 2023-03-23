@@ -3,13 +3,14 @@
 package migrate
 
 import (
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/dialect/sql/schema"
 	"entgo.io/ent/schema/field"
 )
 
 var (
-	// ProjectsColumns holds the columns for the "projects" table.
-	ProjectsColumns = []*schema.Column{
+	// ProjectColumns holds the columns for the "project" table.
+	ProjectColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "identifier", Type: field.TypeString, Unique: true},
@@ -23,14 +24,14 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
-	// ProjectsTable holds the schema information for the "projects" table.
-	ProjectsTable = &schema.Table{
-		Name:       "projects",
-		Columns:    ProjectsColumns,
-		PrimaryKey: []*schema.Column{ProjectsColumns[0]},
+	// ProjectTable holds the schema information for the "project" table.
+	ProjectTable = &schema.Table{
+		Name:       "project",
+		Columns:    ProjectColumns,
+		PrimaryKey: []*schema.Column{ProjectColumns[0]},
 	}
-	// UsersColumns holds the columns for the "users" table.
-	UsersColumns = []*schema.Column{
+	// UserColumns holds the columns for the "user" table.
+	UserColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "active", Type: field.TypeBool, Default: true},
@@ -45,21 +46,28 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
+		{Name: "is_deleted", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "last_login_at", Type: field.TypeTime, Nullable: true},
 		{Name: "uuid", Type: field.TypeUUID},
 	}
-	// UsersTable holds the schema information for the "users" table.
-	UsersTable = &schema.Table{
-		Name:       "users",
-		Columns:    UsersColumns,
-		PrimaryKey: []*schema.Column{UsersColumns[0]},
+	// UserTable holds the schema information for the "user" table.
+	UserTable = &schema.Table{
+		Name:       "user",
+		Columns:    UserColumns,
+		PrimaryKey: []*schema.Column{UserColumns[0]},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		ProjectsTable,
-		UsersTable,
+		ProjectTable,
+		UserTable,
 	}
 )
 
 func init() {
+	ProjectTable.Annotation = &entsql.Annotation{
+		Table: "project",
+	}
+	UserTable.Annotation = &entsql.Annotation{
+		Table: "user",
+	}
 }

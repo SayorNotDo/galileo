@@ -24,8 +24,7 @@ var ProviderSet = wire.NewSet(NewData, NewEntDB, NewRedis, NewUserRepo)
 // Data .
 type Data struct {
 	// TODO wrapped database client
-	entDB *ent.Client
-	//gormDB  *gorm.DB
+	entDB   *ent.Client
 	redisDB *redis.Client
 }
 
@@ -39,6 +38,7 @@ func NewEntDB(c *conf.Data) (*ent.Client, error) {
 	sqlDB.SetMaxOpenConns(150)
 	sqlDB.SetConnMaxLifetime(25 * time.Second)
 	sqlDrv := dialect.DebugWithContext(drv, func(ctx context.Context, i ...interface{}) {
+		log.Context(ctx).Info(i)
 		tracer := otel.Tracer("ent.")
 		kind := trace.SpanKindServer
 		_, span := tracer.Start(ctx,

@@ -4,7 +4,9 @@ import (
 	"context"
 	v1 "galileo/api/user/v1"
 	"galileo/app/user/internal/biz"
+	"galileo/ent"
 	"galileo/ent/user"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"time"
 )
@@ -86,7 +88,7 @@ func (repo *userRepo) DeleteById(ctx context.Context, id uint32) (bool, error) {
 }
 
 func (repo *userRepo) SoftDeleteById(ctx context.Context, id uint32) (bool, error) {
-	_, err := repo.data.entDB.User.UpdateOneID(id).SetDeletedAt(time.Now()).SetActive(false).Save(ctx)
+	_, err := repo.data.entDB.User.UpdateOneID(id).SetDeletedAt(time.Now()).SetIsDeleted(true).Save(ctx)
 	if err != nil {
 		return false, err
 	}
@@ -146,14 +148,17 @@ func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error
 }
 
 func (repo *userRepo) Update(ctx context.Context, u *biz.User) (bool, error) {
-	//var user User
-	//res := repo.data.gormDB.Where("id = ?", u.Id).Find(&user)
-	//if res.RowsAffected == 0 {
-	//	return false, errors.New("record not found")
-	//}
-	//if result := repo.data.gormDB.Updates(&u); result.Error != nil {
-	//	return false, status.Errorf(codes.Internal, result.Error.Error())
-	//}
+	err := repo.data.entDB.User.
+		UpdateOneID(u.Id).
+		SetAvatar(u.Avatar).
+		SetNickname(u.Nickname).
+		Exec(ctx)
+	switch {
+	case ent.IsNotFound(err):
+		return false, errors.NotFound("Not Found", err.Error())
+	case err != nil:
+		return false, errors.InternalServer("InternalServer Error", err.Error())
+	}
 	return true, nil
 }
 
