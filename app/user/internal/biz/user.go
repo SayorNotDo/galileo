@@ -33,6 +33,7 @@ type UserRepo interface {
 	DeleteById(context.Context, uint32) (bool, error)
 	SoftDeleteById(context.Context, uint32, uint32) (bool, error)
 	SetToken(context.Context, string, string) (bool, error)
+	EmptyToken(context.Context, string) (bool, error)
 }
 
 type UserUseCase struct {
@@ -44,6 +45,14 @@ type UserUseCase struct {
 func NewUserUseCase(repo UserRepo, logger log.Logger) *UserUseCase {
 	helper := log.NewHelper(log.With(logger, "module", "useCase/user"))
 	return &UserUseCase{repo: repo, log: helper}
+}
+
+func (uc *UserUseCase) EmptyToken(ctx context.Context, uid uint32) (bool, error) {
+	u, err := uc.repo.GetById(ctx, uid)
+	if err != nil {
+		return false, err
+	}
+	return uc.repo.EmptyToken(ctx, u.Username)
 }
 
 func (uc *UserUseCase) SetToken(ctx context.Context, username string, token string) (bool, error) {

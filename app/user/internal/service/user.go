@@ -151,3 +151,16 @@ func (s *UserService) SetToken(ctx context.Context, req *v1.SetTokenRequest) (*v
 		Success: ok,
 	}, nil
 }
+
+func (s *UserService) EmptyToken(ctx context.Context, req *emptypb.Empty) (*v1.EmptyTokenReply, error) {
+	md, _ := metadata.FromServerContext(ctx)
+	uidStr := md.Get("x-md-local-uid")
+	uid, _ := strconv.ParseInt(uidStr, 10, 64)
+	ok, err := s.uc.EmptyToken(ctx, uint32(uid))
+	if err != nil {
+		return nil, err
+	}
+	return &v1.EmptyTokenReply{
+		IsEmpty: ok,
+	}, nil
+}

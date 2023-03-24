@@ -6,6 +6,7 @@ import (
 	userService "galileo/api/user/v1"
 	"galileo/app/core/internal/biz"
 	"github.com/go-kratos/kratos/v2/log"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type coreRepo struct {
@@ -16,7 +17,7 @@ type coreRepo struct {
 func NewCoreRepo(data *Data, logger log.Logger) biz.CoreRepo {
 	return &coreRepo{
 		data: data,
-		log:  log.NewHelper(log.With(logger, "module", "repo/core")),
+		log:  log.NewHelper(log.With(logger, "module", "coreRepo/core")),
 	}
 }
 
@@ -44,7 +45,6 @@ func (r *coreRepo) UserById(c context.Context, id uint32) (*biz.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Debugf("UserById user: %v", user.Id)
 	return &biz.User{
 		Id:       user.Id,
 		Username: user.Username,
@@ -115,4 +115,12 @@ func (r *coreRepo) SetToken(c context.Context, username string, token string) (b
 		return false, err
 	}
 	return rsp.Success, nil
+}
+
+func (r *coreRepo) EmptyToken(c context.Context) (bool, error) {
+	rsp, err := r.data.uc.EmptyToken(c, &emptypb.Empty{})
+	if err != nil {
+		return false, err
+	}
+	return rsp.IsEmpty, nil
 }

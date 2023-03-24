@@ -25,6 +25,7 @@ type CoreRepo interface {
 	ListUser(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserDetail, int32, error)
 	SoftDeleteUser(ctx context.Context, uid uint32) (bool, error)
 	SetToken(ctx context.Context, username string, token string) (bool, error)
+	EmptyToken(ctx context.Context) (bool, error)
 }
 type User struct {
 	Id          uint32
@@ -61,22 +62,13 @@ func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (
 	if err != nil {
 		return nil, err
 	}
-	claims := auth.CustomClaims{
-		ID:          createUser.Id,
-		Username:    createUser.Username,
-		AuthorityId: int(createUser.Role),
-		RegisteredClaims: jwt2.RegisteredClaims{
-			NotBefore: jwt2.NewNumericDate(time.Now()),
-			ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 0, 30)),
-			Issuer:    "Gyl",
-		},
-	}
-	token, err := auth.CreateToken(claims, c.signingKey)
+	claims := userClaim(createUser)
+	token, err := auth.CreateToken(*claims, c.signingKey)
 	if err != nil {
 		return nil, err
 	}
-	if ok, _ := c.cRepo.SetToken(ctx, createUser.Username, token); !ok {
-		return nil, errors.InternalServer("InternalServer Error", "redis set token failed")
+	if _, err = c.cRepo.SetToken(ctx, createUser.Username, token); err != nil {
+		return nil, errors.InternalServer("Internal Server Error", err.Error())
 	}
 	return &v1.RegisterReply{
 		Id:        createUser.Id,
@@ -89,7 +81,31 @@ func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (
 }
 
 func (c *CoreUseCase) Logout(ctx context.Context) (*v1.LogoutReply, error) {
-	panic("not implemented")
+	userClaim, ok := jwt.FromContext(ctx)
+	if !ok {
+		return nil, ErrUnauthenticated
+	}
+	uid := fmt.Sprintf("%v", userClaim.(jwt2.MapClaims)["ID"])
+	ctx = metadata.AppendToClientContext(ctx, "x-md-local-uid", uid)
+	if ok, err := c.cRepo.EmptyToken(ctx); !ok {
+		return nil, errors.InternalServer("Internal Server Error", err.Error())
+	}
+	return &v1.LogoutReply{
+		Success: true,
+	}, nil
+}
+
+func userClaim(u *User) *auth.CustomClaims {
+	return &auth.CustomClaims{
+		ID:          u.Id,
+		Username:    u.Username,
+		AuthorityId: int(u.Role),
+		RegisteredClaims: jwt2.RegisteredClaims{
+			NotBefore: jwt2.NewNumericDate(time.Now()),
+			ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 0, 1)),
+			Issuer:    "Gyl",
+		},
+	}
 }
 
 func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginReply, error) {
@@ -106,22 +122,10 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	if _, passErr := c.cRepo.CheckPassword(ctx, req.Password, user.Password); passErr != nil {
 		return nil, passErr
 	}
-	claims := auth.CustomClaims{
-		ID:          user.Id,
-		Username:    user.Username,
-		AuthorityId: int(user.Role),
-		RegisteredClaims: jwt2.RegisteredClaims{
-			NotBefore: jwt2.NewNumericDate(time.Now()),
-			ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 0, 1)),
-			Issuer:    "Gyl",
-		},
-	}
-	token, err := auth.CreateToken(claims, c.signingKey)
+	claims := userClaim(user)
+	token, err := auth.CreateToken(*claims, c.signingKey)
 	if err != nil {
 		return nil, ErrInternalServer
-	}
-	if ok, _ := c.cRepo.SetToken(ctx, req.Username, token); !ok {
-		return nil, errors.InternalServer("InternalServer Error", "redis set token failed")
 	}
 	return &v1.LoginReply{
 		Code:    http.StatusOK,

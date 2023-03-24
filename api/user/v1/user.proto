@@ -31,14 +31,19 @@ service User {
   rpc CheckPassword(CheckPasswordRequest) returns (CheckPasswordReply){};
   rpc SoftDeleteUser (SoftDeleteRequest) returns (SoftDeleteReply){};
   rpc SetToken(SetTokenRequest) returns (SetTokenReply){};
+  rpc EmptyToken(google.protobuf.Empty) returns(EmptyTokenReply){};
 }
 
-message SetTokenRequest{
+message EmptyTokenReply {
+  bool isEmpty = 1;
+};
+
+message SetTokenRequest {
   string username = 1;
   string token = 2;
 }
 
-message SetTokenReply{
+message SetTokenReply {
   bool success = 1;
 }
 

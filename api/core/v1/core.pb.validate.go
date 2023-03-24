@@ -1227,6 +1227,8 @@ func (m *LogoutReply) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Success
+
 	if len(errors) > 0 {
 		return LogoutReplyMultiError(errors)
 	}

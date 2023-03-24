@@ -3,8 +3,368 @@
 
 openapi: 3.0.3
 info:
-    title: ""
+    title: Core API
     version: 0.0.1
-paths: {}
+paths:
+    v1/api/user/delete/{id}:
+        delete:
+            tags:
+                - Core
+            operationId: Core_DeleteUser
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/detail:
+        get:
+            tags:
+                - Core
+            operationId: Core_UserDetail
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserDetailReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/list/{pageNum}/{pageSize}:
+        get:
+            tags:
+                - Core
+            operationId: Core_ListUser
+            parameters:
+                - name: pageNum
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageSize
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListUserReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/login:
+        post:
+            tags:
+                - Core
+            operationId: Core_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LoginReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/logout:
+        post:
+            tags:
+                - Core
+            operationId: Core_Logout
+            requestBody:
+                content:
+                    application/json: {}
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LogoutReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/register:
+        post:
+            tags:
+                - Core
+            operationId: Core_Register
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RegisterRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RegisterReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/unregister:
+        delete:
+            tags:
+                - Core
+            operationId: Core_Unregister
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnregisterReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/update:
+        put:
+            tags:
+                - Core
+            operationId: Core_Update
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UserInfoUpdateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserInfoUpdateReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
 components:
-    schemas: {}
+    schemas:
+        DeleteReply:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    format: int32
+                message:
+                    type: string
+                data:
+                    $ref: '#/components/schemas/DeleteReply_DeleteInfo'
+        DeleteReply_DeleteInfo:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                deleteAt:
+                    type: integer
+                    format: int64
+                deleteBy:
+                    type: integer
+                    format: uint32
+        GoogleProtobufAny:
+            type: object
+            properties:
+                '@type':
+                    type: string
+                    description: The type of the serialized message.
+            additionalProperties: true
+            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        ListUserReply:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    format: int32
+                message:
+                    type: string
+                data:
+                    $ref: '#/components/schemas/ListUserReply_ListUser'
+        ListUserReply_ListUser:
+            type: object
+            properties:
+                total:
+                    type: integer
+                    format: int32
+                userList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserDetail'
+        LoginReply:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    format: int32
+                message:
+                    type: string
+                data:
+                    $ref: '#/components/schemas/TokenInfo'
+        LoginRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+        LogoutReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+        RegisterReply:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                phone:
+                    type: string
+                username:
+                    type: string
+                token:
+                    type: string
+                expiresAt:
+                    type: integer
+                    format: int64
+                email:
+                    type: string
+        RegisterRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+                phone:
+                    type: string
+                email:
+                    type: string
+        Status:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+                    format: int32
+                message:
+                    type: string
+                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+                details:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GoogleProtobufAny'
+                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
+            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+        TokenInfo:
+            type: object
+            properties:
+                type:
+                    type: string
+                token:
+                    type: string
+                expiresAt:
+                    type: integer
+                    format: int64
+        UnregisterReply:
+            type: object
+            properties: {}
+        UserDetail:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                username:
+                    type: string
+                nickname:
+                    type: string
+                chineseName:
+                    type: string
+                phone:
+                    type: string
+                email:
+                    type: string
+                role:
+                    type: integer
+                    format: int32
+        UserDetailReply:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    format: int32
+                message:
+                    type: string
+                data:
+                    $ref: '#/components/schemas/UserDetail'
+        UserInfoUpdateReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+        UserInfoUpdateRequest:
+            type: object
+            properties:
+                nickname:
+                    type: string
+                email:
+                    type: string
+                phone:
+                    type: string
+tags:
+    - name: Core

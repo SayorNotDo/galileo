@@ -183,3 +183,17 @@ func (repo *userRepo) SetToken(ctx context.Context, username string, token strin
 	}
 	return true, nil
 }
+
+func (repo *userRepo) EmptyToken(ctx context.Context, username string) (bool, error) {
+	conn := repo.data.redisDB.Conn(ctx)
+	defer func(conn *redis.Conn) {
+		err := conn.Close()
+		if err != nil {
+			log.Error("redis client closed connection")
+		}
+	}(conn)
+	if res := conn.Del(ctx, fmt.Sprintf("%s:token", username)); res.Err() != nil {
+		return false, errors.InternalServer("InternalServer Error", res.Err().Error())
+	}
+	return true, nil
+}
