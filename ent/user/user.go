@@ -33,8 +33,8 @@ const (
 	FieldAvatar = "avatar"
 	// FieldRole holds the string denoting the role field in the database.
 	FieldRole = "role"
-	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
-	FieldUpdatedAt = "updated_at"
+	// FieldUpdateAt holds the string denoting the update_at field in the database.
+	FieldUpdateAt = "update_at"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
@@ -60,7 +60,7 @@ var Columns = []string{
 	FieldEmail,
 	FieldAvatar,
 	FieldRole,
-	FieldUpdatedAt,
+	FieldUpdateAt,
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldIsDeleted,
@@ -84,10 +84,10 @@ var (
 	DefaultActive bool
 	// DefaultRole holds the default value on creation for the "role" field.
 	DefaultRole uint8
-	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
-	DefaultUpdatedAt func() time.Time
-	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
-	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultUpdateAt holds the default value on creation for the "update_at" field.
+	DefaultUpdateAt func() time.Time
+	// UpdateDefaultUpdateAt holds the default value on update for the "update_at" field.
+	UpdateDefaultUpdateAt func() time.Time
 	// DefaultIsDeleted holds the default value on creation for the "is_deleted" field.
 	DefaultIsDeleted bool
 	// DefaultUUID holds the default value on creation for the "uuid" field.

@@ -1101,7 +1101,7 @@ type UserMutation struct {
 	avatar        *string
 	role          *uint8
 	addrole       *int8
-	updated_at    *time.Time
+	update_at     *time.Time
 	deleted_at    *time.Time
 	deleted_by    *uint32
 	adddeleted_by *int32
@@ -1623,40 +1623,40 @@ func (m *UserMutation) ResetRole() {
 	m.addrole = nil
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (m *UserMutation) SetUpdatedAt(t time.Time) {
-	m.updated_at = &t
+// SetUpdateAt sets the "update_at" field.
+func (m *UserMutation) SetUpdateAt(t time.Time) {
+	m.update_at = &t
 }
 
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *UserMutation) UpdatedAt() (r time.Time, exists bool) {
-	v := m.updated_at
+// UpdateAt returns the value of the "update_at" field in the mutation.
+func (m *UserMutation) UpdateAt() (r time.Time, exists bool) {
+	v := m.update_at
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldUpdatedAt returns the old "updated_at" field's value of the User entity.
+// OldUpdateAt returns the old "update_at" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+func (m *UserMutation) OldUpdateAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+		return v, errors.New("OldUpdateAt is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+		return v, errors.New("OldUpdateAt requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+		return v, fmt.Errorf("querying old value for OldUpdateAt: %w", err)
 	}
-	return oldValue.UpdatedAt, nil
+	return oldValue.UpdateAt, nil
 }
 
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *UserMutation) ResetUpdatedAt() {
-	m.updated_at = nil
+// ResetUpdateAt resets all changes to the "update_at" field.
+func (m *UserMutation) ResetUpdateAt() {
+	m.update_at = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -1928,8 +1928,8 @@ func (m *UserMutation) Fields() []string {
 	if m.role != nil {
 		fields = append(fields, user.FieldRole)
 	}
-	if m.updated_at != nil {
-		fields = append(fields, user.FieldUpdatedAt)
+	if m.update_at != nil {
+		fields = append(fields, user.FieldUpdateAt)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, user.FieldDeletedAt)
@@ -1971,8 +1971,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Avatar()
 	case user.FieldRole:
 		return m.Role()
-	case user.FieldUpdatedAt:
-		return m.UpdatedAt()
+	case user.FieldUpdateAt:
+		return m.UpdateAt()
 	case user.FieldDeletedAt:
 		return m.DeletedAt()
 	case user.FieldDeletedBy:
@@ -2010,8 +2010,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldAvatar(ctx)
 	case user.FieldRole:
 		return m.OldRole(ctx)
-	case user.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
+	case user.FieldUpdateAt:
+		return m.OldUpdateAt(ctx)
 	case user.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case user.FieldDeletedBy:
@@ -2099,12 +2099,12 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetRole(v)
 		return nil
-	case user.FieldUpdatedAt:
+	case user.FieldUpdateAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetUpdatedAt(v)
+		m.SetUpdateAt(v)
 		return nil
 	case user.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -2273,8 +2273,8 @@ func (m *UserMutation) ResetField(name string) error {
 	case user.FieldRole:
 		m.ResetRole()
 		return nil
-	case user.FieldUpdatedAt:
-		m.ResetUpdatedAt()
+	case user.FieldUpdateAt:
+		m.ResetUpdateAt()
 		return nil
 	case user.FieldDeletedAt:
 		m.ResetDeletedAt()

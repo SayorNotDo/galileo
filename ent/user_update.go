@@ -134,9 +134,9 @@ func (uu *UserUpdate) AddRole(u int8) *UserUpdate {
 	return uu
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
-	uu.mutation.SetUpdatedAt(t)
+// SetUpdateAt sets the "update_at" field.
+func (uu *UserUpdate) SetUpdateAt(t time.Time) *UserUpdate {
+	uu.mutation.SetUpdateAt(t)
 	return uu
 }
 
@@ -256,9 +256,9 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uu *UserUpdate) defaults() {
-	if _, ok := uu.mutation.UpdatedAt(); !ok {
-		v := user.UpdateDefaultUpdatedAt()
-		uu.mutation.SetUpdatedAt(v)
+	if _, ok := uu.mutation.UpdateAt(); !ok {
+		v := user.UpdateDefaultUpdateAt()
+		uu.mutation.SetUpdateAt(v)
 	}
 }
 
@@ -307,8 +307,8 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.AddedRole(); ok {
 		_spec.AddField(user.FieldRole, field.TypeUint8, value)
 	}
-	if value, ok := uu.mutation.UpdatedAt(); ok {
-		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	if value, ok := uu.mutation.UpdateAt(); ok {
+		_spec.SetField(user.FieldUpdateAt, field.TypeTime, value)
 	}
 	if value, ok := uu.mutation.DeletedAt(); ok {
 		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
@@ -459,9 +459,9 @@ func (uuo *UserUpdateOne) AddRole(u int8) *UserUpdateOne {
 	return uuo
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetUpdatedAt(t)
+// SetUpdateAt sets the "update_at" field.
+func (uuo *UserUpdateOne) SetUpdateAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetUpdateAt(t)
 	return uuo
 }
 
@@ -594,9 +594,9 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uuo *UserUpdateOne) defaults() {
-	if _, ok := uuo.mutation.UpdatedAt(); !ok {
-		v := user.UpdateDefaultUpdatedAt()
-		uuo.mutation.SetUpdatedAt(v)
+	if _, ok := uuo.mutation.UpdateAt(); !ok {
+		v := user.UpdateDefaultUpdateAt()
+		uuo.mutation.SetUpdateAt(v)
 	}
 }
 
@@ -662,8 +662,8 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if value, ok := uuo.mutation.AddedRole(); ok {
 		_spec.AddField(user.FieldRole, field.TypeUint8, value)
 	}
-	if value, ok := uuo.mutation.UpdatedAt(); ok {
-		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	if value, ok := uuo.mutation.UpdateAt(); ok {
+		_spec.SetField(user.FieldUpdateAt, field.TypeTime, value)
 	}
 	if value, ok := uuo.mutation.DeletedAt(); ok {
 		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)

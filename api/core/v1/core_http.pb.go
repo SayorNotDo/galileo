@@ -26,7 +26,10 @@ const OperationCoreLogin = "/api.core.v1.Core/Login"
 const OperationCoreLogout = "/api.core.v1.Core/Logout"
 const OperationCoreRegister = "/api.core.v1.Core/Register"
 const OperationCoreUnregister = "/api.core.v1.Core/Unregister"
-const OperationCoreUpdate = "/api.core.v1.Core/Update"
+const OperationCoreUpdateEmail = "/api.core.v1.Core/UpdateEmail"
+const OperationCoreUpdatePassword = "/api.core.v1.Core/UpdatePassword"
+const OperationCoreUpdatePhone = "/api.core.v1.Core/UpdatePhone"
+const OperationCoreUpdateUserInfo = "/api.core.v1.Core/UpdateUserInfo"
 const OperationCoreUserDetail = "/api.core.v1.Core/UserDetail"
 
 type CoreHTTPServer interface {
@@ -36,7 +39,10 @@ type CoreHTTPServer interface {
 	Logout(context.Context, *emptypb.Empty) (*LogoutReply, error)
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error)
-	Update(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error)
+	UpdateEmail(context.Context, *UpdateEmailRequest) (*UpdateEmailReply, error)
+	UpdatePassword(context.Context, *UpdatePasswordRequest) (*UpdatePasswordReply, error)
+	UpdatePhone(context.Context, *UpdatePhoneRequest) (*UpdatePhoneReply, error)
+	UpdateUserInfo(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error)
 	UserDetail(context.Context, *emptypb.Empty) (*UserDetailReply, error)
 }
 
@@ -48,7 +54,10 @@ func RegisterCoreHTTPServer(s *http.Server, srv CoreHTTPServer) {
 	r.POST("v1/api/user/logout", _Core_Logout0_HTTP_Handler(srv))
 	r.DELETE("v1/api/user/delete/{id}", _Core_DeleteUser0_HTTP_Handler(srv))
 	r.GET("v1/api/user/detail", _Core_UserDetail0_HTTP_Handler(srv))
-	r.PUT("v1/api/user/update", _Core_Update0_HTTP_Handler(srv))
+	r.PUT("v1/api/user/update", _Core_UpdateUserInfo0_HTTP_Handler(srv))
+	r.PUT("v1/api/user/password", _Core_UpdatePassword0_HTTP_Handler(srv))
+	r.PUT("v1/api/user/email", _Core_UpdateEmail0_HTTP_Handler(srv))
+	r.PUT("v1/api/user/email", _Core_UpdatePhone0_HTTP_Handler(srv))
 	r.GET("v1/api/user/list/{pageNum}/{pageSize}", _Core_ListUser0_HTTP_Handler(srv))
 }
 
@@ -169,21 +178,78 @@ func _Core_UserDetail0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) e
 	}
 }
 
-func _Core_Update0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+func _Core_UpdateUserInfo0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in UserInfoUpdateRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationCoreUpdate)
+		http.SetOperation(ctx, OperationCoreUpdateUserInfo)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Update(ctx, req.(*UserInfoUpdateRequest))
+			return srv.UpdateUserInfo(ctx, req.(*UserInfoUpdateRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
 		reply := out.(*UserInfoUpdateReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Core_UpdatePassword0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdatePasswordRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCoreUpdatePassword)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdatePassword(ctx, req.(*UpdatePasswordRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UpdatePasswordReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Core_UpdateEmail0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateEmailRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCoreUpdateEmail)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateEmail(ctx, req.(*UpdateEmailRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UpdateEmailReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Core_UpdatePhone0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdatePhoneRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCoreUpdatePhone)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdatePhone(ctx, req.(*UpdatePhoneRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UpdatePhoneReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -217,7 +283,10 @@ type CoreHTTPClient interface {
 	Logout(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *LogoutReply, err error)
 	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *RegisterReply, err error)
 	Unregister(ctx context.Context, req *UnregisterRequest, opts ...http.CallOption) (rsp *UnregisterReply, err error)
-	Update(ctx context.Context, req *UserInfoUpdateRequest, opts ...http.CallOption) (rsp *UserInfoUpdateReply, err error)
+	UpdateEmail(ctx context.Context, req *UpdateEmailRequest, opts ...http.CallOption) (rsp *UpdateEmailReply, err error)
+	UpdatePassword(ctx context.Context, req *UpdatePasswordRequest, opts ...http.CallOption) (rsp *UpdatePasswordReply, err error)
+	UpdatePhone(ctx context.Context, req *UpdatePhoneRequest, opts ...http.CallOption) (rsp *UpdatePhoneReply, err error)
+	UpdateUserInfo(ctx context.Context, req *UserInfoUpdateRequest, opts ...http.CallOption) (rsp *UserInfoUpdateReply, err error)
 	UserDetail(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *UserDetailReply, err error)
 }
 
@@ -307,11 +376,50 @@ func (c *CoreHTTPClientImpl) Unregister(ctx context.Context, in *UnregisterReque
 	return &out, err
 }
 
-func (c *CoreHTTPClientImpl) Update(ctx context.Context, in *UserInfoUpdateRequest, opts ...http.CallOption) (*UserInfoUpdateReply, error) {
+func (c *CoreHTTPClientImpl) UpdateEmail(ctx context.Context, in *UpdateEmailRequest, opts ...http.CallOption) (*UpdateEmailReply, error) {
+	var out UpdateEmailReply
+	pattern := "v1/api/user/email"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationCoreUpdateEmail))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *CoreHTTPClientImpl) UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...http.CallOption) (*UpdatePasswordReply, error) {
+	var out UpdatePasswordReply
+	pattern := "v1/api/user/password"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationCoreUpdatePassword))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *CoreHTTPClientImpl) UpdatePhone(ctx context.Context, in *UpdatePhoneRequest, opts ...http.CallOption) (*UpdatePhoneReply, error) {
+	var out UpdatePhoneReply
+	pattern := "v1/api/user/email"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationCoreUpdatePhone))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *CoreHTTPClientImpl) UpdateUserInfo(ctx context.Context, in *UserInfoUpdateRequest, opts ...http.CallOption) (*UserInfoUpdateReply, error) {
 	var out UserInfoUpdateReply
 	pattern := "v1/api/user/update"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationCoreUpdate))
+	opts = append(opts, http.Operation(OperationCoreUpdateUserInfo))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {

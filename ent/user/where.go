@@ -105,9 +105,9 @@ func Role(v uint8) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldRole, v))
 }
 
-// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
-func UpdatedAt(v time.Time) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldUpdatedAt, v))
+// UpdateAt applies equality check predicate on the "update_at" field. It's identical to UpdateAtEQ.
+func UpdateAt(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldUpdateAt, v))
 }
 
 // DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
@@ -695,44 +695,44 @@ func RoleLTE(v uint8) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldRole, v))
 }
 
-// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
-func UpdatedAtEQ(v time.Time) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldUpdatedAt, v))
+// UpdateAtEQ applies the EQ predicate on the "update_at" field.
+func UpdateAtEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldUpdateAt, v))
 }
 
-// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
-func UpdatedAtNEQ(v time.Time) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldUpdatedAt, v))
+// UpdateAtNEQ applies the NEQ predicate on the "update_at" field.
+func UpdateAtNEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldUpdateAt, v))
 }
 
-// UpdatedAtIn applies the In predicate on the "updated_at" field.
-func UpdatedAtIn(vs ...time.Time) predicate.User {
-	return predicate.User(sql.FieldIn(FieldUpdatedAt, vs...))
+// UpdateAtIn applies the In predicate on the "update_at" field.
+func UpdateAtIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldIn(FieldUpdateAt, vs...))
 }
 
-// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
-func UpdatedAtNotIn(vs ...time.Time) predicate.User {
-	return predicate.User(sql.FieldNotIn(FieldUpdatedAt, vs...))
+// UpdateAtNotIn applies the NotIn predicate on the "update_at" field.
+func UpdateAtNotIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldUpdateAt, vs...))
 }
 
-// UpdatedAtGT applies the GT predicate on the "updated_at" field.
-func UpdatedAtGT(v time.Time) predicate.User {
-	return predicate.User(sql.FieldGT(FieldUpdatedAt, v))
+// UpdateAtGT applies the GT predicate on the "update_at" field.
+func UpdateAtGT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGT(FieldUpdateAt, v))
 }
 
-// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
-func UpdatedAtGTE(v time.Time) predicate.User {
-	return predicate.User(sql.FieldGTE(FieldUpdatedAt, v))
+// UpdateAtGTE applies the GTE predicate on the "update_at" field.
+func UpdateAtGTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldUpdateAt, v))
 }
 
-// UpdatedAtLT applies the LT predicate on the "updated_at" field.
-func UpdatedAtLT(v time.Time) predicate.User {
-	return predicate.User(sql.FieldLT(FieldUpdatedAt, v))
+// UpdateAtLT applies the LT predicate on the "update_at" field.
+func UpdateAtLT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLT(FieldUpdateAt, v))
 }
 
-// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
-func UpdatedAtLTE(v time.Time) predicate.User {
-	return predicate.User(sql.FieldLTE(FieldUpdatedAt, v))
+// UpdateAtLTE applies the LTE predicate on the "update_at" field.
+func UpdateAtLTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldUpdateAt, v))
 }
 
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.

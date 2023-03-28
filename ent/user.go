@@ -37,8 +37,8 @@ type User struct {
 	Avatar string `json:"avatar,omitempty"`
 	// Role holds the value of the "role" field.
 	Role uint8 `json:"role,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// UpdateAt holds the value of the "update_at" field.
+	UpdateAt time.Time `json:"update_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -60,7 +60,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case user.FieldUsername, user.FieldChineseName, user.FieldNickname, user.FieldPassword, user.FieldPhone, user.FieldEmail, user.FieldAvatar:
 			values[i] = new(sql.NullString)
-		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt:
+		case user.FieldCreatedAt, user.FieldUpdateAt, user.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		case user.FieldUUID:
 			values[i] = new(uuid.UUID)
@@ -145,11 +145,11 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Role = uint8(value.Int64)
 			}
-		case user.FieldUpdatedAt:
+		case user.FieldUpdateAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+				return fmt.Errorf("unexpected type %T for field update_at", values[i])
 			} else if value.Valid {
-				u.UpdatedAt = value.Time
+				u.UpdateAt = value.Time
 			}
 		case user.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -236,8 +236,8 @@ func (u *User) String() string {
 	builder.WriteString("role=")
 	builder.WriteString(fmt.Sprintf("%v", u.Role))
 	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(u.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString("update_at=")
+	builder.WriteString(u.UpdateAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	if v := u.DeletedAt; v != nil {
 		builder.WriteString("deleted_at=")

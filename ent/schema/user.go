@@ -35,7 +35,7 @@ func (User) Fields() []ent.Field {
 		field.String("email").Unique(),
 		field.Text("avatar").Optional(),
 		field.Uint8("role").Default(3),
-		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),
+		field.Time("update_at").Default(time.Now).UpdateDefault(time.Now),
 		field.Time("deleted_at").Optional().Nillable(),
 		field.Uint32("deleted_by").Optional().Nillable(),
 		field.Bool("is_deleted").Optional().Nillable().Default(false),

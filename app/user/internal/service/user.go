@@ -40,14 +40,9 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 		return nil, err
 	}
 	userInfoRep := v1.CreateUserReply{
-		Data: &v1.UserInfoReply{
-			Id:       ret.Id,
-			Username: ret.Username,
-			Status:   ret.Status,
-			Nickname: ret.Nickname,
-			Email:    ret.Email,
-			Phone:    ret.Phone,
-		},
+		Id:        ret.Id,
+		Username:  ret.Username,
+		CreatedAt: ret.CreatedAt.Unix(),
 	}
 	return &userInfoRep, nil
 }

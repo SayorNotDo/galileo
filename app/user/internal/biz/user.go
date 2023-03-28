@@ -21,6 +21,7 @@ type User struct {
 	Role        int32     `json:"role"`
 	DeletedAt   time.Time `json:"deleted_at"`
 	DeletedBy   uint32    `json:"deleted_by"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 type UserRepo interface {

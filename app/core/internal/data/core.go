@@ -7,6 +7,7 @@ import (
 	"galileo/app/core/internal/biz"
 	"github.com/go-kratos/kratos/v2/log"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"time"
 )
 
 type coreRepo struct {
@@ -65,11 +66,14 @@ func (r *coreRepo) CreateUser(c context.Context, user *biz.User) (*biz.User, err
 		return nil, err
 	}
 	return &biz.User{
-		Id:       createUser.Data.Id,
-		Phone:    createUser.Data.Phone,
-		Nickname: createUser.Data.Nickname,
-		Email:    createUser.Data.Email,
+		Id:        createUser.Id,
+		Username:  createUser.Username,
+		CreatedAt: time.Unix(createUser.CreatedAt, 0),
 	}, nil
+}
+
+func (r *coreRepo) UpdatePassword(c context.Context, password string) (bool, error) {
+	return false, nil
 }
 
 func (r *coreRepo) CheckPassword(c context.Context, password, encryptedPassword string) (bool, error) {
@@ -107,6 +111,10 @@ func (r *coreRepo) SoftDeleteUser(c context.Context, uid uint32) (bool, error) {
 		return false, err
 	}
 	return rsp.Deleted, nil
+}
+
+func (r *coreRepo) UpdateUserInfo(c context.Context, user *biz.User) (bool, error) {
+	return false, nil
 }
 
 func (r *coreRepo) SetToken(c context.Context, username string, token string) (bool, error) {

@@ -121,16 +121,16 @@ func (uc *UserCreate) SetNillableRole(u *uint8) *UserCreate {
 	return uc
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (uc *UserCreate) SetUpdatedAt(t time.Time) *UserCreate {
-	uc.mutation.SetUpdatedAt(t)
+// SetUpdateAt sets the "update_at" field.
+func (uc *UserCreate) SetUpdateAt(t time.Time) *UserCreate {
+	uc.mutation.SetUpdateAt(t)
 	return uc
 }
 
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
+// SetNillableUpdateAt sets the "update_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableUpdateAt(t *time.Time) *UserCreate {
 	if t != nil {
-		uc.SetUpdatedAt(*t)
+		uc.SetUpdateAt(*t)
 	}
 	return uc
 }
@@ -244,9 +244,9 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultRole
 		uc.mutation.SetRole(v)
 	}
-	if _, ok := uc.mutation.UpdatedAt(); !ok {
-		v := user.DefaultUpdatedAt()
-		uc.mutation.SetUpdatedAt(v)
+	if _, ok := uc.mutation.UpdateAt(); !ok {
+		v := user.DefaultUpdateAt()
+		uc.mutation.SetUpdateAt(v)
 	}
 	if _, ok := uc.mutation.IsDeleted(); !ok {
 		v := user.DefaultIsDeleted
@@ -284,8 +284,8 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Role(); !ok {
 		return &ValidationError{Name: "role", err: errors.New(`ent: missing required field "User.role"`)}
 	}
-	if _, ok := uc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "User.updated_at"`)}
+	if _, ok := uc.mutation.UpdateAt(); !ok {
+		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "User.update_at"`)}
 	}
 	if _, ok := uc.mutation.UUID(); !ok {
 		return &ValidationError{Name: "uuid", err: errors.New(`ent: missing required field "User.uuid"`)}
@@ -362,9 +362,9 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldRole, field.TypeUint8, value)
 		_node.Role = value
 	}
-	if value, ok := uc.mutation.UpdatedAt(); ok {
-		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
+	if value, ok := uc.mutation.UpdateAt(); ok {
+		_spec.SetField(user.FieldUpdateAt, field.TypeTime, value)
+		_node.UpdateAt = value
 	}
 	if value, ok := uc.mutation.DeletedAt(); ok {
 		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)

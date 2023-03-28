@@ -34,6 +34,10 @@ func (c *CoreService) Logout(ctx context.Context, req *emptypb.Empty) (*v1.Logou
 	return c.uc.Logout(ctx)
 }
 
+func (c *CoreService) UpdatePassword(ctx context.Context, req *v1.UpdatePasswordRequest) (*v1.UpdatePasswordReply, error) {
+	return c.uc.UpdatePassword(ctx, req)
+}
+
 func (c *CoreService) UserDetail(ctx context.Context, req *emptypb.Empty) (*v1.UserDetailReply, error) {
 	return c.uc.UserDetail(ctx, &emptypb.Empty{})
 }
@@ -42,6 +46,10 @@ func (c *CoreService) ListUser(ctx context.Context, req *v1.ListUserRequest) (*v
 	pageNum := req.PageNum
 	pageSize := req.PageSize
 	return c.uc.ListUser(ctx, pageNum, pageSize)
+}
+
+func (c *CoreService) UpdateUserInfo(ctx context.Context, req *v1.UserInfoUpdateRequest) (*v1.UserInfoUpdateReply, error) {
+	return c.uc.UpdateUserInfo(ctx, req)
 }
 
 func (c *CoreService) DeleteUser(ctx context.Context, req *v1.DeleteRequest) (*v1.DeleteReply, error) {

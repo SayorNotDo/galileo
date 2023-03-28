@@ -23,7 +23,7 @@ enum ErrorReason {
 
 service User {
   rpc CreateUser (CreateUserRequest) returns (CreateUserReply) {};
-  rpc UpdateUser (UpdateUserRequest) returns (google.protobuf.Empty){};
+  rpc UpdateUserInfo (UpdateUserRequest) returns (google.protobuf.Empty){};
   rpc DeleteUser (DeleteUserRequest) returns (DeleteUserReply){};
   rpc GetUser (GetUserRequest) returns (userInfoReply){};
   rpc GetUserByUsername (UsernameRequest) returns (userInfoReply){};
@@ -86,7 +86,9 @@ message CreateUserRequest {
   string phone = 4;
 }
 message CreateUserReply {
-  userInfoReply data = 2;
+  uint32 id = 1;
+  string username = 2;
+  int64 createdAt = 3;
 }
 
 message UpdateUserRequest {
@@ -116,6 +118,7 @@ message userInfoReply {
   string phone = 7;
   int32 role = 8;
   string chineseName = 9;
+  int64 createdAt = 10;
 };
 
 message ListUserRequest {

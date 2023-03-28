@@ -35,6 +35,614 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on UpdatePhoneRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdatePhoneRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdatePhoneRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdatePhoneRequestMultiError, or nil if none found.
+func (m *UpdatePhoneRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdatePhoneRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return UpdatePhoneRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdatePhoneRequestMultiError is an error wrapping multiple validation errors
+// returned by UpdatePhoneRequest.ValidateAll() if the designated constraints
+// aren't met.
+type UpdatePhoneRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdatePhoneRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdatePhoneRequestMultiError) AllErrors() []error { return m }
+
+// UpdatePhoneRequestValidationError is the validation error returned by
+// UpdatePhoneRequest.Validate if the designated constraints aren't met.
+type UpdatePhoneRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdatePhoneRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdatePhoneRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdatePhoneRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdatePhoneRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdatePhoneRequestValidationError) ErrorName() string {
+	return "UpdatePhoneRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdatePhoneRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdatePhoneRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdatePhoneRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdatePhoneRequestValidationError{}
+
+// Validate checks the field values on UpdatePhoneReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *UpdatePhoneReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdatePhoneReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdatePhoneReplyMultiError, or nil if none found.
+func (m *UpdatePhoneReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdatePhoneReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return UpdatePhoneReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdatePhoneReplyMultiError is an error wrapping multiple validation errors
+// returned by UpdatePhoneReply.ValidateAll() if the designated constraints
+// aren't met.
+type UpdatePhoneReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdatePhoneReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdatePhoneReplyMultiError) AllErrors() []error { return m }
+
+// UpdatePhoneReplyValidationError is the validation error returned by
+// UpdatePhoneReply.Validate if the designated constraints aren't met.
+type UpdatePhoneReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdatePhoneReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdatePhoneReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdatePhoneReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdatePhoneReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdatePhoneReplyValidationError) ErrorName() string { return "UpdatePhoneReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UpdatePhoneReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdatePhoneReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdatePhoneReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdatePhoneReplyValidationError{}
+
+// Validate checks the field values on UpdateEmailRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateEmailRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateEmailRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateEmailRequestMultiError, or nil if none found.
+func (m *UpdateEmailRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateEmailRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return UpdateEmailRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateEmailRequestMultiError is an error wrapping multiple validation errors
+// returned by UpdateEmailRequest.ValidateAll() if the designated constraints
+// aren't met.
+type UpdateEmailRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateEmailRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateEmailRequestMultiError) AllErrors() []error { return m }
+
+// UpdateEmailRequestValidationError is the validation error returned by
+// UpdateEmailRequest.Validate if the designated constraints aren't met.
+type UpdateEmailRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateEmailRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateEmailRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateEmailRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateEmailRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateEmailRequestValidationError) ErrorName() string {
+	return "UpdateEmailRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateEmailRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateEmailRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateEmailRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateEmailRequestValidationError{}
+
+// Validate checks the field values on UpdateEmailReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *UpdateEmailReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateEmailReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateEmailReplyMultiError, or nil if none found.
+func (m *UpdateEmailReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateEmailReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return UpdateEmailReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateEmailReplyMultiError is an error wrapping multiple validation errors
+// returned by UpdateEmailReply.ValidateAll() if the designated constraints
+// aren't met.
+type UpdateEmailReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateEmailReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateEmailReplyMultiError) AllErrors() []error { return m }
+
+// UpdateEmailReplyValidationError is the validation error returned by
+// UpdateEmailReply.Validate if the designated constraints aren't met.
+type UpdateEmailReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateEmailReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateEmailReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateEmailReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateEmailReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateEmailReplyValidationError) ErrorName() string { return "UpdateEmailReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UpdateEmailReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateEmailReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateEmailReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateEmailReplyValidationError{}
+
+// Validate checks the field values on UpdatePasswordRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdatePasswordRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdatePasswordRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdatePasswordRequestMultiError, or nil if none found.
+func (m *UpdatePasswordRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdatePasswordRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return UpdatePasswordRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdatePasswordRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdatePasswordRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UpdatePasswordRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdatePasswordRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdatePasswordRequestMultiError) AllErrors() []error { return m }
+
+// UpdatePasswordRequestValidationError is the validation error returned by
+// UpdatePasswordRequest.Validate if the designated constraints aren't met.
+type UpdatePasswordRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdatePasswordRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdatePasswordRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdatePasswordRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdatePasswordRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdatePasswordRequestValidationError) ErrorName() string {
+	return "UpdatePasswordRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdatePasswordRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdatePasswordRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdatePasswordRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdatePasswordRequestValidationError{}
+
+// Validate checks the field values on UpdatePasswordReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdatePasswordReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdatePasswordReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdatePasswordReplyMultiError, or nil if none found.
+func (m *UpdatePasswordReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdatePasswordReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return UpdatePasswordReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdatePasswordReplyMultiError is an error wrapping multiple validation
+// errors returned by UpdatePasswordReply.ValidateAll() if the designated
+// constraints aren't met.
+type UpdatePasswordReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdatePasswordReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdatePasswordReplyMultiError) AllErrors() []error { return m }
+
+// UpdatePasswordReplyValidationError is the validation error returned by
+// UpdatePasswordReply.Validate if the designated constraints aren't met.
+type UpdatePasswordReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdatePasswordReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdatePasswordReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdatePasswordReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdatePasswordReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdatePasswordReplyValidationError) ErrorName() string {
+	return "UpdatePasswordReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdatePasswordReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdatePasswordReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdatePasswordReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdatePasswordReplyValidationError{}
+
 // Validate checks the field values on DeleteRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -1017,15 +1625,9 @@ func (m *RegisterReply) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for Phone
-
 	// no validation rules for Username
 
-	// no validation rules for Token
-
-	// no validation rules for ExpiresAt
-
-	// no validation rules for Email
+	// no validation rules for CreatedAt
 
 	if len(errors) > 0 {
 		return RegisterReplyMultiError(errors)

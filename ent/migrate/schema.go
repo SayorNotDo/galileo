@@ -43,7 +43,7 @@ var (
 		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "avatar", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "role", Type: field.TypeUint8, Default: 3},
-		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "update_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "is_deleted", Type: field.TypeBool, Nullable: true, Default: false},

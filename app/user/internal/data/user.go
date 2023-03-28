@@ -25,7 +25,6 @@ type User struct {
 	Phone       string    `json:"phone"`
 	Status      bool      `json:"status" gorm:"default: true"`
 	UpdateAt    time.Time `json:"update_at" gorm:"autoUpdateTime"`
-	LastLoginAt time.Time `json:"last_login_at"`
 	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
 	DeletedAt   time.Time `json:"deleted_at"`
 	DeletedBy   uint32    `json:"deleted_by"`
@@ -146,11 +145,9 @@ func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error
 		return nil, err
 	}
 	return &biz.User{
-		Id:       createUser.ID,
-		Username: createUser.Username,
-		Email:    createUser.Email,
-		Phone:    createUser.Phone,
-		Status:   createUser.Active,
+		Id:        createUser.ID,
+		Username:  createUser.Username,
+		CreatedAt: createUser.CreatedAt,
 	}, nil
 }
 

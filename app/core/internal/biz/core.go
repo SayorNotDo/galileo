@@ -38,9 +38,9 @@ type User struct {
 	Role        int32
 	Password    string
 	Status      bool
-	CreateAt    time.Time
-	DeleteAt    time.Time
-	DeleteBy    uint32
+	CreatedAt   time.Time
+	DeletedAt   time.Time
+	DeletedBy   uint32
 }
 
 type CoreUseCase struct {
@@ -62,21 +62,10 @@ func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (
 	if err != nil {
 		return nil, err
 	}
-	claims := userClaim(createUser)
-	token, err := auth.CreateToken(*claims, c.signingKey)
-	if err != nil {
-		return nil, err
-	}
-	if _, err = c.cRepo.SetToken(ctx, createUser.Username, token); err != nil {
-		return nil, errors.InternalServer("Internal Server Error", err.Error())
-	}
 	return &v1.RegisterReply{
 		Id:        createUser.Id,
-		Phone:     createUser.Phone,
 		Username:  createUser.Username,
-		Token:     token,
-		Email:     createUser.Email,
-		ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 0, 30)).Unix(),
+		CreatedAt: createUser.CreatedAt.Unix(),
 	}, nil
 }
 
@@ -158,7 +147,7 @@ func (c *CoreUseCase) UserDetail(ctx context.Context, empty *emptypb.Empty) (*v1
 			ChineseName: user.ChineseName,
 			Phone:       user.Phone,
 			Email:       user.Email,
-			Role:        int32(user.Role),
+			Role:        user.Role,
 		},
 	}, nil
 }
@@ -204,6 +193,26 @@ func (c *CoreUseCase) DeleteUser(ctx context.Context, deleteId uint32) (*v1.Dele
 		Message: http.StatusText(http.StatusOK),
 		Data:    nil,
 	}, nil
+}
+
+func (c *CoreUseCase) UpdatePassword(ctx context.Context, req *v1.UpdatePasswordRequest) (*v1.UpdatePasswordReply, error) {
+	userClaim, ok := jwt.FromContext(ctx)
+	if !ok {
+		return nil, ErrInternalServer
+	}
+	uid := fmt.Sprintf("%v", userClaim.(jwt2.MapClaims)["ID"])
+	ctx = metadata.AppendToClientContext(ctx, "x-md-local-uid", uid)
+	return nil, nil
+}
+
+func (c *CoreUseCase) UpdateUserInfo(ctx context.Context, req *v1.UserInfoUpdateRequest) (*v1.UserInfoUpdateReply, error) {
+	userClaim, ok := jwt.FromContext(ctx)
+	if !ok {
+		return nil, ErrInternalServer
+	}
+	uid := fmt.Sprintf("%v", userClaim.(jwt2.MapClaims)["ID"])
+	ctx = metadata.AppendToClientContext(ctx, "x-md-local-uid", uid)
+	return nil, nil
 }
 
 func NewUser(phone, username, password, email string) (User, error) {

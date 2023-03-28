@@ -20,14 +20,17 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Core_Register_FullMethodName   = "/api.core.v1.Core/Register"
-	Core_Login_FullMethodName      = "/api.core.v1.Core/Login"
-	Core_Unregister_FullMethodName = "/api.core.v1.Core/Unregister"
-	Core_Logout_FullMethodName     = "/api.core.v1.Core/Logout"
-	Core_DeleteUser_FullMethodName = "/api.core.v1.Core/DeleteUser"
-	Core_UserDetail_FullMethodName = "/api.core.v1.Core/UserDetail"
-	Core_Update_FullMethodName     = "/api.core.v1.Core/Update"
-	Core_ListUser_FullMethodName   = "/api.core.v1.Core/ListUser"
+	Core_Register_FullMethodName       = "/api.core.v1.Core/Register"
+	Core_Login_FullMethodName          = "/api.core.v1.Core/Login"
+	Core_Unregister_FullMethodName     = "/api.core.v1.Core/Unregister"
+	Core_Logout_FullMethodName         = "/api.core.v1.Core/Logout"
+	Core_DeleteUser_FullMethodName     = "/api.core.v1.Core/DeleteUser"
+	Core_UserDetail_FullMethodName     = "/api.core.v1.Core/UserDetail"
+	Core_UpdateUserInfo_FullMethodName = "/api.core.v1.Core/UpdateUserInfo"
+	Core_UpdatePassword_FullMethodName = "/api.core.v1.Core/UpdatePassword"
+	Core_UpdateEmail_FullMethodName    = "/api.core.v1.Core/UpdateEmail"
+	Core_UpdatePhone_FullMethodName    = "/api.core.v1.Core/UpdatePhone"
+	Core_ListUser_FullMethodName       = "/api.core.v1.Core/ListUser"
 )
 
 // CoreClient is the client API for Core service.
@@ -40,7 +43,10 @@ type CoreClient interface {
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*LogoutReply, error)
 	DeleteUser(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteReply, error)
 	UserDetail(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserDetailReply, error)
-	Update(ctx context.Context, in *UserInfoUpdateRequest, opts ...grpc.CallOption) (*UserInfoUpdateReply, error)
+	UpdateUserInfo(ctx context.Context, in *UserInfoUpdateRequest, opts ...grpc.CallOption) (*UserInfoUpdateReply, error)
+	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*UpdatePasswordReply, error)
+	UpdateEmail(ctx context.Context, in *UpdateEmailRequest, opts ...grpc.CallOption) (*UpdateEmailReply, error)
+	UpdatePhone(ctx context.Context, in *UpdatePhoneRequest, opts ...grpc.CallOption) (*UpdatePhoneReply, error)
 	ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
 }
 
@@ -106,9 +112,36 @@ func (c *coreClient) UserDetail(ctx context.Context, in *emptypb.Empty, opts ...
 	return out, nil
 }
 
-func (c *coreClient) Update(ctx context.Context, in *UserInfoUpdateRequest, opts ...grpc.CallOption) (*UserInfoUpdateReply, error) {
+func (c *coreClient) UpdateUserInfo(ctx context.Context, in *UserInfoUpdateRequest, opts ...grpc.CallOption) (*UserInfoUpdateReply, error) {
 	out := new(UserInfoUpdateReply)
-	err := c.cc.Invoke(ctx, Core_Update_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Core_UpdateUserInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*UpdatePasswordReply, error) {
+	out := new(UpdatePasswordReply)
+	err := c.cc.Invoke(ctx, Core_UpdatePassword_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) UpdateEmail(ctx context.Context, in *UpdateEmailRequest, opts ...grpc.CallOption) (*UpdateEmailReply, error) {
+	out := new(UpdateEmailReply)
+	err := c.cc.Invoke(ctx, Core_UpdateEmail_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) UpdatePhone(ctx context.Context, in *UpdatePhoneRequest, opts ...grpc.CallOption) (*UpdatePhoneReply, error) {
+	out := new(UpdatePhoneReply)
+	err := c.cc.Invoke(ctx, Core_UpdatePhone_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +167,10 @@ type CoreServer interface {
 	Logout(context.Context, *emptypb.Empty) (*LogoutReply, error)
 	DeleteUser(context.Context, *DeleteRequest) (*DeleteReply, error)
 	UserDetail(context.Context, *emptypb.Empty) (*UserDetailReply, error)
-	Update(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error)
+	UpdateUserInfo(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error)
+	UpdatePassword(context.Context, *UpdatePasswordRequest) (*UpdatePasswordReply, error)
+	UpdateEmail(context.Context, *UpdateEmailRequest) (*UpdateEmailReply, error)
+	UpdatePhone(context.Context, *UpdatePhoneRequest) (*UpdatePhoneReply, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	mustEmbedUnimplementedCoreServer()
 }
@@ -161,8 +197,17 @@ func (UnimplementedCoreServer) DeleteUser(context.Context, *DeleteRequest) (*Del
 func (UnimplementedCoreServer) UserDetail(context.Context, *emptypb.Empty) (*UserDetailReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserDetail not implemented")
 }
-func (UnimplementedCoreServer) Update(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+func (UnimplementedCoreServer) UpdateUserInfo(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserInfo not implemented")
+}
+func (UnimplementedCoreServer) UpdatePassword(context.Context, *UpdatePasswordRequest) (*UpdatePasswordReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePassword not implemented")
+}
+func (UnimplementedCoreServer) UpdateEmail(context.Context, *UpdateEmailRequest) (*UpdateEmailReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateEmail not implemented")
+}
+func (UnimplementedCoreServer) UpdatePhone(context.Context, *UpdatePhoneRequest) (*UpdatePhoneReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePhone not implemented")
 }
 func (UnimplementedCoreServer) ListUser(context.Context, *ListUserRequest) (*ListUserReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUser not implemented")
@@ -288,20 +333,74 @@ func _Core_UserDetail_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Core_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Core_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserInfoUpdateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CoreServer).Update(ctx, in)
+		return srv.(CoreServer).UpdateUserInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Core_Update_FullMethodName,
+		FullMethod: Core_UpdateUserInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).Update(ctx, req.(*UserInfoUpdateRequest))
+		return srv.(CoreServer).UpdateUserInfo(ctx, req.(*UserInfoUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_UpdatePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).UpdatePassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_UpdatePassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).UpdatePassword(ctx, req.(*UpdatePasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_UpdateEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).UpdateEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_UpdateEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).UpdateEmail(ctx, req.(*UpdateEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_UpdatePhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePhoneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).UpdatePhone(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_UpdatePhone_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).UpdatePhone(ctx, req.(*UpdatePhoneRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -356,8 +455,20 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Core_UserDetail_Handler,
 		},
 		{
-			MethodName: "Update",
-			Handler:    _Core_Update_Handler,
+			MethodName: "UpdateUserInfo",
+			Handler:    _Core_UpdateUserInfo_Handler,
+		},
+		{
+			MethodName: "UpdatePassword",
+			Handler:    _Core_UpdatePassword_Handler,
+		},
+		{
+			MethodName: "UpdateEmail",
+			Handler:    _Core_UpdateEmail_Handler,
+		},
+		{
+			MethodName: "UpdatePhone",
+			Handler:    _Core_UpdatePhone_Handler,
 		},
 		{
 			MethodName: "ListUser",

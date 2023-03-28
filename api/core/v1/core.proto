@@ -44,17 +44,51 @@ service Core {
       get: "v1/api/user/detail"
     };
   };
-  rpc Update(UserInfoUpdateRequest) returns (UserInfoUpdateReply) {
+  rpc UpdateUserInfo(UserInfoUpdateRequest) returns (UserInfoUpdateReply) {
     option(google.api.http) = {
       put: "v1/api/user/update"
       body: "*"
     };
   };
+  rpc UpdatePassword(UpdatePasswordRequest) returns (UpdatePasswordReply){
+    option(google.api.http) = {
+      put: "v1/api/user/password"
+      body: "*"
+    };
+  }
+  rpc UpdateEmail(UpdateEmailRequest) returns (UpdateEmailReply) {
+    option(google.api.http) = {
+      put: "v1/api/user/email"
+      body: "*"
+    };
+  }
+  rpc UpdatePhone(UpdatePhoneRequest) returns (UpdatePhoneReply) {
+    option(google.api.http) = {
+      put: "v1/api/user/phone"
+      body: "*"
+    };
+  }
   rpc ListUser (ListUserRequest) returns (ListUserReply){
     option(google.api.http) = {
       get: "v1/api/user/list/{pageNum}/{pageSize}"
     };
   }
+}
+
+message UpdatePhoneRequest {}
+
+message UpdatePhoneReply {}
+
+message UpdateEmailRequest {}
+
+message UpdateEmailReply {}
+
+message UpdatePasswordRequest {
+  string password = 1[(validate.rules).string = {min_len: 8}];
+}
+
+message UpdatePasswordReply {
+  bool success = 1;
 }
 
 message DeleteRequest{
@@ -106,11 +140,8 @@ message RegisterRequest {
 
 message RegisterReply {
   uint32 id = 1;
-  string phone = 2;
-  string username = 3;
-  string token = 4;
-  int64 expiresAt = 5;
-  string email = 6;
+  string username = 2;
+  int64 createdAt = 3;
 }
 
 message LogoutRequest {}
