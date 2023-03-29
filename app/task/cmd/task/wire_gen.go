@@ -12,9 +12,12 @@ import (
 	"galileo/app/task/internal/data"
 	"galileo/app/task/internal/server"
 	"galileo/app/task/internal/service"
-
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
+)
+
+import (
+	_ "go.uber.org/automaxprocs"
 )
 
 // Injectors from wire.go:
@@ -25,12 +28,11 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	if err != nil {
 		return nil, nil, err
 	}
-	greeterRepo := data.NewGreeterRepo(dataData, logger)
-	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
-	greeterService := service.NewGreeterService(greeterUsecase)
-	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
-	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
-	app := newApp(logger, grpcServer, httpServer)
+	taskRepo := data.NewTaskRepo(dataData, logger)
+	taskUseCase := biz.NewTaskUseCase(taskRepo, logger)
+	taskService := service.NewTaskService(taskUseCase, logger)
+	grpcServer := server.NewGRPCServer(confServer, taskService, logger)
+	app := newApp(logger, grpcServer)
 	return app, func() {
 		cleanup()
 	}, nil

@@ -5,6 +5,7 @@ package ent
 import (
 	"galileo/ent/project"
 	"galileo/ent/schema"
+	"galileo/ent/task"
 	"galileo/ent/user"
 	"time"
 
@@ -29,6 +30,20 @@ func init() {
 	projectDescStatus := projectFields[9].Descriptor()
 	// project.DefaultStatus holds the default value on creation for the status field.
 	project.DefaultStatus = projectDescStatus.Default.(int16)
+	taskFields := schema.Task{}.Fields()
+	_ = taskFields
+	// taskDescCreatedAt is the schema descriptor for created_at field.
+	taskDescCreatedAt := taskFields[2].Descriptor()
+	// task.DefaultCreatedAt holds the default value on creation for the created_at field.
+	task.DefaultCreatedAt = taskDescCreatedAt.Default.(func() time.Time)
+	// taskDescRank is the schema descriptor for rank field.
+	taskDescRank := taskFields[4].Descriptor()
+	// task.DefaultRank holds the default value on creation for the rank field.
+	task.DefaultRank = taskDescRank.Default.(int8)
+	// taskDescUpdateAt is the schema descriptor for update_at field.
+	taskDescUpdateAt := taskFields[8].Descriptor()
+	// task.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
+	task.UpdateDefaultUpdateAt = taskDescUpdateAt.UpdateDefault.(func() time.Time)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.

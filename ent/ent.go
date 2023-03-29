@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"galileo/ent/project"
+	"galileo/ent/task"
 	"galileo/ent/user"
 	"reflect"
 
@@ -67,6 +68,7 @@ type OrderFunc func(*sql.Selector)
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		project.Table: project.ValidColumn,
+		task.Table:    task.ValidColumn,
 		user.Table:    user.ValidColumn,
 	}
 	check, ok := checks[table]

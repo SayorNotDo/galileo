@@ -30,6 +30,30 @@ var (
 		Columns:    ProjectColumns,
 		PrimaryKey: []*schema.Column{ProjectColumns[0]},
 	}
+	// TaskColumns holds the columns for the "task" table.
+	TaskColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeUint32},
+		{Name: "rank", Type: field.TypeInt8, Default: 1},
+		{Name: "type", Type: field.TypeInt16},
+		{Name: "status", Type: field.TypeInt16},
+		{Name: "complete_at", Type: field.TypeTime, Nullable: true},
+		{Name: "update_at", Type: field.TypeTime},
+		{Name: "update_by", Type: field.TypeUint32},
+		{Name: "is_deleted", Type: field.TypeBool, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
+		{Name: "description", Type: field.TypeString, Size: 2147483647},
+		{Name: "url", Type: field.TypeJSON},
+	}
+	// TaskTable holds the schema information for the "task" table.
+	TaskTable = &schema.Table{
+		Name:       "task",
+		Columns:    TaskColumns,
+		PrimaryKey: []*schema.Column{TaskColumns[0]},
+	}
 	// UserColumns holds the columns for the "user" table.
 	UserColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
@@ -58,6 +82,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		ProjectTable,
+		TaskTable,
 		UserTable,
 	}
 )
@@ -65,6 +90,9 @@ var (
 func init() {
 	ProjectTable.Annotation = &entsql.Annotation{
 		Table: "project",
+	}
+	TaskTable.Annotation = &entsql.Annotation{
+		Table: "task",
 	}
 	UserTable.Annotation = &entsql.Annotation{
 		Table: "user",
