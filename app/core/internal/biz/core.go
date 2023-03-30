@@ -6,7 +6,7 @@ import (
 	v1 "galileo/api/core/v1"
 	"galileo/app/core/internal/conf"
 	"galileo/app/core/internal/pkg/middleware/auth"
-	. "galileo/pkg/errors"
+	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/metadata"
@@ -70,15 +70,15 @@ func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (
 }
 
 func (c *CoreUseCase) Logout(ctx context.Context) (*v1.LogoutReply, error) {
-	userClaim, ok := jwt.FromContext(ctx)
-	if !ok {
-		return nil, ErrUnauthenticated
-	}
-	uid := fmt.Sprintf("%v", userClaim.(jwt2.MapClaims)["ID"])
-	ctx = metadata.AppendToClientContext(ctx, "x-md-local-uid", uid)
-	if ok, err := c.cRepo.EmptyToken(ctx); !ok {
-		return nil, errors.InternalServer("Internal Server Error", err.Error())
-	}
+	//userClaim, ok := jwt.FromContext(ctx)
+	//if !ok {
+	//	return nil, SetErrByReason(ReasonUnknownError)
+	//}
+	//uid := fmt.Sprintf("%v", userClaim.(jwt2.MapClaims)["ID"])
+	//ctx = metadata.AppendToClientContext(ctx, "x-md-local-uid", uid)
+	//if ok, err := c.cRepo.EmptyToken(ctx); !ok {
+	//	return nil, errors.InternalServer("Internal Server Error", err.Error())
+	//}
 	return &v1.LogoutReply{
 		Success: true,
 	}, nil
@@ -99,10 +99,10 @@ func userClaim(u *User) *auth.CustomClaims {
 
 func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginReply, error) {
 	if len(req.Username) <= 0 {
-		return nil, ErrUsernameInvalid
+		return nil, SetErrByReason(ReasonParamsError)
 	}
 	if len(req.Password) <= 0 {
-		return nil, ErrPasswordInvalid
+		return nil, SetErrByReason(ReasonParamsError)
 	}
 	user, err := c.cRepo.UserByUsername(ctx, req.Username)
 	if err != nil {
@@ -114,23 +114,19 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	claims := userClaim(user)
 	token, err := auth.CreateToken(*claims, c.signingKey)
 	if err != nil {
-		return nil, ErrInternalServer
+		return nil, SetErrByReason(ReasonParamsError)
 	}
 	return &v1.LoginReply{
-		Code:    http.StatusOK,
-		Message: http.StatusText(http.StatusOK),
-		Data: &v1.TokenInfo{
-			Type:      "Bearer",
-			Token:     token,
-			ExpiresAt: time.Now().AddDate(0, 0, 1).Unix(),
-		},
+		Type:      "Bearer",
+		Token:     token,
+		ExpiresAt: time.Now().AddDate(0, 0, 1).Unix(),
 	}, nil
 }
 
 func (c *CoreUseCase) UserDetail(ctx context.Context, empty *emptypb.Empty) (*v1.UserDetailReply, error) {
 	userClaim, ok := jwt.FromContext(ctx)
 	if !ok {
-		return nil, ErrInternalServer
+		return nil, SetErrByReason(ReasonUnknownError)
 	}
 	uid := uint32(userClaim.(jwt2.MapClaims)["ID"].(float64))
 	user, err := c.cRepo.UserById(ctx, uid)
@@ -138,8 +134,6 @@ func (c *CoreUseCase) UserDetail(ctx context.Context, empty *emptypb.Empty) (*v1
 		return nil, err
 	}
 	return &v1.UserDetailReply{
-		Code:    http.StatusOK,
-		Message: http.StatusText(http.StatusOK),
 		Data: &v1.UserDetail{
 			Id:          user.Id,
 			Username:    user.Username,
@@ -168,7 +162,7 @@ func (c *CoreUseCase) ListUser(ctx context.Context, pageNum, pageSize int32) (*v
 func (c *CoreUseCase) DeleteUser(ctx context.Context, deleteId uint32) (*v1.DeleteReply, error) {
 	userClaim, ok := jwt.FromContext(ctx)
 	if !ok {
-		return nil, ErrInternalServer
+		return nil, SetErrByReason(ReasonUnknownError)
 	}
 	role := int(userClaim.(jwt2.MapClaims)["AuthorityId"].(float64))
 	uid := fmt.Sprintf("%v", userClaim.(jwt2.MapClaims)["ID"])
@@ -194,7 +188,7 @@ func (c *CoreUseCase) DeleteUser(ctx context.Context, deleteId uint32) (*v1.Dele
 func (c *CoreUseCase) UpdatePassword(ctx context.Context, req *v1.UpdatePasswordRequest) (*v1.UpdatePasswordReply, error) {
 	userClaim, ok := jwt.FromContext(ctx)
 	if !ok {
-		return nil, ErrInternalServer
+		return nil, SetErrByReason(ReasonUnknownError)
 	}
 	uid := fmt.Sprintf("%v", userClaim.(jwt2.MapClaims)["ID"])
 	ctx = metadata.AppendToClientContext(ctx, "x-md-local-uid", uid)
@@ -204,7 +198,7 @@ func (c *CoreUseCase) UpdatePassword(ctx context.Context, req *v1.UpdatePassword
 func (c *CoreUseCase) UpdateUserInfo(ctx context.Context, req *v1.UserInfoUpdateRequest) (*v1.UserInfoUpdateReply, error) {
 	userClaim, ok := jwt.FromContext(ctx)
 	if !ok {
-		return nil, ErrInternalServer
+		return nil, SetErrByReason(ReasonUnknownError)
 	}
 	uid := fmt.Sprintf("%v", userClaim.(jwt2.MapClaims)["ID"])
 	ctx = metadata.AppendToClientContext(ctx, "x-md-local-uid", uid)
@@ -213,16 +207,16 @@ func (c *CoreUseCase) UpdateUserInfo(ctx context.Context, req *v1.UserInfoUpdate
 
 func NewUser(phone, username, password, email string) (User, error) {
 	if len(phone) <= 0 {
-		return User{}, ErrPhoneInvalid
+		return User{}, SetErrByReason(ReasonParamsError)
 	}
 	if len(username) <= 0 {
-		return User{}, ErrUsernameInvalid
+		return User{}, SetErrByReason(ReasonParamsError)
 	}
 	if len(password) <= 0 {
-		return User{}, ErrPasswordInvalid
+		return User{}, SetErrByReason(ReasonParamsError)
 	}
 	if len(email) <= 0 {
-		return User{}, ErrEmailInvalid
+		return User{}, SetErrByReason(ReasonParamsError)
 	}
 	return User{
 		Phone:    phone,

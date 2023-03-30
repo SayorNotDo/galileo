@@ -26,7 +26,8 @@ import (
 func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, confService *conf.Service, registry *conf.Registry, logger log.Logger) (*kratos.App, func(), error) {
 	discovery := data.NewDiscovery(registry)
 	userClient := data.NewUserServiceClient(auth, confService, discovery)
-	dataData, err := data.NewData(confData, userClient, logger)
+	cmdable := data.NewRedis(confData, logger)
+	dataData, err := data.NewData(confData, userClient, logger, cmdable)
 	if err != nil {
 		return nil, nil, err
 	}

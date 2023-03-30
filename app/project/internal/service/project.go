@@ -34,15 +34,15 @@ func (s *ProjectService) CreateProject(ctx context.Context, req *v1.CreateProjec
 	}, nil
 }
 
-//func (s *ProjectService) UpdateProject(ctx context.Context, req *pb.UpdateProjectRequest) (*pb.UpdateProjectReply, errors) {
+//func (s *ProjectService) UpdateProject(ctx context.Context, req *pb.UpdateProjectRequest) (*pb.UpdateProjectReply, errResponse) {
 //	return &pb.UpdateProjectReply{}, nil
 //}
-//func (s *ProjectService) DeleteProject(ctx context.Context, req *pb.DeleteProjectRequest) (*pb.DeleteProjectReply, errors) {
+//func (s *ProjectService) DeleteProject(ctx context.Context, req *pb.DeleteProjectRequest) (*pb.DeleteProjectReply, errResponse) {
 //	return &pb.DeleteProjectReply{}, nil
 //}
-//func (s *ProjectService) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.GetProjectReply, errors) {
+//func (s *ProjectService) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.GetProjectReply, errResponse) {
 //	return &pb.GetProjectReply{}, nil
 //}
-//func (s *ProjectService) ListProject(ctx context.Context, req *pb.ListProjectRequest) (*pb.ListProjectReply, errors) {
+//func (s *ProjectService) ListProject(ctx context.Context, req *pb.ListProjectRequest) (*pb.ListProjectReply, errResponse) {
 //	return &pb.ListProjectReply{}, nil
 //}

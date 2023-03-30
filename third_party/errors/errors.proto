@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package errors;
 
-option go_package = "github.com/go-kratos/kratos/v2/errors;errors";
+option go_package = "github.com/go-kratos/kratos/v2/errResponse;errResponse";
 option java_multiple_files = true;
-option java_package = "com.github.kratos.errors";
+option java_package = "com.github.kratos.errResponse";
 option objc_class_prefix = "KratosErrors";
 
 import "google/protobuf/descriptor.proto";

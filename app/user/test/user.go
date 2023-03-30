@@ -17,7 +17,7 @@ func init() {
 	var err error
 	conn, err = grpc.Dial("localhost:9000", grpc.WithInsecure())
 	if err != nil {
-		panic("grpc link errors" + err.Error())
+		panic("grpc link errResponse" + err.Error())
 	}
 	userClient = v1.NewUserClient(conn)
 }
@@ -25,7 +25,7 @@ func main() {
 	defer func(conn *grpc.ClientConn) {
 		err := conn.Close()
 		if err != nil {
-			panic("grpc close errors" + err.Error())
+			panic("grpc close errResponse" + err.Error())
 		}
 	}(conn)
 	testCreateUser()

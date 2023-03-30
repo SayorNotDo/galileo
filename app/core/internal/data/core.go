@@ -125,6 +125,10 @@ func (r *coreRepo) SetToken(c context.Context, username string, token string) (b
 	return rsp.Success, nil
 }
 
+//func (r *coreRepo) GetToken(c context.Context, jwtToken map[string]interface{}) {
+//
+//}
+
 func (r *coreRepo) EmptyToken(c context.Context) (bool, error) {
 	rsp, err := r.data.uc.EmptyToken(c, &emptypb.Empty{})
 	if err != nil {

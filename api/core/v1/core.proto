@@ -151,9 +151,9 @@ message LoginRequest{
 }
 
 message LoginReply{
-  int32 code = 1;
-  string message = 2;
-  TokenInfo data = 3;
+  string type = 1;
+  string token = 2;
+  int64 expiresAt = 3;
 }
 
 message TokenInfo{
@@ -175,7 +175,5 @@ message UserDetail {
   int32 role = 7;
 }
 message UserDetailReply {
-  int32 code = 1;
-  string message = 2;
-  UserDetail data = 3;
+  UserDetail data = 1;
 }
