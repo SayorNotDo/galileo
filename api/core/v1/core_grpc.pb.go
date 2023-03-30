@@ -40,7 +40,7 @@ type CoreClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
 	Unregister(ctx context.Context, in *UnregisterRequest, opts ...grpc.CallOption) (*UnregisterReply, error)
-	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*LogoutReply, error)
+	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteUser(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteReply, error)
 	UserDetail(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserDetailReply, error)
 	UpdateUserInfo(ctx context.Context, in *UserInfoUpdateRequest, opts ...grpc.CallOption) (*UserInfoUpdateReply, error)
@@ -85,8 +85,8 @@ func (c *coreClient) Unregister(ctx context.Context, in *UnregisterRequest, opts
 	return out, nil
 }
 
-func (c *coreClient) Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*LogoutReply, error) {
-	out := new(LogoutReply)
+func (c *coreClient) Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, Core_Logout_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -164,7 +164,7 @@ type CoreServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error)
-	Logout(context.Context, *emptypb.Empty) (*LogoutReply, error)
+	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	DeleteUser(context.Context, *DeleteRequest) (*DeleteReply, error)
 	UserDetail(context.Context, *emptypb.Empty) (*UserDetailReply, error)
 	UpdateUserInfo(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error)
@@ -188,7 +188,7 @@ func (UnimplementedCoreServer) Login(context.Context, *LoginRequest) (*LoginRepl
 func (UnimplementedCoreServer) Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Unregister not implemented")
 }
-func (UnimplementedCoreServer) Logout(context.Context, *emptypb.Empty) (*LogoutReply, error) {
+func (UnimplementedCoreServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
 func (UnimplementedCoreServer) DeleteUser(context.Context, *DeleteRequest) (*DeleteReply, error) {

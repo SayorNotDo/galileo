@@ -28,7 +28,7 @@ service Core {
       delete: "v1/api/user/unregister"
     };
   };
-  rpc Logout (google.protobuf.Empty) returns (LogoutReply){
+  rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty){
     option(google.api.http) = {
       post: "v1/api/user/logout"
       body: "*"
@@ -138,11 +138,6 @@ message RegisterReply {
   uint32 id = 1;
   string username = 2;
   int64 createdAt = 3;
-}
-
-message LogoutRequest {}
-message LogoutReply {
-  bool success = 1;
 }
 
 message LoginRequest{

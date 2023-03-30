@@ -14,6 +14,13 @@ const ReasonParamsError = "PARAMS_ERROR"
 const TimeFormatError = "TIME_FORMAT_ERROR"
 const ReasonRecordNotFound = "RECORD_NOT_FOUND"
 
+const ReasonUserNotFound = "USER_NOT_FOUND"
+const ReasonUserPasswordError = "USER_PASSWORD_ERROR"
+const ReasonUserForbidden = "USER_FORBIDDEN"
+const ReasonUserDeleted = "USER_DELETED"
+const ReasonUserUsernameExist = "USER_USERNAME_EXIST"
+const ReasonUserPhoneExist = "USER_PHONE_EXIST"
+
 const ReasonAdministratorNotFound = "ADMINISTRATOR_NOT_FOUND"
 const ReasonAdministratorPasswordError = "ADMINISTRATOR_PASSWORD_ERROR"
 const ReasonAdministratorForbidden = "ADMINISTRATOR_FORBIDDEN"
@@ -45,8 +52,15 @@ const ReasonServiceGatewayTimeout = "SERVICE_GATEWAY_TIMEOUT"
 const ReasonServiceUnavailable = "SERVICE_GATEWAY_UNAVAILABLE"
 
 var reasonMessageAll = map[string]string{
-	ReasonSuccess:      "请求成功",
-	ReasonUnknownError: "未知错误",
+	ReasonUserNotFound:      "user not found",
+	ReasonUserPasswordError: "user password error",
+	ReasonUserForbidden:     "user forbidden",
+	ReasonUserDeleted:       "user has been deleted",
+	ReasonUserUsernameExist: "username is already exist",
+	ReasonUserPhoneExist:    "phone is already exist",
+
+	ReasonSuccess:      "success",
+	ReasonUnknownError: "unknown error",
 
 	ReasonParamsError:    "请求参数错误",
 	ReasonMissingParams:  "请求参数错误",
@@ -102,6 +116,13 @@ var reasonCodeAll = map[string]int{
 	ReasonAdministratorDeleted:       20004,
 	ReasonAdministratorUsernameExist: 20005,
 	ReasonAdministratorMobileExist:   20006,
+
+	ReasonUserNotFound:      40000,
+	ReasonUserPasswordError: 40001,
+	ReasonUserForbidden:     40003,
+	ReasonUserDeleted:       40004,
+	ReasonUserUsernameExist: 20002,
+	ReasonUserPhoneExist:    20002,
 
 	ReasonAdministratorUnauthorized:       40000,
 	ReasonUnauthorizedRole:                40001,

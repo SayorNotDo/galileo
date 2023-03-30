@@ -5,8 +5,10 @@ import (
 	v1 "galileo/api/core/v1"
 	userService "galileo/api/user/v1"
 	"galileo/app/core/internal/biz"
+	"galileo/pkg/encryption"
 	"github.com/go-kratos/kratos/v2/log"
-	"google.golang.org/protobuf/types/known/emptypb"
+	"github.com/go-kratos/kratos/v2/transport"
+	"strings"
 	"time"
 )
 
@@ -117,22 +119,16 @@ func (r *coreRepo) UpdateUserInfo(c context.Context, user *biz.User) (bool, erro
 	return false, nil
 }
 
-func (r *coreRepo) SetToken(c context.Context, username string, token string) (bool, error) {
-	rsp, err := r.data.uc.SetToken(c, &userService.SetTokenRequest{Username: username, Token: token})
-	if err != nil {
-		return false, err
-	}
-	return rsp.Success, nil
+func (r *coreRepo) SetToken(ctx context.Context, token string) (string, error) {
+	key := encryption.EncodeMD5(token)
+	r.data.redisCli.Set(ctx, key, token, time.Hour*24*30)
+	return key, nil
 }
 
-//func (r *coreRepo) GetToken(c context.Context, jwtToken map[string]interface{}) {
-//
-//}
-
-func (r *coreRepo) EmptyToken(c context.Context) (bool, error) {
-	rsp, err := r.data.uc.EmptyToken(c, &emptypb.Empty{})
-	if err != nil {
-		return false, err
-	}
-	return rsp.IsEmpty, nil
+func (r *coreRepo) DestroyToken(ctx context.Context) error {
+	tr, _ := transport.FromServerContext(ctx)
+	jwtToken := strings.SplitN(tr.RequestHeader().Get("Authorization"), " ", 2)[1]
+	key := encryption.EncodeMD5(jwtToken)
+	r.data.redisCli.Del(ctx, key)
+	return nil
 }

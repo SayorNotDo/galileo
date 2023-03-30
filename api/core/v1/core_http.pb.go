@@ -36,7 +36,7 @@ type CoreHTTPServer interface {
 	DeleteUser(context.Context, *DeleteRequest) (*DeleteReply, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
-	Logout(context.Context, *emptypb.Empty) (*LogoutReply, error)
+	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error)
 	UpdateEmail(context.Context, *UpdateEmailRequest) (*UpdateEmailReply, error)
@@ -132,7 +132,7 @@ func _Core_Logout0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error
 		if err != nil {
 			return err
 		}
-		reply := out.(*LogoutReply)
+		reply := out.(*emptypb.Empty)
 		return ctx.Result(200, reply)
 	}
 }
@@ -280,7 +280,7 @@ type CoreHTTPClient interface {
 	DeleteUser(ctx context.Context, req *DeleteRequest, opts ...http.CallOption) (rsp *DeleteReply, err error)
 	ListUser(ctx context.Context, req *ListUserRequest, opts ...http.CallOption) (rsp *ListUserReply, err error)
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *LoginReply, err error)
-	Logout(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *LogoutReply, err error)
+	Logout(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *RegisterReply, err error)
 	Unregister(ctx context.Context, req *UnregisterRequest, opts ...http.CallOption) (rsp *UnregisterReply, err error)
 	UpdateEmail(ctx context.Context, req *UpdateEmailRequest, opts ...http.CallOption) (rsp *UpdateEmailReply, err error)
@@ -337,8 +337,8 @@ func (c *CoreHTTPClientImpl) Login(ctx context.Context, in *LoginRequest, opts .
 	return &out, err
 }
 
-func (c *CoreHTTPClientImpl) Logout(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*LogoutReply, error) {
-	var out LogoutReply
+func (c *CoreHTTPClientImpl) Logout(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
 	pattern := "v1/api/user/logout"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationCoreLogout))

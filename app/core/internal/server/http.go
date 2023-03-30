@@ -82,7 +82,7 @@ type Response struct {
 
 func responseEncoder(w stdHttp.ResponseWriter, r *stdHttp.Request, v interface{}) error {
 	reply := &Response{}
-	reply.Code = 200
+	reply.Code = 20000
 	reply.Message = "success"
 
 	codec, _ := http.CodecForRequest(r, "Accept")
@@ -127,9 +127,7 @@ func setHeaderInfo() middleware.Middleware {
 					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedRole)
 				}
 				jwtToken := auth[1]
-				println("jwt token: ", jwtToken)
 				token, _ := data.RedisCli.Get(ctx, jwtToken).Result()
-				println("token: ", token)
 				if token == "" {
 					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedRole)
 				}

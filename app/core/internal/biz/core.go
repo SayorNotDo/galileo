@@ -24,8 +24,8 @@ type CoreRepo interface {
 	UserById(context.Context, uint32) (*User, error)
 	ListUser(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserDetail, int32, error)
 	SoftDeleteUser(ctx context.Context, uid uint32) (bool, error)
-	SetToken(ctx context.Context, username string, token string) (bool, error)
-	EmptyToken(ctx context.Context) (bool, error)
+	SetToken(ctx context.Context, token string) (string, error)
+	DestroyToken(ctx context.Context) error
 }
 type User struct {
 	Id          uint32
@@ -69,19 +69,14 @@ func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (
 	}, nil
 }
 
-func (c *CoreUseCase) Logout(ctx context.Context) (*v1.LogoutReply, error) {
-	//userClaim, ok := jwt.FromContext(ctx)
-	//if !ok {
-	//	return nil, SetErrByReason(ReasonUnknownError)
-	//}
-	//uid := fmt.Sprintf("%v", userClaim.(jwt2.MapClaims)["ID"])
-	//ctx = metadata.AppendToClientContext(ctx, "x-md-local-uid", uid)
-	//if ok, err := c.cRepo.EmptyToken(ctx); !ok {
-	//	return nil, errors.InternalServer("Internal Server Error", err.Error())
-	//}
-	return &v1.LogoutReply{
-		Success: true,
-	}, nil
+func (c *CoreUseCase) Logout(ctx context.Context) (*emptypb.Empty, error) {
+	claims, _ := jwt.FromContext(ctx)
+	id := uint32(claims.(jwt2.MapClaims)["ID"].(float64))
+	if _, err := c.cRepo.UserById(ctx, id); err != nil {
+		return nil, err
+	}
+	_ = c.cRepo.DestroyToken(ctx)
+	return nil, nil
 }
 
 func userClaim(u *User) *auth.CustomClaims {
@@ -116,9 +111,10 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	if err != nil {
 		return nil, SetErrByReason(ReasonParamsError)
 	}
+	encryptionToken, _ := c.cRepo.SetToken(ctx, token)
 	return &v1.LoginReply{
 		Type:      "Bearer",
-		Token:     token,
+		Token:     encryptionToken,
 		ExpiresAt: time.Now().AddDate(0, 0, 1).Unix(),
 	}, nil
 }

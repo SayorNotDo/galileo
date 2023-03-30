@@ -140,10 +140,7 @@ paths:
             responses:
                 "200":
                     description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/LogoutReply'
+                    content: {}
                 default:
                     description: Default error response
                     content:
@@ -323,11 +320,6 @@ components:
                     type: string
                 password:
                     type: string
-        LogoutReply:
-            type: object
-            properties:
-                success:
-                    type: boolean
         RegisterReply:
             type: object
             properties:
