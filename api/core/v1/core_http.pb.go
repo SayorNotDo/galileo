@@ -57,7 +57,7 @@ func RegisterCoreHTTPServer(s *http.Server, srv CoreHTTPServer) {
 	r.PUT("v1/api/user/update", _Core_UpdateUserInfo0_HTTP_Handler(srv))
 	r.PUT("v1/api/user/password", _Core_UpdatePassword0_HTTP_Handler(srv))
 	r.PUT("v1/api/user/email", _Core_UpdateEmail0_HTTP_Handler(srv))
-	r.PUT("v1/api/user/email", _Core_UpdatePhone0_HTTP_Handler(srv))
+	r.PUT("v1/api/user/phone", _Core_UpdatePhone0_HTTP_Handler(srv))
 	r.GET("v1/api/user/list/{pageNum}/{pageSize}", _Core_ListUser0_HTTP_Handler(srv))
 }
 
@@ -404,7 +404,7 @@ func (c *CoreHTTPClientImpl) UpdatePassword(ctx context.Context, in *UpdatePassw
 
 func (c *CoreHTTPClientImpl) UpdatePhone(ctx context.Context, in *UpdatePhoneRequest, opts ...http.CallOption) (*UpdatePhoneReply, error) {
 	var out UpdatePhoneReply
-	pattern := "v1/api/user/email"
+	pattern := "v1/api/user/phone"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationCoreUpdatePhone))
 	opts = append(opts, http.PathTemplate(pattern))

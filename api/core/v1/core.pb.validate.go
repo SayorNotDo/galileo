@@ -461,6 +461,17 @@ func (m *UpdatePasswordRequest) validate(all bool) error {
 
 	var errors []error
 
+	if utf8.RuneCountInString(m.GetPassword()) < 8 {
+		err := UpdatePasswordRequestValidationError{
+			field:  "Password",
+			reason: "value length must be at least 8 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return UpdatePasswordRequestMultiError(errors)
 	}
@@ -562,6 +573,8 @@ func (m *UpdatePasswordReply) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Success
 
 	if len(errors) > 0 {
 		return UpdatePasswordReplyMultiError(errors)
@@ -766,10 +779,6 @@ func (m *DeleteReply) validate(all bool) error {
 	}
 
 	var errors []error
-
-	// no validation rules for Code
-
-	// no validation rules for Message
 
 	if all {
 		switch v := interface{}(m.GetData()).(type) {
@@ -1002,10 +1011,6 @@ func (m *ListUserReply) validate(all bool) error {
 	}
 
 	var errors []error
-
-	// no validation rules for Code
-
-	// no validation rules for Message
 
 	if all {
 		switch v := interface{}(m.GetData()).(type) {

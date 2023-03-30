@@ -158,8 +158,6 @@ func (c *CoreUseCase) ListUser(ctx context.Context, pageNum, pageSize int32) (*v
 		return nil, err
 	}
 	return &v1.ListUserReply{
-		Code:    http.StatusOK,
-		Message: http.StatusText(http.StatusOK),
 		Data: &v1.ListUserReply_ListUser{
 			Total:    total,
 			UserList: user,
@@ -189,9 +187,7 @@ func (c *CoreUseCase) DeleteUser(ctx context.Context, deleteId uint32) (*v1.Dele
 		return nil, err
 	}
 	return &v1.DeleteReply{
-		Code:    http.StatusOK,
-		Message: http.StatusText(http.StatusOK),
-		Data:    nil,
+		Data: nil,
 	}, nil
 }
 

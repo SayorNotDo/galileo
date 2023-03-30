@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package api.file.v1;
+
+import "google/protobuf/empty.proto";
+option go_package = "galileo/api/file/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.file.v1";
+
+service File {
+  rpc GetOssStsToken (google.protobuf.Empty) returns (OssStsTokenReply);
+  rpc CreateFile (CreateFileRequest) returns (CreateFileReply);
+  rpc UploadFile (UploadFileRequest) returns (UploadFileReply);
+  rpc UpdateFile (UpdateFileRequest) returns (UpdateFileReply);
+  rpc DeleteFile (DeleteFileRequest) returns (DeleteFileReply);
+  rpc GetFile (GetFileRequest) returns (GetFileReply);
+  rpc ListFile (ListFileRequest) returns (ListFileReply);
+}
+
+message OssStsTokenReply {
+  string accessKey = 1;
+  string accessSecret = 2;
+  string expiration = 3;
+  string securityToken = 4;
+  string endPoint = 5;
+  string bucketName = 6;
+  string region = 7;
+  string url = 8;
+}
+
+message UploadFileRequest {
+  string name = 1;
+  string type = 2;
+  bytes content = 3;
+}
+message UploadFileReply {
+  string url = 1;
+}
+
+message CreateFileRequest {}
+message CreateFileReply {}
+
+message UpdateFileRequest {}
+message UpdateFileReply {}
+
+message DeleteFileRequest {}
+message DeleteFileReply {}
+
+message GetFileRequest {}
+message GetFileReply {}
+
+message ListFileRequest {}
+message ListFileReply {}

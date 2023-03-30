@@ -96,14 +96,12 @@ message DeleteRequest{
 }
 
 message DeleteReply{
-  int32 code = 1;
-  string message = 2;
   message DeleteInfo{
     uint32 id = 1;
     int64 deleteAt = 2;
     uint32 deleteBy = 3;
   };
-  DeleteInfo data = 3;
+  DeleteInfo data = 1;
 }
 
 message ListUserRequest {
@@ -112,13 +110,11 @@ message ListUserRequest {
 }
 
 message ListUserReply {
-  int32 code = 1;
-  string message = 2;
   message ListUser {
     int32 total = 1;
     repeated UserDetail userList = 2;
   }
-  ListUser data = 3;
+  ListUser data = 1;
 }
 
 message UserInfoUpdateRequest {
