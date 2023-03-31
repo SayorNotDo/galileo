@@ -26,10 +26,6 @@ func (s *FileService) GetOssStsToken(ctx context.Context, req *emptypb.Empty) (*
 	return &v1.OssStsTokenReply{}, nil
 }
 
-func (s *FileService) CreateFile(ctx context.Context, req *v1.CreateFileRequest) (*v1.CreateFileReply, error) {
-	return &v1.CreateFileReply{}, nil
-}
-
 func (s *FileService) UploadFile(ctx context.Context, req *v1.UploadFileRequest) (*v1.UploadFileReply, error) {
 	url, err := s.uc.UploadFile(ctx, req.Name, req.Type, req.Content)
 	if err != nil {
@@ -48,10 +44,6 @@ func (s *FileService) DeleteFile(ctx context.Context, req *v1.DeleteFileRequest)
 	return &v1.DeleteFileReply{}, nil
 }
 
-func (s *FileService) GetFile(ctx context.Context, req *v1.GetFileRequest) (*v1.GetFileReply, error) {
-	return &v1.GetFileReply{}, nil
-}
-
-func (s *FileService) ListFile(ctx context.Context, req *v1.ListFileRequest) (*v1.ListFileReply, error) {
-	return &v1.ListFileReply{}, nil
+func (s *FileService) DownloadFile(ctx context.Context, req *v1.DownloadFileRequest) (*v1.DownloadFileReply, error) {
+	return &v1.DownloadFileReply{}, nil
 }

@@ -21,12 +21,10 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	File_GetOssStsToken_FullMethodName = "/api.file.v1.File/GetOssStsToken"
-	File_CreateFile_FullMethodName     = "/api.file.v1.File/CreateFile"
 	File_UploadFile_FullMethodName     = "/api.file.v1.File/UploadFile"
 	File_UpdateFile_FullMethodName     = "/api.file.v1.File/UpdateFile"
 	File_DeleteFile_FullMethodName     = "/api.file.v1.File/DeleteFile"
-	File_GetFile_FullMethodName        = "/api.file.v1.File/GetFile"
-	File_ListFile_FullMethodName       = "/api.file.v1.File/ListFile"
+	File_DownloadFile_FullMethodName   = "/api.file.v1.File/DownloadFile"
 )
 
 // FileClient is the client API for File service.
@@ -34,12 +32,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FileClient interface {
 	GetOssStsToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*OssStsTokenReply, error)
-	CreateFile(ctx context.Context, in *CreateFileRequest, opts ...grpc.CallOption) (*CreateFileReply, error)
 	UploadFile(ctx context.Context, in *UploadFileRequest, opts ...grpc.CallOption) (*UploadFileReply, error)
 	UpdateFile(ctx context.Context, in *UpdateFileRequest, opts ...grpc.CallOption) (*UpdateFileReply, error)
 	DeleteFile(ctx context.Context, in *DeleteFileRequest, opts ...grpc.CallOption) (*DeleteFileReply, error)
-	GetFile(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (*GetFileReply, error)
-	ListFile(ctx context.Context, in *ListFileRequest, opts ...grpc.CallOption) (*ListFileReply, error)
+	DownloadFile(ctx context.Context, in *DownloadFileRequest, opts ...grpc.CallOption) (*DownloadFileReply, error)
 }
 
 type fileClient struct {
@@ -53,15 +49,6 @@ func NewFileClient(cc grpc.ClientConnInterface) FileClient {
 func (c *fileClient) GetOssStsToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*OssStsTokenReply, error) {
 	out := new(OssStsTokenReply)
 	err := c.cc.Invoke(ctx, File_GetOssStsToken_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *fileClient) CreateFile(ctx context.Context, in *CreateFileRequest, opts ...grpc.CallOption) (*CreateFileReply, error) {
-	out := new(CreateFileReply)
-	err := c.cc.Invoke(ctx, File_CreateFile_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -95,18 +82,9 @@ func (c *fileClient) DeleteFile(ctx context.Context, in *DeleteFileRequest, opts
 	return out, nil
 }
 
-func (c *fileClient) GetFile(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (*GetFileReply, error) {
-	out := new(GetFileReply)
-	err := c.cc.Invoke(ctx, File_GetFile_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *fileClient) ListFile(ctx context.Context, in *ListFileRequest, opts ...grpc.CallOption) (*ListFileReply, error) {
-	out := new(ListFileReply)
-	err := c.cc.Invoke(ctx, File_ListFile_FullMethodName, in, out, opts...)
+func (c *fileClient) DownloadFile(ctx context.Context, in *DownloadFileRequest, opts ...grpc.CallOption) (*DownloadFileReply, error) {
+	out := new(DownloadFileReply)
+	err := c.cc.Invoke(ctx, File_DownloadFile_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -118,12 +96,10 @@ func (c *fileClient) ListFile(ctx context.Context, in *ListFileRequest, opts ...
 // for forward compatibility
 type FileServer interface {
 	GetOssStsToken(context.Context, *emptypb.Empty) (*OssStsTokenReply, error)
-	CreateFile(context.Context, *CreateFileRequest) (*CreateFileReply, error)
 	UploadFile(context.Context, *UploadFileRequest) (*UploadFileReply, error)
 	UpdateFile(context.Context, *UpdateFileRequest) (*UpdateFileReply, error)
 	DeleteFile(context.Context, *DeleteFileRequest) (*DeleteFileReply, error)
-	GetFile(context.Context, *GetFileRequest) (*GetFileReply, error)
-	ListFile(context.Context, *ListFileRequest) (*ListFileReply, error)
+	DownloadFile(context.Context, *DownloadFileRequest) (*DownloadFileReply, error)
 	mustEmbedUnimplementedFileServer()
 }
 
@@ -134,9 +110,6 @@ type UnimplementedFileServer struct {
 func (UnimplementedFileServer) GetOssStsToken(context.Context, *emptypb.Empty) (*OssStsTokenReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOssStsToken not implemented")
 }
-func (UnimplementedFileServer) CreateFile(context.Context, *CreateFileRequest) (*CreateFileReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateFile not implemented")
-}
 func (UnimplementedFileServer) UploadFile(context.Context, *UploadFileRequest) (*UploadFileReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
 }
@@ -146,17 +119,14 @@ func (UnimplementedFileServer) UpdateFile(context.Context, *UpdateFileRequest) (
 func (UnimplementedFileServer) DeleteFile(context.Context, *DeleteFileRequest) (*DeleteFileReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFile not implemented")
 }
-func (UnimplementedFileServer) GetFile(context.Context, *GetFileRequest) (*GetFileReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetFile not implemented")
-}
-func (UnimplementedFileServer) ListFile(context.Context, *ListFileRequest) (*ListFileReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListFile not implemented")
+func (UnimplementedFileServer) DownloadFile(context.Context, *DownloadFileRequest) (*DownloadFileReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DownloadFile not implemented")
 }
 func (UnimplementedFileServer) mustEmbedUnimplementedFileServer() {}
 
 // UnsafeFileServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to FileServer will
-// result in compilation errResponse.
+// result in compilation errors.
 type UnsafeFileServer interface {
 	mustEmbedUnimplementedFileServer()
 }
@@ -179,24 +149,6 @@ func _File_GetOssStsToken_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(FileServer).GetOssStsToken(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _File_CreateFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateFileRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FileServer).CreateFile(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: File_CreateFile_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileServer).CreateFile(ctx, req.(*CreateFileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -255,38 +207,20 @@ func _File_DeleteFile_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _File_GetFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetFileRequest)
+func _File_DownloadFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DownloadFileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileServer).GetFile(ctx, in)
+		return srv.(FileServer).DownloadFile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: File_GetFile_FullMethodName,
+		FullMethod: File_DownloadFile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileServer).GetFile(ctx, req.(*GetFileRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _File_ListFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListFileRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FileServer).ListFile(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: File_ListFile_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileServer).ListFile(ctx, req.(*ListFileRequest))
+		return srv.(FileServer).DownloadFile(ctx, req.(*DownloadFileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -303,10 +237,6 @@ var File_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _File_GetOssStsToken_Handler,
 		},
 		{
-			MethodName: "CreateFile",
-			Handler:    _File_CreateFile_Handler,
-		},
-		{
 			MethodName: "UploadFile",
 			Handler:    _File_UploadFile_Handler,
 		},
@@ -319,12 +249,8 @@ var File_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _File_DeleteFile_Handler,
 		},
 		{
-			MethodName: "GetFile",
-			Handler:    _File_GetFile_Handler,
-		},
-		{
-			MethodName: "ListFile",
-			Handler:    _File_ListFile_Handler,
+			MethodName: "DownloadFile",
+			Handler:    _File_DownloadFile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -9,12 +9,10 @@ option java_package = "api.file.v1";
 
 service File {
   rpc GetOssStsToken (google.protobuf.Empty) returns (OssStsTokenReply);
-  rpc CreateFile (CreateFileRequest) returns (CreateFileReply);
   rpc UploadFile (UploadFileRequest) returns (UploadFileReply);
   rpc UpdateFile (UpdateFileRequest) returns (UpdateFileReply);
   rpc DeleteFile (DeleteFileRequest) returns (DeleteFileReply);
-  rpc GetFile (GetFileRequest) returns (GetFileReply);
-  rpc ListFile (ListFileRequest) returns (ListFileReply);
+  rpc DownloadFile (DownloadFileRequest) returns (DownloadFileReply);
 }
 
 message OssStsTokenReply {
@@ -37,17 +35,11 @@ message UploadFileReply {
   string url = 1;
 }
 
-message CreateFileRequest {}
-message CreateFileReply {}
-
 message UpdateFileRequest {}
 message UpdateFileReply {}
 
 message DeleteFileRequest {}
 message DeleteFileReply {}
 
-message GetFileRequest {}
-message GetFileReply {}
-
-message ListFileRequest {}
-message ListFileReply {}
+message DownloadFileRequest {}
+message DownloadFileReply {}

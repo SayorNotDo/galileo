@@ -26,7 +26,6 @@ var RedisCli redis.Cmdable
 
 // Data .
 type Data struct {
-	// TODO wrapped database client
 	log      *log.Helper
 	uc       userV1.UserClient
 	redisCli redis.Cmdable

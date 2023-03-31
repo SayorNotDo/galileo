@@ -201,6 +201,12 @@ func SetCustomizeErrInfoByReason(reason string) error {
 	return errors.New(code, reason, message)
 }
 
+// SetCustomizeErrMsg 根据err.Reason返回自定义包装错误（message动态修改）
+func SetCustomizeErrMsg(reason, msg string) error {
+	code := reasonCodeAll[reason]
+	return errors.New(code, reason, msg)
+}
+
 // GetErrInfoByReason 根据err.Reason返回自定义包装错误
 func GetErrInfoByReason(reason string) string {
 	return reasonMessageAll[reason]
