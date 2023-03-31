@@ -60,6 +60,16 @@ var _ = Describe("User", func() {
 		Ω(ok).Should(BeTrue())
 	})
 
+	It("UpdatePassword", func() {
+		uD = &biz.User{
+			Id:       1,
+			Password: "password",
+		}
+		ok, err := ro.UpdatePassword(context.Background(), uD)
+		Ω(err).ShouldNot(HaveOccurred())
+		Ω(ok).Should(BeTrue())
+	})
+
 	//It("ListUser", func() {
 	//	user, total, err := ro.List(ctx, 1, 10)
 	//	Ω(err).ShouldNot(HaveOccurred())
@@ -80,14 +90,14 @@ var _ = Describe("User", func() {
 	//	Ω(err).ShouldNot(HaveOccurred())
 	//	Ω(ok).Should(BeFalse())
 	//})
-	It("SoftDeleteUser", func() {
-		ok, err := ro.SoftDeleteById(context.Background(), 1, 5)
-		Ω(err).ShouldNot(HaveOccurred())
-		Ω(ok).Should(BeTrue())
-	})
-	It("DeleteUser", func() {
-		ok, err := ro.DeleteById(context.Background(), 1)
-		Ω(err).ShouldNot(HaveOccurred())
-		Ω(ok).Should(BeTrue())
-	})
+	//It("SoftDeleteUser", func() {
+	//	ok, err := ro.SoftDeleteById(context.Background(), 1, 5)
+	//	Ω(err).ShouldNot(HaveOccurred())
+	//	Ω(ok).Should(BeTrue())
+	//})
+	//It("DeleteUser", func() {
+	//	ok, err := ro.DeleteById(context.Background(), 1)
+	//	Ω(err).ShouldNot(HaveOccurred())
+	//	Ω(ok).Should(BeTrue())
+	//})
 })

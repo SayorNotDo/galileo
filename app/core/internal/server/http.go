@@ -124,12 +124,12 @@ func setHeaderInfo() middleware.Middleware {
 				}
 				auth := strings.SplitN(tr.RequestHeader().Get("Authorization"), " ", 2)
 				if len(auth) != 2 || !strings.EqualFold(auth[0], "Bearer") {
-					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedRole)
+					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
 				}
 				jwtToken := auth[1]
-				token, _ := data.RedisCli.Get(ctx, jwtToken).Result()
+				token, _ := data.RedisCli.Get(ctx, "token:"+jwtToken).Result()
 				if token == "" {
-					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedRole)
+					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
 				}
 				// set Authorization header
 				tr.RequestHeader().Set("Authorization", "Bearer "+token)

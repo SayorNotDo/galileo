@@ -20,6 +20,7 @@ const ReasonUserForbidden = "USER_FORBIDDEN"
 const ReasonUserDeleted = "USER_DELETED"
 const ReasonUserUsernameExist = "USER_USERNAME_EXIST"
 const ReasonUserPhoneExist = "USER_PHONE_EXIST"
+const ReasonUnauthorizedUser = "UNAUTHORIZED_USER"
 
 const ReasonAdministratorNotFound = "ADMINISTRATOR_NOT_FOUND"
 const ReasonAdministratorPasswordError = "ADMINISTRATOR_PASSWORD_ERROR"
@@ -58,6 +59,7 @@ var reasonMessageAll = map[string]string{
 	ReasonUserDeleted:       "user has been deleted",
 	ReasonUserUsernameExist: "username is already exist",
 	ReasonUserPhoneExist:    "phone is already exist",
+	ReasonUnauthorizedUser:  "user is unauthorized",
 
 	ReasonSuccess:      "success",
 	ReasonUnknownError: "unknown error",

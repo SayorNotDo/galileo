@@ -40,7 +40,7 @@ type CoreHTTPServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error)
 	UpdateEmail(context.Context, *UpdateEmailRequest) (*UpdateEmailReply, error)
-	UpdatePassword(context.Context, *UpdatePasswordRequest) (*UpdatePasswordReply, error)
+	UpdatePassword(context.Context, *UpdatePasswordRequest) (*emptypb.Empty, error)
 	UpdatePhone(context.Context, *UpdatePhoneRequest) (*UpdatePhoneReply, error)
 	UpdateUserInfo(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error)
 	UserDetail(context.Context, *emptypb.Empty) (*UserDetailReply, error)
@@ -211,7 +211,7 @@ func _Core_UpdatePassword0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Contex
 		if err != nil {
 			return err
 		}
-		reply := out.(*UpdatePasswordReply)
+		reply := out.(*emptypb.Empty)
 		return ctx.Result(200, reply)
 	}
 }
@@ -284,7 +284,7 @@ type CoreHTTPClient interface {
 	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *RegisterReply, err error)
 	Unregister(ctx context.Context, req *UnregisterRequest, opts ...http.CallOption) (rsp *UnregisterReply, err error)
 	UpdateEmail(ctx context.Context, req *UpdateEmailRequest, opts ...http.CallOption) (rsp *UpdateEmailReply, err error)
-	UpdatePassword(ctx context.Context, req *UpdatePasswordRequest, opts ...http.CallOption) (rsp *UpdatePasswordReply, err error)
+	UpdatePassword(ctx context.Context, req *UpdatePasswordRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	UpdatePhone(ctx context.Context, req *UpdatePhoneRequest, opts ...http.CallOption) (rsp *UpdatePhoneReply, err error)
 	UpdateUserInfo(ctx context.Context, req *UserInfoUpdateRequest, opts ...http.CallOption) (rsp *UserInfoUpdateReply, err error)
 	UserDetail(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *UserDetailReply, err error)
@@ -389,8 +389,8 @@ func (c *CoreHTTPClientImpl) UpdateEmail(ctx context.Context, in *UpdateEmailReq
 	return &out, err
 }
 
-func (c *CoreHTTPClientImpl) UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...http.CallOption) (*UpdatePasswordReply, error) {
-	var out UpdatePasswordReply
+func (c *CoreHTTPClientImpl) UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
 	pattern := "v1/api/user/password"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationCoreUpdatePassword))

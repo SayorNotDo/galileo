@@ -2,7 +2,6 @@ syntax = "proto3";
 
 import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
-import "errors/errors.proto";
 
 
 package api.user.v1;
@@ -11,16 +10,6 @@ option go_package = "galileo/api/user/v1;v1";
 option java_multiple_files = true;
 option java_package = "api.user";
 
-enum ErrorReason {
-  option (errors.default_code) = 500;
-
-  USER_NOT_FOUND = 0 [(errors.code) = 404];
-
-  CONTENT_MISSING = 1 [(errors.code) = 400];
-
-  UNAUTHENTICATED = 2 [(errors.code) = 401];
-}
-
 service User {
   rpc CreateUser (CreateUserRequest) returns (CreateUserReply) {};
   rpc UpdateUserInfo (UpdateUserRequest) returns (google.protobuf.Empty){};
@@ -28,10 +17,16 @@ service User {
   rpc GetUser (GetUserRequest) returns (userInfoReply){};
   rpc GetUserByUsername (UsernameRequest) returns (userInfoReply){};
   rpc ListUser (ListUserRequest) returns (ListUserReply){};
-  rpc CheckPassword(CheckPasswordRequest) returns (CheckPasswordReply){};
+  rpc VerifyPassword(VerifyPasswordRequest) returns (VerifyPasswordReply){};
+  rpc ResetPassword(google.protobuf.Empty) returns (google.protobuf.Empty){};
+  rpc UpdatePassword(UpdatePasswordRequest) returns (google.protobuf.Empty){};
   rpc SoftDeleteUser (SoftDeleteRequest) returns (SoftDeleteReply){};
   rpc SetToken(SetTokenRequest) returns (SetTokenReply){};
   rpc EmptyToken(google.protobuf.Empty) returns(EmptyTokenReply){};
+}
+
+message UpdatePasswordRequest {
+  string newPassword = 2;
 }
 
 message EmptyTokenReply {
@@ -58,12 +53,12 @@ message SoftDeleteReply {
 }
 
 
-message CheckPasswordRequest {
+message VerifyPasswordRequest {
   string hashedPassword = 1;
   string password = 2;
 }
 
-message CheckPasswordReply {
+message VerifyPasswordReply {
   bool success = 1;
 }
 

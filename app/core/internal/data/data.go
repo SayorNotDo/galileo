@@ -34,7 +34,7 @@ type Data struct {
 
 // NewData .
 func NewData(c *conf.Data, uc userV1.UserClient, logger log.Logger, redisCli redis.Cmdable) (*Data, error) {
-	l := log.NewHelper(log.With(logger, "module", "data"))
+	l := log.NewHelper(log.With(logger, "module", "coreService/data"))
 	return &Data{log: l, uc: uc, redisCli: redisCli}, nil
 }
 

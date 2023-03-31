@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	v1 "galileo/api/user/v1"
 	"galileo/app/user/internal/biz"
 	"galileo/app/user/internal/pkg/util"
@@ -46,6 +47,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 	}
 	return &userInfoRep, nil
 }
+
 func (s *UserService) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*emptypb.Empty, error) {
 	_, err := s.uc.Update(ctx, &biz.User{Id: req.Id, Nickname: req.Nickname, Avatar: req.Avatar})
 	if err != nil {
@@ -127,12 +129,12 @@ func (s *UserService) SayHello(ctx context.Context, in *v1.HelloRequest) (*v1.He
 	return &v1.HelloReply{Message: "Hello " + in.Name}, nil
 }
 
-func (s *UserService) CheckPassword(ctx context.Context, req *v1.CheckPasswordRequest) (*v1.CheckPasswordReply, error) {
-	ok, err := s.uc.CheckPassword(req.Password, req.HashedPassword)
+func (s *UserService) VerifyPassword(ctx context.Context, req *v1.VerifyPasswordRequest) (*v1.VerifyPasswordReply, error) {
+	ok, err := s.uc.VerifyPassword(req.Password, req.HashedPassword)
 	if err != nil {
 		return nil, err
 	}
-	return &v1.CheckPasswordReply{
+	return &v1.VerifyPasswordReply{
 		Success: ok,
 	}, nil
 }
@@ -158,4 +160,23 @@ func (s *UserService) EmptyToken(ctx context.Context, req *emptypb.Empty) (*v1.E
 	return &v1.EmptyTokenReply{
 		IsEmpty: ok,
 	}, nil
+}
+
+func (s *UserService) ResetPassword(ctx context.Context, req *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, nil
+}
+
+func (s *UserService) UpdatePassword(ctx context.Context, req *v1.UpdatePasswordRequest) (*emptypb.Empty, error) {
+	fmt.Printf("Update Password--------------------: %v", ctx)
+	md, _ := metadata.FromServerContext(ctx)
+	uidStr := md.Get("x-md-local-uid")
+	uid, _ := strconv.ParseInt(uidStr, 10, 64)
+	u, err := s.uc.Get(ctx, uint32(uid))
+	if err != nil {
+		return nil, err
+	}
+	if _, err = s.uc.UpdatePassword(ctx, u, req.NewPassword); err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
 }

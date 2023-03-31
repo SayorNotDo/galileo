@@ -50,7 +50,7 @@ service Core {
       body: "*"
     };
   };
-  rpc UpdatePassword(UpdatePasswordRequest) returns (UpdatePasswordReply){
+  rpc UpdatePassword(UpdatePasswordRequest) returns (google.protobuf.Empty){
     option(google.api.http) = {
       put: "v1/api/user/password"
       body: "*"
@@ -87,10 +87,6 @@ message UpdatePasswordRequest {
   string password = 1[(validate.rules).string = {min_len: 8}];
 }
 
-message UpdatePasswordReply {
-  bool success = 1;
-}
-
 message DeleteRequest{
   uint32 id = 1;
 }
@@ -110,11 +106,8 @@ message ListUserRequest {
 }
 
 message ListUserReply {
-  message ListUser {
-    int32 total = 1;
-    repeated UserDetail userList = 2;
-  }
-  ListUser data = 1;
+  int32 total = 1;
+  repeated UserDetail userList = 2;
 }
 
 message UserInfoUpdateRequest {

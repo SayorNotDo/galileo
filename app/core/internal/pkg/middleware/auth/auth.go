@@ -3,6 +3,11 @@ package auth
 import (
 	"errors"
 	"github.com/golang-jwt/jwt/v4"
+	"time"
+)
+
+const (
+	TokenExpiration = time.Hour * 24 * 30
 )
 
 type CustomClaims struct {

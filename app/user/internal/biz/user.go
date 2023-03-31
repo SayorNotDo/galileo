@@ -4,6 +4,7 @@ import (
 	"context"
 	v1 "galileo/api/user/v1"
 	"galileo/app/user/internal/pkg/util"
+	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
 	"time"
 )
@@ -31,6 +32,7 @@ type UserRepo interface {
 	Create(context.Context, *User) (*User, error)
 	List(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserInfoReply, int32, error)
 	Update(context.Context, *User) (bool, error)
+	UpdatePassword(context.Context, *User) (bool, error)
 	DeleteById(context.Context, uint32) (bool, error)
 	SoftDeleteById(context.Context, uint32, uint32) (bool, error)
 	SetToken(context.Context, string, string) (bool, error)
@@ -88,9 +90,18 @@ func (uc *UserUseCase) GetByUsername(ctx context.Context, username string) (*Use
 	return uc.repo.GetByUsername(ctx, username)
 }
 
-func (uc *UserUseCase) CheckPassword(password, hashedPassword string) (bool, error) {
+func (uc *UserUseCase) VerifyPassword(password, hashedPassword string) (bool, error) {
 	if ok := util.ComparePassword(password, hashedPassword); !ok {
-		return false, v1.ErrorUnauthenticated("password does not match")
+		return false, SetErrByReason(ReasonUserPasswordError)
 	}
 	return true, nil
+}
+
+func (uc *UserUseCase) UpdatePassword(ctx context.Context, u *User, newPassword string) (bool, error) {
+	encryptedPassword, err := util.HashPassword(newPassword)
+	if err != nil {
+		return false, err
+	}
+	u.Password = encryptedPassword
+	return uc.repo.UpdatePassword(ctx, u)
 }

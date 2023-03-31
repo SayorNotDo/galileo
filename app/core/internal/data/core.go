@@ -5,6 +5,7 @@ import (
 	v1 "galileo/api/core/v1"
 	userService "galileo/api/user/v1"
 	"galileo/app/core/internal/biz"
+	"galileo/app/core/internal/pkg/middleware/auth"
 	"galileo/pkg/encryption"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
@@ -74,12 +75,15 @@ func (r *coreRepo) CreateUser(c context.Context, user *biz.User) (*biz.User, err
 	}, nil
 }
 
-func (r *coreRepo) UpdatePassword(c context.Context, password string) (bool, error) {
-	return false, nil
+func (r *coreRepo) UpdatePassword(ctx context.Context, password string) (bool, error) {
+	if _, err := r.data.uc.UpdatePassword(ctx, &userService.UpdatePasswordRequest{NewPassword: password}); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
-func (r *coreRepo) CheckPassword(c context.Context, password, encryptedPassword string) (bool, error) {
-	if ret, err := r.data.uc.CheckPassword(c, &userService.CheckPasswordRequest{Password: password, HashedPassword: encryptedPassword}); err != nil {
+func (r *coreRepo) VerifyPassword(c context.Context, password, encryptedPassword string) (bool, error) {
+	if ret, err := r.data.uc.VerifyPassword(c, &userService.VerifyPasswordRequest{Password: password, HashedPassword: encryptedPassword}); err != nil {
 		return false, err
 	} else {
 		return ret.Success, nil
@@ -121,7 +125,7 @@ func (r *coreRepo) UpdateUserInfo(c context.Context, user *biz.User) (bool, erro
 
 func (r *coreRepo) SetToken(ctx context.Context, token string) (string, error) {
 	key := encryption.EncodeMD5(token)
-	r.data.redisCli.Set(ctx, key, token, time.Hour*24*30)
+	r.data.redisCli.Set(ctx, "token:"+key, token, auth.TokenExpiration)
 	return key, nil
 }
 
@@ -129,6 +133,6 @@ func (r *coreRepo) DestroyToken(ctx context.Context) error {
 	tr, _ := transport.FromServerContext(ctx)
 	jwtToken := strings.SplitN(tr.RequestHeader().Get("Authorization"), " ", 2)[1]
 	key := encryption.EncodeMD5(jwtToken)
-	r.data.redisCli.Del(ctx, key)
+	r.data.redisCli.Del(ctx, "token:"+key)
 	return nil
 }

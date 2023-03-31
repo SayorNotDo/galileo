@@ -44,7 +44,7 @@ type CoreClient interface {
 	DeleteUser(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteReply, error)
 	UserDetail(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserDetailReply, error)
 	UpdateUserInfo(ctx context.Context, in *UserInfoUpdateRequest, opts ...grpc.CallOption) (*UserInfoUpdateReply, error)
-	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*UpdatePasswordReply, error)
+	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	UpdateEmail(ctx context.Context, in *UpdateEmailRequest, opts ...grpc.CallOption) (*UpdateEmailReply, error)
 	UpdatePhone(ctx context.Context, in *UpdatePhoneRequest, opts ...grpc.CallOption) (*UpdatePhoneReply, error)
 	ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
@@ -121,8 +121,8 @@ func (c *coreClient) UpdateUserInfo(ctx context.Context, in *UserInfoUpdateReque
 	return out, nil
 }
 
-func (c *coreClient) UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*UpdatePasswordReply, error) {
-	out := new(UpdatePasswordReply)
+func (c *coreClient) UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, Core_UpdatePassword_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -168,7 +168,7 @@ type CoreServer interface {
 	DeleteUser(context.Context, *DeleteRequest) (*DeleteReply, error)
 	UserDetail(context.Context, *emptypb.Empty) (*UserDetailReply, error)
 	UpdateUserInfo(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error)
-	UpdatePassword(context.Context, *UpdatePasswordRequest) (*UpdatePasswordReply, error)
+	UpdatePassword(context.Context, *UpdatePasswordRequest) (*emptypb.Empty, error)
 	UpdateEmail(context.Context, *UpdateEmailRequest) (*UpdateEmailReply, error)
 	UpdatePhone(context.Context, *UpdatePhoneRequest) (*UpdatePhoneReply, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
@@ -200,7 +200,7 @@ func (UnimplementedCoreServer) UserDetail(context.Context, *emptypb.Empty) (*Use
 func (UnimplementedCoreServer) UpdateUserInfo(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserInfo not implemented")
 }
-func (UnimplementedCoreServer) UpdatePassword(context.Context, *UpdatePasswordRequest) (*UpdatePasswordReply, error) {
+func (UnimplementedCoreServer) UpdatePassword(context.Context, *UpdatePasswordRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePassword not implemented")
 }
 func (UnimplementedCoreServer) UpdateEmail(context.Context, *UpdateEmailRequest) (*UpdateEmailReply, error) {

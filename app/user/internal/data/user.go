@@ -159,9 +159,23 @@ func (repo *userRepo) Update(ctx context.Context, u *biz.User) (bool, error) {
 		Exec(ctx)
 	switch {
 	case ent.IsNotFound(err):
-		return false, errors.NotFound("Not Found", err.Error())
+		return false, errors.NotFound("User Not Found", err.Error())
 	case err != nil:
-		return false, errors.InternalServer("InternalServer Error", err.Error())
+		return false, err
+	}
+	return true, nil
+}
+
+func (repo *userRepo) UpdatePassword(ctx context.Context, u *biz.User) (bool, error) {
+	err := repo.data.entDB.User.
+		UpdateOneID(u.Id).
+		SetPassword(u.Password).
+		Exec(ctx)
+	switch {
+	case ent.IsNotFound(err):
+		return false, errors.NotFound("User Not Found", err.Error())
+	case err != nil:
+		return false, err
 	}
 	return true, nil
 }

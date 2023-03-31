@@ -19,13 +19,14 @@ import (
 
 type CoreRepo interface {
 	CreateUser(ctx context.Context, u *User) (*User, error)
-	CheckPassword(ctx context.Context, password, encryptedPassword string) (bool, error)
+	VerifyPassword(ctx context.Context, password, encryptedPassword string) (bool, error)
 	UserByUsername(ctx context.Context, username string) (*User, error)
 	UserById(context.Context, uint32) (*User, error)
 	ListUser(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserDetail, int32, error)
 	SoftDeleteUser(ctx context.Context, uid uint32) (bool, error)
 	SetToken(ctx context.Context, token string) (string, error)
 	DestroyToken(ctx context.Context) error
+	UpdatePassword(ctx context.Context, password string) (bool, error)
 }
 type User struct {
 	Id          uint32
@@ -103,7 +104,7 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	if err != nil {
 		return nil, err
 	}
-	if _, passErr := c.cRepo.CheckPassword(ctx, req.Password, user.Password); passErr != nil {
+	if _, passErr := c.cRepo.VerifyPassword(ctx, req.Password, user.Password); passErr != nil {
 		return nil, passErr
 	}
 	claims := userClaim(user)
@@ -115,7 +116,7 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	return &v1.LoginReply{
 		Type:      "Bearer",
 		Token:     encryptionToken,
-		ExpiresAt: time.Now().AddDate(0, 0, 1).Unix(),
+		ExpiresAt: claims.ExpiresAt.Unix(),
 	}, nil
 }
 
@@ -148,10 +149,8 @@ func (c *CoreUseCase) ListUser(ctx context.Context, pageNum, pageSize int32) (*v
 		return nil, err
 	}
 	return &v1.ListUserReply{
-		Data: &v1.ListUserReply_ListUser{
-			Total:    total,
-			UserList: user,
-		},
+		Total:    total,
+		UserList: user,
 	}, nil
 }
 
@@ -181,14 +180,21 @@ func (c *CoreUseCase) DeleteUser(ctx context.Context, deleteId uint32) (*v1.Dele
 	}, nil
 }
 
-func (c *CoreUseCase) UpdatePassword(ctx context.Context, req *v1.UpdatePasswordRequest) (*v1.UpdatePasswordReply, error) {
+func (c *CoreUseCase) UpdatePassword(ctx context.Context, req *v1.UpdatePasswordRequest) (*emptypb.Empty, error) {
 	userClaim, ok := jwt.FromContext(ctx)
 	if !ok {
 		return nil, SetErrByReason(ReasonUnknownError)
 	}
 	uid := fmt.Sprintf("%v", userClaim.(jwt2.MapClaims)["ID"])
 	ctx = metadata.AppendToClientContext(ctx, "x-md-local-uid", uid)
-	return nil, nil
+	if ok, _ := c.cRepo.UpdatePassword(ctx, req.Password); !ok {
+		return nil, SetErrByReason(ReasonUnknownError)
+	}
+	err := c.cRepo.DestroyToken(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
 }
 
 func (c *CoreUseCase) UpdateUserInfo(ctx context.Context, req *v1.UserInfoUpdateRequest) (*v1.UserInfoUpdateReply, error) {
