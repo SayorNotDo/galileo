@@ -94,11 +94,6 @@ func UpdateAt(v time.Time) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldUpdateAt, v))
 }
 
-// UpdateBy applies equality check predicate on the "update_by" field. It's identical to UpdateByEQ.
-func UpdateBy(v uint32) predicate.Task {
-	return predicate.Task(sql.FieldEQ(FieldUpdateBy, v))
-}
-
 // IsDeleted applies equality check predicate on the "is_deleted" field. It's identical to IsDeletedEQ.
 func IsDeleted(v bool) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldIsDeleted, v))
@@ -117,6 +112,11 @@ func DeletedBy(v uint32) predicate.Task {
 // Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
 func Description(v string) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldDescription, v))
+}
+
+// URL applies equality check predicate on the "url" field. It's identical to URLEQ.
+func URL(v string) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldURL, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -474,46 +474,6 @@ func UpdateAtLTE(v time.Time) predicate.Task {
 	return predicate.Task(sql.FieldLTE(FieldUpdateAt, v))
 }
 
-// UpdateByEQ applies the EQ predicate on the "update_by" field.
-func UpdateByEQ(v uint32) predicate.Task {
-	return predicate.Task(sql.FieldEQ(FieldUpdateBy, v))
-}
-
-// UpdateByNEQ applies the NEQ predicate on the "update_by" field.
-func UpdateByNEQ(v uint32) predicate.Task {
-	return predicate.Task(sql.FieldNEQ(FieldUpdateBy, v))
-}
-
-// UpdateByIn applies the In predicate on the "update_by" field.
-func UpdateByIn(vs ...uint32) predicate.Task {
-	return predicate.Task(sql.FieldIn(FieldUpdateBy, vs...))
-}
-
-// UpdateByNotIn applies the NotIn predicate on the "update_by" field.
-func UpdateByNotIn(vs ...uint32) predicate.Task {
-	return predicate.Task(sql.FieldNotIn(FieldUpdateBy, vs...))
-}
-
-// UpdateByGT applies the GT predicate on the "update_by" field.
-func UpdateByGT(v uint32) predicate.Task {
-	return predicate.Task(sql.FieldGT(FieldUpdateBy, v))
-}
-
-// UpdateByGTE applies the GTE predicate on the "update_by" field.
-func UpdateByGTE(v uint32) predicate.Task {
-	return predicate.Task(sql.FieldGTE(FieldUpdateBy, v))
-}
-
-// UpdateByLT applies the LT predicate on the "update_by" field.
-func UpdateByLT(v uint32) predicate.Task {
-	return predicate.Task(sql.FieldLT(FieldUpdateBy, v))
-}
-
-// UpdateByLTE applies the LTE predicate on the "update_by" field.
-func UpdateByLTE(v uint32) predicate.Task {
-	return predicate.Task(sql.FieldLTE(FieldUpdateBy, v))
-}
-
 // IsDeletedEQ applies the EQ predicate on the "is_deleted" field.
 func IsDeletedEQ(v bool) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldIsDeleted, v))
@@ -697,6 +657,71 @@ func DescriptionEqualFold(v string) predicate.Task {
 // DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
 func DescriptionContainsFold(v string) predicate.Task {
 	return predicate.Task(sql.FieldContainsFold(FieldDescription, v))
+}
+
+// URLEQ applies the EQ predicate on the "url" field.
+func URLEQ(v string) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldURL, v))
+}
+
+// URLNEQ applies the NEQ predicate on the "url" field.
+func URLNEQ(v string) predicate.Task {
+	return predicate.Task(sql.FieldNEQ(FieldURL, v))
+}
+
+// URLIn applies the In predicate on the "url" field.
+func URLIn(vs ...string) predicate.Task {
+	return predicate.Task(sql.FieldIn(FieldURL, vs...))
+}
+
+// URLNotIn applies the NotIn predicate on the "url" field.
+func URLNotIn(vs ...string) predicate.Task {
+	return predicate.Task(sql.FieldNotIn(FieldURL, vs...))
+}
+
+// URLGT applies the GT predicate on the "url" field.
+func URLGT(v string) predicate.Task {
+	return predicate.Task(sql.FieldGT(FieldURL, v))
+}
+
+// URLGTE applies the GTE predicate on the "url" field.
+func URLGTE(v string) predicate.Task {
+	return predicate.Task(sql.FieldGTE(FieldURL, v))
+}
+
+// URLLT applies the LT predicate on the "url" field.
+func URLLT(v string) predicate.Task {
+	return predicate.Task(sql.FieldLT(FieldURL, v))
+}
+
+// URLLTE applies the LTE predicate on the "url" field.
+func URLLTE(v string) predicate.Task {
+	return predicate.Task(sql.FieldLTE(FieldURL, v))
+}
+
+// URLContains applies the Contains predicate on the "url" field.
+func URLContains(v string) predicate.Task {
+	return predicate.Task(sql.FieldContains(FieldURL, v))
+}
+
+// URLHasPrefix applies the HasPrefix predicate on the "url" field.
+func URLHasPrefix(v string) predicate.Task {
+	return predicate.Task(sql.FieldHasPrefix(FieldURL, v))
+}
+
+// URLHasSuffix applies the HasSuffix predicate on the "url" field.
+func URLHasSuffix(v string) predicate.Task {
+	return predicate.Task(sql.FieldHasSuffix(FieldURL, v))
+}
+
+// URLEqualFold applies the EqualFold predicate on the "url" field.
+func URLEqualFold(v string) predicate.Task {
+	return predicate.Task(sql.FieldEqualFold(FieldURL, v))
+}
+
+// URLContainsFold applies the ContainsFold predicate on the "url" field.
+func URLContainsFold(v string) predicate.Task {
+	return predicate.Task(sql.FieldContainsFold(FieldURL, v))
 }
 
 // And groups predicates with the AND operator between them.

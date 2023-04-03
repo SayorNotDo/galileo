@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	v1 "galileo/api/user/v1"
 	"galileo/app/user/internal/biz"
 	"galileo/app/user/internal/pkg/util"
@@ -167,7 +166,6 @@ func (s *UserService) ResetPassword(ctx context.Context, req *emptypb.Empty) (*e
 }
 
 func (s *UserService) UpdatePassword(ctx context.Context, req *v1.UpdatePasswordRequest) (*emptypb.Empty, error) {
-	fmt.Printf("Update Password--------------------: %v", ctx)
 	md, _ := metadata.FromServerContext(ctx)
 	uidStr := md.Get("x-md-local-uid")
 	uid, _ := strconv.ParseInt(uidStr, 10, 64)

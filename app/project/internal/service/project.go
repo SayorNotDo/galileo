@@ -16,7 +16,7 @@ type ProjectService struct {
 func NewProjectService(uc *biz.ProjectUseCase, logger log.Logger) *ProjectService {
 	return &ProjectService{
 		uc:     uc,
-		logger: log.NewHelper(log.With(logger, "module", "project")),
+		logger: log.NewHelper(log.With(logger, "module", "projectService")),
 	}
 }
 

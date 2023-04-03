@@ -5,7 +5,6 @@ import (
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
-	"net/url"
 	"time"
 )
 
@@ -27,17 +26,16 @@ func (Task) Fields() []ent.Field {
 		field.String("name"),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("created_by"),
-		field.Int8("rank").Default(1),
+		field.Int8("rank"),
 		field.Int16("type"),
-		field.Int16("status"),
+		field.Int16("status").Default(0),
 		field.Time("complete_at").Optional().Nillable(),
 		field.Time("update_at").UpdateDefault(time.Now),
-		field.Uint32("update_by"),
 		field.Bool("is_deleted").Optional().Nillable(),
 		field.Time("deleted_at").Optional().Nillable(),
 		field.Uint32("deleted_by").Optional().Nillable(),
 		field.Text("description"),
-		field.JSON("url", &url.URL{}),
+		field.String("url"),
 	}
 }
 

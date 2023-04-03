@@ -27,8 +27,6 @@ const (
 	FieldCompleteAt = "complete_at"
 	// FieldUpdateAt holds the string denoting the update_at field in the database.
 	FieldUpdateAt = "update_at"
-	// FieldUpdateBy holds the string denoting the update_by field in the database.
-	FieldUpdateBy = "update_by"
 	// FieldIsDeleted holds the string denoting the is_deleted field in the database.
 	FieldIsDeleted = "is_deleted"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
@@ -54,7 +52,6 @@ var Columns = []string{
 	FieldStatus,
 	FieldCompleteAt,
 	FieldUpdateAt,
-	FieldUpdateBy,
 	FieldIsDeleted,
 	FieldDeletedAt,
 	FieldDeletedBy,
@@ -75,8 +72,8 @@ func ValidColumn(column string) bool {
 var (
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
-	// DefaultRank holds the default value on creation for the "rank" field.
-	DefaultRank int8
+	// DefaultStatus holds the default value on creation for the "status" field.
+	DefaultStatus int16
 	// UpdateDefaultUpdateAt holds the default value on update for the "update_at" field.
 	UpdateDefaultUpdateAt func() time.Time
 )

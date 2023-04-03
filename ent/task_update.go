@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"galileo/ent/predicate"
 	"galileo/ent/task"
-	"net/url"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -55,14 +54,6 @@ func (tu *TaskUpdate) SetRank(i int8) *TaskUpdate {
 	return tu
 }
 
-// SetNillableRank sets the "rank" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableRank(i *int8) *TaskUpdate {
-	if i != nil {
-		tu.SetRank(*i)
-	}
-	return tu
-}
-
 // AddRank adds i to the "rank" field.
 func (tu *TaskUpdate) AddRank(i int8) *TaskUpdate {
 	tu.mutation.AddRank(i)
@@ -86,6 +77,14 @@ func (tu *TaskUpdate) AddType(i int16) *TaskUpdate {
 func (tu *TaskUpdate) SetStatus(i int16) *TaskUpdate {
 	tu.mutation.ResetStatus()
 	tu.mutation.SetStatus(i)
+	return tu
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableStatus(i *int16) *TaskUpdate {
+	if i != nil {
+		tu.SetStatus(*i)
+	}
 	return tu
 }
 
@@ -118,19 +117,6 @@ func (tu *TaskUpdate) ClearCompleteAt() *TaskUpdate {
 // SetUpdateAt sets the "update_at" field.
 func (tu *TaskUpdate) SetUpdateAt(t time.Time) *TaskUpdate {
 	tu.mutation.SetUpdateAt(t)
-	return tu
-}
-
-// SetUpdateBy sets the "update_by" field.
-func (tu *TaskUpdate) SetUpdateBy(u uint32) *TaskUpdate {
-	tu.mutation.ResetUpdateBy()
-	tu.mutation.SetUpdateBy(u)
-	return tu
-}
-
-// AddUpdateBy adds u to the "update_by" field.
-func (tu *TaskUpdate) AddUpdateBy(u int32) *TaskUpdate {
-	tu.mutation.AddUpdateBy(u)
 	return tu
 }
 
@@ -208,8 +194,8 @@ func (tu *TaskUpdate) SetDescription(s string) *TaskUpdate {
 }
 
 // SetURL sets the "url" field.
-func (tu *TaskUpdate) SetURL(u *url.URL) *TaskUpdate {
-	tu.mutation.SetURL(u)
+func (tu *TaskUpdate) SetURL(s string) *TaskUpdate {
+	tu.mutation.SetURL(s)
 	return tu
 }
 
@@ -299,12 +285,6 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.UpdateAt(); ok {
 		_spec.SetField(task.FieldUpdateAt, field.TypeTime, value)
 	}
-	if value, ok := tu.mutation.UpdateBy(); ok {
-		_spec.SetField(task.FieldUpdateBy, field.TypeUint32, value)
-	}
-	if value, ok := tu.mutation.AddedUpdateBy(); ok {
-		_spec.AddField(task.FieldUpdateBy, field.TypeUint32, value)
-	}
 	if value, ok := tu.mutation.IsDeleted(); ok {
 		_spec.SetField(task.FieldIsDeleted, field.TypeBool, value)
 	}
@@ -330,7 +310,7 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(task.FieldDescription, field.TypeString, value)
 	}
 	if value, ok := tu.mutation.URL(); ok {
-		_spec.SetField(task.FieldURL, field.TypeJSON, value)
+		_spec.SetField(task.FieldURL, field.TypeString, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -378,14 +358,6 @@ func (tuo *TaskUpdateOne) SetRank(i int8) *TaskUpdateOne {
 	return tuo
 }
 
-// SetNillableRank sets the "rank" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableRank(i *int8) *TaskUpdateOne {
-	if i != nil {
-		tuo.SetRank(*i)
-	}
-	return tuo
-}
-
 // AddRank adds i to the "rank" field.
 func (tuo *TaskUpdateOne) AddRank(i int8) *TaskUpdateOne {
 	tuo.mutation.AddRank(i)
@@ -409,6 +381,14 @@ func (tuo *TaskUpdateOne) AddType(i int16) *TaskUpdateOne {
 func (tuo *TaskUpdateOne) SetStatus(i int16) *TaskUpdateOne {
 	tuo.mutation.ResetStatus()
 	tuo.mutation.SetStatus(i)
+	return tuo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableStatus(i *int16) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetStatus(*i)
+	}
 	return tuo
 }
 
@@ -441,19 +421,6 @@ func (tuo *TaskUpdateOne) ClearCompleteAt() *TaskUpdateOne {
 // SetUpdateAt sets the "update_at" field.
 func (tuo *TaskUpdateOne) SetUpdateAt(t time.Time) *TaskUpdateOne {
 	tuo.mutation.SetUpdateAt(t)
-	return tuo
-}
-
-// SetUpdateBy sets the "update_by" field.
-func (tuo *TaskUpdateOne) SetUpdateBy(u uint32) *TaskUpdateOne {
-	tuo.mutation.ResetUpdateBy()
-	tuo.mutation.SetUpdateBy(u)
-	return tuo
-}
-
-// AddUpdateBy adds u to the "update_by" field.
-func (tuo *TaskUpdateOne) AddUpdateBy(u int32) *TaskUpdateOne {
-	tuo.mutation.AddUpdateBy(u)
 	return tuo
 }
 
@@ -531,8 +498,8 @@ func (tuo *TaskUpdateOne) SetDescription(s string) *TaskUpdateOne {
 }
 
 // SetURL sets the "url" field.
-func (tuo *TaskUpdateOne) SetURL(u *url.URL) *TaskUpdateOne {
-	tuo.mutation.SetURL(u)
+func (tuo *TaskUpdateOne) SetURL(s string) *TaskUpdateOne {
+	tuo.mutation.SetURL(s)
 	return tuo
 }
 
@@ -652,12 +619,6 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if value, ok := tuo.mutation.UpdateAt(); ok {
 		_spec.SetField(task.FieldUpdateAt, field.TypeTime, value)
 	}
-	if value, ok := tuo.mutation.UpdateBy(); ok {
-		_spec.SetField(task.FieldUpdateBy, field.TypeUint32, value)
-	}
-	if value, ok := tuo.mutation.AddedUpdateBy(); ok {
-		_spec.AddField(task.FieldUpdateBy, field.TypeUint32, value)
-	}
 	if value, ok := tuo.mutation.IsDeleted(); ok {
 		_spec.SetField(task.FieldIsDeleted, field.TypeBool, value)
 	}
@@ -683,7 +644,7 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 		_spec.SetField(task.FieldDescription, field.TypeString, value)
 	}
 	if value, ok := tuo.mutation.URL(); ok {
-		_spec.SetField(task.FieldURL, field.TypeJSON, value)
+		_spec.SetField(task.FieldURL, field.TypeString, value)
 	}
 	_node = &Task{config: tuo.config}
 	_spec.Assign = _node.assignValues

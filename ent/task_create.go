@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"galileo/ent/task"
-	"net/url"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -53,14 +52,6 @@ func (tc *TaskCreate) SetRank(i int8) *TaskCreate {
 	return tc
 }
 
-// SetNillableRank sets the "rank" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableRank(i *int8) *TaskCreate {
-	if i != nil {
-		tc.SetRank(*i)
-	}
-	return tc
-}
-
 // SetType sets the "type" field.
 func (tc *TaskCreate) SetType(i int16) *TaskCreate {
 	tc.mutation.SetType(i)
@@ -70,6 +61,14 @@ func (tc *TaskCreate) SetType(i int16) *TaskCreate {
 // SetStatus sets the "status" field.
 func (tc *TaskCreate) SetStatus(i int16) *TaskCreate {
 	tc.mutation.SetStatus(i)
+	return tc
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableStatus(i *int16) *TaskCreate {
+	if i != nil {
+		tc.SetStatus(*i)
+	}
 	return tc
 }
 
@@ -90,12 +89,6 @@ func (tc *TaskCreate) SetNillableCompleteAt(t *time.Time) *TaskCreate {
 // SetUpdateAt sets the "update_at" field.
 func (tc *TaskCreate) SetUpdateAt(t time.Time) *TaskCreate {
 	tc.mutation.SetUpdateAt(t)
-	return tc
-}
-
-// SetUpdateBy sets the "update_by" field.
-func (tc *TaskCreate) SetUpdateBy(u uint32) *TaskCreate {
-	tc.mutation.SetUpdateBy(u)
 	return tc
 }
 
@@ -148,8 +141,8 @@ func (tc *TaskCreate) SetDescription(s string) *TaskCreate {
 }
 
 // SetURL sets the "url" field.
-func (tc *TaskCreate) SetURL(u *url.URL) *TaskCreate {
-	tc.mutation.SetURL(u)
+func (tc *TaskCreate) SetURL(s string) *TaskCreate {
+	tc.mutation.SetURL(s)
 	return tc
 }
 
@@ -198,9 +191,9 @@ func (tc *TaskCreate) defaults() {
 		v := task.DefaultCreatedAt()
 		tc.mutation.SetCreatedAt(v)
 	}
-	if _, ok := tc.mutation.Rank(); !ok {
-		v := task.DefaultRank
-		tc.mutation.SetRank(v)
+	if _, ok := tc.mutation.Status(); !ok {
+		v := task.DefaultStatus
+		tc.mutation.SetStatus(v)
 	}
 }
 
@@ -226,9 +219,6 @@ func (tc *TaskCreate) check() error {
 	}
 	if _, ok := tc.mutation.UpdateAt(); !ok {
 		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "Task.update_at"`)}
-	}
-	if _, ok := tc.mutation.UpdateBy(); !ok {
-		return &ValidationError{Name: "update_by", err: errors.New(`ent: missing required field "Task.update_by"`)}
 	}
 	if _, ok := tc.mutation.Description(); !ok {
 		return &ValidationError{Name: "description", err: errors.New(`ent: missing required field "Task.description"`)}
@@ -300,10 +290,6 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_spec.SetField(task.FieldUpdateAt, field.TypeTime, value)
 		_node.UpdateAt = value
 	}
-	if value, ok := tc.mutation.UpdateBy(); ok {
-		_spec.SetField(task.FieldUpdateBy, field.TypeUint32, value)
-		_node.UpdateBy = value
-	}
 	if value, ok := tc.mutation.IsDeleted(); ok {
 		_spec.SetField(task.FieldIsDeleted, field.TypeBool, value)
 		_node.IsDeleted = &value
@@ -321,7 +307,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_node.Description = value
 	}
 	if value, ok := tc.mutation.URL(); ok {
-		_spec.SetField(task.FieldURL, field.TypeJSON, value)
+		_spec.SetField(task.FieldURL, field.TypeString, value)
 		_node.URL = value
 	}
 	return _node, _spec

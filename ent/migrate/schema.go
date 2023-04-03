@@ -36,17 +36,16 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
-		{Name: "rank", Type: field.TypeInt8, Default: 1},
+		{Name: "rank", Type: field.TypeInt8},
 		{Name: "type", Type: field.TypeInt16},
-		{Name: "status", Type: field.TypeInt16},
+		{Name: "status", Type: field.TypeInt16, Default: 0},
 		{Name: "complete_at", Type: field.TypeTime, Nullable: true},
 		{Name: "update_at", Type: field.TypeTime},
-		{Name: "update_by", Type: field.TypeUint32},
 		{Name: "is_deleted", Type: field.TypeBool, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "description", Type: field.TypeString, Size: 2147483647},
-		{Name: "url", Type: field.TypeJSON},
+		{Name: "url", Type: field.TypeString},
 	}
 	// TaskTable holds the schema information for the "task" table.
 	TaskTable = &schema.Table{

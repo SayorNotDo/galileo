@@ -10,7 +10,6 @@ import (
 	"galileo/ent/project"
 	"galileo/ent/task"
 	"galileo/ent/user"
-	"net/url"
 	"sync"
 	"time"
 
@@ -1105,14 +1104,12 @@ type TaskMutation struct {
 	addstatus     *int16
 	complete_at   *time.Time
 	update_at     *time.Time
-	update_by     *uint32
-	addupdate_by  *int32
 	is_deleted    *bool
 	deleted_at    *time.Time
 	deleted_by    *uint32
 	adddeleted_by *int32
 	description   *string
-	url           **url.URL
+	url           *string
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*Task, error)
@@ -1604,62 +1601,6 @@ func (m *TaskMutation) ResetUpdateAt() {
 	m.update_at = nil
 }
 
-// SetUpdateBy sets the "update_by" field.
-func (m *TaskMutation) SetUpdateBy(u uint32) {
-	m.update_by = &u
-	m.addupdate_by = nil
-}
-
-// UpdateBy returns the value of the "update_by" field in the mutation.
-func (m *TaskMutation) UpdateBy() (r uint32, exists bool) {
-	v := m.update_by
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdateBy returns the old "update_by" field's value of the Task entity.
-// If the Task object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldUpdateBy(ctx context.Context) (v uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdateBy is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdateBy requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateBy: %w", err)
-	}
-	return oldValue.UpdateBy, nil
-}
-
-// AddUpdateBy adds u to the "update_by" field.
-func (m *TaskMutation) AddUpdateBy(u int32) {
-	if m.addupdate_by != nil {
-		*m.addupdate_by += u
-	} else {
-		m.addupdate_by = &u
-	}
-}
-
-// AddedUpdateBy returns the value that was added to the "update_by" field in this mutation.
-func (m *TaskMutation) AddedUpdateBy() (r int32, exists bool) {
-	v := m.addupdate_by
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetUpdateBy resets all changes to the "update_by" field.
-func (m *TaskMutation) ResetUpdateBy() {
-	m.update_by = nil
-	m.addupdate_by = nil
-}
-
 // SetIsDeleted sets the "is_deleted" field.
 func (m *TaskMutation) SetIsDeleted(b bool) {
 	m.is_deleted = &b
@@ -1865,12 +1806,12 @@ func (m *TaskMutation) ResetDescription() {
 }
 
 // SetURL sets the "url" field.
-func (m *TaskMutation) SetURL(u *url.URL) {
-	m.url = &u
+func (m *TaskMutation) SetURL(s string) {
+	m.url = &s
 }
 
 // URL returns the value of the "url" field in the mutation.
-func (m *TaskMutation) URL() (r *url.URL, exists bool) {
+func (m *TaskMutation) URL() (r string, exists bool) {
 	v := m.url
 	if v == nil {
 		return
@@ -1881,7 +1822,7 @@ func (m *TaskMutation) URL() (r *url.URL, exists bool) {
 // OldURL returns the old "url" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldURL(ctx context.Context) (v *url.URL, err error) {
+func (m *TaskMutation) OldURL(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldURL is only allowed on UpdateOne operations")
 	}
@@ -1934,7 +1875,7 @@ func (m *TaskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 13)
 	if m.name != nil {
 		fields = append(fields, task.FieldName)
 	}
@@ -1958,9 +1899,6 @@ func (m *TaskMutation) Fields() []string {
 	}
 	if m.update_at != nil {
 		fields = append(fields, task.FieldUpdateAt)
-	}
-	if m.update_by != nil {
-		fields = append(fields, task.FieldUpdateBy)
 	}
 	if m.is_deleted != nil {
 		fields = append(fields, task.FieldIsDeleted)
@@ -2001,8 +1939,6 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 		return m.CompleteAt()
 	case task.FieldUpdateAt:
 		return m.UpdateAt()
-	case task.FieldUpdateBy:
-		return m.UpdateBy()
 	case task.FieldIsDeleted:
 		return m.IsDeleted()
 	case task.FieldDeletedAt:
@@ -2038,8 +1974,6 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldCompleteAt(ctx)
 	case task.FieldUpdateAt:
 		return m.OldUpdateAt(ctx)
-	case task.FieldUpdateBy:
-		return m.OldUpdateBy(ctx)
 	case task.FieldIsDeleted:
 		return m.OldIsDeleted(ctx)
 	case task.FieldDeletedAt:
@@ -2115,13 +2049,6 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdateAt(v)
 		return nil
-	case task.FieldUpdateBy:
-		v, ok := value.(uint32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdateBy(v)
-		return nil
 	case task.FieldIsDeleted:
 		v, ok := value.(bool)
 		if !ok {
@@ -2151,7 +2078,7 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		m.SetDescription(v)
 		return nil
 	case task.FieldURL:
-		v, ok := value.(*url.URL)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -2177,9 +2104,6 @@ func (m *TaskMutation) AddedFields() []string {
 	if m.addstatus != nil {
 		fields = append(fields, task.FieldStatus)
 	}
-	if m.addupdate_by != nil {
-		fields = append(fields, task.FieldUpdateBy)
-	}
 	if m.adddeleted_by != nil {
 		fields = append(fields, task.FieldDeletedBy)
 	}
@@ -2199,8 +2123,6 @@ func (m *TaskMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedType()
 	case task.FieldStatus:
 		return m.AddedStatus()
-	case task.FieldUpdateBy:
-		return m.AddedUpdateBy()
 	case task.FieldDeletedBy:
 		return m.AddedDeletedBy()
 	}
@@ -2239,13 +2161,6 @@ func (m *TaskMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddStatus(v)
-		return nil
-	case task.FieldUpdateBy:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddUpdateBy(v)
 		return nil
 	case task.FieldDeletedBy:
 		v, ok := value.(int32)
@@ -2331,9 +2246,6 @@ func (m *TaskMutation) ResetField(name string) error {
 		return nil
 	case task.FieldUpdateAt:
 		m.ResetUpdateAt()
-		return nil
-	case task.FieldUpdateBy:
-		m.ResetUpdateBy()
 		return nil
 	case task.FieldIsDeleted:
 		m.ResetIsDeleted()

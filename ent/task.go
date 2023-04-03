@@ -3,10 +3,8 @@
 package ent
 
 import (
-	"encoding/json"
 	"fmt"
 	"galileo/ent/task"
-	"net/url"
 	"strings"
 	"time"
 
@@ -34,8 +32,6 @@ type Task struct {
 	CompleteAt *time.Time `json:"complete_at,omitempty"`
 	// UpdateAt holds the value of the "update_at" field.
 	UpdateAt time.Time `json:"update_at,omitempty"`
-	// UpdateBy holds the value of the "update_by" field.
-	UpdateBy uint32 `json:"update_by,omitempty"`
 	// IsDeleted holds the value of the "is_deleted" field.
 	IsDeleted *bool `json:"is_deleted,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
@@ -45,7 +41,7 @@ type Task struct {
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
 	// URL holds the value of the "url" field.
-	URL *url.URL `json:"url,omitempty"`
+	URL string `json:"url,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -53,13 +49,11 @@ func (*Task) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case task.FieldURL:
-			values[i] = new([]byte)
 		case task.FieldIsDeleted:
 			values[i] = new(sql.NullBool)
-		case task.FieldID, task.FieldCreatedBy, task.FieldRank, task.FieldType, task.FieldStatus, task.FieldUpdateBy, task.FieldDeletedBy:
+		case task.FieldID, task.FieldCreatedBy, task.FieldRank, task.FieldType, task.FieldStatus, task.FieldDeletedBy:
 			values[i] = new(sql.NullInt64)
-		case task.FieldName, task.FieldDescription:
+		case task.FieldName, task.FieldDescription, task.FieldURL:
 			values[i] = new(sql.NullString)
 		case task.FieldCreatedAt, task.FieldCompleteAt, task.FieldUpdateAt, task.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -133,12 +127,6 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.UpdateAt = value.Time
 			}
-		case task.FieldUpdateBy:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field update_by", values[i])
-			} else if value.Valid {
-				t.UpdateBy = uint32(value.Int64)
-			}
 		case task.FieldIsDeleted:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field is_deleted", values[i])
@@ -167,12 +155,10 @@ func (t *Task) assignValues(columns []string, values []any) error {
 				t.Description = value.String
 			}
 		case task.FieldURL:
-			if value, ok := values[i].(*[]byte); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field url", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &t.URL); err != nil {
-					return fmt.Errorf("unmarshal field url: %w", err)
-				}
+			} else if value.Valid {
+				t.URL = value.String
 			}
 		}
 	}
@@ -228,9 +214,6 @@ func (t *Task) String() string {
 	builder.WriteString("update_at=")
 	builder.WriteString(t.UpdateAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("update_by=")
-	builder.WriteString(fmt.Sprintf("%v", t.UpdateBy))
-	builder.WriteString(", ")
 	if v := t.IsDeleted; v != nil {
 		builder.WriteString("is_deleted=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
@@ -250,7 +233,7 @@ func (t *Task) String() string {
 	builder.WriteString(t.Description)
 	builder.WriteString(", ")
 	builder.WriteString("url=")
-	builder.WriteString(fmt.Sprintf("%v", t.URL))
+	builder.WriteString(t.URL)
 	builder.WriteByte(')')
 	return builder.String()
 }

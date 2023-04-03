@@ -1,7 +1,7 @@
 syntax = "proto3";
 package kratos.api;
 
-option go_package = "galileo/app/task/internal/conf;conf";
+option go_package = "galileo/runner/internal/conf;conf";
 
 import "google/protobuf/duration.proto";
 
@@ -33,26 +33,9 @@ message Data {
   message Redis {
     string network = 1;
     string addr = 2;
-    string password = 3;
-    int32 db = 4;
-    google.protobuf.Duration read_timeout = 5;
-    google.protobuf.Duration write_timeout = 6;
-    google.protobuf.Duration dial_timeout = 7;
+    google.protobuf.Duration read_timeout = 3;
+    google.protobuf.Duration write_timeout = 4;
   }
   Database database = 1;
   Redis redis = 2;
 }
-
-message Trace {
-  string endpoint = 1;
-}
-
-message Registry {
-  message Consul {
-    string address = 1;
-    string scheme = 2;
-  }
-  Consul consul = 1;
-}
-
-

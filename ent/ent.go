@@ -191,7 +191,7 @@ func (e *ValidationError) Error() string {
 	return e.err.Error()
 }
 
-// Unwrap implements the errResponse.Wrapper interface.
+// Unwrap implements the errors.Wrapper interface.
 func (e *ValidationError) Unwrap() error {
 	return e.err
 }
@@ -283,7 +283,7 @@ func (e ConstraintError) Error() string {
 	return "ent: constraint failed: " + e.msg
 }
 
-// Unwrap implements the errResponse.Wrapper interface.
+// Unwrap implements the errors.Wrapper interface.
 func (e *ConstraintError) Unwrap() error {
 	return e.wrap
 }
