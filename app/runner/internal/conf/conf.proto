@@ -8,6 +8,9 @@ import "google/protobuf/duration.proto";
 message Bootstrap {
   Server server = 1;
   Data data = 2;
+  Trace trace = 3;
+  Auth auth = 4;
+  Service service = 5;
 }
 
 message Server {
@@ -33,9 +36,35 @@ message Data {
   message Redis {
     string network = 1;
     string addr = 2;
-    google.protobuf.Duration read_timeout = 3;
-    google.protobuf.Duration write_timeout = 4;
+    string password = 3;
+    int32 db = 4;
+    google.protobuf.Duration read_timeout = 5;
+    google.protobuf.Duration write_timeout = 6;
+    google.protobuf.Duration dial_timeout = 7;
   }
   Database database = 1;
   Redis redis = 2;
+}
+
+message Service {
+  message User {
+    string endpoint = 1;
+  }
+  User user = 1;
+}
+
+message Trace {
+  string endpoint = 1;
+}
+
+message Registry {
+  message Consul {
+    string address = 1;
+    string scheme = 2;
+  }
+  Consul consul = 1;
+}
+
+message Auth {
+  string jwt_key = 1;
 }
