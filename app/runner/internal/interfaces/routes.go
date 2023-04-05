@@ -4,7 +4,7 @@ import (
 	"context"
 	"galileo/app/runner/internal/conf"
 	"galileo/app/runner/internal/data"
-	"galileo/app/runner/internal/pkg/ctxdata"
+	"galileo/pkg/ctxdata"
 	"galileo/pkg/errResponse"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
