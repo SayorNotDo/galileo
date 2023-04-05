@@ -10,7 +10,6 @@ import (
 	"galileo/app/runner/internal/biz"
 	"galileo/app/runner/internal/conf"
 	"galileo/app/runner/internal/data"
-	"galileo/app/runner/internal/interfaces"
 	"galileo/app/runner/internal/server"
 	"galileo/app/runner/internal/service"
 	"github.com/go-kratos/kratos/v2"
@@ -33,8 +32,7 @@ func wireApp(confServer *conf.Server, auth *conf.Auth, confData *conf.Data, logg
 	runnerRepo := data.NewRunnerRepo(dataData, logger)
 	runnerUseCase := biz.NewRunnerUseCase(runnerRepo, logger)
 	runnerService := service.NewRunnerService(runnerUseCase, logger)
-	runnerInterface := interfaces.NewRunnerInterface(runnerService, logger)
-	httpServer := server.NewHTTPServer(confServer, auth, runnerInterface, logger)
+	httpServer := server.NewHTTPServer(confServer, auth, runnerService, logger)
 	app := newApp(logger, httpServer)
 	return app, func() {
 		cleanup()

@@ -87,7 +87,7 @@ func setUserInfo() middleware.Middleware {
 	}
 }
 
-func RegisterHTTPServer(ac *conf.Auth, us *RunnerUseCase) *gin.Engine {
+func RegisterHTTPServer(ac *conf.Auth, us *RunnerInterface) *gin.Engine {
 	router := gin.New()
 
 	// cors

@@ -1,18 +1,26 @@
-package service
+package interfaces
 
 import (
 	"galileo/app/runner/internal/biz"
+	"github.com/gin-gonic/gin"
 	"github.com/go-kratos/kratos/v2/log"
+	stdHttp "net/http"
 )
 
 type RunnerService struct {
-	uc     *biz.RunnerUseCase
-	logger *log.Helper
+	runnerUseCase *biz.RunnerUseCase
+	log           *log.Helper
 }
 
-func NewRunnerService(uc *biz.RunnerUseCase, logger log.Logger) *RunnerService {
-	return &RunnerService{
-		uc:     uc,
-		logger: log.NewHelper(log.With(logger, "module", "runnerService")),
-	}
+func NewRunnerInterface(uc *biz.RunnerUseCase, logger log.Logger) *RunnerService {
+	return &RunnerService{runnerUseCase: uc, log: log.NewHelper(log.With(logger, "logger", "runnerService"))}
+}
+
+func (uc *RunnerService) SayHi(ctx *gin.Context) {
+	ctx.JSON(200, gin.H{
+		"code":    stdHttp.StatusOK,
+		"reason":  "success",
+		"message": "hello world",
+		"data":    map[string]interface{}{},
+	})
 }

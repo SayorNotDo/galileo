@@ -9,10 +9,8 @@ import (
 	"galileo/app/runner/internal/biz"
 	"galileo/app/runner/internal/conf"
 	"galileo/app/runner/internal/data"
-	"galileo/app/runner/internal/interfaces"
 	"galileo/app/runner/internal/server"
 	"galileo/app/runner/internal/service"
-
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
@@ -20,5 +18,5 @@ import (
 
 // wireApp init kratos application.
 func wireApp(*conf.Server, *conf.Auth, *conf.Data, log.Logger) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, interfaces.ProviderSet, newApp))
+	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
 }
