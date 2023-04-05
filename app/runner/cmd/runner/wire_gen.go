@@ -31,10 +31,10 @@ func wireApp(confServer *conf.Server, auth *conf.Auth, confData *conf.Data, logg
 		return nil, nil, err
 	}
 	runnerRepo := data.NewRunnerRepo(dataData, logger)
-	runnerUseCase := biz.NewRunnerUserCase(runnerRepo, logger)
+	runnerUseCase := biz.NewRunnerUseCase(runnerRepo, logger)
 	runnerService := service.NewRunnerService(runnerUseCase, logger)
-	interfacesRunnerUseCase := interfaces.NewRunnerUseCase(runnerService, logger)
-	httpServer := server.NewHTTPServer(confServer, auth, interfacesRunnerUseCase, logger)
+	runnerInterface := interfaces.NewRunnerInterface(runnerService, logger)
+	httpServer := server.NewHTTPServer(confServer, auth, runnerInterface, logger)
 	app := newApp(logger, httpServer)
 	return app, func() {
 		cleanup()
