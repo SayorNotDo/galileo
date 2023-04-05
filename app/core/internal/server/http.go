@@ -15,10 +15,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/metadata"
-	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
-	"github.com/go-kratos/kratos/v2/middleware/tracing"
-	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	jwt2 "github.com/golang-jwt/jwt/v4"
@@ -31,9 +28,6 @@ import (
 func NewHTTPServer(c *conf.Server, ac *conf.Auth, s *service.CoreService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
-			recovery.Recovery(),
-			validate.Validator(),
-			tracing.Server(),
 			// logging record
 			logging.Server(logger),
 			selector.Server(
@@ -87,10 +81,10 @@ func responseEncoder(w stdHttp.ResponseWriter, r *stdHttp.Request, v interface{}
 
 	codec, _ := http.CodecForRequest(r, "Accept")
 	marshalData, err := codec.Marshal(v)
-	_ = json.Unmarshal(marshalData, &reply.Data)
 	if err != nil {
 		return err
 	}
+	_ = json.Unmarshal(marshalData, &reply.Data)
 	resp, err := codec.Marshal(reply)
 	if err != nil {
 		return err

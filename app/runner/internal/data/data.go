@@ -23,13 +23,13 @@ type Data struct {
 }
 
 // NewData .
-func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
+func NewData(c *conf.Data, logger log.Logger, redisCli redis.Cmdable) (*Data, func(), error) {
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
 	}
 	return &Data{
 		log:      log.NewHelper(log.With(logger, "module", "runnerService/data")),
-		redisCli: RedisCli,
+		redisCli: redisCli,
 	}, cleanup, nil
 }
 

@@ -1,92 +1,24 @@
 package server
 
 import (
-	"context"
-	"fmt"
+	"encoding/json"
 	"galileo/app/runner/internal/conf"
-	"galileo/app/runner/internal/data"
-	"galileo/app/runner/internal/router"
-	"galileo/app/runner/internal/service"
+	"galileo/app/runner/internal/interfaces"
 	"galileo/pkg/errResponse"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/middleware"
-	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
-	"github.com/go-kratos/kratos/v2/middleware/logging"
-	"github.com/go-kratos/kratos/v2/middleware/metadata"
-	"github.com/go-kratos/kratos/v2/middleware/metrics"
-	"github.com/go-kratos/kratos/v2/middleware/recovery"
-	"github.com/go-kratos/kratos/v2/middleware/selector"
-	"github.com/go-kratos/kratos/v2/middleware/tracing"
-	"github.com/go-kratos/kratos/v2/middleware/validate"
-	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	jwt2 "github.com/golang-jwt/jwt/v4"
-	"github.com/gorilla/handlers"
-	"strings"
+	stdHttp "net/http"
 )
 
-func customMiddleware(handler middleware.Handler) middleware.Handler {
-	return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
-		if tr, ok := transport.FromServerContext(ctx); ok {
-			fmt.Println("operation:", tr.Operation())
-		}
-		reply, err = handler(ctx, req)
-		return
-	}
+type Response struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
 }
 
-func setHeaderInfo() middleware.Middleware {
-	return func(handler middleware.Handler) middleware.Handler {
-		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
-			if tr, ok := transport.FromServerContext(ctx); ok {
-				if ht, ok := tr.(*http.Transport); ok {
-					ctx = context.WithValue(ctx, "RemoteAddr", ht.Request().RemoteAddr)
-				}
-				auth := strings.SplitN(tr.RequestHeader().Get("Authorization"), " ", 2)
-				if len(auth) != 2 || !strings.EqualFold(auth[0], "Bearer") {
-					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
-				}
-				jwtToken := auth[1]
-				token, _ := data.RedisCli.Get(ctx, "token:"+jwtToken).Result()
-				if token == "" {
-					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
-				}
-				// set Authorization header
-				tr.RequestHeader().Set("Authorization", "Bearer "+token)
-			}
-			return handler(ctx, req)
-		}
-	}
-}
-
-func NewHTTPServer(c *conf.Server, ac *conf.Auth, runner *service.RunnerService, logger log.Logger) *http.Server {
-	var opts = []http.ServerOption{
-		http.Middleware(
-			recovery.Recovery(),
-			tracing.Server(),
-			logging.Server(logger),
-			metrics.Server(),
-			validate.Validator(),
-			selector.Server(
-				setHeaderInfo(),
-				jwt.Server(func(token *jwt2.Token) (interface{}, error) {
-					return []byte(ac.JwtKey), nil
-				}, jwt.WithSigningMethod(jwt2.SigningMethodHS256),
-					jwt.WithClaims(func() jwt2.Claims {
-						return jwt2.MapClaims{}
-					})),
-			).Match(NewWhiteListMatcher()).Build(),
-			metadata.Server(),
-		),
-		http.Filter(
-			handlers.CORS(
-				handlers.AllowedHeaders([]string{"Authorization", "Content-Type", "Upgrade", "Origin", "Connection", "Accept-Encoding", "Accept-Language", "Host", "x-requested-with", "CurrentTeamID"}),
-				handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "PATCH", "DELETE", "OPTIONS"}),
-				handlers.AllowedOrigins([]string{"*"}),
-				handlers.ExposedHeaders([]string{"Content-Length", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Content-Type"}),
-			),
-		),
-	}
+func NewHTTPServer(c *conf.Server, ac *conf.Auth, runner *interfaces.RunnerUseCase, logger log.Logger) *http.Server {
+	var opts []http.ServerOption
 	if c.Http.Network != "" {
 		opts = append(opts, http.Network(c.Http.Network))
 	}
@@ -96,19 +28,45 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, runner *service.RunnerService,
 	if c.Http.Timeout != nil {
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
+	// add success custom json response
+	opts = append(opts, http.ResponseEncoder(responseEncoder))
+	// add error custom json response
+	opts = append(opts, http.ErrorEncoder(errorEncoder))
 	srv := http.NewServer(opts...)
-	srv.HandlePrefix("/", router.RegisterHTTPServer(runner))
+	srv.HandlePrefix("/", interfaces.RegisterHTTPServer(ac, runner))
 	return srv
 }
 
-func NewWhiteListMatcher() selector.MatchFunc {
-	whiteList := make(map[string]struct{})
-	//whiteList["/api.core.v1.Core/Register"] = struct{}{}
-	//whiteList["/api.core.v1.Core/Login"] = struct{}{}
-	return func(ctx context.Context, operation string) bool {
-		if _, ok := whiteList[operation]; ok {
-			return false
-		}
-		return true
+func errorEncoder(w stdHttp.ResponseWriter, r *stdHttp.Request, err error) {
+	codec, _ := http.CodecForRequest(r, "Accept")
+	w.Header().Set("Content-Type", "application/"+codec.Name())
+	err = errResponse.SetCustomizeErrInfo(err)
+	se := errors.FromError(err)
+	body, err := codec.Marshal(se)
+	if err != nil {
+		w.WriteHeader(500)
+		return
 	}
+	_, _ = w.Write(body)
+}
+
+func responseEncoder(w stdHttp.ResponseWriter, r *stdHttp.Request, v interface{}) error {
+	reply := &Response{}
+	reply.Code = 20000
+	reply.Message = "success"
+
+	codec, _ := http.CodecForRequest(r, "Accept")
+	marshalData, err := codec.Marshal(v)
+	if err != nil {
+		return err
+	}
+	_ = json.Unmarshal(marshalData, &reply.Data)
+	resp, err := codec.Marshal(reply)
+	if err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", codec.Name())
+	w.WriteHeader(stdHttp.StatusOK)
+	_, _ = w.Write(resp)
+	return nil
 }
