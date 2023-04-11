@@ -13,6 +13,6 @@ type runnerRepo struct {
 func NewRunnerRepo(data *Data, logger log.Logger) biz.RunnerRepo {
 	return &runnerRepo{
 		data: data,
-		log:  log.NewHelper(logger),
+		log:  log.NewHelper(log.With(logger, "module", "runnerRepo")),
 	}
 }

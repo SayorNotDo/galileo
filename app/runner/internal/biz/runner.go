@@ -12,9 +12,9 @@ type RunnerUseCase struct {
 	log  *log.Helper
 }
 
-func NewRunnerUserCase(repo RunnerRepo, logger log.Logger) *RunnerUseCase {
+func NewRunnerUseCase(repo RunnerRepo, logger log.Logger) *RunnerUseCase {
 	return &RunnerUseCase{
 		repo: repo,
-		log:  log.NewHelper(logger),
+		log:  log.NewHelper(log.With(logger, "module", "runnerUseCase")),
 	}
 }

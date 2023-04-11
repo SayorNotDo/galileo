@@ -1,4 +1,4 @@
-package interfaces
+package service
 
 import (
 	"context"
@@ -20,6 +20,18 @@ import (
 	"strings"
 	"time"
 )
+
+func NewWhiteListMatcher() selector.MatchFunc {
+	whiteList := make(map[string]struct{})
+	//whiteList["/api.core.v1.Core/Register"] = struct{}{}
+	//whiteList["/api.core.v1.Core/Login"] = struct{}{}
+	return func(ctx context.Context, operation string) bool {
+		if _, ok := whiteList[operation]; ok {
+			return false
+		}
+		return true
+	}
+}
 
 func setHeaderInfo() middleware.Middleware {
 	return func(handler middleware.Handler) middleware.Handler {
@@ -87,7 +99,7 @@ func setUserInfo() middleware.Middleware {
 	}
 }
 
-func RegisterHTTPServer(ac *conf.Auth, us *RunnerInterface) *gin.Engine {
+func RegisterHTTPServer(ac *conf.Auth, us *RunnerService) *gin.Engine {
 	router := gin.New()
 
 	// cors
@@ -120,19 +132,12 @@ func RegisterHTTPServer(ac *conf.Auth, us *RunnerInterface) *gin.Engine {
 		rootGrp := v1.Group("/api")
 		{
 			rootGrp.GET("/sayhi", us.SayHi)
+			loader := rootGrp.Group("/loader")
+			{
+				loader.GET("/health_check", us.HealthCheck)
+				loader.POST("/start")
+			}
 		}
 	}
 	return router
-}
-
-func NewWhiteListMatcher() selector.MatchFunc {
-	whiteList := make(map[string]struct{})
-	//whiteList["/api.core.v1.Core/Register"] = struct{}{}
-	//whiteList["/api.core.v1.Core/Login"] = struct{}{}
-	return func(ctx context.Context, operation string) bool {
-		if _, ok := whiteList[operation]; ok {
-			return false
-		}
-		return true
-	}
 }

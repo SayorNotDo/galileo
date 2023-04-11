@@ -1,4 +1,4 @@
-package interfaces
+package service
 
 import (
 	"galileo/app/runner/internal/biz"
@@ -12,11 +12,22 @@ type RunnerService struct {
 	log           *log.Helper
 }
 
-func NewRunnerInterface(uc *biz.RunnerUseCase, logger log.Logger) *RunnerService {
-	return &RunnerService{runnerUseCase: uc, log: log.NewHelper(log.With(logger, "logger", "runnerService"))}
+func NewRunnerService(uc *biz.RunnerUseCase, logger log.Logger) *RunnerService {
+	return &RunnerService{
+		runnerUseCase: uc,
+		log:           log.NewHelper(log.With(logger, "logger", "runnerService"))}
 }
 
 func (uc *RunnerService) SayHi(ctx *gin.Context) {
+	ctx.JSON(200, gin.H{
+		"code":    stdHttp.StatusOK,
+		"reason":  "success",
+		"message": "hello world",
+		"data":    map[string]interface{}{},
+	})
+}
+
+func (uc *RunnerService) HealthCheck(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{
 		"code":    stdHttp.StatusOK,
 		"reason":  "success",

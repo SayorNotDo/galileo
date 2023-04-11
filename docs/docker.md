@@ -9,3 +9,7 @@ browser http://127.0.0.1:8500/ui/dc1/services
 
 docker run --rm --name jaeger -p14268:14268 -p16686:16686 jaegertracing/all-in-one
 // 执行完毕之后，切记别退出服务
+
+# RabbitMQ 3.11
+
+docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.11-management

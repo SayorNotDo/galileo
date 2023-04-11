@@ -3,7 +3,7 @@ package server
 import (
 	"encoding/json"
 	"galileo/app/runner/internal/conf"
-	"galileo/app/runner/internal/interfaces"
+	"galileo/app/runner/internal/service"
 	"galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
@@ -17,7 +17,7 @@ type Response struct {
 	Data    interface{} `json:"data"`
 }
 
-func NewHTTPServer(c *conf.Server, ac *conf.Auth, runner *interfaces.RunnerUseCase, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, ac *conf.Auth, runner *service.RunnerService, logger log.Logger) *http.Server {
 	var opts []http.ServerOption
 	if c.Http.Network != "" {
 		opts = append(opts, http.Network(c.Http.Network))
@@ -33,7 +33,7 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, runner *interfaces.RunnerUseCa
 	// add error custom json response
 	opts = append(opts, http.ErrorEncoder(errorEncoder))
 	srv := http.NewServer(opts...)
-	srv.HandlePrefix("/", interfaces.RegisterHTTPServer(ac, runner))
+	srv.HandlePrefix("/", service.RegisterHTTPServer(ac, runner))
 	return srv
 }
 

@@ -24,8 +24,12 @@ message Server {
     string addr = 2;
     google.protobuf.Duration timeout = 3;
   }
+  message Rabbitmq{
+    repeated string addr = 1;
+  }
   HTTP http = 1;
   GRPC grpc = 2;
+  Rabbitmq rabbitmq = 3;
 }
 
 message Data {
