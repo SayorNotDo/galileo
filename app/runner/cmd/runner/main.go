@@ -2,16 +2,13 @@ package main
 
 import (
 	"flag"
-	"galileo/pkg/transport/server/rabbitmq"
-	"os"
-
 	"galileo/app/runner/internal/conf"
+	"galileo/pkg/transport/server/rabbitmq"
+	"galileo/pkg/utils/bootstrap"
+	"github.com/go-kratos/kratos/v2/registry"
 
 	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/config"
-	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/http"
 
 	_ "go.uber.org/automaxprocs"
@@ -19,51 +16,37 @@ import (
 
 // go build -ldflags "-X main.Version=x.y.z"
 var (
-	// Name is the name of the compiled software.
-	Name = "runner.api"
-	// Version is the version of the compiled software.
-	Version = "runner.api.v1"
-	// flagconf is the config flag.
-	flagconf string
+	Service = bootstrap.NewServiceInfo(
+		"kratos.runner.api",
+		"0.0.0",
+		"",
+	)
 
-	id, _ = os.Hostname()
+	// Flags is the config flag.
+	Flags = bootstrap.NewCommandFlags()
 )
 
 func init() {
-	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
+	Flags.Init()
 }
 
-func newApp(logger log.Logger, hs *http.Server, rs *rabbitmq.Server) *kratos.App {
+func newApp(logger log.Logger, hs *http.Server, rs *rabbitmq.Server, rr registry.Registrar) *kratos.App {
 	return kratos.New(
-		kratos.ID(id),
-		kratos.Name(Name),
-		kratos.Version(Version),
+		kratos.ID(Service.Id),
+		kratos.Name(Service.Name),
+		kratos.Version(Service.Version),
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
 		kratos.Server(
 			hs,
 			rs,
 		),
+		kratos.Registrar(rr),
 	)
 }
 
-func main() {
-	flag.Parse()
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
-	c := config.New(
-		config.WithSource(
-			file.NewSource(flagconf),
-		),
-	)
-	defer c.Close()
+func loadConfig() (*conf.Bootstrap, *conf.Registry) {
+	c := bootstrap.NewConfigProvider(Flags.ConfigType, Flags.ConfigHost, Flags.Conf, Service.Name)
 
 	if err := c.Load(); err != nil {
 		panic(err)
@@ -74,7 +57,30 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := wireApp(bc.Server, bc.Auth, bc.Data, logger)
+	var rc conf.Registry
+	if err := c.Scan(&rc); err != nil {
+		panic(err)
+	}
+
+	return &bc, &rc
+}
+
+func main() {
+	flag.Parse()
+
+	logger := bootstrap.NewLoggerProvider(&Service)
+
+	bc, rc := loadConfig()
+	if bc == nil || rc == nil {
+		panic("load config failed")
+	}
+
+	err := bootstrap.NewTracerProvider(bc.Trace.Endpoint, Flags.Env, &Service)
+	if err != nil {
+		panic(err)
+	}
+
+	app, cleanup, err := wireApp(bc.Server, bc.Auth, bc.Data, logger, rc)
 	if err != nil {
 		panic(err)
 	}
