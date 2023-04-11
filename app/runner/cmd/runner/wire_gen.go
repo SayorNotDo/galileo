@@ -31,9 +31,12 @@ func wireApp(confServer *conf.Server, auth *conf.Auth, confData *conf.Data, logg
 	}
 	runnerRepo := data.NewRunnerRepo(dataData, logger)
 	runnerUseCase := biz.NewRunnerUseCase(runnerRepo, logger)
-	runnerService := service.NewRunnerService(runnerUseCase, logger)
+	runnerDataRepo := data.NewRunnerDataRepo(dataData, logger)
+	runnerDataUseCase := biz.NewRunnerDataUseCase(runnerDataRepo, logger)
+	runnerService := service.NewRunnerService(runnerUseCase, runnerDataUseCase, logger)
 	httpServer := server.NewHTTPServer(confServer, auth, runnerService, logger)
-	app := newApp(logger, httpServer)
+	rabbitmqServer := server.NewRabbitServer(confServer, logger, runnerService)
+	app := newApp(logger, httpServer, rabbitmqServer)
 	return app, func() {
 		cleanup()
 	}, nil

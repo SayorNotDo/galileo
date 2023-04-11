@@ -13,6 +13,13 @@ type runnerDataRepo struct {
 	log  *log.Helper
 }
 
+func NewRunnerDataRepo(data *Data, logger log.Logger) biz.RunnerDataRepo {
+	return &runnerDataRepo{
+		data: data,
+		log:  log.NewHelper(log.With(logger, "module", "data.runnerDataRepo")),
+	}
+}
+
 func (r *runnerDataRepo) InsertRunnerData(ctx context.Context, req *biz.Runner) error {
 	return nil
 }

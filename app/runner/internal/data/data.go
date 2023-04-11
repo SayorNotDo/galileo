@@ -12,7 +12,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewRunnerRepo, NewRedis)
+var ProviderSet = wire.NewSet(NewData, NewRunnerRepo, NewRedis, NewRunnerDataRepo)
 
 var RedisCli redis.Cmdable
 

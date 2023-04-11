@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"galileo/pkg/transport/server/rabbitmq"
 	"os"
 
 	"galileo/app/runner/internal/conf"
@@ -32,7 +33,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, hs *http.Server) *kratos.App {
+func newApp(logger log.Logger, hs *http.Server, rs *rabbitmq.Server) *kratos.App {
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -41,6 +42,7 @@ func newApp(logger log.Logger, hs *http.Server) *kratos.App {
 		kratos.Logger(logger),
 		kratos.Server(
 			hs,
+			rs,
 		),
 	)
 }

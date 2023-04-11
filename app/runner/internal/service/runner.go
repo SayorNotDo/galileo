@@ -11,13 +11,15 @@ type RunnerService struct {
 	runnerUseCase *biz.RunnerUseCase
 	log           *log.Helper
 
-	runnerData *biz.RunnerUseCase
+	runnerDataUseCase *biz.RunnerDataUseCase
 }
 
-func NewRunnerService(uc *biz.RunnerUseCase, logger log.Logger) *RunnerService {
+func NewRunnerService(runner *biz.RunnerUseCase, runnerData *biz.RunnerDataUseCase, logger log.Logger) *RunnerService {
 	return &RunnerService{
-		runnerUseCase: uc,
-		log:           log.NewHelper(log.With(logger, "logger", "runnerService"))}
+		runnerUseCase:     runner,
+		runnerDataUseCase: runnerData,
+		log:               log.NewHelper(log.With(logger, "module", "service.runnerService")),
+	}
 }
 
 func (rs *RunnerService) SayHi(ctx *gin.Context) {

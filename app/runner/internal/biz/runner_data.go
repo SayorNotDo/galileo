@@ -28,9 +28,9 @@ func NewRunnerDataUseCase(repo RunnerDataRepo, logger log.Logger) *RunnerDataUse
 }
 
 func (uc *RunnerDataUseCase) InsertRunnerData(ctx context.Context, req *Runner) error {
-	return nil
+	return uc.repo.InsertRunnerData(ctx, req)
 }
 
 func (uc *RunnerDataUseCase) BatchInsertRunnerData(ctx context.Context, req []*Runner) error {
-	return nil
+	return uc.repo.BatchInsertRunnerData(ctx, req)
 }
