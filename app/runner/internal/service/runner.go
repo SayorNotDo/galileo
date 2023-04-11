@@ -10,6 +10,8 @@ import (
 type RunnerService struct {
 	runnerUseCase *biz.RunnerUseCase
 	log           *log.Helper
+
+	runnerData *biz.RunnerUseCase
 }
 
 func NewRunnerService(uc *biz.RunnerUseCase, logger log.Logger) *RunnerService {
@@ -18,7 +20,7 @@ func NewRunnerService(uc *biz.RunnerUseCase, logger log.Logger) *RunnerService {
 		log:           log.NewHelper(log.With(logger, "logger", "runnerService"))}
 }
 
-func (uc *RunnerService) SayHi(ctx *gin.Context) {
+func (rs *RunnerService) SayHi(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{
 		"code":    stdHttp.StatusOK,
 		"reason":  "success",
@@ -27,7 +29,7 @@ func (uc *RunnerService) SayHi(ctx *gin.Context) {
 	})
 }
 
-func (uc *RunnerService) HealthCheck(ctx *gin.Context) {
+func (rs *RunnerService) HealthCheck(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{
 		"code":    stdHttp.StatusOK,
 		"reason":  "success",

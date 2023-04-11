@@ -22,5 +22,5 @@ func NewRabbitServer(c *conf.Server, _ log.Logger, runner *service.RunnerService
 }
 
 func registerRabbitmqSubscriber(ctx context.Context, srv *rabbitmq.Server, runner *service.RunnerService) {
-	_ = srv.RegisterSubscriber(ctx, "logger.sensor.ts", nil, nil)
+	_ = srv.RegisterSubscriber(ctx, "logger.sensor.ts", registerRunnerDataHandler(runner.InsertRunnerData), nil)
 }
