@@ -6,10 +6,11 @@ import (
 )
 
 type Runner struct {
-	Id        int64                  `json:"id"`
-	Type      string                 `json:"type"`
-	Timestamp int64                  `json:"time"`
-	Data      map[string]interface{} `json:"data"`
+	Id        int64                  `json:"id,omitempty"`
+	Type      string                 `json:"type,omitempty"`
+	Sync      int64                  `json:"sync,omitempty"`
+	Timestamp int64                  `json:"timestamp,omitempty"`
+	Data      map[string]interface{} `json:"data,omitempty"`
 }
 
 type RunnerDataRepo interface {

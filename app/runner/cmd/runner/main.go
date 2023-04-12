@@ -32,7 +32,7 @@ func init() {
 
 func newApp(logger log.Logger, hs *http.Server, rs *rabbitmq.Server, rr registry.Registrar) *kratos.App {
 	return kratos.New(
-		kratos.ID(Service.Id),
+		kratos.ID(Service.GetInstanceId()),
 		kratos.Name(Service.Name),
 		kratos.Version(Service.Version),
 		kratos.Metadata(map[string]string{}),

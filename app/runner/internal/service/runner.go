@@ -32,6 +32,10 @@ func (rs *RunnerService) SayHi(ctx *gin.Context) {
 }
 
 func (rs *RunnerService) HealthCheck(ctx *gin.Context) {
+	err := rs.runnerDataUseCase.InsertRunnerData(ctx, &biz.Runner{})
+	if err != nil {
+		return
+	}
 	ctx.JSON(200, gin.H{
 		"code":    stdHttp.StatusOK,
 		"reason":  "success",

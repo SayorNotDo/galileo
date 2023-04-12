@@ -13,6 +13,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	jwt2 "github.com/golang-jwt/jwt/v4"
@@ -113,7 +114,10 @@ func RegisterHTTPServer(ac *conf.Auth, us *RunnerService) *gin.Engine {
 
 	router.Use(gin.Logger())
 
-	router.Use(kgin.Middlewares(recovery.Recovery(),
+	router.Use(kgin.Middlewares(
+		recovery.Recovery(),
+		tracing.Server(),
+
 		selector.Server(
 			setHeaderInfo(),
 			jwt.Server(
@@ -131,11 +135,20 @@ func RegisterHTTPServer(ac *conf.Auth, us *RunnerService) *gin.Engine {
 	{
 		rootGrp := v1.Group("/api")
 		{
-			rootGrp.GET("/sayhi", us.SayHi)
+			// hello test api
+			rootGrp.GET("/hello", us.SayHi)
+
+			// loader api
 			loader := rootGrp.Group("/loader")
 			{
-				loader.GET("/health_check", us.HealthCheck)
+				loader.GET("/healthCheck", us.HealthCheck)
 				loader.POST("/start")
+			}
+
+			// job api
+			job := rootGrp.Group("/job")
+			{
+				job.POST("/hello", us.SayHi)
 			}
 		}
 	}
