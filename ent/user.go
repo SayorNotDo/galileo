@@ -46,7 +46,8 @@ type User struct {
 	// IsDeleted holds the value of the "is_deleted" field.
 	IsDeleted *bool `json:"is_deleted,omitempty"`
 	// UUID holds the value of the "uuid" field.
-	UUID uuid.UUID `json:"uuid,omitempty"`
+	UUID       uuid.UUID `json:"uuid,omitempty"`
+	group_user *int
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -64,6 +65,8 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullTime)
 		case user.FieldUUID:
 			values[i] = new(uuid.UUID)
+		case user.ForeignKeys[0]: // group_user
+			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type User", columns[i])
 		}
@@ -177,6 +180,13 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field uuid", values[i])
 			} else if value != nil {
 				u.UUID = *value
+			}
+		case user.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field group_user", value)
+			} else if value.Valid {
+				u.group_user = new(int)
+				*u.group_user = int(value.Int64)
 			}
 		}
 	}

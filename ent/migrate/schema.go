@@ -9,6 +9,17 @@ import (
 )
 
 var (
+	// GroupsColumns holds the columns for the "groups" table.
+	GroupsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+	}
+	// GroupsTable holds the schema information for the "groups" table.
+	GroupsTable = &schema.Table{
+		Name:       "groups",
+		Columns:    GroupsColumns,
+		PrimaryKey: []*schema.Column{GroupsColumns[0]},
+	}
 	// ProjectColumns holds the columns for the "project" table.
 	ProjectColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
@@ -71,15 +82,25 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "is_deleted", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "uuid", Type: field.TypeUUID},
+		{Name: "group_user", Type: field.TypeInt, Nullable: true},
 	}
 	// UserTable holds the schema information for the "user" table.
 	UserTable = &schema.Table{
 		Name:       "user",
 		Columns:    UserColumns,
 		PrimaryKey: []*schema.Column{UserColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_groups_user",
+				Columns:    []*schema.Column{UserColumns[16]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		GroupsTable,
 		ProjectTable,
 		TaskTable,
 		UserTable,
@@ -93,6 +114,7 @@ func init() {
 	TaskTable.Annotation = &entsql.Annotation{
 		Table: "task",
 	}
+	UserTable.ForeignKeys[0].RefTable = GroupsTable
 	UserTable.Annotation = &entsql.Annotation{
 		Table: "user",
 	}

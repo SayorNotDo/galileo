@@ -17,7 +17,7 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	Service = bootstrap.NewServiceInfo(
-		"kratos.runner.api",
+		"Galileo.runner.api",
 		"0.0.0",
 		"",
 	)
