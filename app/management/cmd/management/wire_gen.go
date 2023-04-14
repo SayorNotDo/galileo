@@ -36,7 +36,8 @@ func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Regist
 	projectUseCase := biz.NewProjectUseCase(projectRepo, logger)
 	projectService := service.NewProjectService(projectUseCase, logger)
 	grpcServer := server.NewGRPCServer(confServer, projectService, logger)
-	httpServer := server.NewHTTPServer(confServer, projectService, logger)
+	testcaseService := service.NewTestcaseService(logger)
+	httpServer := server.NewHTTPServer(confServer, projectService, testcaseService, logger)
 	registrar := data.NewRegistrar(registry)
 	app := newApp(logger, grpcServer, httpServer, registrar)
 	return app, func() {
