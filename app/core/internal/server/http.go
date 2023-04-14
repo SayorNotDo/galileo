@@ -76,7 +76,7 @@ type Response struct {
 
 func responseEncoder(w stdHttp.ResponseWriter, r *stdHttp.Request, v interface{}) error {
 	reply := &Response{}
-	reply.Code = 20000
+	reply.Code = stdHttp.StatusOK
 	reply.Message = "success"
 
 	codec, _ := http.CodecForRequest(r, "Accept")
