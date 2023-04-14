@@ -1,4 +1,4 @@
-name: project.api
+name: management.api
 server:
   http:
     addr: 0.0.0.0:8000

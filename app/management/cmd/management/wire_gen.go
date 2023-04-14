@@ -7,11 +7,11 @@
 package main
 
 import (
-	"galileo/app/project/internal/biz"
-	"galileo/app/project/internal/conf"
-	"galileo/app/project/internal/data"
-	"galileo/app/project/internal/server"
-	"galileo/app/project/internal/service"
+	"galileo/app/management/internal/biz"
+	"galileo/app/management/internal/conf"
+	"galileo/app/management/internal/data"
+	"galileo/app/management/internal/server"
+	"galileo/app/management/internal/service"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -24,9 +24,7 @@ import (
 
 // wireApp init kratos application.
 func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Registry, logger log.Logger) (*kratos.App, func(), error) {
-	db := data.NewDB(confData)
-	client := data.NewRedis(confData)
-	dataData, cleanup, err := data.NewData(confData, logger, db, client)
+	dataData, cleanup, err := data.NewData(confData, logger)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -34,7 +32,9 @@ func wireApp(confServer *conf.Server, confData *conf.Data, registry *conf.Regist
 	projectUseCase := biz.NewProjectUseCase(projectRepo, logger)
 	projectService := service.NewProjectService(projectUseCase, logger)
 	grpcServer := server.NewGRPCServer(confServer, projectService, logger)
-	app := newApp(logger, grpcServer)
+	httpServer := server.NewHTTPServer(confServer, projectService, logger)
+	registrar := data.NewRegistrar(registry)
+	app := newApp(logger, grpcServer, httpServer, registrar)
 	return app, func() {
 		cleanup()
 	}, nil

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "errors/errors.proto";
+import "google/api/annotations.proto";
 
 package api.project.v1;
 
@@ -8,20 +8,15 @@ option go_package = "galileo/api/project/v1;v1";
 option java_multiple_files = true;
 option java_package = "api.project.v1";
 
-enum ErrorReason {
-  option (errors.default_code) = 500;
-
-  PROJECT_NOT_FOUND = 0 [(errors.code) = 404];
-
-  CONTENT_MISSING = 1 [(errors.code) = 400];
-
-}
-
 service Project {
   rpc CreateProject (CreateProjectRequest) returns (CreateProjectReply);
   rpc UpdateProject (UpdateProjectRequest) returns (UpdateProjectReply);
   rpc DeleteProject (DeleteProjectRequest) returns (DeleteProjectReply);
-  rpc GetProject (GetProjectRequest) returns (GetProjectReply);
+  rpc GetProject (GetProjectRequest) returns (GetProjectReply) {
+    option(google.api.http) = {
+      get: "v1/project/{id}"
+    };
+  };
   rpc ListProject (ListProjectRequest) returns (ListProjectReply);
 }
 
@@ -48,7 +43,9 @@ message UpdateProjectReply {}
 message DeleteProjectRequest {}
 message DeleteProjectReply {}
 
-message GetProjectRequest {}
+message GetProjectRequest {
+  int64 id = 1;
+}
 message GetProjectReply {}
 
 message ListProjectRequest {}

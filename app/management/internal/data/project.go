@@ -3,7 +3,7 @@ package data
 import (
 	"context"
 	"fmt"
-	"galileo/app/project/internal/biz"
+	"galileo/app/management/internal/biz"
 	"github.com/go-kratos/kratos/v2/log"
 	"time"
 )

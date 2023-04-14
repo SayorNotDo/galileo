@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	v1 "galileo/api/project/v1"
-	"galileo/app/project/internal/biz"
+	"galileo/app/management/internal/biz"
 	"github.com/go-kratos/kratos/v2/log"
 )
 

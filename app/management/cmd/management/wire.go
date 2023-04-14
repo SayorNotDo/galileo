@@ -6,11 +6,11 @@
 package main
 
 import (
-	"galileo/app/project/internal/biz"
-	"galileo/app/project/internal/conf"
-	"galileo/app/project/internal/data"
-	"galileo/app/project/internal/server"
-	"galileo/app/project/internal/service"
+	"galileo/app/management/internal/biz"
+	"galileo/app/management/internal/conf"
+	"galileo/app/management/internal/data"
+	"galileo/app/management/internal/server"
+	"galileo/app/management/internal/service"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"

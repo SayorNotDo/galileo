@@ -31,6 +31,8 @@ const (
 	Core_UpdateEmail_FullMethodName    = "/api.core.v1.Core/UpdateEmail"
 	Core_UpdatePhone_FullMethodName    = "/api.core.v1.Core/UpdatePhone"
 	Core_ListUser_FullMethodName       = "/api.core.v1.Core/ListUser"
+	Core_CreateGroup_FullMethodName    = "/api.core.v1.Core/CreateGroup"
+	Core_UpdateGroup_FullMethodName    = "/api.core.v1.Core/UpdateGroup"
 )
 
 // CoreClient is the client API for Core service.
@@ -48,6 +50,8 @@ type CoreClient interface {
 	UpdateEmail(ctx context.Context, in *UpdateEmailRequest, opts ...grpc.CallOption) (*UpdateEmailReply, error)
 	UpdatePhone(ctx context.Context, in *UpdatePhoneRequest, opts ...grpc.CallOption) (*UpdatePhoneReply, error)
 	ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
+	CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupReply, error)
+	UpdateGroup(ctx context.Context, in *UpdateGroupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type coreClient struct {
@@ -157,6 +161,24 @@ func (c *coreClient) ListUser(ctx context.Context, in *ListUserRequest, opts ...
 	return out, nil
 }
 
+func (c *coreClient) CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupReply, error) {
+	out := new(CreateGroupReply)
+	err := c.cc.Invoke(ctx, Core_CreateGroup_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) UpdateGroup(ctx context.Context, in *UpdateGroupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Core_UpdateGroup_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CoreServer is the server API for Core service.
 // All implementations must embed UnimplementedCoreServer
 // for forward compatibility
@@ -172,6 +194,8 @@ type CoreServer interface {
 	UpdateEmail(context.Context, *UpdateEmailRequest) (*UpdateEmailReply, error)
 	UpdatePhone(context.Context, *UpdatePhoneRequest) (*UpdatePhoneReply, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
+	CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupReply, error)
+	UpdateGroup(context.Context, *UpdateGroupRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedCoreServer()
 }
 
@@ -211,6 +235,12 @@ func (UnimplementedCoreServer) UpdatePhone(context.Context, *UpdatePhoneRequest)
 }
 func (UnimplementedCoreServer) ListUser(context.Context, *ListUserRequest) (*ListUserReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUser not implemented")
+}
+func (UnimplementedCoreServer) CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateGroup not implemented")
+}
+func (UnimplementedCoreServer) UpdateGroup(context.Context, *UpdateGroupRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateGroup not implemented")
 }
 func (UnimplementedCoreServer) mustEmbedUnimplementedCoreServer() {}
 
@@ -423,6 +453,42 @@ func _Core_ListUser_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Core_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).CreateGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_CreateGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).CreateGroup(ctx, req.(*CreateGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_UpdateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).UpdateGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_UpdateGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).UpdateGroup(ctx, req.(*UpdateGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Core_ServiceDesc is the grpc.ServiceDesc for Core service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -473,6 +539,14 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListUser",
 			Handler:    _Core_ListUser_Handler,
+		},
+		{
+			MethodName: "CreateGroup",
+			Handler:    _Core_CreateGroup_Handler,
+		},
+		{
+			MethodName: "UpdateGroup",
+			Handler:    _Core_UpdateGroup_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

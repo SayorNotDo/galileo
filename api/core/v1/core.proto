@@ -73,6 +73,31 @@ service Core {
       get: "v1/api/user/list/{pageNum}/{pageSize}"
     };
   }
+  rpc CreateGroup(CreateGroupRequest) returns (CreateGroupReply) {
+    option(google.api.http) = {
+      post: "v1/api/user/group"
+      body: "*"
+    };
+  }
+  rpc UpdateGroup(UpdateGroupRequest) returns (google.protobuf.Empty) {
+    option(google.api.http) = {
+      put: "v1/api/user/group"
+      body: "*"
+    };
+  }
+}
+
+message UpdateGroupRequest {}
+
+message UpdateGroupReply {}
+
+message CreateGroupRequest {
+  string name = 1;
+}
+
+message CreateGroupReply {
+  int64 id = 1;
+  bool success = 2;
 }
 
 message UpdatePhoneRequest {}
