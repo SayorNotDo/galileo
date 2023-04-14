@@ -79,9 +79,9 @@ func UpdatedAt(v time.Time) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v string) predicate.Project {
-	return predicate.Project(sql.FieldEQ(FieldUpdatedBy, v))
+// UpdateBy applies equality check predicate on the "update_by" field. It's identical to UpdateByEQ.
+func UpdateBy(v string) predicate.Project {
+	return predicate.Project(sql.FieldEQ(FieldUpdateBy, v))
 }
 
 // DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
@@ -359,69 +359,69 @@ func UpdatedAtLTE(v time.Time) predicate.Project {
 	return predicate.Project(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v string) predicate.Project {
-	return predicate.Project(sql.FieldEQ(FieldUpdatedBy, v))
+// UpdateByEQ applies the EQ predicate on the "update_by" field.
+func UpdateByEQ(v string) predicate.Project {
+	return predicate.Project(sql.FieldEQ(FieldUpdateBy, v))
 }
 
-// UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v string) predicate.Project {
-	return predicate.Project(sql.FieldNEQ(FieldUpdatedBy, v))
+// UpdateByNEQ applies the NEQ predicate on the "update_by" field.
+func UpdateByNEQ(v string) predicate.Project {
+	return predicate.Project(sql.FieldNEQ(FieldUpdateBy, v))
 }
 
-// UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...string) predicate.Project {
-	return predicate.Project(sql.FieldIn(FieldUpdatedBy, vs...))
+// UpdateByIn applies the In predicate on the "update_by" field.
+func UpdateByIn(vs ...string) predicate.Project {
+	return predicate.Project(sql.FieldIn(FieldUpdateBy, vs...))
 }
 
-// UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...string) predicate.Project {
-	return predicate.Project(sql.FieldNotIn(FieldUpdatedBy, vs...))
+// UpdateByNotIn applies the NotIn predicate on the "update_by" field.
+func UpdateByNotIn(vs ...string) predicate.Project {
+	return predicate.Project(sql.FieldNotIn(FieldUpdateBy, vs...))
 }
 
-// UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v string) predicate.Project {
-	return predicate.Project(sql.FieldGT(FieldUpdatedBy, v))
+// UpdateByGT applies the GT predicate on the "update_by" field.
+func UpdateByGT(v string) predicate.Project {
+	return predicate.Project(sql.FieldGT(FieldUpdateBy, v))
 }
 
-// UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v string) predicate.Project {
-	return predicate.Project(sql.FieldGTE(FieldUpdatedBy, v))
+// UpdateByGTE applies the GTE predicate on the "update_by" field.
+func UpdateByGTE(v string) predicate.Project {
+	return predicate.Project(sql.FieldGTE(FieldUpdateBy, v))
 }
 
-// UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v string) predicate.Project {
-	return predicate.Project(sql.FieldLT(FieldUpdatedBy, v))
+// UpdateByLT applies the LT predicate on the "update_by" field.
+func UpdateByLT(v string) predicate.Project {
+	return predicate.Project(sql.FieldLT(FieldUpdateBy, v))
 }
 
-// UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v string) predicate.Project {
-	return predicate.Project(sql.FieldLTE(FieldUpdatedBy, v))
+// UpdateByLTE applies the LTE predicate on the "update_by" field.
+func UpdateByLTE(v string) predicate.Project {
+	return predicate.Project(sql.FieldLTE(FieldUpdateBy, v))
 }
 
-// UpdatedByContains applies the Contains predicate on the "updated_by" field.
-func UpdatedByContains(v string) predicate.Project {
-	return predicate.Project(sql.FieldContains(FieldUpdatedBy, v))
+// UpdateByContains applies the Contains predicate on the "update_by" field.
+func UpdateByContains(v string) predicate.Project {
+	return predicate.Project(sql.FieldContains(FieldUpdateBy, v))
 }
 
-// UpdatedByHasPrefix applies the HasPrefix predicate on the "updated_by" field.
-func UpdatedByHasPrefix(v string) predicate.Project {
-	return predicate.Project(sql.FieldHasPrefix(FieldUpdatedBy, v))
+// UpdateByHasPrefix applies the HasPrefix predicate on the "update_by" field.
+func UpdateByHasPrefix(v string) predicate.Project {
+	return predicate.Project(sql.FieldHasPrefix(FieldUpdateBy, v))
 }
 
-// UpdatedByHasSuffix applies the HasSuffix predicate on the "updated_by" field.
-func UpdatedByHasSuffix(v string) predicate.Project {
-	return predicate.Project(sql.FieldHasSuffix(FieldUpdatedBy, v))
+// UpdateByHasSuffix applies the HasSuffix predicate on the "update_by" field.
+func UpdateByHasSuffix(v string) predicate.Project {
+	return predicate.Project(sql.FieldHasSuffix(FieldUpdateBy, v))
 }
 
-// UpdatedByEqualFold applies the EqualFold predicate on the "updated_by" field.
-func UpdatedByEqualFold(v string) predicate.Project {
-	return predicate.Project(sql.FieldEqualFold(FieldUpdatedBy, v))
+// UpdateByEqualFold applies the EqualFold predicate on the "update_by" field.
+func UpdateByEqualFold(v string) predicate.Project {
+	return predicate.Project(sql.FieldEqualFold(FieldUpdateBy, v))
 }
 
-// UpdatedByContainsFold applies the ContainsFold predicate on the "updated_by" field.
-func UpdatedByContainsFold(v string) predicate.Project {
-	return predicate.Project(sql.FieldContainsFold(FieldUpdatedBy, v))
+// UpdateByContainsFold applies the ContainsFold predicate on the "update_by" field.
+func UpdateByContainsFold(v string) predicate.Project {
+	return predicate.Project(sql.FieldContainsFold(FieldUpdateBy, v))
 }
 
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.

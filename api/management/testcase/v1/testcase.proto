@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+
+package api.management.testcase;
+
+option go_package = "galileo/api/management/testcase/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.management.testcase.v1";
+
+service Testcase {
+  rpc CreateTestcase (CreateTestcaseRequest) returns (CreateTestcaseReply) {
+    option(google.api.http) = {
+      post: "v1/api/testcase"
+      body: "*"
+    };
+  };
+  rpc UpdateTestcase (UpdateTestcaseRequest) returns (UpdateTestcaseReply);
+  rpc DeleteTestcase (DeleteTestcaseRequest) returns (DeleteTestcaseReply);
+  rpc GetTestcase (GetTestcaseRequest) returns (GetTestcaseReply);
+  rpc ListTestcase (ListTestcaseRequest) returns (ListTestcaseReply);
+}
+
+message CreateTestcaseRequest {
+  string name = 1;
+  int32 status = 2;
+  int32 type = 3;
+  int32 priority = 4;
+  string url = 5;
+  string description = 6;
+}
+message CreateTestcaseReply {
+  int64 id = 1;
+  int64 createdAt = 2;
+}
+
+message UpdateTestcaseRequest {}
+message UpdateTestcaseReply {}
+
+message DeleteTestcaseRequest {}
+message DeleteTestcaseReply {}
+
+message GetTestcaseRequest {}
+message GetTestcaseReply {}
+
+message ListTestcaseRequest {}
+message ListTestcaseReply {}

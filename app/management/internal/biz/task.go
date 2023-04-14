@@ -39,7 +39,10 @@ type TaskUseCase struct {
 
 // NewTaskUseCase new a Task useCase.
 func NewTaskUseCase(repo TaskRepo, logger log.Logger) *TaskUseCase {
-	return &TaskUseCase{repo: repo, log: log.NewHelper(logger)}
+	return &TaskUseCase{
+		repo: repo,
+		log:  log.NewHelper(log.With(logger, "module", "management.taskUseCase")),
+	}
 }
 
 func (uc *TaskUseCase) CreateTask(ctx context.Context, task *Task) (*Task, error) {

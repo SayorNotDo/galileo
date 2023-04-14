@@ -51,7 +51,7 @@ type CoreUseCase struct {
 }
 
 func NewCoreUseCase(repo CoreRepo, logger log.Logger, conf *conf.Auth) *CoreUseCase {
-	helper := log.NewHelper(log.With(logger, "module", "useCase/core"))
+	helper := log.NewHelper(log.With(logger, "module", "core.useCase"))
 	return &CoreUseCase{cRepo: repo, log: helper, signingKey: conf.JwtKey}
 }
 func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterReply, error) {

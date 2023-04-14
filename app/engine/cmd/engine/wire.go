@@ -6,11 +6,9 @@
 package main
 
 import (
-	"galileo/engine/internal/biz"
-	"galileo/engine/internal/conf"
-	"galileo/engine/internal/data"
-	"galileo/engine/internal/server"
-	"galileo/engine/internal/service"
+	"galileo/app/engine/internal/conf"
+	"galileo/app/engine/internal/server"
+	"galileo/app/engine/internal/service"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
@@ -19,5 +17,5 @@ import (
 
 // wireApp init kratos application.
 func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
+	panic(wire.Build(server.ProviderSet, service.ProviderSet, newApp))
 }

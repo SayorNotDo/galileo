@@ -5,7 +5,7 @@ import (
 	"galileo/ent/task"
 	"time"
 
-	"galileo/app/task/internal/biz"
+	"galileo/app/management/internal/biz"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -19,7 +19,7 @@ type taskRepo struct {
 func NewTaskRepo(data *Data, logger log.Logger) biz.TaskRepo {
 	return &taskRepo{
 		data: data,
-		log:  log.NewHelper(logger),
+		log:  log.NewHelper(log.With(logger, "module", "management.taskRepo")),
 	}
 }
 

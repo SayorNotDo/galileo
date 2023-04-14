@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+import "google/api/annotations.proto";
+
+
 package api.engine.v1;
 
 option go_package = "galileo/api/engine/v1;v1";
@@ -7,11 +10,15 @@ option java_multiple_files = true;
 option java_package = "api.engine.v1";
 
 service Engine {
-	rpc CreateEngine (CreateEngineRequest) returns (CreateEngineReply);
-	rpc UpdateEngine (UpdateEngineRequest) returns (UpdateEngineReply);
-	rpc DeleteEngine (DeleteEngineRequest) returns (DeleteEngineReply);
-	rpc GetEngine (GetEngineRequest) returns (GetEngineReply);
-	rpc ListEngine (ListEngineRequest) returns (ListEngineReply);
+  rpc CreateEngine (CreateEngineRequest) returns (CreateEngineReply);
+  rpc UpdateEngine (UpdateEngineRequest) returns (UpdateEngineReply);
+  rpc DeleteEngine (DeleteEngineRequest) returns (DeleteEngineReply);
+  rpc GetEngine (GetEngineRequest) returns (GetEngineReply);
+  rpc ListEngine (ListEngineRequest) returns (ListEngineReply) {
+    option(google.api.http) = {
+      get: "v1/api/hello"
+    };
+  };
 }
 
 message CreateEngineRequest {}

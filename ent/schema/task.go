@@ -25,7 +25,7 @@ func (Task) Fields() []ent.Field {
 		field.Int64("id"),
 		field.String("name"),
 		field.Time("created_at").Default(time.Now).Immutable(),
-		field.Uint32("created_by"),
+		field.Uint32("created_by").Immutable(),
 		field.Int8("rank"),
 		field.Int16("type"),
 		field.Int16("status").Default(0),
@@ -34,7 +34,7 @@ func (Task) Fields() []ent.Field {
 		field.Bool("is_deleted").Optional().Nillable(),
 		field.Time("deleted_at").Optional().Nillable(),
 		field.Uint32("deleted_by").Optional().Nillable(),
-		field.Text("description"),
+		field.Text("description").Optional(),
 		field.String("url"),
 	}
 }

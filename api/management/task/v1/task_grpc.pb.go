@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v3.21.7
-// source: api/task/v1/task.proto
+// source: api/management/task/v1/task.proto
 
 package v1
 
@@ -125,7 +125,7 @@ func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
 
 // UnsafeTaskServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to TaskServer will
-// result in compilation errResponse.
+// result in compilation errors.
 type UnsafeTaskServer interface {
 	mustEmbedUnimplementedTaskServer()
 }
@@ -253,5 +253,5 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/task/v1/task.proto",
+	Metadata: "api/management/task/v1/task.proto",
 }

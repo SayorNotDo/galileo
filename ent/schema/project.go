@@ -28,7 +28,7 @@ func (Project) Fields() []ent.Field {
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("created_by").Immutable(),
 		field.Time("updated_at").UpdateDefault(time.Now),
-		field.String("updated_by"),
+		field.String("update_by"),
 		field.Time("deleted_at").Optional().Nillable(),
 		field.Uint32("deleted_by").Optional().Nillable(),
 		field.Int16("status").Default(0),

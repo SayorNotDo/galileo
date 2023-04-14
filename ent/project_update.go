@@ -46,9 +46,9 @@ func (pu *ProjectUpdate) SetUpdatedAt(t time.Time) *ProjectUpdate {
 	return pu
 }
 
-// SetUpdatedBy sets the "updated_by" field.
-func (pu *ProjectUpdate) SetUpdatedBy(s string) *ProjectUpdate {
-	pu.mutation.SetUpdatedBy(s)
+// SetUpdateBy sets the "update_by" field.
+func (pu *ProjectUpdate) SetUpdateBy(s string) *ProjectUpdate {
+	pu.mutation.SetUpdateBy(s)
 	return pu
 }
 
@@ -219,8 +219,8 @@ func (pu *ProjectUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := pu.mutation.UpdatedAt(); ok {
 		_spec.SetField(project.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := pu.mutation.UpdatedBy(); ok {
-		_spec.SetField(project.FieldUpdatedBy, field.TypeString, value)
+	if value, ok := pu.mutation.UpdateBy(); ok {
+		_spec.SetField(project.FieldUpdateBy, field.TypeString, value)
 	}
 	if value, ok := pu.mutation.DeletedAt(); ok {
 		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)
@@ -293,9 +293,9 @@ func (puo *ProjectUpdateOne) SetUpdatedAt(t time.Time) *ProjectUpdateOne {
 	return puo
 }
 
-// SetUpdatedBy sets the "updated_by" field.
-func (puo *ProjectUpdateOne) SetUpdatedBy(s string) *ProjectUpdateOne {
-	puo.mutation.SetUpdatedBy(s)
+// SetUpdateBy sets the "update_by" field.
+func (puo *ProjectUpdateOne) SetUpdateBy(s string) *ProjectUpdateOne {
+	puo.mutation.SetUpdateBy(s)
 	return puo
 }
 
@@ -496,8 +496,8 @@ func (puo *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err e
 	if value, ok := puo.mutation.UpdatedAt(); ok {
 		_spec.SetField(project.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := puo.mutation.UpdatedBy(); ok {
-		_spec.SetField(project.FieldUpdatedBy, field.TypeString, value)
+	if value, ok := puo.mutation.UpdateBy(); ok {
+		_spec.SetField(project.FieldUpdateBy, field.TypeString, value)
 	}
 	if value, ok := puo.mutation.DeletedAt(); ok {
 		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)

@@ -26,8 +26,10 @@ type ProjectUseCase struct {
 
 // NewProjectUseCase new a Greeter use case.
 func NewProjectUseCase(repo ProjectRepo, logger log.Logger) *ProjectUseCase {
-	helper := log.NewHelper(log.With(logger, "module", "useCase/project"))
-	return &ProjectUseCase{repo: repo, log: helper}
+	return &ProjectUseCase{
+		repo: repo,
+		log:  log.NewHelper(log.With(logger, "module", "management.projectUseCase")),
+	}
 }
 
 // CreateProject creates a Project, and returns the new Project.

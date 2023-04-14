@@ -21,7 +21,7 @@ type UserService struct {
 func NewUserService(uc *biz.UserUseCase, logger log.Logger) *UserService {
 	return &UserService{
 		uc:     uc,
-		logger: log.NewHelper(log.With(logger, "module", "user")),
+		logger: log.NewHelper(log.With(logger, "module", "user.Service")),
 	}
 }
 

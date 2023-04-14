@@ -34,19 +34,6 @@ func (tu *TaskUpdate) SetName(s string) *TaskUpdate {
 	return tu
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (tu *TaskUpdate) SetCreatedBy(u uint32) *TaskUpdate {
-	tu.mutation.ResetCreatedBy()
-	tu.mutation.SetCreatedBy(u)
-	return tu
-}
-
-// AddCreatedBy adds u to the "created_by" field.
-func (tu *TaskUpdate) AddCreatedBy(u int32) *TaskUpdate {
-	tu.mutation.AddCreatedBy(u)
-	return tu
-}
-
 // SetRank sets the "rank" field.
 func (tu *TaskUpdate) SetRank(i int8) *TaskUpdate {
 	tu.mutation.ResetRank()
@@ -193,6 +180,20 @@ func (tu *TaskUpdate) SetDescription(s string) *TaskUpdate {
 	return tu
 }
 
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableDescription(s *string) *TaskUpdate {
+	if s != nil {
+		tu.SetDescription(*s)
+	}
+	return tu
+}
+
+// ClearDescription clears the value of the "description" field.
+func (tu *TaskUpdate) ClearDescription() *TaskUpdate {
+	tu.mutation.ClearDescription()
+	return tu
+}
+
 // SetURL sets the "url" field.
 func (tu *TaskUpdate) SetURL(s string) *TaskUpdate {
 	tu.mutation.SetURL(s)
@@ -252,12 +253,6 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.Name(); ok {
 		_spec.SetField(task.FieldName, field.TypeString, value)
 	}
-	if value, ok := tu.mutation.CreatedBy(); ok {
-		_spec.SetField(task.FieldCreatedBy, field.TypeUint32, value)
-	}
-	if value, ok := tu.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(task.FieldCreatedBy, field.TypeUint32, value)
-	}
 	if value, ok := tu.mutation.Rank(); ok {
 		_spec.SetField(task.FieldRank, field.TypeInt8, value)
 	}
@@ -309,6 +304,9 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.Description(); ok {
 		_spec.SetField(task.FieldDescription, field.TypeString, value)
 	}
+	if tu.mutation.DescriptionCleared() {
+		_spec.ClearField(task.FieldDescription, field.TypeString)
+	}
 	if value, ok := tu.mutation.URL(); ok {
 		_spec.SetField(task.FieldURL, field.TypeString, value)
 	}
@@ -335,19 +333,6 @@ type TaskUpdateOne struct {
 // SetName sets the "name" field.
 func (tuo *TaskUpdateOne) SetName(s string) *TaskUpdateOne {
 	tuo.mutation.SetName(s)
-	return tuo
-}
-
-// SetCreatedBy sets the "created_by" field.
-func (tuo *TaskUpdateOne) SetCreatedBy(u uint32) *TaskUpdateOne {
-	tuo.mutation.ResetCreatedBy()
-	tuo.mutation.SetCreatedBy(u)
-	return tuo
-}
-
-// AddCreatedBy adds u to the "created_by" field.
-func (tuo *TaskUpdateOne) AddCreatedBy(u int32) *TaskUpdateOne {
-	tuo.mutation.AddCreatedBy(u)
 	return tuo
 }
 
@@ -497,6 +482,20 @@ func (tuo *TaskUpdateOne) SetDescription(s string) *TaskUpdateOne {
 	return tuo
 }
 
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableDescription(s *string) *TaskUpdateOne {
+	if s != nil {
+		tuo.SetDescription(*s)
+	}
+	return tuo
+}
+
+// ClearDescription clears the value of the "description" field.
+func (tuo *TaskUpdateOne) ClearDescription() *TaskUpdateOne {
+	tuo.mutation.ClearDescription()
+	return tuo
+}
+
 // SetURL sets the "url" field.
 func (tuo *TaskUpdateOne) SetURL(s string) *TaskUpdateOne {
 	tuo.mutation.SetURL(s)
@@ -586,12 +585,6 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if value, ok := tuo.mutation.Name(); ok {
 		_spec.SetField(task.FieldName, field.TypeString, value)
 	}
-	if value, ok := tuo.mutation.CreatedBy(); ok {
-		_spec.SetField(task.FieldCreatedBy, field.TypeUint32, value)
-	}
-	if value, ok := tuo.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(task.FieldCreatedBy, field.TypeUint32, value)
-	}
 	if value, ok := tuo.mutation.Rank(); ok {
 		_spec.SetField(task.FieldRank, field.TypeInt8, value)
 	}
@@ -642,6 +635,9 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if value, ok := tuo.mutation.Description(); ok {
 		_spec.SetField(task.FieldDescription, field.TypeString, value)
+	}
+	if tuo.mutation.DescriptionCleared() {
+		_spec.ClearField(task.FieldDescription, field.TypeString)
 	}
 	if value, ok := tuo.mutation.URL(); ok {
 		_spec.SetField(task.FieldURL, field.TypeString, value)

@@ -140,6 +140,14 @@ func (tc *TaskCreate) SetDescription(s string) *TaskCreate {
 	return tc
 }
 
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableDescription(s *string) *TaskCreate {
+	if s != nil {
+		tc.SetDescription(*s)
+	}
+	return tc
+}
+
 // SetURL sets the "url" field.
 func (tc *TaskCreate) SetURL(s string) *TaskCreate {
 	tc.mutation.SetURL(s)
@@ -219,9 +227,6 @@ func (tc *TaskCreate) check() error {
 	}
 	if _, ok := tc.mutation.UpdateAt(); !ok {
 		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "Task.update_at"`)}
-	}
-	if _, ok := tc.mutation.Description(); !ok {
-		return &ValidationError{Name: "description", err: errors.New(`ent: missing required field "Task.description"`)}
 	}
 	if _, ok := tc.mutation.URL(); !ok {
 		return &ValidationError{Name: "url", err: errors.New(`ent: missing required field "Task.url"`)}

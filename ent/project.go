@@ -26,8 +26,8 @@ type Project struct {
 	CreatedBy uint32 `json:"created_by,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy string `json:"updated_by,omitempty"`
+	// UpdateBy holds the value of the "update_by" field.
+	UpdateBy string `json:"update_by,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -47,7 +47,7 @@ func (*Project) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case project.FieldID, project.FieldCreatedBy, project.FieldDeletedBy, project.FieldStatus:
 			values[i] = new(sql.NullInt64)
-		case project.FieldName, project.FieldIdentifier, project.FieldUpdatedBy, project.FieldDescription, project.FieldRemark:
+		case project.FieldName, project.FieldIdentifier, project.FieldUpdateBy, project.FieldDescription, project.FieldRemark:
 			values[i] = new(sql.NullString)
 		case project.FieldCreatedAt, project.FieldUpdatedAt, project.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -102,11 +102,11 @@ func (pr *Project) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pr.UpdatedAt = value.Time
 			}
-		case project.FieldUpdatedBy:
+		case project.FieldUpdateBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+				return fmt.Errorf("unexpected type %T for field update_by", values[i])
 			} else if value.Valid {
-				pr.UpdatedBy = value.String
+				pr.UpdateBy = value.String
 			}
 		case project.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -185,8 +185,8 @@ func (pr *Project) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(pr.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("updated_by=")
-	builder.WriteString(pr.UpdatedBy)
+	builder.WriteString("update_by=")
+	builder.WriteString(pr.UpdateBy)
 	builder.WriteString(", ")
 	if v := pr.DeletedAt; v != nil {
 		builder.WriteString("deleted_at=")

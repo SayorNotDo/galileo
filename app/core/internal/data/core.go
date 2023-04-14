@@ -21,7 +21,7 @@ type coreRepo struct {
 func NewCoreRepo(data *Data, logger log.Logger) biz.CoreRepo {
 	return &coreRepo{
 		data: data,
-		log:  log.NewHelper(log.With(logger, "module", "coreRepo/core")),
+		log:  log.NewHelper(log.With(logger, "module", "core.Repo")),
 	}
 }
 

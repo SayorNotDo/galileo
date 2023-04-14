@@ -1,7 +1,7 @@
 package server
 
 import (
-	v1 "galileo/api/project/v1"
+	"galileo/api/management/project/v1"
 	"galileo/app/management/internal/conf"
 	"galileo/app/management/internal/service"
 

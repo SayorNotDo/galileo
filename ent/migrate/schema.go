@@ -13,6 +13,8 @@ var (
 	GroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
+		{Name: "created_by", Type: field.TypeUint32},
+		{Name: "created_at", Type: field.TypeTime},
 	}
 	// GroupsTable holds the schema information for the "groups" table.
 	GroupsTable = &schema.Table{
@@ -28,7 +30,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "updated_by", Type: field.TypeString},
+		{Name: "update_by", Type: field.TypeString},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "status", Type: field.TypeInt16, Default: 0},
@@ -55,7 +57,7 @@ var (
 		{Name: "is_deleted", Type: field.TypeBool, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
-		{Name: "description", Type: field.TypeString, Size: 2147483647},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "url", Type: field.TypeString},
 	}
 	// TaskTable holds the schema information for the "task" table.
@@ -63,6 +65,50 @@ var (
 		Name:       "task",
 		Columns:    TaskColumns,
 		PrimaryKey: []*schema.Column{TaskColumns[0]},
+	}
+	// TestCasesColumns holds the columns for the "test_cases" table.
+	TestCasesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "created_by", Type: field.TypeUint32},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "update_by", Type: field.TypeUint32, Nullable: true},
+		{Name: "update_at", Type: field.TypeTime, Nullable: true},
+		{Name: "status", Type: field.TypeInt8, Default: 0},
+		{Name: "type", Type: field.TypeInt16, Default: 0},
+		{Name: "priority", Type: field.TypeInt8, Default: 0},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "url", Type: field.TypeString, Nullable: true},
+		{Name: "test_case_suite_testcase", Type: field.TypeInt, Nullable: true},
+	}
+	// TestCasesTable holds the schema information for the "test_cases" table.
+	TestCasesTable = &schema.Table{
+		Name:       "test_cases",
+		Columns:    TestCasesColumns,
+		PrimaryKey: []*schema.Column{TestCasesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "test_cases_test_case_suites_testcase",
+				Columns:    []*schema.Column{TestCasesColumns[13]},
+				RefColumns: []*schema.Column{TestCaseSuitesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// TestCaseSuitesColumns holds the columns for the "test_case_suites" table.
+	TestCaseSuitesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeUint32},
+	}
+	// TestCaseSuitesTable holds the schema information for the "test_case_suites" table.
+	TestCaseSuitesTable = &schema.Table{
+		Name:       "test_case_suites",
+		Columns:    TestCaseSuitesColumns,
+		PrimaryKey: []*schema.Column{TestCaseSuitesColumns[0]},
 	}
 	// UserColumns holds the columns for the "user" table.
 	UserColumns = []*schema.Column{
@@ -103,6 +149,8 @@ var (
 		GroupsTable,
 		ProjectTable,
 		TaskTable,
+		TestCasesTable,
+		TestCaseSuitesTable,
 		UserTable,
 	}
 )
@@ -114,6 +162,7 @@ func init() {
 	TaskTable.Annotation = &entsql.Annotation{
 		Table: "task",
 	}
+	TestCasesTable.ForeignKeys[0].RefTable = TestCaseSuitesTable
 	UserTable.ForeignKeys[0].RefTable = GroupsTable
 	UserTable.Annotation = &entsql.Annotation{
 		Table: "user",

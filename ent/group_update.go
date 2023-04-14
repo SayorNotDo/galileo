@@ -34,6 +34,19 @@ func (gu *GroupUpdate) SetName(s string) *GroupUpdate {
 	return gu
 }
 
+// SetCreatedBy sets the "created_by" field.
+func (gu *GroupUpdate) SetCreatedBy(u uint32) *GroupUpdate {
+	gu.mutation.ResetCreatedBy()
+	gu.mutation.SetCreatedBy(u)
+	return gu
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (gu *GroupUpdate) AddCreatedBy(u int32) *GroupUpdate {
+	gu.mutation.AddCreatedBy(u)
+	return gu
+}
+
 // AddUserIDs adds the "user" edge to the User entity by IDs.
 func (gu *GroupUpdate) AddUserIDs(ids ...uint32) *GroupUpdate {
 	gu.mutation.AddUserIDs(ids...)
@@ -127,6 +140,12 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := gu.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)
 	}
+	if value, ok := gu.mutation.CreatedBy(); ok {
+		_spec.SetField(group.FieldCreatedBy, field.TypeUint32, value)
+	}
+	if value, ok := gu.mutation.AddedCreatedBy(); ok {
+		_spec.AddField(group.FieldCreatedBy, field.TypeUint32, value)
+	}
 	if gu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -195,6 +214,19 @@ type GroupUpdateOne struct {
 // SetName sets the "name" field.
 func (guo *GroupUpdateOne) SetName(s string) *GroupUpdateOne {
 	guo.mutation.SetName(s)
+	return guo
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (guo *GroupUpdateOne) SetCreatedBy(u uint32) *GroupUpdateOne {
+	guo.mutation.ResetCreatedBy()
+	guo.mutation.SetCreatedBy(u)
+	return guo
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (guo *GroupUpdateOne) AddCreatedBy(u int32) *GroupUpdateOne {
+	guo.mutation.AddCreatedBy(u)
 	return guo
 }
 
@@ -320,6 +352,12 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	}
 	if value, ok := guo.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)
+	}
+	if value, ok := guo.mutation.CreatedBy(); ok {
+		_spec.SetField(group.FieldCreatedBy, field.TypeUint32, value)
+	}
+	if value, ok := guo.mutation.AddedCreatedBy(); ok {
+		_spec.AddField(group.FieldCreatedBy, field.TypeUint32, value)
 	}
 	if guo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -7,6 +7,8 @@ import (
 	"galileo/ent/project"
 	"galileo/ent/schema"
 	"galileo/ent/task"
+	"galileo/ent/testcase"
+	"galileo/ent/testcasesuite"
 	"galileo/ent/user"
 	"time"
 
@@ -23,6 +25,10 @@ func init() {
 	groupDescName := groupFields[0].Descriptor()
 	// group.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	group.NameValidator = groupDescName.Validators[0].(func(string) error)
+	// groupDescCreatedAt is the schema descriptor for created_at field.
+	groupDescCreatedAt := groupFields[2].Descriptor()
+	// group.DefaultCreatedAt holds the default value on creation for the created_at field.
+	group.DefaultCreatedAt = groupDescCreatedAt.Default.(func() time.Time)
 	projectFields := schema.Project{}.Fields()
 	_ = projectFields
 	// projectDescCreatedAt is the schema descriptor for created_at field.
@@ -51,6 +57,34 @@ func init() {
 	taskDescUpdateAt := taskFields[8].Descriptor()
 	// task.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
 	task.UpdateDefaultUpdateAt = taskDescUpdateAt.UpdateDefault.(func() time.Time)
+	testcaseFields := schema.TestCase{}.Fields()
+	_ = testcaseFields
+	// testcaseDescCreatedAt is the schema descriptor for created_at field.
+	testcaseDescCreatedAt := testcaseFields[2].Descriptor()
+	// testcase.DefaultCreatedAt holds the default value on creation for the created_at field.
+	testcase.DefaultCreatedAt = testcaseDescCreatedAt.Default.(func() time.Time)
+	// testcaseDescUpdateAt is the schema descriptor for update_at field.
+	testcaseDescUpdateAt := testcaseFields[4].Descriptor()
+	// testcase.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
+	testcase.UpdateDefaultUpdateAt = testcaseDescUpdateAt.UpdateDefault.(func() time.Time)
+	// testcaseDescStatus is the schema descriptor for status field.
+	testcaseDescStatus := testcaseFields[5].Descriptor()
+	// testcase.DefaultStatus holds the default value on creation for the status field.
+	testcase.DefaultStatus = testcaseDescStatus.Default.(int8)
+	// testcaseDescType is the schema descriptor for type field.
+	testcaseDescType := testcaseFields[6].Descriptor()
+	// testcase.DefaultType holds the default value on creation for the type field.
+	testcase.DefaultType = testcaseDescType.Default.(int16)
+	// testcaseDescPriority is the schema descriptor for priority field.
+	testcaseDescPriority := testcaseFields[7].Descriptor()
+	// testcase.DefaultPriority holds the default value on creation for the priority field.
+	testcase.DefaultPriority = testcaseDescPriority.Default.(int8)
+	testcasesuiteFields := schema.TestCaseSuite{}.Fields()
+	_ = testcasesuiteFields
+	// testcasesuiteDescCreatedAt is the schema descriptor for created_at field.
+	testcasesuiteDescCreatedAt := testcasesuiteFields[1].Descriptor()
+	// testcasesuite.DefaultCreatedAt holds the default value on creation for the created_at field.
+	testcasesuite.DefaultCreatedAt = testcasesuiteDescCreatedAt.Default.(func() time.Time)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.

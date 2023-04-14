@@ -1,9 +1,9 @@
 package server
 
 import (
-	v1 "galileo/api/helloworld/v1"
-	"galileo/engine/internal/conf"
-	"galileo/engine/internal/service"
+	v1 "galileo/api/engine/v1"
+	"galileo/app/engine/internal/conf"
+	"galileo/app/engine/internal/service"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -11,7 +11,7 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, greeter *service.GreeterService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, engine *service.EngineService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -27,6 +27,6 @@ func NewHTTPServer(c *conf.Server, greeter *service.GreeterService, logger log.L
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	v1.RegisterGreeterHTTPServer(srv, greeter)
+	v1.RegisterEngineHTTPServer(srv, engine)
 	return srv
 }

@@ -60,7 +60,7 @@ func NewEntDB(c *conf.Data) (*ent.Client, error) {
 
 // NewData .
 func NewData(c *conf.Data, logger log.Logger, db *ent.Client, rdb *redis.Client) (*Data, func(), error) {
-	newHelper := log.NewHelper(log.With(logger, "module", "userService/data"))
+	newHelper := log.NewHelper(log.With(logger, "module", "user.data"))
 	cleanup := func() {
 		newHelper.Info("closing the data resources")
 	}

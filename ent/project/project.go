@@ -21,8 +21,8 @@ const (
 	FieldCreatedBy = "created_by"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
-	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
-	FieldUpdatedBy = "updated_by"
+	// FieldUpdateBy holds the string denoting the update_by field in the database.
+	FieldUpdateBy = "update_by"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
@@ -45,7 +45,7 @@ var Columns = []string{
 	FieldCreatedAt,
 	FieldCreatedBy,
 	FieldUpdatedAt,
-	FieldUpdatedBy,
+	FieldUpdateBy,
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldStatus,

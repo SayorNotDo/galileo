@@ -31,7 +31,7 @@ type projectRepo struct {
 func NewProjectRepo(data *Data, logger log.Logger) biz.ProjectRepo {
 	return &projectRepo{
 		data: data,
-		log:  log.NewHelper(logger),
+		log:  log.NewHelper(log.With(logger, "module", "management.projectRepo")),
 	}
 }
 

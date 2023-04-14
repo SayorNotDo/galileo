@@ -20,6 +20,6 @@ type CoreService struct {
 func NewCoreService(uc *biz.CoreUseCase, logger log.Logger) *CoreService {
 	return &CoreService{
 		uc:  uc,
-		log: log.NewHelper(log.With(logger, "module", "service/core")),
+		log: log.NewHelper(log.With(logger, "module", "core.Service")),
 	}
 }

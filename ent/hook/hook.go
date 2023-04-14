@@ -44,6 +44,30 @@ func (f TaskFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TaskMutation", m)
 }
 
+// The TestCaseFunc type is an adapter to allow the use of ordinary
+// function as TestCase mutator.
+type TestCaseFunc func(context.Context, *ent.TestCaseMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TestCaseFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TestCaseMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TestCaseMutation", m)
+}
+
+// The TestCaseSuiteFunc type is an adapter to allow the use of ordinary
+// function as TestCaseSuite mutator.
+type TestCaseSuiteFunc func(context.Context, *ent.TestCaseSuiteMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TestCaseSuiteFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TestCaseSuiteMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TestCaseSuiteMutation", m)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *ent.UserMutation) (ent.Value, error)

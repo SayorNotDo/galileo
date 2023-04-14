@@ -18,6 +18,10 @@ type Tx struct {
 	Project *ProjectClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
+	// TestCase is the client for interacting with the TestCase builders.
+	TestCase *TestCaseClient
+	// TestCaseSuite is the client for interacting with the TestCaseSuite builders.
+	TestCaseSuite *TestCaseSuiteClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -154,6 +158,8 @@ func (tx *Tx) init() {
 	tx.Group = NewGroupClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
+	tx.TestCase = NewTestCaseClient(tx.config)
+	tx.TestCaseSuite = NewTestCaseSuiteClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 
