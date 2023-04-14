@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package api.engine.v1;
+
+option go_package = "galileo/api/engine/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.engine.v1";
+
+service Engine {
+	rpc CreateEngine (CreateEngineRequest) returns (CreateEngineReply);
+	rpc UpdateEngine (UpdateEngineRequest) returns (UpdateEngineReply);
+	rpc DeleteEngine (DeleteEngineRequest) returns (DeleteEngineReply);
+	rpc GetEngine (GetEngineRequest) returns (GetEngineReply);
+	rpc ListEngine (ListEngineRequest) returns (ListEngineReply);
+}
+
+message CreateEngineRequest {}
+message CreateEngineReply {}
+
+message UpdateEngineRequest {}
+message UpdateEngineReply {}
+
+message DeleteEngineRequest {}
+message DeleteEngineReply {}
+
+message GetEngineRequest {}
+message GetEngineReply {}
+
+message ListEngineRequest {}
+message ListEngineReply {}
