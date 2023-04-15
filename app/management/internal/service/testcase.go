@@ -11,12 +11,13 @@ import (
 type TestcaseService struct {
 	pb.UnimplementedTestcaseServer
 
-	uc     *biz.TestCaseUseCase
+	uc     *biz.TestcaseUseCase
 	logger *log.Helper
 }
 
-func NewTestcaseService(logger log.Logger) *TestcaseService {
+func NewTestcaseService(uc *biz.TestcaseUseCase, logger log.Logger) *TestcaseService {
 	return &TestcaseService{
+		uc:     uc,
 		logger: log.NewHelper(log.With(logger, "module", "management.testcaseService")),
 	}
 }

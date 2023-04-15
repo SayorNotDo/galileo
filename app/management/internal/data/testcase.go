@@ -11,13 +11,13 @@ type testcaseRepo struct {
 	log  *log.Helper
 }
 
-func NewTestCaseRepo(data *Data, logger log.Logger) biz.TestCaseRepo {
+func NewTestCaseRepo(data *Data, logger log.Logger) biz.TestcaseRepo {
 	return &testcaseRepo{
 		data: data,
 		log:  log.NewHelper(log.With(logger, "module", "management.TestCaseRepo")),
 	}
 }
 
-func (r *testcaseRepo) CreateTestCase(ctx context.Context, testCase *biz.TestCase) (*biz.TestCase, error) {
+func (r *testcaseRepo) CreateTestcase(ctx context.Context, testCase *biz.TestCase) (*biz.TestCase, error) {
 	return nil, nil
 }

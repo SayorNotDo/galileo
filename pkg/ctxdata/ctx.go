@@ -2,8 +2,12 @@ package ctxdata
 
 import "context"
 
-const UserIdKey = "kratos-userId"
-const Username = "kratos-username"
+const (
+	UserIdKey         = "kratos-userId"
+	Username          = "kratos-username"
+	AuthorizationKey  = "Authorization"
+	AuthorizationType = "Bearer"
+)
 
 func GetUserId(ctx context.Context) uint32 {
 	if v, ok := ctx.Value(UserIdKey).(uint32); ok {

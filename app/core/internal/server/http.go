@@ -116,8 +116,8 @@ func setHeaderInfo() middleware.Middleware {
 				if ht, ok := tr.(*http.Transport); ok {
 					ctx = context.WithValue(ctx, "RemoteAddr", ht.Request().RemoteAddr)
 				}
-				auth := strings.SplitN(tr.RequestHeader().Get("Authorization"), " ", 2)
-				if len(auth) != 2 || !strings.EqualFold(auth[0], "Bearer") {
+				auth := strings.SplitN(tr.RequestHeader().Get(ctxdata.AuthorizationKey), " ", 2)
+				if len(auth) != 2 || !strings.EqualFold(auth[0], ctxdata.AuthorizationType) {
 					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
 				}
 				jwtToken := auth[1]
@@ -126,7 +126,7 @@ func setHeaderInfo() middleware.Middleware {
 					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
 				}
 				// set Authorization header
-				tr.RequestHeader().Set("Authorization", "Bearer "+token)
+				tr.RequestHeader().Set(ctxdata.AuthorizationKey, ctxdata.AuthorizationType+" "+token)
 			}
 			return handler(ctx, req)
 		}

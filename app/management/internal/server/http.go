@@ -17,6 +17,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/selector"
 	"github.com/go-kratos/kratos/v2/transport"
 	jwt2 "github.com/golang-jwt/jwt/v4"
+	"github.com/gorilla/handlers"
 	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -44,6 +45,11 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, project *service.ProjectServic
 			).Match(NewWhiteListMatcher()).Build(),
 			metadata.Server(),
 		),
+		http.Filter(handlers.CORS(
+			handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Accept"}),
+			handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "PATCH", "DELETE", "OPTIONS"}),
+			handlers.AllowedOrigins([]string{"*"}),
+		)),
 	}
 	if c.Http.Network != "" {
 		opts = append(opts, http.Network(c.Http.Network))
@@ -71,8 +77,8 @@ func setHeaderInfo() middleware.Middleware {
 				if ht, ok := tr.(*http.Transport); ok {
 					ctx = context.WithValue(ctx, "RemoteAddr", ht.Request().RemoteAddr)
 				}
-				auth := strings.SplitN(tr.RequestHeader().Get("Authorization"), "", 2)
-				if len(auth) != 2 || !strings.EqualFold(auth[0], "Bearer") {
+				auth := strings.SplitN(tr.RequestHeader().Get(ctxdata.AuthorizationKey), " ", 2)
+				if len(auth) != 2 || !strings.EqualFold(auth[0], ctxdata.AuthorizationType) {
 					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
 				}
 				jwtToken := auth[1]
@@ -81,7 +87,7 @@ func setHeaderInfo() middleware.Middleware {
 					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
 				}
 				// set Authorization header
-				tr.RequestHeader().Set("Authorization", "Bearer"+token)
+				tr.RequestHeader().Set(ctxdata.AuthorizationKey, ctxdata.AuthorizationType+" "+token)
 			}
 			return handler(ctx, req)
 		}
@@ -92,6 +98,7 @@ func setUserInfo() middleware.Middleware {
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
 			claim, _ := jwt.FromContext(ctx)
+			println("------------------------", claim)
 			if claim == nil {
 				return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedInfoMissing)
 			}

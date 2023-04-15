@@ -20,22 +20,22 @@ type TestCase struct {
 	Url       string    `json:"url,omitempty"`
 }
 
-type TestCaseRepo interface {
-	CreateTestCase(ctx context.Context, testCase *TestCase) (*TestCase, error)
+type TestcaseRepo interface {
+	CreateTestcase(ctx context.Context, testCase *TestCase) (*TestCase, error)
 }
 
-type TestCaseUseCase struct {
-	repo TestCaseRepo
+type TestcaseUseCase struct {
+	repo TestcaseRepo
 	log  *log.Helper
 }
 
-func NewTestCaseUseCase(repo TestCaseRepo, logger log.Logger) *TestCaseUseCase {
-	return &TestCaseUseCase{
+func NewTestcaseUseCase(repo TestcaseRepo, logger log.Logger) *TestcaseUseCase {
+	return &TestcaseUseCase{
 		repo: repo,
 		log:  log.NewHelper(log.With(logger, "module", "management.testcaseUseCase")),
 	}
 }
 
-func (uc *TestCaseUseCase) CreateTestCase(ctx context.Context, testCase *TestCase) (*TestCase, error) {
-	return uc.repo.CreateTestCase(ctx, testCase)
+func (uc *TestcaseUseCase) CreateTestcase(ctx context.Context, testCase *TestCase) (*TestCase, error) {
+	return uc.repo.CreateTestcase(ctx, testCase)
 }
