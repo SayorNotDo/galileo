@@ -1,12 +1,23 @@
 package server
 
 import (
+	"context"
 	projectV1 "galileo/api/management/project/v1"
 	testCaseV1 "galileo/api/management/testcase/v1"
 	"galileo/app/management/internal/conf"
+	"galileo/app/management/internal/data"
 	"galileo/app/management/internal/service"
+	"galileo/pkg/ctxdata"
+	"galileo/pkg/errResponse"
 	"galileo/pkg/responseEncoder"
+	"github.com/go-kratos/kratos/v2/middleware"
+	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
+	"github.com/go-kratos/kratos/v2/middleware/metadata"
+	"github.com/go-kratos/kratos/v2/middleware/selector"
+	"github.com/go-kratos/kratos/v2/transport"
+	jwt2 "github.com/golang-jwt/jwt/v4"
+	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -14,11 +25,24 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, project *service.ProjectService, testcase *service.TestcaseService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, ac *conf.Auth, project *service.ProjectService, testcase *service.TestcaseService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			logging.Server(logger),
 			recovery.Recovery(),
+			selector.Server(
+				// set header information
+				setHeaderInfo(),
+				jwt.Server(func(token *jwt2.Token) (interface{}, error) {
+					return []byte(ac.JwtKey), nil
+				}, jwt.WithSigningMethod(jwt2.SigningMethodHS256),
+					jwt.WithClaims(func() jwt2.Claims {
+						return jwt2.MapClaims{}
+					})),
+				// set global ctx
+				setUserInfo(),
+			).Match(NewWhiteListMatcher()).Build(),
+			metadata.Server(),
 		),
 	}
 	if c.Http.Network != "" {
@@ -38,4 +62,56 @@ func NewHTTPServer(c *conf.Server, project *service.ProjectService, testcase *se
 	projectV1.RegisterProjectHTTPServer(srv, project)
 	testCaseV1.RegisterTestcaseHTTPServer(srv, testcase)
 	return srv
+}
+
+func setHeaderInfo() middleware.Middleware {
+	return func(handler middleware.Handler) middleware.Handler {
+		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
+			if tr, ok := transport.FromServerContext(ctx); ok {
+				if ht, ok := tr.(*http.Transport); ok {
+					ctx = context.WithValue(ctx, "RemoteAddr", ht.Request().RemoteAddr)
+				}
+				auth := strings.SplitN(tr.RequestHeader().Get("Authorization"), "", 2)
+				if len(auth) != 2 || !strings.EqualFold(auth[0], "Bearer") {
+					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
+				}
+				jwtToken := auth[1]
+				token, _ := data.RedisCli.Get(ctx, "token:"+jwtToken).Result()
+				if token == "" {
+					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
+				}
+				// set Authorization header
+				tr.RequestHeader().Set("Authorization", "Bearer"+token)
+			}
+			return handler(ctx, req)
+		}
+	}
+}
+
+func setUserInfo() middleware.Middleware {
+	return func(handler middleware.Handler) middleware.Handler {
+		return func(ctx context.Context, req interface{}) (interface{}, error) {
+			claim, _ := jwt.FromContext(ctx)
+			if claim == nil {
+				return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedInfoMissing)
+			}
+			claimInfo := claim.(jwt2.MapClaims)
+			userId := uint32(claimInfo["ID"].(float64))
+			ctx = context.WithValue(ctx, ctxdata.UserIdKey, userId)
+			ctx = context.WithValue(ctx, ctxdata.Username, claimInfo["Username"])
+			return handler(ctx, req)
+		}
+	}
+}
+
+func NewWhiteListMatcher() selector.MatchFunc {
+	whiteList := make(map[string]struct{})
+	//whiteList["/api.core.v1.Core/Register"] = struct{}{}
+	//whiteList["/api.core.v1.Core/Login"] = struct{}{}
+	return func(ctx context.Context, operation string) bool {
+		if _, ok := whiteList[operation]; ok {
+			return false
+		}
+		return true
+	}
 }

@@ -19,7 +19,7 @@ type taskRepo struct {
 func NewTaskRepo(data *Data, logger log.Logger) biz.TaskRepo {
 	return &taskRepo{
 		data: data,
-		log:  log.NewHelper(log.With(logger, "module", "management.taskRepo")),
+		log:  log.NewHelper(log.With(logger, "module", "management.dataService.taskRepo")),
 	}
 }
 

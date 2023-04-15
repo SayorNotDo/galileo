@@ -9,6 +9,8 @@ import (
 	"galileo/ent"
 	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/go-redis/redis/extra/redisotel"
+	"github.com/go-redis/redis/v8"
 	_ "github.com/go-sql-driver/mysql"
 	consulAPI "github.com/hashicorp/consul/api"
 	"go.opentelemetry.io/otel"
@@ -21,20 +23,25 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewEntDB, NewProjectRepo, NewTaskRepo, NewTestCaseRepo, NewRegistrar, NewDiscovery)
+var ProviderSet = wire.NewSet(NewData, NewEntDB, NewRedis, NewProjectRepo, NewTaskRepo, NewTestCaseRepo, NewRegistrar, NewDiscovery)
+
+var RedisCli redis.Cmdable
 
 // Data .
 type Data struct {
 	// TODO wrapped database client
-	entDB *ent.Client
+	entDB    *ent.Client
+	log      *log.Helper
+	redisCli redis.Cmdable
 }
 
 // NewData .
-func NewData(c *conf.Data, db *ent.Client, logger log.Logger) (*Data, func(), error) {
+func NewData(c *conf.Data, db *ent.Client, logger log.Logger, redisCli redis.Cmdable) (*Data, func(), error) {
+	l := log.NewHelper(log.With(logger, "module", "management.DataService"))
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
 	}
-	return &Data{entDB: db}, cleanup, nil
+	return &Data{entDB: db, log: l, redisCli: redisCli}, cleanup, nil
 }
 
 func NewRegistrar(conf *conf.Registry) registry.Registrar {
@@ -89,4 +96,26 @@ func NewEntDB(c *conf.Data) (*ent.Client, error) {
 		return nil, err
 	}
 	return client, nil
+}
+
+func NewRedis(conf *conf.Data, logger log.Logger) redis.Cmdable {
+	l := log.NewHelper(log.With(logger, "module", "management.dataService.redis"))
+	rdb := redis.NewClient(&redis.Options{
+		Addr:         conf.Redis.Addr,
+		Password:     conf.Redis.Password,
+		DB:           int(conf.Redis.Db),
+		ReadTimeout:  conf.Redis.ReadTimeout.AsDuration(),
+		WriteTimeout: conf.Redis.WriteTimeout.AsDuration(),
+		DialTimeout:  time.Second * 2,
+		PoolSize:     10,
+	})
+	rdb.AddHook(redisotel.TracingHook{})
+	timeout, cancelFunc := context.WithTimeout(context.Background(), time.Second*2)
+	err := rdb.Ping(timeout).Err()
+	defer cancelFunc()
+	if err != nil {
+		l.Fatalf("redis connect error: %v", err)
+	}
+	RedisCli = rdb
+	return rdb
 }

@@ -22,6 +22,7 @@ func NewTestcaseService(logger log.Logger) *TestcaseService {
 }
 
 func (s *TestcaseService) CreateTestcase(ctx context.Context, req *pb.CreateTestcaseRequest) (*pb.CreateTestcaseReply, error) {
+	log.Debug("implementing CreateTestCase API")
 	return &pb.CreateTestcaseReply{}, nil
 }
 func (s *TestcaseService) UpdateTestcase(ctx context.Context, req *pb.UpdateTestcaseRequest) (*pb.UpdateTestcaseReply, error) {
