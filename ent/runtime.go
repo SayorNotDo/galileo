@@ -59,24 +59,28 @@ func init() {
 	task.UpdateDefaultUpdateAt = taskDescUpdateAt.UpdateDefault.(func() time.Time)
 	testcaseFields := schema.TestCase{}.Fields()
 	_ = testcaseFields
+	// testcaseDescName is the schema descriptor for name field.
+	testcaseDescName := testcaseFields[1].Descriptor()
+	// testcase.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	testcase.NameValidator = testcaseDescName.Validators[0].(func(string) error)
 	// testcaseDescCreatedAt is the schema descriptor for created_at field.
-	testcaseDescCreatedAt := testcaseFields[2].Descriptor()
+	testcaseDescCreatedAt := testcaseFields[3].Descriptor()
 	// testcase.DefaultCreatedAt holds the default value on creation for the created_at field.
 	testcase.DefaultCreatedAt = testcaseDescCreatedAt.Default.(func() time.Time)
 	// testcaseDescUpdateAt is the schema descriptor for update_at field.
-	testcaseDescUpdateAt := testcaseFields[4].Descriptor()
+	testcaseDescUpdateAt := testcaseFields[5].Descriptor()
 	// testcase.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
 	testcase.UpdateDefaultUpdateAt = testcaseDescUpdateAt.UpdateDefault.(func() time.Time)
 	// testcaseDescStatus is the schema descriptor for status field.
-	testcaseDescStatus := testcaseFields[5].Descriptor()
+	testcaseDescStatus := testcaseFields[6].Descriptor()
 	// testcase.DefaultStatus holds the default value on creation for the status field.
 	testcase.DefaultStatus = testcaseDescStatus.Default.(int8)
 	// testcaseDescType is the schema descriptor for type field.
-	testcaseDescType := testcaseFields[6].Descriptor()
+	testcaseDescType := testcaseFields[7].Descriptor()
 	// testcase.DefaultType holds the default value on creation for the type field.
 	testcase.DefaultType = testcaseDescType.Default.(int16)
 	// testcaseDescPriority is the schema descriptor for priority field.
-	testcaseDescPriority := testcaseFields[7].Descriptor()
+	testcaseDescPriority := testcaseFields[8].Descriptor()
 	// testcase.DefaultPriority holds the default value on creation for the priority field.
 	testcase.DefaultPriority = testcaseDescPriority.Default.(int8)
 	testcasesuiteFields := schema.TestCaseSuite{}.Fields()

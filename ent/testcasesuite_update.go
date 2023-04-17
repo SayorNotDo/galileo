@@ -35,14 +35,14 @@ func (tcsu *TestCaseSuiteUpdate) SetName(s string) *TestCaseSuiteUpdate {
 }
 
 // AddTestcaseIDs adds the "testcase" edge to the TestCase entity by IDs.
-func (tcsu *TestCaseSuiteUpdate) AddTestcaseIDs(ids ...int) *TestCaseSuiteUpdate {
+func (tcsu *TestCaseSuiteUpdate) AddTestcaseIDs(ids ...int64) *TestCaseSuiteUpdate {
 	tcsu.mutation.AddTestcaseIDs(ids...)
 	return tcsu
 }
 
 // AddTestcase adds the "testcase" edges to the TestCase entity.
 func (tcsu *TestCaseSuiteUpdate) AddTestcase(t ...*TestCase) *TestCaseSuiteUpdate {
-	ids := make([]int, len(t))
+	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -61,14 +61,14 @@ func (tcsu *TestCaseSuiteUpdate) ClearTestcase() *TestCaseSuiteUpdate {
 }
 
 // RemoveTestcaseIDs removes the "testcase" edge to TestCase entities by IDs.
-func (tcsu *TestCaseSuiteUpdate) RemoveTestcaseIDs(ids ...int) *TestCaseSuiteUpdate {
+func (tcsu *TestCaseSuiteUpdate) RemoveTestcaseIDs(ids ...int64) *TestCaseSuiteUpdate {
 	tcsu.mutation.RemoveTestcaseIDs(ids...)
 	return tcsu
 }
 
 // RemoveTestcase removes "testcase" edges to TestCase entities.
 func (tcsu *TestCaseSuiteUpdate) RemoveTestcase(t ...*TestCase) *TestCaseSuiteUpdate {
-	ids := make([]int, len(t))
+	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -122,7 +122,7 @@ func (tcsu *TestCaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Columns: []string{testcasesuite.TestcaseColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -135,7 +135,7 @@ func (tcsu *TestCaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Columns: []string{testcasesuite.TestcaseColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -151,7 +151,7 @@ func (tcsu *TestCaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Columns: []string{testcasesuite.TestcaseColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -186,14 +186,14 @@ func (tcsuo *TestCaseSuiteUpdateOne) SetName(s string) *TestCaseSuiteUpdateOne {
 }
 
 // AddTestcaseIDs adds the "testcase" edge to the TestCase entity by IDs.
-func (tcsuo *TestCaseSuiteUpdateOne) AddTestcaseIDs(ids ...int) *TestCaseSuiteUpdateOne {
+func (tcsuo *TestCaseSuiteUpdateOne) AddTestcaseIDs(ids ...int64) *TestCaseSuiteUpdateOne {
 	tcsuo.mutation.AddTestcaseIDs(ids...)
 	return tcsuo
 }
 
 // AddTestcase adds the "testcase" edges to the TestCase entity.
 func (tcsuo *TestCaseSuiteUpdateOne) AddTestcase(t ...*TestCase) *TestCaseSuiteUpdateOne {
-	ids := make([]int, len(t))
+	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -212,14 +212,14 @@ func (tcsuo *TestCaseSuiteUpdateOne) ClearTestcase() *TestCaseSuiteUpdateOne {
 }
 
 // RemoveTestcaseIDs removes the "testcase" edge to TestCase entities by IDs.
-func (tcsuo *TestCaseSuiteUpdateOne) RemoveTestcaseIDs(ids ...int) *TestCaseSuiteUpdateOne {
+func (tcsuo *TestCaseSuiteUpdateOne) RemoveTestcaseIDs(ids ...int64) *TestCaseSuiteUpdateOne {
 	tcsuo.mutation.RemoveTestcaseIDs(ids...)
 	return tcsuo
 }
 
 // RemoveTestcase removes "testcase" edges to TestCase entities.
 func (tcsuo *TestCaseSuiteUpdateOne) RemoveTestcase(t ...*TestCase) *TestCaseSuiteUpdateOne {
-	ids := make([]int, len(t))
+	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -303,7 +303,7 @@ func (tcsuo *TestCaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *TestCa
 			Columns: []string{testcasesuite.TestcaseColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -316,7 +316,7 @@ func (tcsuo *TestCaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *TestCa
 			Columns: []string{testcasesuite.TestcaseColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -332,7 +332,7 @@ func (tcsuo *TestCaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *TestCa
 			Columns: []string{testcasesuite.TestcaseColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

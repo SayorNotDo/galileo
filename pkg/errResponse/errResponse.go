@@ -46,7 +46,7 @@ const ReasonOssConfigWrong = "OSS_CONFIG_WRONG"
 const ReasonOssBucketWrong = "OSS_BUCKET_WRONG"
 const ReasonOssPutObjectFail = "OSS_PUT_OBJECT_FILE"
 
-const ReasonAdministratorUnauthorized = "UNAUTHORIZED"
+const ReasonUserUnauthorized = "UNAUTHORIZED"
 
 const ReasonSystemError = "SYSTEM_ERROR"
 const ReasonServiceGatewayTimeout = "SERVICE_GATEWAY_TIMEOUT"
@@ -77,10 +77,10 @@ var reasonMessageAll = map[string]string{
 	ReasonAdministratorUsernameExist: "管理员用户名已存在",
 	ReasonAdministratorMobileExist:   "管理员手机号已存在",
 
-	ReasonAdministratorUnauthorized: "管理员未登陆",
-	ReasonUnauthorizedInfoMissing:   "角色授权信息不存在",
-	ReasonAuthorizedDataMissing:     "权限数据不存在",
-	ReasonUnauthorizedRole:          "角色未授权",
+	ReasonUserUnauthorized:        "user is unauthorized",
+	ReasonUnauthorizedInfoMissing: "角色授权信息不存在",
+	ReasonAuthorizedDataMissing:   "权限数据不存在",
+	ReasonUnauthorizedRole:        "角色未授权",
 
 	ReasonAuthorizationRoleExist:          "角色已存在",
 	ReasonAuthorizationRoleNotFound:       "角色不存在",
@@ -106,7 +106,7 @@ var reasonCodeAll = map[string]int{
 	ReasonSuccess:      0,
 	ReasonUnknownError: 1,
 
-	ReasonParamsError:    10000,
+	ReasonParamsError:    40000,
 	ReasonMissingParams:  10001,
 	ReasonMissingId:      10002,
 	ReasonRecordNotFound: 10003,
@@ -126,7 +126,7 @@ var reasonCodeAll = map[string]int{
 	ReasonUserUsernameExist: 20002,
 	ReasonUserPhoneExist:    20002,
 
-	ReasonAdministratorUnauthorized:       40000,
+	ReasonUserUnauthorized:                40000,
 	ReasonUnauthorizedRole:                40001,
 	ReasonUnauthorizedInfoMissing:         40002,
 	ReasonAuthorizedDataMissing:           40003,
@@ -151,7 +151,7 @@ var reasonCodeAll = map[string]int{
 
 var reasonGrpcCodeAll = map[string]int{
 	ReasonSuccess:      http.StatusOK,
-	ReasonUnknownError: http.StatusBadRequest,
+	ReasonUnknownError: http.StatusInternalServerError,
 
 	ReasonParamsError:   http.StatusBadRequest,
 	ReasonMissingParams: http.StatusBadRequest,
@@ -164,7 +164,7 @@ var reasonGrpcCodeAll = map[string]int{
 	ReasonAdministratorUsernameExist: http.StatusBadRequest,
 	ReasonAdministratorMobileExist:   http.StatusBadRequest,
 
-	ReasonAdministratorUnauthorized: http.StatusUnauthorized,
+	ReasonUserUnauthorized: http.StatusUnauthorized,
 
 	ReasonSystemError:           http.StatusInternalServerError,
 	ReasonServiceGatewayTimeout: http.StatusGatewayTimeout,
@@ -204,6 +204,7 @@ func SetCustomizeErrInfoByReason(reason string) error {
 // SetCustomizeErrMsg 根据err.Reason返回自定义包装错误（message动态修改）
 func SetCustomizeErrMsg(reason, msg string) error {
 	code := reasonCodeAll[reason]
+	println("set custom error code: ", code)
 	return errors.New(code, reason, msg)
 }
 

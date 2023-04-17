@@ -2907,7 +2907,7 @@ type TestCaseMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int
+	id            *int64
 	name          *string
 	created_by    *uint32
 	addcreated_by *int32
@@ -2952,7 +2952,7 @@ func newTestCaseMutation(c config, op Op, opts ...testcaseOption) *TestCaseMutat
 }
 
 // withTestCaseID sets the ID field of the mutation.
-func withTestCaseID(id int) testcaseOption {
+func withTestCaseID(id int64) testcaseOption {
 	return func(m *TestCaseMutation) {
 		var (
 			err   error
@@ -3002,9 +3002,15 @@ func (m TestCaseMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of TestCase entities.
+func (m *TestCaseMutation) SetID(id int64) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *TestCaseMutation) ID() (id int, exists bool) {
+func (m *TestCaseMutation) ID() (id int64, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -3015,12 +3021,12 @@ func (m *TestCaseMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *TestCaseMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *TestCaseMutation) IDs(ctx context.Context) ([]int64, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []int64{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -4153,8 +4159,8 @@ type TestCaseSuiteMutation struct {
 	created_by      *uint32
 	addcreated_by   *int32
 	clearedFields   map[string]struct{}
-	testcase        map[int]struct{}
-	removedtestcase map[int]struct{}
+	testcase        map[int64]struct{}
+	removedtestcase map[int64]struct{}
 	clearedtestcase bool
 	done            bool
 	oldValue        func(context.Context) (*TestCaseSuite, error)
@@ -4388,9 +4394,9 @@ func (m *TestCaseSuiteMutation) ResetCreatedBy() {
 }
 
 // AddTestcaseIDs adds the "testcase" edge to the TestCase entity by ids.
-func (m *TestCaseSuiteMutation) AddTestcaseIDs(ids ...int) {
+func (m *TestCaseSuiteMutation) AddTestcaseIDs(ids ...int64) {
 	if m.testcase == nil {
-		m.testcase = make(map[int]struct{})
+		m.testcase = make(map[int64]struct{})
 	}
 	for i := range ids {
 		m.testcase[ids[i]] = struct{}{}
@@ -4408,9 +4414,9 @@ func (m *TestCaseSuiteMutation) TestcaseCleared() bool {
 }
 
 // RemoveTestcaseIDs removes the "testcase" edge to the TestCase entity by IDs.
-func (m *TestCaseSuiteMutation) RemoveTestcaseIDs(ids ...int) {
+func (m *TestCaseSuiteMutation) RemoveTestcaseIDs(ids ...int64) {
 	if m.removedtestcase == nil {
-		m.removedtestcase = make(map[int]struct{})
+		m.removedtestcase = make(map[int64]struct{})
 	}
 	for i := range ids {
 		delete(m.testcase, ids[i])
@@ -4419,7 +4425,7 @@ func (m *TestCaseSuiteMutation) RemoveTestcaseIDs(ids ...int) {
 }
 
 // RemovedTestcase returns the removed IDs of the "testcase" edge to the TestCase entity.
-func (m *TestCaseSuiteMutation) RemovedTestcaseIDs() (ids []int) {
+func (m *TestCaseSuiteMutation) RemovedTestcaseIDs() (ids []int64) {
 	for id := range m.removedtestcase {
 		ids = append(ids, id)
 	}
@@ -4427,7 +4433,7 @@ func (m *TestCaseSuiteMutation) RemovedTestcaseIDs() (ids []int) {
 }
 
 // TestcaseIDs returns the "testcase" edge IDs in the mutation.
-func (m *TestCaseSuiteMutation) TestcaseIDs() (ids []int) {
+func (m *TestCaseSuiteMutation) TestcaseIDs() (ids []int64) {
 	for id := range m.testcase {
 		ids = append(ids, id)
 	}

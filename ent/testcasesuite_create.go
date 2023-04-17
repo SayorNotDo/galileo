@@ -48,14 +48,14 @@ func (tcsc *TestCaseSuiteCreate) SetCreatedBy(u uint32) *TestCaseSuiteCreate {
 }
 
 // AddTestcaseIDs adds the "testcase" edge to the TestCase entity by IDs.
-func (tcsc *TestCaseSuiteCreate) AddTestcaseIDs(ids ...int) *TestCaseSuiteCreate {
+func (tcsc *TestCaseSuiteCreate) AddTestcaseIDs(ids ...int64) *TestCaseSuiteCreate {
 	tcsc.mutation.AddTestcaseIDs(ids...)
 	return tcsc
 }
 
 // AddTestcase adds the "testcase" edges to the TestCase entity.
 func (tcsc *TestCaseSuiteCreate) AddTestcase(t ...*TestCase) *TestCaseSuiteCreate {
-	ids := make([]int, len(t))
+	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -160,7 +160,7 @@ func (tcsc *TestCaseSuiteCreate) createSpec() (*TestCaseSuite, *sqlgraph.CreateS
 			Columns: []string{testcasesuite.TestcaseColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

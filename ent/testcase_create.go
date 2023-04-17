@@ -172,6 +172,12 @@ func (tcc *TestCaseCreate) SetNillableURL(s *string) *TestCaseCreate {
 	return tcc
 }
 
+// SetID sets the "id" field.
+func (tcc *TestCaseCreate) SetID(i int64) *TestCaseCreate {
+	tcc.mutation.SetID(i)
+	return tcc
+}
+
 // Mutation returns the TestCaseMutation object of the builder.
 func (tcc *TestCaseCreate) Mutation() *TestCaseMutation {
 	return tcc.mutation
@@ -230,6 +236,11 @@ func (tcc *TestCaseCreate) check() error {
 	if _, ok := tcc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "TestCase.name"`)}
 	}
+	if v, ok := tcc.mutation.Name(); ok {
+		if err := testcase.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "TestCase.name": %w`, err)}
+		}
+	}
 	if _, ok := tcc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "TestCase.created_by"`)}
 	}
@@ -259,8 +270,10 @@ func (tcc *TestCaseCreate) sqlSave(ctx context.Context) (*TestCase, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int64(id)
+	}
 	tcc.mutation.id = &_node.ID
 	tcc.mutation.done = true
 	return _node, nil
@@ -269,8 +282,12 @@ func (tcc *TestCaseCreate) sqlSave(ctx context.Context) (*TestCase, error) {
 func (tcc *TestCaseCreate) createSpec() (*TestCase, *sqlgraph.CreateSpec) {
 	var (
 		_node = &TestCase{config: tcc.config}
-		_spec = sqlgraph.NewCreateSpec(testcase.Table, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(testcase.Table, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64))
 	)
+	if id, ok := tcc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := tcc.mutation.Name(); ok {
 		_spec.SetField(testcase.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -363,9 +380,9 @@ func (tccb *TestCaseCreateBulk) Save(ctx context.Context) ([]*TestCase, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

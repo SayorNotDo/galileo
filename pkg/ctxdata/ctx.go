@@ -3,8 +3,8 @@ package ctxdata
 import "context"
 
 const (
-	UserIdKey         = "kratos-userId"
-	Username          = "kratos-username"
+	UserIdKey         = "galileo-userId"
+	Username          = "galileo-username"
 	AuthorizationKey  = "Authorization"
 	AuthorizationType = "Bearer"
 )

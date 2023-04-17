@@ -14,7 +14,8 @@ type TestCase struct {
 // Fields of the TestCase.
 func (TestCase) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").Unique(),
+		field.Int64("id").Unique(),
+		field.String("name").Unique().NotEmpty(),
 		field.Uint32("created_by").Immutable(),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("update_by").Optional(),

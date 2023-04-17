@@ -6,12 +6,6 @@ import (
 	"galileo/pkg/utils/bootstrap"
 	"github.com/go-kratos/kratos/v2/encoding/json"
 	"github.com/go-kratos/kratos/v2/registry"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/exporters/jaeger"
-	"go.opentelemetry.io/otel/sdk/resource"
-	tracesdk "go.opentelemetry.io/otel/sdk/trace"
-	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
 	"google.golang.org/protobuf/encoding/protojson"
 
 	"github.com/go-kratos/kratos/v2"
@@ -96,34 +90,8 @@ func main() {
 	}
 	defer cleanup()
 
-	err = setTracerProvider(bc.Trace.Endpoint)
-	if err != nil {
-		panic(err)
-	}
-
 	// start and wait for stop signal
 	if err := app.Run(); err != nil {
 		panic(err)
 	}
-}
-
-func setTracerProvider(url string) error {
-	// Create the Jaeger exporter
-	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url)))
-	if err != nil {
-		return err
-	}
-	tp := tracesdk.NewTracerProvider(
-		// Set the sampling rate based on the parent span to 100%
-		tracesdk.WithSampler(tracesdk.ParentBased(tracesdk.TraceIDRatioBased(1.0))),
-		// Always be sure to batch in production
-		tracesdk.WithBatcher(exp),
-		// Record information about this application in an Resource
-		tracesdk.WithResource(resource.NewSchemaless(
-			semconv.ServiceNameKey.String(Service.Name),
-			attribute.String("env", "dev"),
-		)),
-	)
-	otel.SetTracerProvider(tp)
-	return nil
 }

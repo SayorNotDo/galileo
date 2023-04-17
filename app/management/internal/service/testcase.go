@@ -2,10 +2,12 @@ package service
 
 import (
 	"context"
-	"galileo/app/management/internal/biz"
-	"github.com/go-kratos/kratos/v2/log"
-
+	"fmt"
 	pb "galileo/api/management/testcase/v1"
+	"galileo/app/management/internal/biz"
+	"galileo/pkg/ctxdata"
+	"galileo/pkg/errResponse"
+	"github.com/go-kratos/kratos/v2/log"
 )
 
 type TestcaseService struct {
@@ -23,10 +25,26 @@ func NewTestcaseService(uc *biz.TestcaseUseCase, logger log.Logger) *TestcaseSer
 }
 
 func (s *TestcaseService) CreateTestcase(ctx context.Context, req *pb.CreateTestcaseRequest) (*pb.CreateTestcaseReply, error) {
-	log.Debug("implementing CreateTestCase API")
-	return &pb.CreateTestcaseReply{}, nil
+	uid := ctx.Value(ctxdata.UserIdKey).(uint32)
+	newTestcase := &biz.Testcase{
+		Name:        req.Name,
+		CreatedBy:   uid,
+		CaseType:    int16(req.Type),
+		Priority:    int8(req.Priority),
+		Description: req.Description,
+		Url:         req.Url,
+	}
+	res, err := s.uc.CreateTestcase(ctx, newTestcase)
+	if err != nil {
+		println("--------------------------------")
+		fmt.Printf("%v", errResponse.SetCustomizeErrMsg("ReasonParamsError", err.Error()))
+		println("--------------------------------")
+		return nil, errResponse.SetCustomizeErrMsg("PARAMS_ERROR", err.Error())
+	}
+	return &pb.CreateTestcaseReply{Id: res.Id, CreatedAt: res.CreatedAt.Unix()}, nil
 }
 func (s *TestcaseService) UpdateTestcase(ctx context.Context, req *pb.UpdateTestcaseRequest) (*pb.UpdateTestcaseReply, error) {
+
 	return &pb.UpdateTestcaseReply{}, nil
 }
 func (s *TestcaseService) DeleteTestcase(ctx context.Context, req *pb.DeleteTestcaseRequest) (*pb.DeleteTestcaseReply, error) {

@@ -82,8 +82,8 @@ func (tcq *TestCaseQuery) FirstX(ctx context.Context) *TestCase {
 
 // FirstID returns the first TestCase ID from the query.
 // Returns a *NotFoundError when no TestCase ID was found.
-func (tcq *TestCaseQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (tcq *TestCaseQuery) FirstID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = tcq.Limit(1).IDs(setContextOp(ctx, tcq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -95,7 +95,7 @@ func (tcq *TestCaseQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (tcq *TestCaseQuery) FirstIDX(ctx context.Context) int {
+func (tcq *TestCaseQuery) FirstIDX(ctx context.Context) int64 {
 	id, err := tcq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -133,8 +133,8 @@ func (tcq *TestCaseQuery) OnlyX(ctx context.Context) *TestCase {
 // OnlyID is like Only, but returns the only TestCase ID in the query.
 // Returns a *NotSingularError when more than one TestCase ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (tcq *TestCaseQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (tcq *TestCaseQuery) OnlyID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = tcq.Limit(2).IDs(setContextOp(ctx, tcq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -150,7 +150,7 @@ func (tcq *TestCaseQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (tcq *TestCaseQuery) OnlyIDX(ctx context.Context) int {
+func (tcq *TestCaseQuery) OnlyIDX(ctx context.Context) int64 {
 	id, err := tcq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -178,7 +178,7 @@ func (tcq *TestCaseQuery) AllX(ctx context.Context) []*TestCase {
 }
 
 // IDs executes the query and returns a list of TestCase IDs.
-func (tcq *TestCaseQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (tcq *TestCaseQuery) IDs(ctx context.Context) (ids []int64, err error) {
 	if tcq.ctx.Unique == nil && tcq.path != nil {
 		tcq.Unique(true)
 	}
@@ -190,7 +190,7 @@ func (tcq *TestCaseQuery) IDs(ctx context.Context) (ids []int, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (tcq *TestCaseQuery) IDsX(ctx context.Context) []int {
+func (tcq *TestCaseQuery) IDsX(ctx context.Context) []int64 {
 	ids, err := tcq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -369,7 +369,7 @@ func (tcq *TestCaseQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (tcq *TestCaseQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(testcase.Table, testcase.Columns, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(testcase.Table, testcase.Columns, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64))
 	_spec.From = tcq.sql
 	if unique := tcq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

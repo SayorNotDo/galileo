@@ -25,6 +25,10 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 )
 
+const (
+	tokenKey = "token"
+)
+
 // NewHTTPServer new an HTTP server.
 func NewHTTPServer(c *conf.Server, ac *conf.Auth, project *service.ProjectService, testcase *service.TestcaseService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
@@ -82,7 +86,7 @@ func setHeaderInfo() middleware.Middleware {
 					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
 				}
 				jwtToken := auth[1]
-				token, _ := data.RedisCli.Get(ctx, "token:"+jwtToken).Result()
+				token, _ := data.RedisCli.Get(ctx, tokenKey+":"+jwtToken).Result()
 				if token == "" {
 					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
 				}
@@ -98,7 +102,6 @@ func setUserInfo() middleware.Middleware {
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
 			claim, _ := jwt.FromContext(ctx)
-			println("------------------------", claim)
 			if claim == nil {
 				return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedInfoMissing)
 			}

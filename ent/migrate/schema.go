@@ -68,7 +68,7 @@ var (
 	}
 	// TestCasesColumns holds the columns for the "test_cases" table.
 	TestCasesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "created_by", Type: field.TypeUint32},
 		{Name: "created_at", Type: field.TypeTime},
