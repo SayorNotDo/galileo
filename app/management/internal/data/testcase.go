@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"galileo/app/management/internal/biz"
+	"galileo/ent/testcase"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -41,6 +42,7 @@ func (r *testcaseRepo) UpdateTestcase(ctx context.Context, testcase *biz.Testcas
 		SetName(testcase.Name).
 		SetPriority(testcase.Priority).
 		SetDescription(testcase.Description).
+		SetUpdateBy(testcase.UpdatedBy).
 		SetType(testcase.CaseType).
 		SetURL(testcase.Url).
 		Exec(ctx)
@@ -51,5 +53,38 @@ func (r *testcaseRepo) UpdateTestcase(ctx context.Context, testcase *biz.Testcas
 }
 
 func (r *testcaseRepo) TestcaseById(ctx context.Context, id int64) (*biz.Testcase, error) {
-	return nil, nil
+	queryTestcase, err := r.data.entDB.TestCase.Query().Where(testcase.ID(id)).Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &biz.Testcase{
+		Name:      queryTestcase.Name,
+		CreatedAt: queryTestcase.CreatedAt,
+		CreatedBy: queryTestcase.CreatedBy,
+		UpdatedBy: queryTestcase.UpdateBy,
+		UpdateAt:  queryTestcase.UpdateAt,
+		Status:    queryTestcase.Status,
+		CaseType:  queryTestcase.Type,
+		Priority:  queryTestcase.Priority,
+		Url:       queryTestcase.URL,
+	}, nil
+}
+
+func (r *testcaseRepo) TestcaseByName(ctx context.Context, name string) (*biz.Testcase, error) {
+	queryTestcase, err := r.data.entDB.TestCase.Query().Where(testcase.Name(name)).Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &biz.Testcase{
+		Id:        queryTestcase.ID,
+		Name:      queryTestcase.Name,
+		CreatedAt: queryTestcase.CreatedAt,
+		CreatedBy: queryTestcase.CreatedBy,
+		UpdatedBy: queryTestcase.UpdateBy,
+		UpdateAt:  queryTestcase.UpdateAt,
+		Status:    queryTestcase.Status,
+		CaseType:  queryTestcase.Type,
+		Priority:  queryTestcase.Priority,
+		Url:       queryTestcase.URL,
+	}, nil
 }

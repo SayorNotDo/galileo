@@ -25,6 +25,8 @@ type Testcase struct {
 type TestcaseRepo interface {
 	CreateTestcase(ctx context.Context, testcase *Testcase) (*Testcase, error)
 	UpdateTestcase(ctx context.Context, testcase *Testcase) (bool, error)
+	TestcaseById(ctx context.Context, id int64) (*Testcase, error)
+	TestcaseByName(ctx context.Context, name string) (*Testcase, error)
 }
 
 type TestcaseUseCase struct {
@@ -45,4 +47,12 @@ func (uc *TestcaseUseCase) CreateTestcase(ctx context.Context, testcase *Testcas
 
 func (uc *TestcaseUseCase) UpdateTestcase(ctx context.Context, testcase *Testcase) (bool, error) {
 	return uc.repo.UpdateTestcase(ctx, testcase)
+}
+
+func (uc *TestcaseUseCase) TestcaseById(ctx context.Context, id int64) (*Testcase, error) {
+	return uc.repo.TestcaseById(ctx, id)
+}
+
+func (uc *TestcaseUseCase) TestcaseByName(ctx context.Context, name string) (*Testcase, error) {
+	return uc.repo.TestcaseByName(ctx, name)
 }
