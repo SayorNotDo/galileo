@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	pb "galileo/api/management/testcase/v1"
 	"galileo/app/management/internal/biz"
 	"galileo/pkg/ctxdata"
@@ -36,16 +35,26 @@ func (s *TestcaseService) CreateTestcase(ctx context.Context, req *pb.CreateTest
 	}
 	res, err := s.uc.CreateTestcase(ctx, newTestcase)
 	if err != nil {
-		println("--------------------------------")
-		fmt.Printf("%v", errResponse.SetCustomizeErrMsg("ReasonParamsError", err.Error()))
-		println("--------------------------------")
 		return nil, errResponse.SetCustomizeErrMsg("PARAMS_ERROR", err.Error())
 	}
 	return &pb.CreateTestcaseReply{Id: res.Id, CreatedAt: res.CreatedAt.Unix()}, nil
 }
 func (s *TestcaseService) UpdateTestcase(ctx context.Context, req *pb.UpdateTestcaseRequest) (*pb.UpdateTestcaseReply, error) {
-
-	return &pb.UpdateTestcaseReply{}, nil
+	updateTestcase := &biz.Testcase{
+		Id:          req.Id,
+		Name:        req.Name,
+		CaseType:    int16(req.Type),
+		Priority:    int8(req.Priority),
+		Description: req.Description,
+		Url:         req.Url,
+	}
+	ok, err := s.uc.UpdateTestcase(ctx, updateTestcase)
+	if err != nil {
+		return nil, errResponse.SetCustomizeErrMsg("UNKNOWN_ERROR", err.Error())
+	}
+	return &pb.UpdateTestcaseReply{
+		Success: ok,
+	}, nil
 }
 func (s *TestcaseService) DeleteTestcase(ctx context.Context, req *pb.DeleteTestcaseRequest) (*pb.DeleteTestcaseReply, error) {
 	return &pb.DeleteTestcaseReply{}, nil

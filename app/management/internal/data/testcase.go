@@ -49,3 +49,7 @@ func (r *testcaseRepo) UpdateTestcase(ctx context.Context, testcase *biz.Testcas
 	}
 	return true, nil
 }
+
+func (r *testcaseRepo) TestcaseById(ctx context.Context, id int64) (*biz.Testcase, error) {
+	return nil, nil
+}

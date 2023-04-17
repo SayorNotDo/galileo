@@ -20,14 +20,17 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationTestcaseCreateTestcase = "/api.management.testcase.Testcase/CreateTestcase"
+const OperationTestcaseUpdateTestcase = "/api.management.testcase.Testcase/UpdateTestcase"
 
 type TestcaseHTTPServer interface {
 	CreateTestcase(context.Context, *CreateTestcaseRequest) (*CreateTestcaseReply, error)
+	UpdateTestcase(context.Context, *UpdateTestcaseRequest) (*UpdateTestcaseReply, error)
 }
 
 func RegisterTestcaseHTTPServer(s *http.Server, srv TestcaseHTTPServer) {
 	r := s.Route("/")
 	r.POST("v1/api/testcase", _Testcase_CreateTestcase0_HTTP_Handler(srv))
+	r.PUT("v1/api/testcase", _Testcase_UpdateTestcase0_HTTP_Handler(srv))
 }
 
 func _Testcase_CreateTestcase0_HTTP_Handler(srv TestcaseHTTPServer) func(ctx http.Context) error {
@@ -49,8 +52,28 @@ func _Testcase_CreateTestcase0_HTTP_Handler(srv TestcaseHTTPServer) func(ctx htt
 	}
 }
 
+func _Testcase_UpdateTestcase0_HTTP_Handler(srv TestcaseHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateTestcaseRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTestcaseUpdateTestcase)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateTestcase(ctx, req.(*UpdateTestcaseRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UpdateTestcaseReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type TestcaseHTTPClient interface {
 	CreateTestcase(ctx context.Context, req *CreateTestcaseRequest, opts ...http.CallOption) (rsp *CreateTestcaseReply, err error)
+	UpdateTestcase(ctx context.Context, req *UpdateTestcaseRequest, opts ...http.CallOption) (rsp *UpdateTestcaseReply, err error)
 }
 
 type TestcaseHTTPClientImpl struct {
@@ -68,6 +91,19 @@ func (c *TestcaseHTTPClientImpl) CreateTestcase(ctx context.Context, in *CreateT
 	opts = append(opts, http.Operation(OperationTestcaseCreateTestcase))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *TestcaseHTTPClientImpl) UpdateTestcase(ctx context.Context, in *UpdateTestcaseRequest, opts ...http.CallOption) (*UpdateTestcaseReply, error) {
+	var out UpdateTestcaseReply
+	pattern := "v1/api/testcase"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationTestcaseUpdateTestcase))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

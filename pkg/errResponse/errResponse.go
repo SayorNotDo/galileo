@@ -204,7 +204,6 @@ func SetCustomizeErrInfoByReason(reason string) error {
 // SetCustomizeErrMsg 根据err.Reason返回自定义包装错误（message动态修改）
 func SetCustomizeErrMsg(reason, msg string) error {
 	code := reasonCodeAll[reason]
-	println("set custom error code: ", code)
 	return errors.New(code, reason, msg)
 }
 

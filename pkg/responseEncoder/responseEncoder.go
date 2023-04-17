@@ -2,7 +2,6 @@ package responseEncoder
 
 import (
 	"encoding/json"
-	"galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	stdHttp "net/http"
@@ -16,7 +15,7 @@ type Response struct {
 
 func ResponseEncoder(w stdHttp.ResponseWriter, r *stdHttp.Request, v interface{}) error {
 	reply := &Response{}
-	reply.Code = stdHttp.StatusOK
+	reply.Code = 20000
 	reply.Message = "success"
 
 	codec, _ := http.CodecForRequest(r, "Accept")
@@ -39,11 +38,11 @@ func ErrorEncoder(w stdHttp.ResponseWriter, r *stdHttp.Request, err error) {
 	codec, _ := http.CodecForRequest(r, "Accept")
 	w.Header().Set("Content-Type", "application/"+codec.Name())
 	// status code set 200
-	err = errResponse.SetCustomizeErrInfo(err)
+	w.WriteHeader(stdHttp.StatusOK)
 	se := errors.FromError(err)
 	body, err := codec.Marshal(se)
 	if err != nil {
-		w.WriteHeader(500)
+		w.WriteHeader(stdHttp.StatusInternalServerError)
 		return
 	}
 	_, _ = w.Write(body)
