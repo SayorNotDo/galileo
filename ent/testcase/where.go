@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -727,6 +728,33 @@ func URLEqualFold(v string) predicate.TestCase {
 // URLContainsFold applies the ContainsFold predicate on the "url" field.
 func URLContainsFold(v string) predicate.TestCase {
 	return predicate.TestCase(sql.FieldContainsFold(FieldURL, v))
+}
+
+// HasTestcaseSuites applies the HasEdge predicate on the "testcaseSuites" edge.
+func HasTestcaseSuites() predicate.TestCase {
+	return predicate.TestCase(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, TestcaseSuitesTable, TestcaseSuitesPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTestcaseSuitesWith applies the HasEdge predicate on the "testcaseSuites" edge with a given conditions (other predicates).
+func HasTestcaseSuitesWith(preds ...predicate.TestCaseSuite) predicate.TestCase {
+	return predicate.TestCase(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(TestcaseSuitesInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, TestcaseSuitesTable, TestcaseSuitesPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

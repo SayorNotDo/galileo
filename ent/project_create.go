@@ -59,8 +59,16 @@ func (pc *ProjectCreate) SetUpdatedAt(t time.Time) *ProjectCreate {
 }
 
 // SetUpdateBy sets the "update_by" field.
-func (pc *ProjectCreate) SetUpdateBy(s string) *ProjectCreate {
-	pc.mutation.SetUpdateBy(s)
+func (pc *ProjectCreate) SetUpdateBy(u uint32) *ProjectCreate {
+	pc.mutation.SetUpdateBy(u)
+	return pc
+}
+
+// SetNillableUpdateBy sets the "update_by" field if the given value is not nil.
+func (pc *ProjectCreate) SetNillableUpdateBy(u *uint32) *ProjectCreate {
+	if u != nil {
+		pc.SetUpdateBy(*u)
+	}
 	return pc
 }
 
@@ -202,9 +210,6 @@ func (pc *ProjectCreate) check() error {
 	if _, ok := pc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Project.updated_at"`)}
 	}
-	if _, ok := pc.mutation.UpdateBy(); !ok {
-		return &ValidationError{Name: "update_by", err: errors.New(`ent: missing required field "Project.update_by"`)}
-	}
 	if _, ok := pc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Project.status"`)}
 	}
@@ -261,8 +266,8 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 		_node.UpdatedAt = value
 	}
 	if value, ok := pc.mutation.UpdateBy(); ok {
-		_spec.SetField(project.FieldUpdateBy, field.TypeString, value)
-		_node.UpdateBy = value
+		_spec.SetField(project.FieldUpdateBy, field.TypeUint32, value)
+		_node.UpdateBy = &value
 	}
 	if value, ok := pc.mutation.DeletedAt(); ok {
 		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)

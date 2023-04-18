@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"errors"
 	"galileo/api/management/task/v1"
 	"galileo/app/management/internal/biz"
 	"galileo/pkg/ctxdata"
+	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -23,16 +25,26 @@ func NewTaskService(uc *biz.TaskUseCase, logger log.Logger) *TaskService {
 }
 
 func (s *TaskService) CreateTask(ctx context.Context, req *v1.CreateTaskRequest) (*v1.CreateTaskReply, error) {
-	uid := ctx.Value(ctxdata.UserIdKey)
-	createTask := &biz.Task{
-		CreatedBy: uid.(uint32),
-		Name:      req.Name,
-		Rank:      int8(req.Rank),
-		Type:      int8(req.Type),
+	createTask, err := NewTask(req.Name, req.Rank, req.Type, req.Description, req.TestcaseSuiteId)
+	if err != nil {
+		return nil, SetCustomizeErrMsg(ReasonParamsError, err.Error())
 	}
-	println(createTask)
-	return &v1.CreateTaskReply{}, nil
+	if queryTask, _ := s.uc.TaskByName(ctx, createTask.Name); queryTask != nil {
+		return nil, SetCustomizeErrMsg(ReasonParamsError, "duplicated task name")
+	}
+	uid := ctx.Value(ctxdata.UserIdKey)
+	createTask.CreatedBy = uid.(uint32)
+	ret, err := s.uc.CreateTask(ctx, &createTask)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.CreateTaskReply{
+		Id:        ret.Id,
+		Status:    int32(ret.Status),
+		CreatedAt: ret.CreatedAt.Unix(),
+	}, nil
 }
+
 func (s *TaskService) UpdateTask(ctx context.Context, req *v1.UpdateTaskRequest) (*v1.UpdateTaskReply, error) {
 	return &v1.UpdateTaskReply{}, nil
 }
@@ -44,4 +56,20 @@ func (s *TaskService) GetTask(ctx context.Context, req *v1.GetTaskRequest) (*v1.
 }
 func (s *TaskService) ListTask(ctx context.Context, req *v1.ListTaskRequest) (*v1.ListTaskReply, error) {
 	return &v1.ListTaskReply{}, nil
+}
+
+func NewTask(name string, rank, status int32, description string, testcaseSuites []int64) (biz.Task, error) {
+	if len(name) <= 0 {
+		return biz.Task{}, errors.New("testcase name must not be empty")
+	}
+	if rank < 0 || status < 0 {
+		return biz.Task{}, errors.New("invalid parameter")
+	}
+	return biz.Task{
+		Name:           name,
+		Rank:           int8(rank),
+		Status:         int8(status),
+		Description:    description,
+		TestcaseSuites: testcaseSuites,
+	}, nil
 }

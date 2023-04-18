@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,22 +20,26 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Engine_CreateEngine_FullMethodName = "/api.engine.v1.Engine/CreateEngine"
-	Engine_UpdateEngine_FullMethodName = "/api.engine.v1.Engine/UpdateEngine"
-	Engine_DeleteEngine_FullMethodName = "/api.engine.v1.Engine/DeleteEngine"
-	Engine_GetEngine_FullMethodName    = "/api.engine.v1.Engine/GetEngine"
-	Engine_ListEngine_FullMethodName   = "/api.engine.v1.Engine/ListEngine"
+	Engine_TestEngine_FullMethodName = "/api.engine.v1.Engine/TestEngine"
+	Engine_RunJob_FullMethodName     = "/api.engine.v1.Engine/RunJob"
+	Engine_CancelJob_FullMethodName  = "/api.engine.v1.Engine/CancelJob"
+	Engine_PauseJob_FullMethodName   = "/api.engine.v1.Engine/PauseJob"
+	Engine_ResumeJob_FullMethodName  = "/api.engine.v1.Engine/ResumeJob"
+	Engine_DeleteJob_FullMethodName  = "/api.engine.v1.Engine/DeleteJob"
+	Engine_CronJob_FullMethodName    = "/api.engine.v1.Engine/CronJob"
 )
 
 // EngineClient is the client API for Engine service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EngineClient interface {
-	CreateEngine(ctx context.Context, in *CreateEngineRequest, opts ...grpc.CallOption) (*CreateEngineReply, error)
-	UpdateEngine(ctx context.Context, in *UpdateEngineRequest, opts ...grpc.CallOption) (*UpdateEngineReply, error)
-	DeleteEngine(ctx context.Context, in *DeleteEngineRequest, opts ...grpc.CallOption) (*DeleteEngineReply, error)
-	GetEngine(ctx context.Context, in *GetEngineRequest, opts ...grpc.CallOption) (*GetEngineReply, error)
-	ListEngine(ctx context.Context, in *ListEngineRequest, opts ...grpc.CallOption) (*ListEngineReply, error)
+	TestEngine(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobReply, error)
+	CancelJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	PauseJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ResumeJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	CronJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type engineClient struct {
@@ -45,45 +50,63 @@ func NewEngineClient(cc grpc.ClientConnInterface) EngineClient {
 	return &engineClient{cc}
 }
 
-func (c *engineClient) CreateEngine(ctx context.Context, in *CreateEngineRequest, opts ...grpc.CallOption) (*CreateEngineReply, error) {
-	out := new(CreateEngineReply)
-	err := c.cc.Invoke(ctx, Engine_CreateEngine_FullMethodName, in, out, opts...)
+func (c *engineClient) TestEngine(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Engine_TestEngine_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *engineClient) UpdateEngine(ctx context.Context, in *UpdateEngineRequest, opts ...grpc.CallOption) (*UpdateEngineReply, error) {
-	out := new(UpdateEngineReply)
-	err := c.cc.Invoke(ctx, Engine_UpdateEngine_FullMethodName, in, out, opts...)
+func (c *engineClient) RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobReply, error) {
+	out := new(RunJobReply)
+	err := c.cc.Invoke(ctx, Engine_RunJob_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *engineClient) DeleteEngine(ctx context.Context, in *DeleteEngineRequest, opts ...grpc.CallOption) (*DeleteEngineReply, error) {
-	out := new(DeleteEngineReply)
-	err := c.cc.Invoke(ctx, Engine_DeleteEngine_FullMethodName, in, out, opts...)
+func (c *engineClient) CancelJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Engine_CancelJob_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *engineClient) GetEngine(ctx context.Context, in *GetEngineRequest, opts ...grpc.CallOption) (*GetEngineReply, error) {
-	out := new(GetEngineReply)
-	err := c.cc.Invoke(ctx, Engine_GetEngine_FullMethodName, in, out, opts...)
+func (c *engineClient) PauseJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Engine_PauseJob_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *engineClient) ListEngine(ctx context.Context, in *ListEngineRequest, opts ...grpc.CallOption) (*ListEngineReply, error) {
-	out := new(ListEngineReply)
-	err := c.cc.Invoke(ctx, Engine_ListEngine_FullMethodName, in, out, opts...)
+func (c *engineClient) ResumeJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Engine_ResumeJob_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *engineClient) DeleteJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Engine_DeleteJob_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *engineClient) CronJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Engine_CronJob_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -94,11 +117,13 @@ func (c *engineClient) ListEngine(ctx context.Context, in *ListEngineRequest, op
 // All implementations must embed UnimplementedEngineServer
 // for forward compatibility
 type EngineServer interface {
-	CreateEngine(context.Context, *CreateEngineRequest) (*CreateEngineReply, error)
-	UpdateEngine(context.Context, *UpdateEngineRequest) (*UpdateEngineReply, error)
-	DeleteEngine(context.Context, *DeleteEngineRequest) (*DeleteEngineReply, error)
-	GetEngine(context.Context, *GetEngineRequest) (*GetEngineReply, error)
-	ListEngine(context.Context, *ListEngineRequest) (*ListEngineReply, error)
+	TestEngine(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	RunJob(context.Context, *RunJobRequest) (*RunJobReply, error)
+	CancelJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	PauseJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	ResumeJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	DeleteJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	CronJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	mustEmbedUnimplementedEngineServer()
 }
 
@@ -106,20 +131,26 @@ type EngineServer interface {
 type UnimplementedEngineServer struct {
 }
 
-func (UnimplementedEngineServer) CreateEngine(context.Context, *CreateEngineRequest) (*CreateEngineReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateEngine not implemented")
+func (UnimplementedEngineServer) TestEngine(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TestEngine not implemented")
 }
-func (UnimplementedEngineServer) UpdateEngine(context.Context, *UpdateEngineRequest) (*UpdateEngineReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateEngine not implemented")
+func (UnimplementedEngineServer) RunJob(context.Context, *RunJobRequest) (*RunJobReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RunJob not implemented")
 }
-func (UnimplementedEngineServer) DeleteEngine(context.Context, *DeleteEngineRequest) (*DeleteEngineReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteEngine not implemented")
+func (UnimplementedEngineServer) CancelJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CancelJob not implemented")
 }
-func (UnimplementedEngineServer) GetEngine(context.Context, *GetEngineRequest) (*GetEngineReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetEngine not implemented")
+func (UnimplementedEngineServer) PauseJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PauseJob not implemented")
 }
-func (UnimplementedEngineServer) ListEngine(context.Context, *ListEngineRequest) (*ListEngineReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListEngine not implemented")
+func (UnimplementedEngineServer) ResumeJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResumeJob not implemented")
+}
+func (UnimplementedEngineServer) DeleteJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteJob not implemented")
+}
+func (UnimplementedEngineServer) CronJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CronJob not implemented")
 }
 func (UnimplementedEngineServer) mustEmbedUnimplementedEngineServer() {}
 
@@ -134,92 +165,128 @@ func RegisterEngineServer(s grpc.ServiceRegistrar, srv EngineServer) {
 	s.RegisterService(&Engine_ServiceDesc, srv)
 }
 
-func _Engine_CreateEngine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateEngineRequest)
+func _Engine_TestEngine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EngineServer).CreateEngine(ctx, in)
+		return srv.(EngineServer).TestEngine(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Engine_CreateEngine_FullMethodName,
+		FullMethod: Engine_TestEngine_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EngineServer).CreateEngine(ctx, req.(*CreateEngineRequest))
+		return srv.(EngineServer).TestEngine(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Engine_UpdateEngine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateEngineRequest)
+func _Engine_RunJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RunJobRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EngineServer).UpdateEngine(ctx, in)
+		return srv.(EngineServer).RunJob(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Engine_UpdateEngine_FullMethodName,
+		FullMethod: Engine_RunJob_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EngineServer).UpdateEngine(ctx, req.(*UpdateEngineRequest))
+		return srv.(EngineServer).RunJob(ctx, req.(*RunJobRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Engine_DeleteEngine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteEngineRequest)
+func _Engine_CancelJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EngineServer).DeleteEngine(ctx, in)
+		return srv.(EngineServer).CancelJob(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Engine_DeleteEngine_FullMethodName,
+		FullMethod: Engine_CancelJob_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EngineServer).DeleteEngine(ctx, req.(*DeleteEngineRequest))
+		return srv.(EngineServer).CancelJob(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Engine_GetEngine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetEngineRequest)
+func _Engine_PauseJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EngineServer).GetEngine(ctx, in)
+		return srv.(EngineServer).PauseJob(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Engine_GetEngine_FullMethodName,
+		FullMethod: Engine_PauseJob_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EngineServer).GetEngine(ctx, req.(*GetEngineRequest))
+		return srv.(EngineServer).PauseJob(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Engine_ListEngine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListEngineRequest)
+func _Engine_ResumeJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EngineServer).ListEngine(ctx, in)
+		return srv.(EngineServer).ResumeJob(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Engine_ListEngine_FullMethodName,
+		FullMethod: Engine_ResumeJob_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EngineServer).ListEngine(ctx, req.(*ListEngineRequest))
+		return srv.(EngineServer).ResumeJob(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Engine_DeleteJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServer).DeleteJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Engine_DeleteJob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServer).DeleteJob(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Engine_CronJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServer).CronJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Engine_CronJob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServer).CronJob(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -232,24 +299,32 @@ var Engine_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*EngineServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateEngine",
-			Handler:    _Engine_CreateEngine_Handler,
+			MethodName: "TestEngine",
+			Handler:    _Engine_TestEngine_Handler,
 		},
 		{
-			MethodName: "UpdateEngine",
-			Handler:    _Engine_UpdateEngine_Handler,
+			MethodName: "RunJob",
+			Handler:    _Engine_RunJob_Handler,
 		},
 		{
-			MethodName: "DeleteEngine",
-			Handler:    _Engine_DeleteEngine_Handler,
+			MethodName: "CancelJob",
+			Handler:    _Engine_CancelJob_Handler,
 		},
 		{
-			MethodName: "GetEngine",
-			Handler:    _Engine_GetEngine_Handler,
+			MethodName: "PauseJob",
+			Handler:    _Engine_PauseJob_Handler,
 		},
 		{
-			MethodName: "ListEngine",
-			Handler:    _Engine_ListEngine_Handler,
+			MethodName: "ResumeJob",
+			Handler:    _Engine_ResumeJob_Handler,
+		},
+		{
+			MethodName: "DeleteJob",
+			Handler:    _Engine_DeleteJob_Handler,
+		},
+		{
+			MethodName: "CronJob",
+			Handler:    _Engine_CronJob_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

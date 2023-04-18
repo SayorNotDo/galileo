@@ -10,6 +10,7 @@ import (
 	context "context"
 	http "github.com/go-kratos/kratos/v2/transport/http"
 	binding "github.com/go-kratos/kratos/v2/transport/http/binding"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,38 +20,176 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationEngineListEngine = "/api.engine.v1.Engine/ListEngine"
+const OperationEngineCancelJob = "/api.engine.v1.Engine/CancelJob"
+const OperationEngineCronJob = "/api.engine.v1.Engine/CronJob"
+const OperationEngineDeleteJob = "/api.engine.v1.Engine/DeleteJob"
+const OperationEnginePauseJob = "/api.engine.v1.Engine/PauseJob"
+const OperationEngineResumeJob = "/api.engine.v1.Engine/ResumeJob"
+const OperationEngineRunJob = "/api.engine.v1.Engine/RunJob"
+const OperationEngineTestEngine = "/api.engine.v1.Engine/TestEngine"
 
 type EngineHTTPServer interface {
-	ListEngine(context.Context, *ListEngineRequest) (*ListEngineReply, error)
+	CancelJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	CronJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	DeleteJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	PauseJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	ResumeJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	RunJob(context.Context, *RunJobRequest) (*RunJobReply, error)
+	TestEngine(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 }
 
 func RegisterEngineHTTPServer(s *http.Server, srv EngineHTTPServer) {
 	r := s.Route("/")
-	r.GET("v1/api/hello", _Engine_ListEngine0_HTTP_Handler(srv))
+	r.GET("v1/api/hello", _Engine_TestEngine0_HTTP_Handler(srv))
+	r.POST("v1/api/engine/job/run", _Engine_RunJob0_HTTP_Handler(srv))
+	r.PUT("v1/api/engine/job/cancel", _Engine_CancelJob0_HTTP_Handler(srv))
+	r.PUT("v1/api/engine/job/pause", _Engine_PauseJob0_HTTP_Handler(srv))
+	r.PUT("v1/api/engine/job/resume", _Engine_ResumeJob0_HTTP_Handler(srv))
+	r.DELETE("v1/api/engine/job/delete", _Engine_DeleteJob0_HTTP_Handler(srv))
+	r.POST("v1/api/engine/cronJob", _Engine_CronJob0_HTTP_Handler(srv))
 }
 
-func _Engine_ListEngine0_HTTP_Handler(srv EngineHTTPServer) func(ctx http.Context) error {
+func _Engine_TestEngine0_HTTP_Handler(srv EngineHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in ListEngineRequest
+		var in emptypb.Empty
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationEngineListEngine)
+		http.SetOperation(ctx, OperationEngineTestEngine)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.ListEngine(ctx, req.(*ListEngineRequest))
+			return srv.TestEngine(ctx, req.(*emptypb.Empty))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*ListEngineReply)
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Engine_RunJob0_HTTP_Handler(srv EngineHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in RunJobRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationEngineRunJob)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.RunJob(ctx, req.(*RunJobRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*RunJobReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Engine_CancelJob0_HTTP_Handler(srv EngineHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationEngineCancelJob)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.CancelJob(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Engine_PauseJob0_HTTP_Handler(srv EngineHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationEnginePauseJob)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.PauseJob(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Engine_ResumeJob0_HTTP_Handler(srv EngineHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationEngineResumeJob)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ResumeJob(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Engine_DeleteJob0_HTTP_Handler(srv EngineHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationEngineDeleteJob)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DeleteJob(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Engine_CronJob0_HTTP_Handler(srv EngineHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationEngineCronJob)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.CronJob(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
 		return ctx.Result(200, reply)
 	}
 }
 
 type EngineHTTPClient interface {
-	ListEngine(ctx context.Context, req *ListEngineRequest, opts ...http.CallOption) (rsp *ListEngineReply, err error)
+	CancelJob(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	CronJob(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	DeleteJob(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	PauseJob(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	ResumeJob(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	RunJob(ctx context.Context, req *RunJobRequest, opts ...http.CallOption) (rsp *RunJobReply, err error)
+	TestEngine(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
 type EngineHTTPClientImpl struct {
@@ -61,11 +200,89 @@ func NewEngineHTTPClient(client *http.Client) EngineHTTPClient {
 	return &EngineHTTPClientImpl{client}
 }
 
-func (c *EngineHTTPClientImpl) ListEngine(ctx context.Context, in *ListEngineRequest, opts ...http.CallOption) (*ListEngineReply, error) {
-	var out ListEngineReply
+func (c *EngineHTTPClientImpl) CancelJob(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "v1/api/engine/job/cancel"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationEngineCancelJob))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *EngineHTTPClientImpl) CronJob(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "v1/api/engine/cronJob"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationEngineCronJob))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *EngineHTTPClientImpl) DeleteJob(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "v1/api/engine/job/delete"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationEngineDeleteJob))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *EngineHTTPClientImpl) PauseJob(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "v1/api/engine/job/pause"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationEnginePauseJob))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *EngineHTTPClientImpl) ResumeJob(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "v1/api/engine/job/resume"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationEngineResumeJob))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *EngineHTTPClientImpl) RunJob(ctx context.Context, in *RunJobRequest, opts ...http.CallOption) (*RunJobReply, error) {
+	var out RunJobReply
+	pattern := "v1/api/engine/job/run"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationEngineRunJob))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *EngineHTTPClientImpl) TestEngine(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
 	pattern := "v1/api/hello"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationEngineListEngine))
+	opts = append(opts, http.Operation(OperationEngineTestEngine))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

@@ -53,6 +53,14 @@ func (tc *TaskCreate) SetRank(i int8) *TaskCreate {
 	return tc
 }
 
+// SetNillableRank sets the "rank" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableRank(i *int8) *TaskCreate {
+	if i != nil {
+		tc.SetRank(*i)
+	}
+	return tc
+}
+
 // SetType sets the "type" field.
 func (tc *TaskCreate) SetType(i int8) *TaskCreate {
 	tc.mutation.SetType(i)
@@ -90,6 +98,14 @@ func (tc *TaskCreate) SetNillableCompleteAt(t *time.Time) *TaskCreate {
 // SetUpdateAt sets the "update_at" field.
 func (tc *TaskCreate) SetUpdateAt(t time.Time) *TaskCreate {
 	tc.mutation.SetUpdateAt(t)
+	return tc
+}
+
+// SetNillableUpdateAt sets the "update_at" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableUpdateAt(t *time.Time) *TaskCreate {
+	if t != nil {
+		tc.SetUpdateAt(*t)
+	}
 	return tc
 }
 
@@ -142,14 +158,14 @@ func (tc *TaskCreate) SetID(i int64) *TaskCreate {
 }
 
 // AddTestcaseSuiteIDs adds the "testcaseSuite" edge to the TestCaseSuite entity by IDs.
-func (tc *TaskCreate) AddTestcaseSuiteIDs(ids ...int) *TaskCreate {
+func (tc *TaskCreate) AddTestcaseSuiteIDs(ids ...int64) *TaskCreate {
 	tc.mutation.AddTestcaseSuiteIDs(ids...)
 	return tc
 }
 
 // AddTestcaseSuite adds the "testcaseSuite" edges to the TestCaseSuite entity.
 func (tc *TaskCreate) AddTestcaseSuite(t ...*TestCaseSuite) *TaskCreate {
-	ids := make([]int, len(t))
+	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -195,6 +211,10 @@ func (tc *TaskCreate) defaults() {
 		v := task.DefaultCreatedAt()
 		tc.mutation.SetCreatedAt(v)
 	}
+	if _, ok := tc.mutation.Rank(); !ok {
+		v := task.DefaultRank
+		tc.mutation.SetRank(v)
+	}
 	if _, ok := tc.mutation.Status(); !ok {
 		v := task.DefaultStatus
 		tc.mutation.SetStatus(v)
@@ -220,9 +240,6 @@ func (tc *TaskCreate) check() error {
 	}
 	if _, ok := tc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Task.status"`)}
-	}
-	if _, ok := tc.mutation.UpdateAt(); !ok {
-		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "Task.update_at"`)}
 	}
 	return nil
 }
@@ -286,7 +303,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := tc.mutation.UpdateAt(); ok {
 		_spec.SetField(task.FieldUpdateAt, field.TypeTime, value)
-		_node.UpdateAt = value
+		_node.UpdateAt = &value
 	}
 	if value, ok := tc.mutation.DeletedAt(); ok {
 		_spec.SetField(task.FieldDeletedAt, field.TypeTime, value)
@@ -308,7 +325,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 			Columns: []string{task.TestcaseSuiteColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

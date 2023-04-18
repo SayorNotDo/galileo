@@ -31,7 +31,7 @@ type Task struct {
 	// CompleteAt holds the value of the "complete_at" field.
 	CompleteAt *time.Time `json:"complete_at,omitempty"`
 	// UpdateAt holds the value of the "update_at" field.
-	UpdateAt time.Time `json:"update_at,omitempty"`
+	UpdateAt *time.Time `json:"update_at,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
@@ -140,7 +140,8 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field update_at", values[i])
 			} else if value.Valid {
-				t.UpdateAt = value.Time
+				t.UpdateAt = new(time.Time)
+				*t.UpdateAt = value.Time
 			}
 		case task.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -218,8 +219,10 @@ func (t *Task) String() string {
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteString(", ")
-	builder.WriteString("update_at=")
-	builder.WriteString(t.UpdateAt.Format(time.ANSIC))
+	if v := t.UpdateAt; v != nil {
+		builder.WriteString("update_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	if v := t.DeletedAt; v != nil {
 		builder.WriteString("deleted_at=")

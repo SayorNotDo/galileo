@@ -24,14 +24,14 @@ func (Task) Annotations() []schema.Annotation {
 func (Task) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("id"),
-		field.String("name"),
+		field.String("name").Unique().NotEmpty(),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("created_by").Immutable(),
-		field.Int8("rank"),
+		field.Int8("rank").Default(0),
 		field.Int8("type"),
 		field.Int8("status").Default(0),
 		field.Time("complete_at").Optional().Nillable(),
-		field.Time("update_at").UpdateDefault(time.Now),
+		field.Time("update_at").UpdateDefault(time.Now).Optional().Nillable(),
 		field.Time("deleted_at").Optional().Nillable(),
 		field.Uint32("deleted_by").Optional().Nillable(),
 		field.Text("description").Optional(),

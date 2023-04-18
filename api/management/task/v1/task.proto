@@ -2,12 +2,19 @@ syntax = "proto3";
 
 package api.task.v1;
 
+import "google/api/annotations.proto";
+
 option go_package = "galileo/api/management/task/v1;v1";
 option java_multiple_files = true;
 option java_package = "api.management.task.v1";
 
 service Task {
-  rpc CreateTask (CreateTaskRequest) returns (CreateTaskReply);
+  rpc CreateTask (CreateTaskRequest) returns (CreateTaskReply){
+    option(google.api.http) = {
+      post: "v1/api/management/task"
+      body: "*"
+    };
+  };
   rpc UpdateTask (UpdateTaskRequest) returns (UpdateTaskReply);
   rpc DeleteTask (DeleteTaskRequest) returns (DeleteTaskReply);
   rpc GetTask (GetTaskRequest) returns (GetTaskReply);

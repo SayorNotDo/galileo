@@ -15,7 +15,8 @@ type TestCaseSuite struct {
 // Fields of the TestCaseSuite.
 func (TestCaseSuite) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").Unique(),
+		field.Int64("id"),
+		field.String("name").Unique().NotEmpty(),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("created_by").Immutable(),
 	}
@@ -24,6 +25,6 @@ func (TestCaseSuite) Fields() []ent.Field {
 // Edges of the TestCaseSuite.
 func (TestCaseSuite) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("testcase", TestCase.Type),
+		edge.To("testcases", TestCase.Type),
 	}
 }

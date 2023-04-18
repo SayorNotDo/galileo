@@ -49,6 +49,10 @@ func init() {
 	taskDescCreatedAt := taskFields[2].Descriptor()
 	// task.DefaultCreatedAt holds the default value on creation for the created_at field.
 	task.DefaultCreatedAt = taskDescCreatedAt.Default.(func() time.Time)
+	// taskDescRank is the schema descriptor for rank field.
+	taskDescRank := taskFields[4].Descriptor()
+	// task.DefaultRank holds the default value on creation for the rank field.
+	task.DefaultRank = taskDescRank.Default.(int8)
 	// taskDescStatus is the schema descriptor for status field.
 	taskDescStatus := taskFields[6].Descriptor()
 	// task.DefaultStatus holds the default value on creation for the status field.
@@ -86,7 +90,7 @@ func init() {
 	testcasesuiteFields := schema.TestCaseSuite{}.Fields()
 	_ = testcasesuiteFields
 	// testcasesuiteDescCreatedAt is the schema descriptor for created_at field.
-	testcasesuiteDescCreatedAt := testcasesuiteFields[1].Descriptor()
+	testcasesuiteDescCreatedAt := testcasesuiteFields[2].Descriptor()
 	// testcasesuite.DefaultCreatedAt holds the default value on creation for the created_at field.
 	testcasesuite.DefaultCreatedAt = testcasesuiteDescCreatedAt.Default.(func() time.Time)
 	userFields := schema.User{}.Fields()

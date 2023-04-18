@@ -42,6 +42,14 @@ func (tu *TaskUpdate) SetRank(i int8) *TaskUpdate {
 	return tu
 }
 
+// SetNillableRank sets the "rank" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableRank(i *int8) *TaskUpdate {
+	if i != nil {
+		tu.SetRank(*i)
+	}
+	return tu
+}
+
 // AddRank adds i to the "rank" field.
 func (tu *TaskUpdate) AddRank(i int8) *TaskUpdate {
 	tu.mutation.AddRank(i)
@@ -105,6 +113,12 @@ func (tu *TaskUpdate) ClearCompleteAt() *TaskUpdate {
 // SetUpdateAt sets the "update_at" field.
 func (tu *TaskUpdate) SetUpdateAt(t time.Time) *TaskUpdate {
 	tu.mutation.SetUpdateAt(t)
+	return tu
+}
+
+// ClearUpdateAt clears the value of the "update_at" field.
+func (tu *TaskUpdate) ClearUpdateAt() *TaskUpdate {
+	tu.mutation.ClearUpdateAt()
 	return tu
 }
 
@@ -176,14 +190,14 @@ func (tu *TaskUpdate) ClearDescription() *TaskUpdate {
 }
 
 // AddTestcaseSuiteIDs adds the "testcaseSuite" edge to the TestCaseSuite entity by IDs.
-func (tu *TaskUpdate) AddTestcaseSuiteIDs(ids ...int) *TaskUpdate {
+func (tu *TaskUpdate) AddTestcaseSuiteIDs(ids ...int64) *TaskUpdate {
 	tu.mutation.AddTestcaseSuiteIDs(ids...)
 	return tu
 }
 
 // AddTestcaseSuite adds the "testcaseSuite" edges to the TestCaseSuite entity.
 func (tu *TaskUpdate) AddTestcaseSuite(t ...*TestCaseSuite) *TaskUpdate {
-	ids := make([]int, len(t))
+	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -202,14 +216,14 @@ func (tu *TaskUpdate) ClearTestcaseSuite() *TaskUpdate {
 }
 
 // RemoveTestcaseSuiteIDs removes the "testcaseSuite" edge to TestCaseSuite entities by IDs.
-func (tu *TaskUpdate) RemoveTestcaseSuiteIDs(ids ...int) *TaskUpdate {
+func (tu *TaskUpdate) RemoveTestcaseSuiteIDs(ids ...int64) *TaskUpdate {
 	tu.mutation.RemoveTestcaseSuiteIDs(ids...)
 	return tu
 }
 
 // RemoveTestcaseSuite removes "testcaseSuite" edges to TestCaseSuite entities.
 func (tu *TaskUpdate) RemoveTestcaseSuite(t ...*TestCaseSuite) *TaskUpdate {
-	ids := make([]int, len(t))
+	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -246,7 +260,7 @@ func (tu *TaskUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tu *TaskUpdate) defaults() {
-	if _, ok := tu.mutation.UpdateAt(); !ok {
+	if _, ok := tu.mutation.UpdateAt(); !ok && !tu.mutation.UpdateAtCleared() {
 		v := task.UpdateDefaultUpdateAt()
 		tu.mutation.SetUpdateAt(v)
 	}
@@ -291,6 +305,9 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.UpdateAt(); ok {
 		_spec.SetField(task.FieldUpdateAt, field.TypeTime, value)
 	}
+	if tu.mutation.UpdateAtCleared() {
+		_spec.ClearField(task.FieldUpdateAt, field.TypeTime)
+	}
 	if value, ok := tu.mutation.DeletedAt(); ok {
 		_spec.SetField(task.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -320,7 +337,7 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{task.TestcaseSuiteColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -333,7 +350,7 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{task.TestcaseSuiteColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -349,7 +366,7 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{task.TestcaseSuiteColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -387,6 +404,14 @@ func (tuo *TaskUpdateOne) SetName(s string) *TaskUpdateOne {
 func (tuo *TaskUpdateOne) SetRank(i int8) *TaskUpdateOne {
 	tuo.mutation.ResetRank()
 	tuo.mutation.SetRank(i)
+	return tuo
+}
+
+// SetNillableRank sets the "rank" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableRank(i *int8) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetRank(*i)
+	}
 	return tuo
 }
 
@@ -453,6 +478,12 @@ func (tuo *TaskUpdateOne) ClearCompleteAt() *TaskUpdateOne {
 // SetUpdateAt sets the "update_at" field.
 func (tuo *TaskUpdateOne) SetUpdateAt(t time.Time) *TaskUpdateOne {
 	tuo.mutation.SetUpdateAt(t)
+	return tuo
+}
+
+// ClearUpdateAt clears the value of the "update_at" field.
+func (tuo *TaskUpdateOne) ClearUpdateAt() *TaskUpdateOne {
+	tuo.mutation.ClearUpdateAt()
 	return tuo
 }
 
@@ -524,14 +555,14 @@ func (tuo *TaskUpdateOne) ClearDescription() *TaskUpdateOne {
 }
 
 // AddTestcaseSuiteIDs adds the "testcaseSuite" edge to the TestCaseSuite entity by IDs.
-func (tuo *TaskUpdateOne) AddTestcaseSuiteIDs(ids ...int) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) AddTestcaseSuiteIDs(ids ...int64) *TaskUpdateOne {
 	tuo.mutation.AddTestcaseSuiteIDs(ids...)
 	return tuo
 }
 
 // AddTestcaseSuite adds the "testcaseSuite" edges to the TestCaseSuite entity.
 func (tuo *TaskUpdateOne) AddTestcaseSuite(t ...*TestCaseSuite) *TaskUpdateOne {
-	ids := make([]int, len(t))
+	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -550,14 +581,14 @@ func (tuo *TaskUpdateOne) ClearTestcaseSuite() *TaskUpdateOne {
 }
 
 // RemoveTestcaseSuiteIDs removes the "testcaseSuite" edge to TestCaseSuite entities by IDs.
-func (tuo *TaskUpdateOne) RemoveTestcaseSuiteIDs(ids ...int) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) RemoveTestcaseSuiteIDs(ids ...int64) *TaskUpdateOne {
 	tuo.mutation.RemoveTestcaseSuiteIDs(ids...)
 	return tuo
 }
 
 // RemoveTestcaseSuite removes "testcaseSuite" edges to TestCaseSuite entities.
 func (tuo *TaskUpdateOne) RemoveTestcaseSuite(t ...*TestCaseSuite) *TaskUpdateOne {
-	ids := make([]int, len(t))
+	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -607,7 +638,7 @@ func (tuo *TaskUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tuo *TaskUpdateOne) defaults() {
-	if _, ok := tuo.mutation.UpdateAt(); !ok {
+	if _, ok := tuo.mutation.UpdateAt(); !ok && !tuo.mutation.UpdateAtCleared() {
 		v := task.UpdateDefaultUpdateAt()
 		tuo.mutation.SetUpdateAt(v)
 	}
@@ -669,6 +700,9 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if value, ok := tuo.mutation.UpdateAt(); ok {
 		_spec.SetField(task.FieldUpdateAt, field.TypeTime, value)
 	}
+	if tuo.mutation.UpdateAtCleared() {
+		_spec.ClearField(task.FieldUpdateAt, field.TypeTime)
+	}
 	if value, ok := tuo.mutation.DeletedAt(); ok {
 		_spec.SetField(task.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -698,7 +732,7 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Columns: []string{task.TestcaseSuiteColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -711,7 +745,7 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Columns: []string{task.TestcaseSuiteColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -727,7 +761,7 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Columns: []string{task.TestcaseSuiteColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

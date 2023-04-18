@@ -23,7 +23,7 @@ func (User) Annotations() []schema.Annotation {
 // Fields of the User.
 func (User) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("id").Unique().Immutable(),
+		field.Uint32("id"),
 		field.Time("created_at").
 			Default(time.Now).Immutable(),
 		field.Bool("active").Default(true),

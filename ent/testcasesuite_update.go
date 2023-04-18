@@ -34,14 +34,14 @@ func (tcsu *TestCaseSuiteUpdate) SetName(s string) *TestCaseSuiteUpdate {
 	return tcsu
 }
 
-// AddTestcaseIDs adds the "testcase" edge to the TestCase entity by IDs.
+// AddTestcaseIDs adds the "testcases" edge to the TestCase entity by IDs.
 func (tcsu *TestCaseSuiteUpdate) AddTestcaseIDs(ids ...int64) *TestCaseSuiteUpdate {
 	tcsu.mutation.AddTestcaseIDs(ids...)
 	return tcsu
 }
 
-// AddTestcase adds the "testcase" edges to the TestCase entity.
-func (tcsu *TestCaseSuiteUpdate) AddTestcase(t ...*TestCase) *TestCaseSuiteUpdate {
+// AddTestcases adds the "testcases" edges to the TestCase entity.
+func (tcsu *TestCaseSuiteUpdate) AddTestcases(t ...*TestCase) *TestCaseSuiteUpdate {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -54,20 +54,20 @@ func (tcsu *TestCaseSuiteUpdate) Mutation() *TestCaseSuiteMutation {
 	return tcsu.mutation
 }
 
-// ClearTestcase clears all "testcase" edges to the TestCase entity.
-func (tcsu *TestCaseSuiteUpdate) ClearTestcase() *TestCaseSuiteUpdate {
-	tcsu.mutation.ClearTestcase()
+// ClearTestcases clears all "testcases" edges to the TestCase entity.
+func (tcsu *TestCaseSuiteUpdate) ClearTestcases() *TestCaseSuiteUpdate {
+	tcsu.mutation.ClearTestcases()
 	return tcsu
 }
 
-// RemoveTestcaseIDs removes the "testcase" edge to TestCase entities by IDs.
+// RemoveTestcaseIDs removes the "testcases" edge to TestCase entities by IDs.
 func (tcsu *TestCaseSuiteUpdate) RemoveTestcaseIDs(ids ...int64) *TestCaseSuiteUpdate {
 	tcsu.mutation.RemoveTestcaseIDs(ids...)
 	return tcsu
 }
 
-// RemoveTestcase removes "testcase" edges to TestCase entities.
-func (tcsu *TestCaseSuiteUpdate) RemoveTestcase(t ...*TestCase) *TestCaseSuiteUpdate {
+// RemoveTestcases removes "testcases" edges to TestCase entities.
+func (tcsu *TestCaseSuiteUpdate) RemoveTestcases(t ...*TestCase) *TestCaseSuiteUpdate {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -103,7 +103,7 @@ func (tcsu *TestCaseSuiteUpdate) ExecX(ctx context.Context) {
 }
 
 func (tcsu *TestCaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(testcasesuite.Table, testcasesuite.Columns, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(testcasesuite.Table, testcasesuite.Columns, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64))
 	if ps := tcsu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -114,12 +114,12 @@ func (tcsu *TestCaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error)
 	if value, ok := tcsu.mutation.Name(); ok {
 		_spec.SetField(testcasesuite.FieldName, field.TypeString, value)
 	}
-	if tcsu.mutation.TestcaseCleared() {
+	if tcsu.mutation.TestcasesCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   testcasesuite.TestcaseTable,
-			Columns: []string{testcasesuite.TestcaseColumn},
+			Table:   testcasesuite.TestcasesTable,
+			Columns: testcasesuite.TestcasesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
@@ -127,12 +127,12 @@ func (tcsu *TestCaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tcsu.mutation.RemovedTestcaseIDs(); len(nodes) > 0 && !tcsu.mutation.TestcaseCleared() {
+	if nodes := tcsu.mutation.RemovedTestcasesIDs(); len(nodes) > 0 && !tcsu.mutation.TestcasesCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   testcasesuite.TestcaseTable,
-			Columns: []string{testcasesuite.TestcaseColumn},
+			Table:   testcasesuite.TestcasesTable,
+			Columns: testcasesuite.TestcasesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
@@ -143,12 +143,12 @@ func (tcsu *TestCaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tcsu.mutation.TestcaseIDs(); len(nodes) > 0 {
+	if nodes := tcsu.mutation.TestcasesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   testcasesuite.TestcaseTable,
-			Columns: []string{testcasesuite.TestcaseColumn},
+			Table:   testcasesuite.TestcasesTable,
+			Columns: testcasesuite.TestcasesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
@@ -185,14 +185,14 @@ func (tcsuo *TestCaseSuiteUpdateOne) SetName(s string) *TestCaseSuiteUpdateOne {
 	return tcsuo
 }
 
-// AddTestcaseIDs adds the "testcase" edge to the TestCase entity by IDs.
+// AddTestcaseIDs adds the "testcases" edge to the TestCase entity by IDs.
 func (tcsuo *TestCaseSuiteUpdateOne) AddTestcaseIDs(ids ...int64) *TestCaseSuiteUpdateOne {
 	tcsuo.mutation.AddTestcaseIDs(ids...)
 	return tcsuo
 }
 
-// AddTestcase adds the "testcase" edges to the TestCase entity.
-func (tcsuo *TestCaseSuiteUpdateOne) AddTestcase(t ...*TestCase) *TestCaseSuiteUpdateOne {
+// AddTestcases adds the "testcases" edges to the TestCase entity.
+func (tcsuo *TestCaseSuiteUpdateOne) AddTestcases(t ...*TestCase) *TestCaseSuiteUpdateOne {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -205,20 +205,20 @@ func (tcsuo *TestCaseSuiteUpdateOne) Mutation() *TestCaseSuiteMutation {
 	return tcsuo.mutation
 }
 
-// ClearTestcase clears all "testcase" edges to the TestCase entity.
-func (tcsuo *TestCaseSuiteUpdateOne) ClearTestcase() *TestCaseSuiteUpdateOne {
-	tcsuo.mutation.ClearTestcase()
+// ClearTestcases clears all "testcases" edges to the TestCase entity.
+func (tcsuo *TestCaseSuiteUpdateOne) ClearTestcases() *TestCaseSuiteUpdateOne {
+	tcsuo.mutation.ClearTestcases()
 	return tcsuo
 }
 
-// RemoveTestcaseIDs removes the "testcase" edge to TestCase entities by IDs.
+// RemoveTestcaseIDs removes the "testcases" edge to TestCase entities by IDs.
 func (tcsuo *TestCaseSuiteUpdateOne) RemoveTestcaseIDs(ids ...int64) *TestCaseSuiteUpdateOne {
 	tcsuo.mutation.RemoveTestcaseIDs(ids...)
 	return tcsuo
 }
 
-// RemoveTestcase removes "testcase" edges to TestCase entities.
-func (tcsuo *TestCaseSuiteUpdateOne) RemoveTestcase(t ...*TestCase) *TestCaseSuiteUpdateOne {
+// RemoveTestcases removes "testcases" edges to TestCase entities.
+func (tcsuo *TestCaseSuiteUpdateOne) RemoveTestcases(t ...*TestCase) *TestCaseSuiteUpdateOne {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -267,7 +267,7 @@ func (tcsuo *TestCaseSuiteUpdateOne) ExecX(ctx context.Context) {
 }
 
 func (tcsuo *TestCaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *TestCaseSuite, err error) {
-	_spec := sqlgraph.NewUpdateSpec(testcasesuite.Table, testcasesuite.Columns, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(testcasesuite.Table, testcasesuite.Columns, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64))
 	id, ok := tcsuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TestCaseSuite.id" for update`)}
@@ -295,12 +295,12 @@ func (tcsuo *TestCaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *TestCa
 	if value, ok := tcsuo.mutation.Name(); ok {
 		_spec.SetField(testcasesuite.FieldName, field.TypeString, value)
 	}
-	if tcsuo.mutation.TestcaseCleared() {
+	if tcsuo.mutation.TestcasesCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   testcasesuite.TestcaseTable,
-			Columns: []string{testcasesuite.TestcaseColumn},
+			Table:   testcasesuite.TestcasesTable,
+			Columns: testcasesuite.TestcasesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
@@ -308,12 +308,12 @@ func (tcsuo *TestCaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *TestCa
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tcsuo.mutation.RemovedTestcaseIDs(); len(nodes) > 0 && !tcsuo.mutation.TestcaseCleared() {
+	if nodes := tcsuo.mutation.RemovedTestcasesIDs(); len(nodes) > 0 && !tcsuo.mutation.TestcasesCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   testcasesuite.TestcaseTable,
-			Columns: []string{testcasesuite.TestcaseColumn},
+			Table:   testcasesuite.TestcasesTable,
+			Columns: testcasesuite.TestcasesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
@@ -324,12 +324,12 @@ func (tcsuo *TestCaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *TestCa
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tcsuo.mutation.TestcaseIDs(); len(nodes) > 0 {
+	if nodes := tcsuo.mutation.TestcasesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   testcasesuite.TestcaseTable,
-			Columns: []string{testcasesuite.TestcaseColumn},
+			Table:   testcasesuite.TestcasesTable,
+			Columns: testcasesuite.TestcasesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),

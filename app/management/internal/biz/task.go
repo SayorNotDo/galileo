@@ -9,25 +9,26 @@ import (
 
 // Task is a Task model.
 type Task struct {
-	Id            int64
-	Name          string
-	Rank          int8
-	Type          int8
-	Status        int8
-	CreatedAt     time.Time
-	CreatedBy     uint32
-	CompleteAt    time.Time
-	UpdateAt      time.Time
-	DeletedAt     time.Time
-	DeletedBy     uint32
-	Description   string
-	TestcaseSuite []int
+	Id             int64
+	Name           string
+	Rank           int8
+	Type           int8
+	Status         int8
+	CreatedAt      time.Time
+	CreatedBy      uint32
+	UpdateAt       time.Time
+	CompleteAt     time.Time
+	DeletedAt      time.Time
+	DeletedBy      uint32
+	Description    string
+	TestcaseSuites []int64
 }
 
 // TaskRepo is a Task repo.
 type TaskRepo interface {
 	ListTask(ctx context.Context, pageNum, pageSize int) ([]*Task, error)
 	CreateTask(ctx context.Context, task *Task) (*Task, error)
+	TaskByName(ctx context.Context, name string) (*Task, error)
 }
 
 // TaskUseCase is a Task useCase.
@@ -46,4 +47,8 @@ func NewTaskUseCase(repo TaskRepo, logger log.Logger) *TaskUseCase {
 
 func (uc *TaskUseCase) CreateTask(ctx context.Context, task *Task) (*Task, error) {
 	return uc.repo.CreateTask(ctx, task)
+}
+
+func (uc *TaskUseCase) TaskByName(ctx context.Context, name string) (*Task, error) {
+	return uc.repo.TaskByName(ctx, name)
 }

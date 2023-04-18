@@ -716,6 +716,22 @@ func (c *TestCaseClient) GetX(ctx context.Context, id int64) *TestCase {
 	return obj
 }
 
+// QueryTestcaseSuites queries the testcaseSuites edge of a TestCase.
+func (c *TestCaseClient) QueryTestcaseSuites(tc *TestCase) *TestCaseSuiteQuery {
+	query := (&TestCaseSuiteClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := tc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(testcase.Table, testcase.FieldID, id),
+			sqlgraph.To(testcasesuite.Table, testcasesuite.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, testcase.TestcaseSuitesTable, testcase.TestcaseSuitesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(tc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *TestCaseClient) Hooks() []Hook {
 	return c.hooks.TestCase
@@ -787,7 +803,7 @@ func (c *TestCaseSuiteClient) UpdateOne(tcs *TestCaseSuite) *TestCaseSuiteUpdate
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *TestCaseSuiteClient) UpdateOneID(id int) *TestCaseSuiteUpdateOne {
+func (c *TestCaseSuiteClient) UpdateOneID(id int64) *TestCaseSuiteUpdateOne {
 	mutation := newTestCaseSuiteMutation(c.config, OpUpdateOne, withTestCaseSuiteID(id))
 	return &TestCaseSuiteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -804,7 +820,7 @@ func (c *TestCaseSuiteClient) DeleteOne(tcs *TestCaseSuite) *TestCaseSuiteDelete
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *TestCaseSuiteClient) DeleteOneID(id int) *TestCaseSuiteDeleteOne {
+func (c *TestCaseSuiteClient) DeleteOneID(id int64) *TestCaseSuiteDeleteOne {
 	builder := c.Delete().Where(testcasesuite.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -821,12 +837,12 @@ func (c *TestCaseSuiteClient) Query() *TestCaseSuiteQuery {
 }
 
 // Get returns a TestCaseSuite entity by its id.
-func (c *TestCaseSuiteClient) Get(ctx context.Context, id int) (*TestCaseSuite, error) {
+func (c *TestCaseSuiteClient) Get(ctx context.Context, id int64) (*TestCaseSuite, error) {
 	return c.Query().Where(testcasesuite.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *TestCaseSuiteClient) GetX(ctx context.Context, id int) *TestCaseSuite {
+func (c *TestCaseSuiteClient) GetX(ctx context.Context, id int64) *TestCaseSuite {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -834,15 +850,15 @@ func (c *TestCaseSuiteClient) GetX(ctx context.Context, id int) *TestCaseSuite {
 	return obj
 }
 
-// QueryTestcase queries the testcase edge of a TestCaseSuite.
-func (c *TestCaseSuiteClient) QueryTestcase(tcs *TestCaseSuite) *TestCaseQuery {
+// QueryTestcases queries the testcases edge of a TestCaseSuite.
+func (c *TestCaseSuiteClient) QueryTestcases(tcs *TestCaseSuite) *TestCaseQuery {
 	query := (&TestCaseClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := tcs.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(testcasesuite.Table, testcasesuite.FieldID, id),
 			sqlgraph.To(testcase.Table, testcase.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, testcasesuite.TestcaseTable, testcasesuite.TestcaseColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, testcasesuite.TestcasesTable, testcasesuite.TestcasesPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(tcs.driver.Dialect(), step)
 		return fromV, nil

@@ -7,7 +7,9 @@
 package main
 
 import (
+	"galileo/app/engine/internal/biz"
 	"galileo/app/engine/internal/conf"
+	"galileo/app/engine/internal/data"
 	"galileo/app/engine/internal/server"
 	"galileo/app/engine/internal/service"
 	"github.com/go-kratos/kratos/v2"
@@ -21,11 +23,18 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	engineService := service.NewEngineService()
+func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
+	dataData, cleanup, err := data.NewData(confData, logger)
+	if err != nil {
+		return nil, nil, err
+	}
+	engineRepo := data.NewEngineRepo(dataData, logger)
+	engineUseCase := biz.NewEngineUseCase(engineRepo, logger)
+	engineService := service.NewEngineService(engineUseCase, logger)
 	grpcServer := server.NewGRPCServer(confServer, engineService, logger)
 	httpServer := server.NewHTTPServer(confServer, engineService, logger)
 	app := newApp(logger, grpcServer, httpServer)
 	return app, func() {
+		cleanup()
 	}, nil
 }

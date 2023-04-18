@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"galileo/ent/testcase"
+	"galileo/ent/testcasesuite"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -178,6 +179,21 @@ func (tcc *TestCaseCreate) SetID(i int64) *TestCaseCreate {
 	return tcc
 }
 
+// AddTestcaseSuiteIDs adds the "testcaseSuites" edge to the TestCaseSuite entity by IDs.
+func (tcc *TestCaseCreate) AddTestcaseSuiteIDs(ids ...int64) *TestCaseCreate {
+	tcc.mutation.AddTestcaseSuiteIDs(ids...)
+	return tcc
+}
+
+// AddTestcaseSuites adds the "testcaseSuites" edges to the TestCaseSuite entity.
+func (tcc *TestCaseCreate) AddTestcaseSuites(t ...*TestCaseSuite) *TestCaseCreate {
+	ids := make([]int64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tcc.AddTestcaseSuiteIDs(ids...)
+}
+
 // Mutation returns the TestCaseMutation object of the builder.
 func (tcc *TestCaseCreate) Mutation() *TestCaseMutation {
 	return tcc.mutation
@@ -302,11 +318,11 @@ func (tcc *TestCaseCreate) createSpec() (*TestCase, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := tcc.mutation.UpdateBy(); ok {
 		_spec.SetField(testcase.FieldUpdateBy, field.TypeUint32, value)
-		_node.UpdateBy = value
+		_node.UpdateBy = &value
 	}
 	if value, ok := tcc.mutation.UpdateAt(); ok {
 		_spec.SetField(testcase.FieldUpdateAt, field.TypeTime, value)
-		_node.UpdateAt = value
+		_node.UpdateAt = &value
 	}
 	if value, ok := tcc.mutation.Status(); ok {
 		_spec.SetField(testcase.FieldStatus, field.TypeInt8, value)
@@ -335,6 +351,22 @@ func (tcc *TestCaseCreate) createSpec() (*TestCase, *sqlgraph.CreateSpec) {
 	if value, ok := tcc.mutation.URL(); ok {
 		_spec.SetField(testcase.FieldURL, field.TypeString, value)
 		_node.URL = value
+	}
+	if nodes := tcc.mutation.TestcaseSuitesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   testcase.TestcaseSuitesTable,
+			Columns: testcase.TestcaseSuitesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

@@ -17,7 +17,7 @@ service Engine {
       get: "v1/api/hello"
     };
   };
-  rpc RunJob(google.protobuf.Empty) returns (google.protobuf.Empty) {
+  rpc RunJob(RunJobRequest) returns (RunJobReply) {
     option(google.api.http) = {
       post: "v1/api/engine/job/run"
       body: "*"
@@ -55,6 +55,13 @@ service Engine {
 }
 
 message RunJobRequest {
-  int64 id = 1;
+  int64 taskId = 1;
+  string worker = 2;
+  string conf = 3;
+}
+
+message RunJobReply {
+  bool success = 1;
+
 }
 

@@ -23,9 +23,9 @@ type TestCase struct {
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdateBy holds the value of the "update_by" field.
-	UpdateBy uint32 `json:"update_by,omitempty"`
+	UpdateBy *uint32 `json:"update_by,omitempty"`
 	// UpdateAt holds the value of the "update_at" field.
-	UpdateAt time.Time `json:"update_at,omitempty"`
+	UpdateAt *time.Time `json:"update_at,omitempty"`
 	// Status holds the value of the "status" field.
 	Status int8 `json:"status,omitempty"`
 	// Type holds the value of the "type" field.
@@ -39,8 +39,28 @@ type TestCase struct {
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
 	// URL holds the value of the "url" field.
-	URL                      string `json:"url,omitempty"`
-	test_case_suite_testcase *int
+	URL string `json:"url,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the TestCaseQuery when eager-loading is set.
+	Edges TestCaseEdges `json:"edges"`
+}
+
+// TestCaseEdges holds the relations/edges for other nodes in the graph.
+type TestCaseEdges struct {
+	// TestcaseSuites holds the value of the testcaseSuites edge.
+	TestcaseSuites []*TestCaseSuite `json:"testcaseSuites,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// TestcaseSuitesOrErr returns the TestcaseSuites value or an error if the edge
+// was not loaded in eager-loading.
+func (e TestCaseEdges) TestcaseSuitesOrErr() ([]*TestCaseSuite, error) {
+	if e.loadedTypes[0] {
+		return e.TestcaseSuites, nil
+	}
+	return nil, &NotLoadedError{edge: "testcaseSuites"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -54,8 +74,6 @@ func (*TestCase) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case testcase.FieldCreatedAt, testcase.FieldUpdateAt, testcase.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
-		case testcase.ForeignKeys[0]: // test_case_suite_testcase
-			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type TestCase", columns[i])
 		}
@@ -99,13 +117,15 @@ func (tc *TestCase) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field update_by", values[i])
 			} else if value.Valid {
-				tc.UpdateBy = uint32(value.Int64)
+				tc.UpdateBy = new(uint32)
+				*tc.UpdateBy = uint32(value.Int64)
 			}
 		case testcase.FieldUpdateAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field update_at", values[i])
 			} else if value.Valid {
-				tc.UpdateAt = value.Time
+				tc.UpdateAt = new(time.Time)
+				*tc.UpdateAt = value.Time
 			}
 		case testcase.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -149,16 +169,14 @@ func (tc *TestCase) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				tc.URL = value.String
 			}
-		case testcase.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field test_case_suite_testcase", value)
-			} else if value.Valid {
-				tc.test_case_suite_testcase = new(int)
-				*tc.test_case_suite_testcase = int(value.Int64)
-			}
 		}
 	}
 	return nil
+}
+
+// QueryTestcaseSuites queries the "testcaseSuites" edge of the TestCase entity.
+func (tc *TestCase) QueryTestcaseSuites() *TestCaseSuiteQuery {
+	return NewTestCaseClient(tc.config).QueryTestcaseSuites(tc)
 }
 
 // Update returns a builder for updating this TestCase.
@@ -193,11 +211,15 @@ func (tc *TestCase) String() string {
 	builder.WriteString("created_at=")
 	builder.WriteString(tc.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("update_by=")
-	builder.WriteString(fmt.Sprintf("%v", tc.UpdateBy))
+	if v := tc.UpdateBy; v != nil {
+		builder.WriteString("update_by=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", ")
-	builder.WriteString("update_at=")
-	builder.WriteString(tc.UpdateAt.Format(time.ANSIC))
+	if v := tc.UpdateAt; v != nil {
+		builder.WriteString("update_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", tc.Status))

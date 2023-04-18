@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"time"
 )
@@ -14,12 +15,12 @@ type TestCase struct {
 // Fields of the TestCase.
 func (TestCase) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("id").Unique().Immutable(),
+		field.Int64("id"),
 		field.String("name").Unique().NotEmpty(),
 		field.Uint32("created_by").Immutable(),
 		field.Time("created_at").Default(time.Now).Immutable(),
-		field.Uint32("update_by").Optional(),
-		field.Time("update_at").UpdateDefault(time.Now).Optional(),
+		field.Uint32("update_by").Optional().Nillable(),
+		field.Time("update_at").UpdateDefault(time.Now).Optional().Nillable(),
 		field.Int8("status").Default(0),
 		field.Int8("type").Default(0),
 		field.Int8("priority").Default(0),
@@ -32,5 +33,7 @@ func (TestCase) Fields() []ent.Field {
 
 // Edges of the TestCase.
 func (TestCase) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.From("testcaseSuites", TestCaseSuite.Type).Ref("testcases"),
+	}
 }

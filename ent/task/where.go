@@ -465,6 +465,16 @@ func UpdateAtLTE(v time.Time) predicate.Task {
 	return predicate.Task(sql.FieldLTE(FieldUpdateAt, v))
 }
 
+// UpdateAtIsNil applies the IsNil predicate on the "update_at" field.
+func UpdateAtIsNil() predicate.Task {
+	return predicate.Task(sql.FieldIsNull(FieldUpdateAt))
+}
+
+// UpdateAtNotNil applies the NotNil predicate on the "update_at" field.
+func UpdateAtNotNil() predicate.Task {
+	return predicate.Task(sql.FieldNotNull(FieldUpdateAt))
+}
+
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
 func DeletedAtEQ(v time.Time) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldDeletedAt, v))

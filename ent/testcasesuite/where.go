@@ -11,47 +11,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.TestCaseSuite {
+func ID(id int64) predicate.TestCaseSuite {
 	return predicate.TestCaseSuite(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.TestCaseSuite {
+func IDEQ(id int64) predicate.TestCaseSuite {
 	return predicate.TestCaseSuite(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.TestCaseSuite {
+func IDNEQ(id int64) predicate.TestCaseSuite {
 	return predicate.TestCaseSuite(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.TestCaseSuite {
+func IDIn(ids ...int64) predicate.TestCaseSuite {
 	return predicate.TestCaseSuite(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.TestCaseSuite {
+func IDNotIn(ids ...int64) predicate.TestCaseSuite {
 	return predicate.TestCaseSuite(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.TestCaseSuite {
+func IDGT(id int64) predicate.TestCaseSuite {
 	return predicate.TestCaseSuite(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.TestCaseSuite {
+func IDGTE(id int64) predicate.TestCaseSuite {
 	return predicate.TestCaseSuite(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.TestCaseSuite {
+func IDLT(id int64) predicate.TestCaseSuite {
 	return predicate.TestCaseSuite(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.TestCaseSuite {
+func IDLTE(id int64) predicate.TestCaseSuite {
 	return predicate.TestCaseSuite(sql.FieldLTE(FieldID, id))
 }
 
@@ -215,24 +215,24 @@ func CreatedByLTE(v uint32) predicate.TestCaseSuite {
 	return predicate.TestCaseSuite(sql.FieldLTE(FieldCreatedBy, v))
 }
 
-// HasTestcase applies the HasEdge predicate on the "testcase" edge.
-func HasTestcase() predicate.TestCaseSuite {
+// HasTestcases applies the HasEdge predicate on the "testcases" edge.
+func HasTestcases() predicate.TestCaseSuite {
 	return predicate.TestCaseSuite(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, TestcaseTable, TestcaseColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, TestcasesTable, TestcasesPrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasTestcaseWith applies the HasEdge predicate on the "testcase" edge with a given conditions (other predicates).
-func HasTestcaseWith(preds ...predicate.TestCase) predicate.TestCaseSuite {
+// HasTestcasesWith applies the HasEdge predicate on the "testcases" edge with a given conditions (other predicates).
+func HasTestcasesWith(preds ...predicate.TestCase) predicate.TestCaseSuite {
 	return predicate.TestCaseSuite(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(TestcaseInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, TestcaseTable, TestcaseColumn),
+			sqlgraph.To(TestcasesInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, TestcasesTable, TestcasesPrimaryKey...),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

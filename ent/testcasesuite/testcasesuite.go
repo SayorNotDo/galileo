@@ -17,17 +17,15 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldCreatedBy holds the string denoting the created_by field in the database.
 	FieldCreatedBy = "created_by"
-	// EdgeTestcase holds the string denoting the testcase edge name in mutations.
-	EdgeTestcase = "testcase"
+	// EdgeTestcases holds the string denoting the testcases edge name in mutations.
+	EdgeTestcases = "testcases"
 	// Table holds the table name of the testcasesuite in the database.
 	Table = "test_case_suites"
-	// TestcaseTable is the table that holds the testcase relation/edge.
-	TestcaseTable = "test_cases"
-	// TestcaseInverseTable is the table name for the TestCase entity.
+	// TestcasesTable is the table that holds the testcases relation/edge. The primary key declared below.
+	TestcasesTable = "test_case_suite_testcases"
+	// TestcasesInverseTable is the table name for the TestCase entity.
 	// It exists in this package in order to avoid circular dependency with the "testcase" package.
-	TestcaseInverseTable = "test_cases"
-	// TestcaseColumn is the table column denoting the testcase relation/edge.
-	TestcaseColumn = "test_case_suite_testcase"
+	TestcasesInverseTable = "test_cases"
 )
 
 // Columns holds all SQL columns for testcasesuite fields.
@@ -43,6 +41,12 @@ var Columns = []string{
 var ForeignKeys = []string{
 	"task_testcase_suite",
 }
+
+var (
+	// TestcasesPrimaryKey and TestcasesColumn2 are the table columns denoting the
+	// primary key for the testcases relation (M2M).
+	TestcasesPrimaryKey = []string{"test_case_suite_id", "test_case_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {

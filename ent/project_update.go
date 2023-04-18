@@ -47,8 +47,29 @@ func (pu *ProjectUpdate) SetUpdatedAt(t time.Time) *ProjectUpdate {
 }
 
 // SetUpdateBy sets the "update_by" field.
-func (pu *ProjectUpdate) SetUpdateBy(s string) *ProjectUpdate {
-	pu.mutation.SetUpdateBy(s)
+func (pu *ProjectUpdate) SetUpdateBy(u uint32) *ProjectUpdate {
+	pu.mutation.ResetUpdateBy()
+	pu.mutation.SetUpdateBy(u)
+	return pu
+}
+
+// SetNillableUpdateBy sets the "update_by" field if the given value is not nil.
+func (pu *ProjectUpdate) SetNillableUpdateBy(u *uint32) *ProjectUpdate {
+	if u != nil {
+		pu.SetUpdateBy(*u)
+	}
+	return pu
+}
+
+// AddUpdateBy adds u to the "update_by" field.
+func (pu *ProjectUpdate) AddUpdateBy(u int32) *ProjectUpdate {
+	pu.mutation.AddUpdateBy(u)
+	return pu
+}
+
+// ClearUpdateBy clears the value of the "update_by" field.
+func (pu *ProjectUpdate) ClearUpdateBy() *ProjectUpdate {
+	pu.mutation.ClearUpdateBy()
 	return pu
 }
 
@@ -220,7 +241,13 @@ func (pu *ProjectUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(project.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := pu.mutation.UpdateBy(); ok {
-		_spec.SetField(project.FieldUpdateBy, field.TypeString, value)
+		_spec.SetField(project.FieldUpdateBy, field.TypeUint32, value)
+	}
+	if value, ok := pu.mutation.AddedUpdateBy(); ok {
+		_spec.AddField(project.FieldUpdateBy, field.TypeUint32, value)
+	}
+	if pu.mutation.UpdateByCleared() {
+		_spec.ClearField(project.FieldUpdateBy, field.TypeUint32)
 	}
 	if value, ok := pu.mutation.DeletedAt(); ok {
 		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)
@@ -294,8 +321,29 @@ func (puo *ProjectUpdateOne) SetUpdatedAt(t time.Time) *ProjectUpdateOne {
 }
 
 // SetUpdateBy sets the "update_by" field.
-func (puo *ProjectUpdateOne) SetUpdateBy(s string) *ProjectUpdateOne {
-	puo.mutation.SetUpdateBy(s)
+func (puo *ProjectUpdateOne) SetUpdateBy(u uint32) *ProjectUpdateOne {
+	puo.mutation.ResetUpdateBy()
+	puo.mutation.SetUpdateBy(u)
+	return puo
+}
+
+// SetNillableUpdateBy sets the "update_by" field if the given value is not nil.
+func (puo *ProjectUpdateOne) SetNillableUpdateBy(u *uint32) *ProjectUpdateOne {
+	if u != nil {
+		puo.SetUpdateBy(*u)
+	}
+	return puo
+}
+
+// AddUpdateBy adds u to the "update_by" field.
+func (puo *ProjectUpdateOne) AddUpdateBy(u int32) *ProjectUpdateOne {
+	puo.mutation.AddUpdateBy(u)
+	return puo
+}
+
+// ClearUpdateBy clears the value of the "update_by" field.
+func (puo *ProjectUpdateOne) ClearUpdateBy() *ProjectUpdateOne {
+	puo.mutation.ClearUpdateBy()
 	return puo
 }
 
@@ -497,7 +545,13 @@ func (puo *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err e
 		_spec.SetField(project.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := puo.mutation.UpdateBy(); ok {
-		_spec.SetField(project.FieldUpdateBy, field.TypeString, value)
+		_spec.SetField(project.FieldUpdateBy, field.TypeUint32, value)
+	}
+	if value, ok := puo.mutation.AddedUpdateBy(); ok {
+		_spec.AddField(project.FieldUpdateBy, field.TypeUint32, value)
+	}
+	if puo.mutation.UpdateByCleared() {
+		_spec.ClearField(project.FieldUpdateBy, field.TypeUint32)
 	}
 	if value, ok := puo.mutation.DeletedAt(); ok {
 		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)

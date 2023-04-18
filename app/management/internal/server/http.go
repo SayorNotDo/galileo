@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	projectV1 "galileo/api/management/project/v1"
+	taskV1 "galileo/api/management/task/v1"
 	testCaseV1 "galileo/api/management/testcase/v1"
 	"galileo/app/management/internal/conf"
 	"galileo/app/management/internal/data"
@@ -30,7 +31,7 @@ const (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, ac *conf.Auth, project *service.ProjectService, testcase *service.TestcaseService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, ac *conf.Auth, project *service.ProjectService, testcase *service.TestcaseService, task *service.TaskService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			logging.Server(logger),
@@ -69,6 +70,7 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, project *service.ProjectServic
 	// add error custom json response
 	opts = append(opts, http.ErrorEncoder(responseEncoder.ErrorEncoder))
 	srv := http.NewServer(opts...)
+	taskV1.RegisterTaskHTTPServer(srv, task)
 	projectV1.RegisterProjectHTTPServer(srv, project)
 	testCaseV1.RegisterTestcaseHTTPServer(srv, testcase)
 	return srv

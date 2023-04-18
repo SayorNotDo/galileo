@@ -62,6 +62,7 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, e
 		SetRank(task.Rank).
 		SetCreatedBy(task.CreatedBy).
 		SetDescription(task.Description).
+		AddTestcaseSuiteIDs(task.TestcaseSuites...).
 		Save(ctx)
 	if err != nil {
 		return nil, err
@@ -121,7 +122,7 @@ func (r *taskRepo) TaskDetailById(ctx context.Context, id int64) (*biz.Task, err
 		Name:        queryTask.Name,
 		CreatedAt:   queryTask.CreatedAt,
 		CreatedBy:   queryTask.CreatedBy,
-		UpdateAt:    queryTask.UpdateAt,
+		UpdateAt:    *queryTask.UpdateAt,
 		CompleteAt:  *queryTask.CompleteAt,
 		Status:      queryTask.Status,
 		Type:        queryTask.Type,

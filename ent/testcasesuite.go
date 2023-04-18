@@ -15,7 +15,7 @@ import (
 type TestCaseSuite struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -30,20 +30,20 @@ type TestCaseSuite struct {
 
 // TestCaseSuiteEdges holds the relations/edges for other nodes in the graph.
 type TestCaseSuiteEdges struct {
-	// Testcase holds the value of the testcase edge.
-	Testcase []*TestCase `json:"testcase,omitempty"`
+	// Testcases holds the value of the testcases edge.
+	Testcases []*TestCase `json:"testcases,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
-// TestcaseOrErr returns the Testcase value or an error if the edge
+// TestcasesOrErr returns the Testcases value or an error if the edge
 // was not loaded in eager-loading.
-func (e TestCaseSuiteEdges) TestcaseOrErr() ([]*TestCase, error) {
+func (e TestCaseSuiteEdges) TestcasesOrErr() ([]*TestCase, error) {
 	if e.loadedTypes[0] {
-		return e.Testcase, nil
+		return e.Testcases, nil
 	}
-	return nil, &NotLoadedError{edge: "testcase"}
+	return nil, &NotLoadedError{edge: "testcases"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -79,7 +79,7 @@ func (tcs *TestCaseSuite) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			tcs.ID = int(value.Int64)
+			tcs.ID = int64(value.Int64)
 		case testcasesuite.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -110,9 +110,9 @@ func (tcs *TestCaseSuite) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// QueryTestcase queries the "testcase" edge of the TestCaseSuite entity.
-func (tcs *TestCaseSuite) QueryTestcase() *TestCaseQuery {
-	return NewTestCaseSuiteClient(tcs.config).QueryTestcase(tcs)
+// QueryTestcases queries the "testcases" edge of the TestCaseSuite entity.
+func (tcs *TestCaseSuite) QueryTestcases() *TestCaseQuery {
+	return NewTestCaseSuiteClient(tcs.config).QueryTestcases(tcs)
 }
 
 // Update returns a builder for updating this TestCaseSuite.

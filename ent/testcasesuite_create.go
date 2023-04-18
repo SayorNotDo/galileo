@@ -47,14 +47,20 @@ func (tcsc *TestCaseSuiteCreate) SetCreatedBy(u uint32) *TestCaseSuiteCreate {
 	return tcsc
 }
 
-// AddTestcaseIDs adds the "testcase" edge to the TestCase entity by IDs.
+// SetID sets the "id" field.
+func (tcsc *TestCaseSuiteCreate) SetID(i int64) *TestCaseSuiteCreate {
+	tcsc.mutation.SetID(i)
+	return tcsc
+}
+
+// AddTestcaseIDs adds the "testcases" edge to the TestCase entity by IDs.
 func (tcsc *TestCaseSuiteCreate) AddTestcaseIDs(ids ...int64) *TestCaseSuiteCreate {
 	tcsc.mutation.AddTestcaseIDs(ids...)
 	return tcsc
 }
 
-// AddTestcase adds the "testcase" edges to the TestCase entity.
-func (tcsc *TestCaseSuiteCreate) AddTestcase(t ...*TestCase) *TestCaseSuiteCreate {
+// AddTestcases adds the "testcases" edges to the TestCase entity.
+func (tcsc *TestCaseSuiteCreate) AddTestcases(t ...*TestCase) *TestCaseSuiteCreate {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -128,8 +134,10 @@ func (tcsc *TestCaseSuiteCreate) sqlSave(ctx context.Context) (*TestCaseSuite, e
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int64(id)
+	}
 	tcsc.mutation.id = &_node.ID
 	tcsc.mutation.done = true
 	return _node, nil
@@ -138,8 +146,12 @@ func (tcsc *TestCaseSuiteCreate) sqlSave(ctx context.Context) (*TestCaseSuite, e
 func (tcsc *TestCaseSuiteCreate) createSpec() (*TestCaseSuite, *sqlgraph.CreateSpec) {
 	var (
 		_node = &TestCaseSuite{config: tcsc.config}
-		_spec = sqlgraph.NewCreateSpec(testcasesuite.Table, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(testcasesuite.Table, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64))
 	)
+	if id, ok := tcsc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := tcsc.mutation.Name(); ok {
 		_spec.SetField(testcasesuite.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -152,12 +164,12 @@ func (tcsc *TestCaseSuiteCreate) createSpec() (*TestCaseSuite, *sqlgraph.CreateS
 		_spec.SetField(testcasesuite.FieldCreatedBy, field.TypeUint32, value)
 		_node.CreatedBy = value
 	}
-	if nodes := tcsc.mutation.TestcaseIDs(); len(nodes) > 0 {
+	if nodes := tcsc.mutation.TestcasesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   testcasesuite.TestcaseTable,
-			Columns: []string{testcasesuite.TestcaseColumn},
+			Table:   testcasesuite.TestcasesTable,
+			Columns: testcasesuite.TestcasesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
@@ -212,9 +224,9 @@ func (tcscb *TestCaseSuiteCreateBulk) Save(ctx context.Context) ([]*TestCaseSuit
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
