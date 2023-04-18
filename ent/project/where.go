@@ -95,7 +95,7 @@ func DeletedBy(v uint32) predicate.Project {
 }
 
 // Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
-func Status(v int16) predicate.Project {
+func Status(v int8) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldStatus, v))
 }
 
@@ -525,42 +525,42 @@ func DeletedByNotNil() predicate.Project {
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v int16) predicate.Project {
+func StatusEQ(v int8) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldStatus, v))
 }
 
 // StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v int16) predicate.Project {
+func StatusNEQ(v int8) predicate.Project {
 	return predicate.Project(sql.FieldNEQ(FieldStatus, v))
 }
 
 // StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...int16) predicate.Project {
+func StatusIn(vs ...int8) predicate.Project {
 	return predicate.Project(sql.FieldIn(FieldStatus, vs...))
 }
 
 // StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...int16) predicate.Project {
+func StatusNotIn(vs ...int8) predicate.Project {
 	return predicate.Project(sql.FieldNotIn(FieldStatus, vs...))
 }
 
 // StatusGT applies the GT predicate on the "status" field.
-func StatusGT(v int16) predicate.Project {
+func StatusGT(v int8) predicate.Project {
 	return predicate.Project(sql.FieldGT(FieldStatus, v))
 }
 
 // StatusGTE applies the GTE predicate on the "status" field.
-func StatusGTE(v int16) predicate.Project {
+func StatusGTE(v int8) predicate.Project {
 	return predicate.Project(sql.FieldGTE(FieldStatus, v))
 }
 
 // StatusLT applies the LT predicate on the "status" field.
-func StatusLT(v int16) predicate.Project {
+func StatusLT(v int8) predicate.Project {
 	return predicate.Project(sql.FieldLT(FieldStatus, v))
 }
 
 // StatusLTE applies the LTE predicate on the "status" field.
-func StatusLTE(v int16) predicate.Project {
+func StatusLTE(v int8) predicate.Project {
 	return predicate.Project(sql.FieldLTE(FieldStatus, v))
 }
 

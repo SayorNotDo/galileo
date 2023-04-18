@@ -100,14 +100,14 @@ func (pu *ProjectUpdate) ClearDeletedBy() *ProjectUpdate {
 }
 
 // SetStatus sets the "status" field.
-func (pu *ProjectUpdate) SetStatus(i int16) *ProjectUpdate {
+func (pu *ProjectUpdate) SetStatus(i int8) *ProjectUpdate {
 	pu.mutation.ResetStatus()
 	pu.mutation.SetStatus(i)
 	return pu
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (pu *ProjectUpdate) SetNillableStatus(i *int16) *ProjectUpdate {
+func (pu *ProjectUpdate) SetNillableStatus(i *int8) *ProjectUpdate {
 	if i != nil {
 		pu.SetStatus(*i)
 	}
@@ -115,7 +115,7 @@ func (pu *ProjectUpdate) SetNillableStatus(i *int16) *ProjectUpdate {
 }
 
 // AddStatus adds i to the "status" field.
-func (pu *ProjectUpdate) AddStatus(i int16) *ProjectUpdate {
+func (pu *ProjectUpdate) AddStatus(i int8) *ProjectUpdate {
 	pu.mutation.AddStatus(i)
 	return pu
 }
@@ -238,10 +238,10 @@ func (pu *ProjectUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.ClearField(project.FieldDeletedBy, field.TypeUint32)
 	}
 	if value, ok := pu.mutation.Status(); ok {
-		_spec.SetField(project.FieldStatus, field.TypeInt16, value)
+		_spec.SetField(project.FieldStatus, field.TypeInt8, value)
 	}
 	if value, ok := pu.mutation.AddedStatus(); ok {
-		_spec.AddField(project.FieldStatus, field.TypeInt16, value)
+		_spec.AddField(project.FieldStatus, field.TypeInt8, value)
 	}
 	if value, ok := pu.mutation.Description(); ok {
 		_spec.SetField(project.FieldDescription, field.TypeString, value)
@@ -347,14 +347,14 @@ func (puo *ProjectUpdateOne) ClearDeletedBy() *ProjectUpdateOne {
 }
 
 // SetStatus sets the "status" field.
-func (puo *ProjectUpdateOne) SetStatus(i int16) *ProjectUpdateOne {
+func (puo *ProjectUpdateOne) SetStatus(i int8) *ProjectUpdateOne {
 	puo.mutation.ResetStatus()
 	puo.mutation.SetStatus(i)
 	return puo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (puo *ProjectUpdateOne) SetNillableStatus(i *int16) *ProjectUpdateOne {
+func (puo *ProjectUpdateOne) SetNillableStatus(i *int8) *ProjectUpdateOne {
 	if i != nil {
 		puo.SetStatus(*i)
 	}
@@ -362,7 +362,7 @@ func (puo *ProjectUpdateOne) SetNillableStatus(i *int16) *ProjectUpdateOne {
 }
 
 // AddStatus adds i to the "status" field.
-func (puo *ProjectUpdateOne) AddStatus(i int16) *ProjectUpdateOne {
+func (puo *ProjectUpdateOne) AddStatus(i int8) *ProjectUpdateOne {
 	puo.mutation.AddStatus(i)
 	return puo
 }
@@ -515,10 +515,10 @@ func (puo *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err e
 		_spec.ClearField(project.FieldDeletedBy, field.TypeUint32)
 	}
 	if value, ok := puo.mutation.Status(); ok {
-		_spec.SetField(project.FieldStatus, field.TypeInt16, value)
+		_spec.SetField(project.FieldStatus, field.TypeInt8, value)
 	}
 	if value, ok := puo.mutation.AddedStatus(); ok {
-		_spec.AddField(project.FieldStatus, field.TypeInt16, value)
+		_spec.AddField(project.FieldStatus, field.TypeInt8, value)
 	}
 	if value, ok := puo.mutation.Description(); ok {
 		_spec.SetField(project.FieldDescription, field.TypeString, value)

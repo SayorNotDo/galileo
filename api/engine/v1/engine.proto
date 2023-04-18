@@ -1,6 +1,8 @@
 syntax = "proto3";
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
 
 
 package api.engine.v1;
@@ -10,28 +12,49 @@ option java_multiple_files = true;
 option java_package = "api.engine.v1";
 
 service Engine {
-  rpc CreateEngine (CreateEngineRequest) returns (CreateEngineReply);
-  rpc UpdateEngine (UpdateEngineRequest) returns (UpdateEngineReply);
-  rpc DeleteEngine (DeleteEngineRequest) returns (DeleteEngineReply);
-  rpc GetEngine (GetEngineRequest) returns (GetEngineReply);
-  rpc ListEngine (ListEngineRequest) returns (ListEngineReply) {
+  rpc TestEngine (google.protobuf.Empty) returns (google.protobuf.Empty) {
     option(google.api.http) = {
       get: "v1/api/hello"
     };
   };
+  rpc RunJob(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option(google.api.http) = {
+      post: "v1/api/engine/job/run"
+      body: "*"
+    };
+  }
+  rpc CancelJob(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option(google.api.http) = {
+      put: "v1/api/engine/job/cancel"
+      body: "*"
+    };
+  }
+  rpc PauseJob(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option(google.api.http) = {
+      put: "v1/api/engine/job/pause"
+      body: "*"
+    };
+  }
+  rpc ResumeJob(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option(google.api.http) = {
+      put: "v1/api/engine/job/resume"
+      body: "*"
+    };
+  }
+  rpc DeleteJob(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option(google.api.http) = {
+      delete: "v1/api/engine/job/delete"
+    };
+  }
+  rpc CronJob(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option(google.api.http) = {
+      post: "v1/api/engine/cronJob"
+      body: "*"
+    };
+  }
 }
 
-message CreateEngineRequest {}
-message CreateEngineReply {}
+message RunJobRequest {
+  int64 id = 1;
+}
 
-message UpdateEngineRequest {}
-message UpdateEngineReply {}
-
-message DeleteEngineRequest {}
-message DeleteEngineReply {}
-
-message GetEngineRequest {}
-message GetEngineReply {}
-
-message ListEngineRequest {}
-message ListEngineReply {}

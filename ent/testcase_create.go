@@ -89,13 +89,13 @@ func (tcc *TestCaseCreate) SetNillableStatus(i *int8) *TestCaseCreate {
 }
 
 // SetType sets the "type" field.
-func (tcc *TestCaseCreate) SetType(i int16) *TestCaseCreate {
+func (tcc *TestCaseCreate) SetType(i int8) *TestCaseCreate {
 	tcc.mutation.SetType(i)
 	return tcc
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (tcc *TestCaseCreate) SetNillableType(i *int16) *TestCaseCreate {
+func (tcc *TestCaseCreate) SetNillableType(i *int8) *TestCaseCreate {
 	if i != nil {
 		tcc.SetType(*i)
 	}
@@ -313,7 +313,7 @@ func (tcc *TestCaseCreate) createSpec() (*TestCase, *sqlgraph.CreateSpec) {
 		_node.Status = value
 	}
 	if value, ok := tcc.mutation.GetType(); ok {
-		_spec.SetField(testcase.FieldType, field.TypeInt16, value)
+		_spec.SetField(testcase.FieldType, field.TypeInt8, value)
 		_node.Type = value
 	}
 	if value, ok := tcc.mutation.Priority(); ok {

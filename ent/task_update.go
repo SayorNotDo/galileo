@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"galileo/ent/predicate"
 	"galileo/ent/task"
+	"galileo/ent/testcasesuite"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -48,27 +49,27 @@ func (tu *TaskUpdate) AddRank(i int8) *TaskUpdate {
 }
 
 // SetType sets the "type" field.
-func (tu *TaskUpdate) SetType(i int16) *TaskUpdate {
+func (tu *TaskUpdate) SetType(i int8) *TaskUpdate {
 	tu.mutation.ResetType()
 	tu.mutation.SetType(i)
 	return tu
 }
 
 // AddType adds i to the "type" field.
-func (tu *TaskUpdate) AddType(i int16) *TaskUpdate {
+func (tu *TaskUpdate) AddType(i int8) *TaskUpdate {
 	tu.mutation.AddType(i)
 	return tu
 }
 
 // SetStatus sets the "status" field.
-func (tu *TaskUpdate) SetStatus(i int16) *TaskUpdate {
+func (tu *TaskUpdate) SetStatus(i int8) *TaskUpdate {
 	tu.mutation.ResetStatus()
 	tu.mutation.SetStatus(i)
 	return tu
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableStatus(i *int16) *TaskUpdate {
+func (tu *TaskUpdate) SetNillableStatus(i *int8) *TaskUpdate {
 	if i != nil {
 		tu.SetStatus(*i)
 	}
@@ -76,7 +77,7 @@ func (tu *TaskUpdate) SetNillableStatus(i *int16) *TaskUpdate {
 }
 
 // AddStatus adds i to the "status" field.
-func (tu *TaskUpdate) AddStatus(i int16) *TaskUpdate {
+func (tu *TaskUpdate) AddStatus(i int8) *TaskUpdate {
 	tu.mutation.AddStatus(i)
 	return tu
 }
@@ -104,26 +105,6 @@ func (tu *TaskUpdate) ClearCompleteAt() *TaskUpdate {
 // SetUpdateAt sets the "update_at" field.
 func (tu *TaskUpdate) SetUpdateAt(t time.Time) *TaskUpdate {
 	tu.mutation.SetUpdateAt(t)
-	return tu
-}
-
-// SetIsDeleted sets the "is_deleted" field.
-func (tu *TaskUpdate) SetIsDeleted(b bool) *TaskUpdate {
-	tu.mutation.SetIsDeleted(b)
-	return tu
-}
-
-// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableIsDeleted(b *bool) *TaskUpdate {
-	if b != nil {
-		tu.SetIsDeleted(*b)
-	}
-	return tu
-}
-
-// ClearIsDeleted clears the value of the "is_deleted" field.
-func (tu *TaskUpdate) ClearIsDeleted() *TaskUpdate {
-	tu.mutation.ClearIsDeleted()
 	return tu
 }
 
@@ -194,15 +175,45 @@ func (tu *TaskUpdate) ClearDescription() *TaskUpdate {
 	return tu
 }
 
-// SetURL sets the "url" field.
-func (tu *TaskUpdate) SetURL(s string) *TaskUpdate {
-	tu.mutation.SetURL(s)
+// AddTestcaseSuiteIDs adds the "testcaseSuite" edge to the TestCaseSuite entity by IDs.
+func (tu *TaskUpdate) AddTestcaseSuiteIDs(ids ...int) *TaskUpdate {
+	tu.mutation.AddTestcaseSuiteIDs(ids...)
 	return tu
+}
+
+// AddTestcaseSuite adds the "testcaseSuite" edges to the TestCaseSuite entity.
+func (tu *TaskUpdate) AddTestcaseSuite(t ...*TestCaseSuite) *TaskUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tu.AddTestcaseSuiteIDs(ids...)
 }
 
 // Mutation returns the TaskMutation object of the builder.
 func (tu *TaskUpdate) Mutation() *TaskMutation {
 	return tu.mutation
+}
+
+// ClearTestcaseSuite clears all "testcaseSuite" edges to the TestCaseSuite entity.
+func (tu *TaskUpdate) ClearTestcaseSuite() *TaskUpdate {
+	tu.mutation.ClearTestcaseSuite()
+	return tu
+}
+
+// RemoveTestcaseSuiteIDs removes the "testcaseSuite" edge to TestCaseSuite entities by IDs.
+func (tu *TaskUpdate) RemoveTestcaseSuiteIDs(ids ...int) *TaskUpdate {
+	tu.mutation.RemoveTestcaseSuiteIDs(ids...)
+	return tu
+}
+
+// RemoveTestcaseSuite removes "testcaseSuite" edges to TestCaseSuite entities.
+func (tu *TaskUpdate) RemoveTestcaseSuite(t ...*TestCaseSuite) *TaskUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tu.RemoveTestcaseSuiteIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -260,16 +271,16 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddField(task.FieldRank, field.TypeInt8, value)
 	}
 	if value, ok := tu.mutation.GetType(); ok {
-		_spec.SetField(task.FieldType, field.TypeInt16, value)
+		_spec.SetField(task.FieldType, field.TypeInt8, value)
 	}
 	if value, ok := tu.mutation.AddedType(); ok {
-		_spec.AddField(task.FieldType, field.TypeInt16, value)
+		_spec.AddField(task.FieldType, field.TypeInt8, value)
 	}
 	if value, ok := tu.mutation.Status(); ok {
-		_spec.SetField(task.FieldStatus, field.TypeInt16, value)
+		_spec.SetField(task.FieldStatus, field.TypeInt8, value)
 	}
 	if value, ok := tu.mutation.AddedStatus(); ok {
-		_spec.AddField(task.FieldStatus, field.TypeInt16, value)
+		_spec.AddField(task.FieldStatus, field.TypeInt8, value)
 	}
 	if value, ok := tu.mutation.CompleteAt(); ok {
 		_spec.SetField(task.FieldCompleteAt, field.TypeTime, value)
@@ -279,12 +290,6 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.UpdateAt(); ok {
 		_spec.SetField(task.FieldUpdateAt, field.TypeTime, value)
-	}
-	if value, ok := tu.mutation.IsDeleted(); ok {
-		_spec.SetField(task.FieldIsDeleted, field.TypeBool, value)
-	}
-	if tu.mutation.IsDeletedCleared() {
-		_spec.ClearField(task.FieldIsDeleted, field.TypeBool)
 	}
 	if value, ok := tu.mutation.DeletedAt(); ok {
 		_spec.SetField(task.FieldDeletedAt, field.TypeTime, value)
@@ -307,8 +312,50 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if tu.mutation.DescriptionCleared() {
 		_spec.ClearField(task.FieldDescription, field.TypeString)
 	}
-	if value, ok := tu.mutation.URL(); ok {
-		_spec.SetField(task.FieldURL, field.TypeString, value)
+	if tu.mutation.TestcaseSuiteCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.TestcaseSuiteTable,
+			Columns: []string{task.TestcaseSuiteColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RemovedTestcaseSuiteIDs(); len(nodes) > 0 && !tu.mutation.TestcaseSuiteCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.TestcaseSuiteTable,
+			Columns: []string{task.TestcaseSuiteColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.TestcaseSuiteIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.TestcaseSuiteTable,
+			Columns: []string{task.TestcaseSuiteColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -350,27 +397,27 @@ func (tuo *TaskUpdateOne) AddRank(i int8) *TaskUpdateOne {
 }
 
 // SetType sets the "type" field.
-func (tuo *TaskUpdateOne) SetType(i int16) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) SetType(i int8) *TaskUpdateOne {
 	tuo.mutation.ResetType()
 	tuo.mutation.SetType(i)
 	return tuo
 }
 
 // AddType adds i to the "type" field.
-func (tuo *TaskUpdateOne) AddType(i int16) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) AddType(i int8) *TaskUpdateOne {
 	tuo.mutation.AddType(i)
 	return tuo
 }
 
 // SetStatus sets the "status" field.
-func (tuo *TaskUpdateOne) SetStatus(i int16) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) SetStatus(i int8) *TaskUpdateOne {
 	tuo.mutation.ResetStatus()
 	tuo.mutation.SetStatus(i)
 	return tuo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableStatus(i *int16) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) SetNillableStatus(i *int8) *TaskUpdateOne {
 	if i != nil {
 		tuo.SetStatus(*i)
 	}
@@ -378,7 +425,7 @@ func (tuo *TaskUpdateOne) SetNillableStatus(i *int16) *TaskUpdateOne {
 }
 
 // AddStatus adds i to the "status" field.
-func (tuo *TaskUpdateOne) AddStatus(i int16) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) AddStatus(i int8) *TaskUpdateOne {
 	tuo.mutation.AddStatus(i)
 	return tuo
 }
@@ -406,26 +453,6 @@ func (tuo *TaskUpdateOne) ClearCompleteAt() *TaskUpdateOne {
 // SetUpdateAt sets the "update_at" field.
 func (tuo *TaskUpdateOne) SetUpdateAt(t time.Time) *TaskUpdateOne {
 	tuo.mutation.SetUpdateAt(t)
-	return tuo
-}
-
-// SetIsDeleted sets the "is_deleted" field.
-func (tuo *TaskUpdateOne) SetIsDeleted(b bool) *TaskUpdateOne {
-	tuo.mutation.SetIsDeleted(b)
-	return tuo
-}
-
-// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableIsDeleted(b *bool) *TaskUpdateOne {
-	if b != nil {
-		tuo.SetIsDeleted(*b)
-	}
-	return tuo
-}
-
-// ClearIsDeleted clears the value of the "is_deleted" field.
-func (tuo *TaskUpdateOne) ClearIsDeleted() *TaskUpdateOne {
-	tuo.mutation.ClearIsDeleted()
 	return tuo
 }
 
@@ -496,15 +523,45 @@ func (tuo *TaskUpdateOne) ClearDescription() *TaskUpdateOne {
 	return tuo
 }
 
-// SetURL sets the "url" field.
-func (tuo *TaskUpdateOne) SetURL(s string) *TaskUpdateOne {
-	tuo.mutation.SetURL(s)
+// AddTestcaseSuiteIDs adds the "testcaseSuite" edge to the TestCaseSuite entity by IDs.
+func (tuo *TaskUpdateOne) AddTestcaseSuiteIDs(ids ...int) *TaskUpdateOne {
+	tuo.mutation.AddTestcaseSuiteIDs(ids...)
 	return tuo
+}
+
+// AddTestcaseSuite adds the "testcaseSuite" edges to the TestCaseSuite entity.
+func (tuo *TaskUpdateOne) AddTestcaseSuite(t ...*TestCaseSuite) *TaskUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tuo.AddTestcaseSuiteIDs(ids...)
 }
 
 // Mutation returns the TaskMutation object of the builder.
 func (tuo *TaskUpdateOne) Mutation() *TaskMutation {
 	return tuo.mutation
+}
+
+// ClearTestcaseSuite clears all "testcaseSuite" edges to the TestCaseSuite entity.
+func (tuo *TaskUpdateOne) ClearTestcaseSuite() *TaskUpdateOne {
+	tuo.mutation.ClearTestcaseSuite()
+	return tuo
+}
+
+// RemoveTestcaseSuiteIDs removes the "testcaseSuite" edge to TestCaseSuite entities by IDs.
+func (tuo *TaskUpdateOne) RemoveTestcaseSuiteIDs(ids ...int) *TaskUpdateOne {
+	tuo.mutation.RemoveTestcaseSuiteIDs(ids...)
+	return tuo
+}
+
+// RemoveTestcaseSuite removes "testcaseSuite" edges to TestCaseSuite entities.
+func (tuo *TaskUpdateOne) RemoveTestcaseSuite(t ...*TestCaseSuite) *TaskUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tuo.RemoveTestcaseSuiteIDs(ids...)
 }
 
 // Where appends a list predicates to the TaskUpdate builder.
@@ -592,16 +649,16 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 		_spec.AddField(task.FieldRank, field.TypeInt8, value)
 	}
 	if value, ok := tuo.mutation.GetType(); ok {
-		_spec.SetField(task.FieldType, field.TypeInt16, value)
+		_spec.SetField(task.FieldType, field.TypeInt8, value)
 	}
 	if value, ok := tuo.mutation.AddedType(); ok {
-		_spec.AddField(task.FieldType, field.TypeInt16, value)
+		_spec.AddField(task.FieldType, field.TypeInt8, value)
 	}
 	if value, ok := tuo.mutation.Status(); ok {
-		_spec.SetField(task.FieldStatus, field.TypeInt16, value)
+		_spec.SetField(task.FieldStatus, field.TypeInt8, value)
 	}
 	if value, ok := tuo.mutation.AddedStatus(); ok {
-		_spec.AddField(task.FieldStatus, field.TypeInt16, value)
+		_spec.AddField(task.FieldStatus, field.TypeInt8, value)
 	}
 	if value, ok := tuo.mutation.CompleteAt(); ok {
 		_spec.SetField(task.FieldCompleteAt, field.TypeTime, value)
@@ -611,12 +668,6 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if value, ok := tuo.mutation.UpdateAt(); ok {
 		_spec.SetField(task.FieldUpdateAt, field.TypeTime, value)
-	}
-	if value, ok := tuo.mutation.IsDeleted(); ok {
-		_spec.SetField(task.FieldIsDeleted, field.TypeBool, value)
-	}
-	if tuo.mutation.IsDeletedCleared() {
-		_spec.ClearField(task.FieldIsDeleted, field.TypeBool)
 	}
 	if value, ok := tuo.mutation.DeletedAt(); ok {
 		_spec.SetField(task.FieldDeletedAt, field.TypeTime, value)
@@ -639,8 +690,50 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if tuo.mutation.DescriptionCleared() {
 		_spec.ClearField(task.FieldDescription, field.TypeString)
 	}
-	if value, ok := tuo.mutation.URL(); ok {
-		_spec.SetField(task.FieldURL, field.TypeString, value)
+	if tuo.mutation.TestcaseSuiteCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.TestcaseSuiteTable,
+			Columns: []string{task.TestcaseSuiteColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RemovedTestcaseSuiteIDs(); len(nodes) > 0 && !tuo.mutation.TestcaseSuiteCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.TestcaseSuiteTable,
+			Columns: []string{task.TestcaseSuiteColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.TestcaseSuiteIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.TestcaseSuiteTable,
+			Columns: []string{task.TestcaseSuiteColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Task{config: tuo.config}
 	_spec.Assign = _node.assignValues

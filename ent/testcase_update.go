@@ -95,14 +95,14 @@ func (tcu *TestCaseUpdate) AddStatus(i int8) *TestCaseUpdate {
 }
 
 // SetType sets the "type" field.
-func (tcu *TestCaseUpdate) SetType(i int16) *TestCaseUpdate {
+func (tcu *TestCaseUpdate) SetType(i int8) *TestCaseUpdate {
 	tcu.mutation.ResetType()
 	tcu.mutation.SetType(i)
 	return tcu
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (tcu *TestCaseUpdate) SetNillableType(i *int16) *TestCaseUpdate {
+func (tcu *TestCaseUpdate) SetNillableType(i *int8) *TestCaseUpdate {
 	if i != nil {
 		tcu.SetType(*i)
 	}
@@ -110,7 +110,7 @@ func (tcu *TestCaseUpdate) SetNillableType(i *int16) *TestCaseUpdate {
 }
 
 // AddType adds i to the "type" field.
-func (tcu *TestCaseUpdate) AddType(i int16) *TestCaseUpdate {
+func (tcu *TestCaseUpdate) AddType(i int8) *TestCaseUpdate {
 	tcu.mutation.AddType(i)
 	return tcu
 }
@@ -311,10 +311,10 @@ func (tcu *TestCaseUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddField(testcase.FieldStatus, field.TypeInt8, value)
 	}
 	if value, ok := tcu.mutation.GetType(); ok {
-		_spec.SetField(testcase.FieldType, field.TypeInt16, value)
+		_spec.SetField(testcase.FieldType, field.TypeInt8, value)
 	}
 	if value, ok := tcu.mutation.AddedType(); ok {
-		_spec.AddField(testcase.FieldType, field.TypeInt16, value)
+		_spec.AddField(testcase.FieldType, field.TypeInt8, value)
 	}
 	if value, ok := tcu.mutation.Priority(); ok {
 		_spec.SetField(testcase.FieldPriority, field.TypeInt8, value)
@@ -436,14 +436,14 @@ func (tcuo *TestCaseUpdateOne) AddStatus(i int8) *TestCaseUpdateOne {
 }
 
 // SetType sets the "type" field.
-func (tcuo *TestCaseUpdateOne) SetType(i int16) *TestCaseUpdateOne {
+func (tcuo *TestCaseUpdateOne) SetType(i int8) *TestCaseUpdateOne {
 	tcuo.mutation.ResetType()
 	tcuo.mutation.SetType(i)
 	return tcuo
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (tcuo *TestCaseUpdateOne) SetNillableType(i *int16) *TestCaseUpdateOne {
+func (tcuo *TestCaseUpdateOne) SetNillableType(i *int8) *TestCaseUpdateOne {
 	if i != nil {
 		tcuo.SetType(*i)
 	}
@@ -451,7 +451,7 @@ func (tcuo *TestCaseUpdateOne) SetNillableType(i *int16) *TestCaseUpdateOne {
 }
 
 // AddType adds i to the "type" field.
-func (tcuo *TestCaseUpdateOne) AddType(i int16) *TestCaseUpdateOne {
+func (tcuo *TestCaseUpdateOne) AddType(i int8) *TestCaseUpdateOne {
 	tcuo.mutation.AddType(i)
 	return tcuo
 }
@@ -682,10 +682,10 @@ func (tcuo *TestCaseUpdateOne) sqlSave(ctx context.Context) (_node *TestCase, er
 		_spec.AddField(testcase.FieldStatus, field.TypeInt8, value)
 	}
 	if value, ok := tcuo.mutation.GetType(); ok {
-		_spec.SetField(testcase.FieldType, field.TypeInt16, value)
+		_spec.SetField(testcase.FieldType, field.TypeInt8, value)
 	}
 	if value, ok := tcuo.mutation.AddedType(); ok {
-		_spec.AddField(testcase.FieldType, field.TypeInt16, value)
+		_spec.AddField(testcase.FieldType, field.TypeInt8, value)
 	}
 	if value, ok := tcuo.mutation.Priority(); ok {
 		_spec.SetField(testcase.FieldPriority, field.TypeInt8, value)

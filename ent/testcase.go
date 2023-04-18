@@ -29,7 +29,7 @@ type TestCase struct {
 	// Status holds the value of the "status" field.
 	Status int8 `json:"status,omitempty"`
 	// Type holds the value of the "type" field.
-	Type int16 `json:"type,omitempty"`
+	Type int8 `json:"type,omitempty"`
 	// Priority holds the value of the "priority" field.
 	Priority int8 `json:"priority,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
@@ -117,7 +117,7 @@ func (tc *TestCase) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				tc.Type = int16(value.Int64)
+				tc.Type = int8(value.Int64)
 			}
 		case testcase.FieldPriority:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -75,12 +76,12 @@ func Rank(v int8) predicate.Task {
 }
 
 // Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
-func Type(v int16) predicate.Task {
+func Type(v int8) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldType, v))
 }
 
 // Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
-func Status(v int16) predicate.Task {
+func Status(v int8) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldStatus, v))
 }
 
@@ -92,11 +93,6 @@ func CompleteAt(v time.Time) predicate.Task {
 // UpdateAt applies equality check predicate on the "update_at" field. It's identical to UpdateAtEQ.
 func UpdateAt(v time.Time) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldUpdateAt, v))
-}
-
-// IsDeleted applies equality check predicate on the "is_deleted" field. It's identical to IsDeletedEQ.
-func IsDeleted(v bool) predicate.Task {
-	return predicate.Task(sql.FieldEQ(FieldIsDeleted, v))
 }
 
 // DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
@@ -112,11 +108,6 @@ func DeletedBy(v uint32) predicate.Task {
 // Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
 func Description(v string) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldDescription, v))
-}
-
-// URL applies equality check predicate on the "url" field. It's identical to URLEQ.
-func URL(v string) predicate.Task {
-	return predicate.Task(sql.FieldEQ(FieldURL, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -305,82 +296,82 @@ func RankLTE(v int8) predicate.Task {
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v int16) predicate.Task {
+func TypeEQ(v int8) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldType, v))
 }
 
 // TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v int16) predicate.Task {
+func TypeNEQ(v int8) predicate.Task {
 	return predicate.Task(sql.FieldNEQ(FieldType, v))
 }
 
 // TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...int16) predicate.Task {
+func TypeIn(vs ...int8) predicate.Task {
 	return predicate.Task(sql.FieldIn(FieldType, vs...))
 }
 
 // TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...int16) predicate.Task {
+func TypeNotIn(vs ...int8) predicate.Task {
 	return predicate.Task(sql.FieldNotIn(FieldType, vs...))
 }
 
 // TypeGT applies the GT predicate on the "type" field.
-func TypeGT(v int16) predicate.Task {
+func TypeGT(v int8) predicate.Task {
 	return predicate.Task(sql.FieldGT(FieldType, v))
 }
 
 // TypeGTE applies the GTE predicate on the "type" field.
-func TypeGTE(v int16) predicate.Task {
+func TypeGTE(v int8) predicate.Task {
 	return predicate.Task(sql.FieldGTE(FieldType, v))
 }
 
 // TypeLT applies the LT predicate on the "type" field.
-func TypeLT(v int16) predicate.Task {
+func TypeLT(v int8) predicate.Task {
 	return predicate.Task(sql.FieldLT(FieldType, v))
 }
 
 // TypeLTE applies the LTE predicate on the "type" field.
-func TypeLTE(v int16) predicate.Task {
+func TypeLTE(v int8) predicate.Task {
 	return predicate.Task(sql.FieldLTE(FieldType, v))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v int16) predicate.Task {
+func StatusEQ(v int8) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldStatus, v))
 }
 
 // StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v int16) predicate.Task {
+func StatusNEQ(v int8) predicate.Task {
 	return predicate.Task(sql.FieldNEQ(FieldStatus, v))
 }
 
 // StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...int16) predicate.Task {
+func StatusIn(vs ...int8) predicate.Task {
 	return predicate.Task(sql.FieldIn(FieldStatus, vs...))
 }
 
 // StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...int16) predicate.Task {
+func StatusNotIn(vs ...int8) predicate.Task {
 	return predicate.Task(sql.FieldNotIn(FieldStatus, vs...))
 }
 
 // StatusGT applies the GT predicate on the "status" field.
-func StatusGT(v int16) predicate.Task {
+func StatusGT(v int8) predicate.Task {
 	return predicate.Task(sql.FieldGT(FieldStatus, v))
 }
 
 // StatusGTE applies the GTE predicate on the "status" field.
-func StatusGTE(v int16) predicate.Task {
+func StatusGTE(v int8) predicate.Task {
 	return predicate.Task(sql.FieldGTE(FieldStatus, v))
 }
 
 // StatusLT applies the LT predicate on the "status" field.
-func StatusLT(v int16) predicate.Task {
+func StatusLT(v int8) predicate.Task {
 	return predicate.Task(sql.FieldLT(FieldStatus, v))
 }
 
 // StatusLTE applies the LTE predicate on the "status" field.
-func StatusLTE(v int16) predicate.Task {
+func StatusLTE(v int8) predicate.Task {
 	return predicate.Task(sql.FieldLTE(FieldStatus, v))
 }
 
@@ -472,26 +463,6 @@ func UpdateAtLT(v time.Time) predicate.Task {
 // UpdateAtLTE applies the LTE predicate on the "update_at" field.
 func UpdateAtLTE(v time.Time) predicate.Task {
 	return predicate.Task(sql.FieldLTE(FieldUpdateAt, v))
-}
-
-// IsDeletedEQ applies the EQ predicate on the "is_deleted" field.
-func IsDeletedEQ(v bool) predicate.Task {
-	return predicate.Task(sql.FieldEQ(FieldIsDeleted, v))
-}
-
-// IsDeletedNEQ applies the NEQ predicate on the "is_deleted" field.
-func IsDeletedNEQ(v bool) predicate.Task {
-	return predicate.Task(sql.FieldNEQ(FieldIsDeleted, v))
-}
-
-// IsDeletedIsNil applies the IsNil predicate on the "is_deleted" field.
-func IsDeletedIsNil() predicate.Task {
-	return predicate.Task(sql.FieldIsNull(FieldIsDeleted))
-}
-
-// IsDeletedNotNil applies the NotNil predicate on the "is_deleted" field.
-func IsDeletedNotNil() predicate.Task {
-	return predicate.Task(sql.FieldNotNull(FieldIsDeleted))
 }
 
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
@@ -669,69 +640,31 @@ func DescriptionContainsFold(v string) predicate.Task {
 	return predicate.Task(sql.FieldContainsFold(FieldDescription, v))
 }
 
-// URLEQ applies the EQ predicate on the "url" field.
-func URLEQ(v string) predicate.Task {
-	return predicate.Task(sql.FieldEQ(FieldURL, v))
+// HasTestcaseSuite applies the HasEdge predicate on the "testcaseSuite" edge.
+func HasTestcaseSuite() predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TestcaseSuiteTable, TestcaseSuiteColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
 }
 
-// URLNEQ applies the NEQ predicate on the "url" field.
-func URLNEQ(v string) predicate.Task {
-	return predicate.Task(sql.FieldNEQ(FieldURL, v))
-}
-
-// URLIn applies the In predicate on the "url" field.
-func URLIn(vs ...string) predicate.Task {
-	return predicate.Task(sql.FieldIn(FieldURL, vs...))
-}
-
-// URLNotIn applies the NotIn predicate on the "url" field.
-func URLNotIn(vs ...string) predicate.Task {
-	return predicate.Task(sql.FieldNotIn(FieldURL, vs...))
-}
-
-// URLGT applies the GT predicate on the "url" field.
-func URLGT(v string) predicate.Task {
-	return predicate.Task(sql.FieldGT(FieldURL, v))
-}
-
-// URLGTE applies the GTE predicate on the "url" field.
-func URLGTE(v string) predicate.Task {
-	return predicate.Task(sql.FieldGTE(FieldURL, v))
-}
-
-// URLLT applies the LT predicate on the "url" field.
-func URLLT(v string) predicate.Task {
-	return predicate.Task(sql.FieldLT(FieldURL, v))
-}
-
-// URLLTE applies the LTE predicate on the "url" field.
-func URLLTE(v string) predicate.Task {
-	return predicate.Task(sql.FieldLTE(FieldURL, v))
-}
-
-// URLContains applies the Contains predicate on the "url" field.
-func URLContains(v string) predicate.Task {
-	return predicate.Task(sql.FieldContains(FieldURL, v))
-}
-
-// URLHasPrefix applies the HasPrefix predicate on the "url" field.
-func URLHasPrefix(v string) predicate.Task {
-	return predicate.Task(sql.FieldHasPrefix(FieldURL, v))
-}
-
-// URLHasSuffix applies the HasSuffix predicate on the "url" field.
-func URLHasSuffix(v string) predicate.Task {
-	return predicate.Task(sql.FieldHasSuffix(FieldURL, v))
-}
-
-// URLEqualFold applies the EqualFold predicate on the "url" field.
-func URLEqualFold(v string) predicate.Task {
-	return predicate.Task(sql.FieldEqualFold(FieldURL, v))
-}
-
-// URLContainsFold applies the ContainsFold predicate on the "url" field.
-func URLContainsFold(v string) predicate.Task {
-	return predicate.Task(sql.FieldContainsFold(FieldURL, v))
+// HasTestcaseSuiteWith applies the HasEdge predicate on the "testcaseSuite" edge with a given conditions (other predicates).
+func HasTestcaseSuiteWith(preds ...predicate.TestCaseSuite) predicate.Task {
+	return predicate.Task(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(TestcaseSuiteInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TestcaseSuiteTable, TestcaseSuiteColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

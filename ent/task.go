@@ -25,23 +25,40 @@ type Task struct {
 	// Rank holds the value of the "rank" field.
 	Rank int8 `json:"rank,omitempty"`
 	// Type holds the value of the "type" field.
-	Type int16 `json:"type,omitempty"`
+	Type int8 `json:"type,omitempty"`
 	// Status holds the value of the "status" field.
-	Status int16 `json:"status,omitempty"`
+	Status int8 `json:"status,omitempty"`
 	// CompleteAt holds the value of the "complete_at" field.
 	CompleteAt *time.Time `json:"complete_at,omitempty"`
 	// UpdateAt holds the value of the "update_at" field.
 	UpdateAt time.Time `json:"update_at,omitempty"`
-	// IsDeleted holds the value of the "is_deleted" field.
-	IsDeleted *bool `json:"is_deleted,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
-	// URL holds the value of the "url" field.
-	URL string `json:"url,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the TaskQuery when eager-loading is set.
+	Edges TaskEdges `json:"edges"`
+}
+
+// TaskEdges holds the relations/edges for other nodes in the graph.
+type TaskEdges struct {
+	// TestcaseSuite holds the value of the testcaseSuite edge.
+	TestcaseSuite []*TestCaseSuite `json:"testcaseSuite,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// TestcaseSuiteOrErr returns the TestcaseSuite value or an error if the edge
+// was not loaded in eager-loading.
+func (e TaskEdges) TestcaseSuiteOrErr() ([]*TestCaseSuite, error) {
+	if e.loadedTypes[0] {
+		return e.TestcaseSuite, nil
+	}
+	return nil, &NotLoadedError{edge: "testcaseSuite"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -49,11 +66,9 @@ func (*Task) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case task.FieldIsDeleted:
-			values[i] = new(sql.NullBool)
 		case task.FieldID, task.FieldCreatedBy, task.FieldRank, task.FieldType, task.FieldStatus, task.FieldDeletedBy:
 			values[i] = new(sql.NullInt64)
-		case task.FieldName, task.FieldDescription, task.FieldURL:
+		case task.FieldName, task.FieldDescription:
 			values[i] = new(sql.NullString)
 		case task.FieldCreatedAt, task.FieldCompleteAt, task.FieldUpdateAt, task.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -106,13 +121,13 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				t.Type = int16(value.Int64)
+				t.Type = int8(value.Int64)
 			}
 		case task.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				t.Status = int16(value.Int64)
+				t.Status = int8(value.Int64)
 			}
 		case task.FieldCompleteAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -126,13 +141,6 @@ func (t *Task) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field update_at", values[i])
 			} else if value.Valid {
 				t.UpdateAt = value.Time
-			}
-		case task.FieldIsDeleted:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_deleted", values[i])
-			} else if value.Valid {
-				t.IsDeleted = new(bool)
-				*t.IsDeleted = value.Bool
 			}
 		case task.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -154,15 +162,14 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Description = value.String
 			}
-		case task.FieldURL:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field url", values[i])
-			} else if value.Valid {
-				t.URL = value.String
-			}
 		}
 	}
 	return nil
+}
+
+// QueryTestcaseSuite queries the "testcaseSuite" edge of the Task entity.
+func (t *Task) QueryTestcaseSuite() *TestCaseSuiteQuery {
+	return NewTaskClient(t.config).QueryTestcaseSuite(t)
 }
 
 // Update returns a builder for updating this Task.
@@ -214,11 +221,6 @@ func (t *Task) String() string {
 	builder.WriteString("update_at=")
 	builder.WriteString(t.UpdateAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	if v := t.IsDeleted; v != nil {
-		builder.WriteString("is_deleted=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
 	if v := t.DeletedAt; v != nil {
 		builder.WriteString("deleted_at=")
 		builder.WriteString(v.Format(time.ANSIC))
@@ -231,9 +233,6 @@ func (t *Task) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(t.Description)
-	builder.WriteString(", ")
-	builder.WriteString("url=")
-	builder.WriteString(t.URL)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -9,20 +9,19 @@ import (
 
 // Task is a Task model.
 type Task struct {
-	Id          int64
-	Name        string
-	Rank        int8
-	Type        int16
-	Status      int16
-	CreatedAt   time.Time
-	CreatedBy   uint32
-	CompleteAt  time.Time
-	UpdateAt    time.Time
-	IsDeleted   bool
-	DeletedAt   time.Time
-	DeletedBy   uint32
-	Description string
-	Url         string
+	Id            int64
+	Name          string
+	Rank          int8
+	Type          int8
+	Status        int8
+	CreatedAt     time.Time
+	CreatedBy     uint32
+	CompleteAt    time.Time
+	UpdateAt      time.Time
+	DeletedAt     time.Time
+	DeletedBy     uint32
+	Description   string
+	TestcaseSuite []int
 }
 
 // TaskRepo is a Task repo.

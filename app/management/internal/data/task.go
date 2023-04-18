@@ -62,7 +62,6 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, e
 		SetRank(task.Rank).
 		SetCreatedBy(task.CreatedBy).
 		SetDescription(task.Description).
-		SetURL(task.Url).
 		Save(ctx)
 	if err != nil {
 		return nil, err
@@ -73,7 +72,7 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, e
 	}, nil
 }
 
-func (r *taskRepo) UpdateTaskStatus(ctx context.Context, id int64, status int16) (bool, error) {
+func (r *taskRepo) UpdateTaskStatus(ctx context.Context, id int64, status int8) (bool, error) {
 	err := r.data.entDB.Task.UpdateOneID(id).SetStatus(status).Exec(ctx)
 	if err != nil {
 		return false, err
@@ -103,7 +102,6 @@ func (r *taskRepo) UpdateTaskDescription(ctx context.Context, description string
 
 func (r *taskRepo) SoftDeleteTask(ctx context.Context, uid uint32, id int64) (bool, error) {
 	err := r.data.entDB.Task.UpdateOneID(id).
-		SetIsDeleted(true).
 		SetDeletedAt(time.Now()).
 		SetDeletedBy(uid).
 		Exec(ctx)
@@ -129,8 +127,6 @@ func (r *taskRepo) TaskDetailById(ctx context.Context, id int64) (*biz.Task, err
 		Type:        queryTask.Type,
 		Rank:        queryTask.Rank,
 		Description: queryTask.Description,
-		Url:         queryTask.URL,
-		IsDeleted:   *queryTask.IsDeleted,
 		DeletedAt:   *queryTask.DeletedAt,
 		DeletedBy:   *queryTask.DeletedBy,
 	}, nil
@@ -141,7 +137,10 @@ func (r *taskRepo) IsTaskDeleted(ctx context.Context, id int64) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	return *queryTask.IsDeleted, nil
+	if queryTask.CompleteAt != nil && queryTask.DeletedBy != nil {
+		return true, nil
+	}
+	return false, err
 }
 
 func (r *taskRepo) ListTask(ctx context.Context, pageNum, pageSize int) ([]*biz.Task, error) {

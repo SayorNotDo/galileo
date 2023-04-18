@@ -33,7 +33,7 @@ var (
 		{Name: "update_by", Type: field.TypeString},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
-		{Name: "status", Type: field.TypeInt16, Default: 0},
+		{Name: "status", Type: field.TypeInt8, Default: 0},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
@@ -50,15 +50,13 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
 		{Name: "rank", Type: field.TypeInt8},
-		{Name: "type", Type: field.TypeInt16},
-		{Name: "status", Type: field.TypeInt16, Default: 0},
+		{Name: "type", Type: field.TypeInt8},
+		{Name: "status", Type: field.TypeInt8, Default: 0},
 		{Name: "complete_at", Type: field.TypeTime, Nullable: true},
 		{Name: "update_at", Type: field.TypeTime},
-		{Name: "is_deleted", Type: field.TypeBool, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "url", Type: field.TypeString},
 	}
 	// TaskTable holds the schema information for the "task" table.
 	TaskTable = &schema.Table{
@@ -75,7 +73,7 @@ var (
 		{Name: "update_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "update_at", Type: field.TypeTime, Nullable: true},
 		{Name: "status", Type: field.TypeInt8, Default: 0},
-		{Name: "type", Type: field.TypeInt16, Default: 0},
+		{Name: "type", Type: field.TypeInt8, Default: 0},
 		{Name: "priority", Type: field.TypeInt8, Default: 0},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
@@ -103,12 +101,21 @@ var (
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
+		{Name: "task_testcase_suite", Type: field.TypeInt64, Nullable: true},
 	}
 	// TestCaseSuitesTable holds the schema information for the "test_case_suites" table.
 	TestCaseSuitesTable = &schema.Table{
 		Name:       "test_case_suites",
 		Columns:    TestCaseSuitesColumns,
 		PrimaryKey: []*schema.Column{TestCaseSuitesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "test_case_suites_task_testcaseSuite",
+				Columns:    []*schema.Column{TestCaseSuitesColumns[4]},
+				RefColumns: []*schema.Column{TaskColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// UserColumns holds the columns for the "user" table.
 	UserColumns = []*schema.Column{
@@ -163,6 +170,7 @@ func init() {
 		Table: "task",
 	}
 	TestCasesTable.ForeignKeys[0].RefTable = TestCaseSuitesTable
+	TestCaseSuitesTable.ForeignKeys[0].RefTable = TaskTable
 	UserTable.ForeignKeys[0].RefTable = GroupsTable
 	UserTable.Annotation = &entsql.Annotation{
 		Table: "user",

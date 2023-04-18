@@ -93,13 +93,13 @@ func (pc *ProjectCreate) SetNillableDeletedBy(u *uint32) *ProjectCreate {
 }
 
 // SetStatus sets the "status" field.
-func (pc *ProjectCreate) SetStatus(i int16) *ProjectCreate {
+func (pc *ProjectCreate) SetStatus(i int8) *ProjectCreate {
 	pc.mutation.SetStatus(i)
 	return pc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (pc *ProjectCreate) SetNillableStatus(i *int16) *ProjectCreate {
+func (pc *ProjectCreate) SetNillableStatus(i *int8) *ProjectCreate {
 	if i != nil {
 		pc.SetStatus(*i)
 	}
@@ -273,7 +273,7 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 		_node.DeletedBy = &value
 	}
 	if value, ok := pc.mutation.Status(); ok {
-		_spec.SetField(project.FieldStatus, field.TypeInt16, value)
+		_spec.SetField(project.FieldStatus, field.TypeInt8, value)
 		_node.Status = value
 	}
 	if value, ok := pc.mutation.Description(); ok {

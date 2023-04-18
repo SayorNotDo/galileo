@@ -22,7 +22,11 @@ service Testcase {
     };
   };
   rpc DeleteTestcase (DeleteTestcaseRequest) returns (DeleteTestcaseReply);
-  rpc GetTestcase (GetTestcaseRequest) returns (GetTestcaseReply);
+  rpc GetTestcaseById (GetTestcaseRequest) returns (GetTestcaseReply){
+    option(google.api.http) = {
+      get: "v1/api/testcase/{id}"
+    };
+  };
   rpc ListTestcase (ListTestcaseRequest) returns (ListTestcaseReply);
 }
 
@@ -54,8 +58,21 @@ message UpdateTestcaseReply {
 message DeleteTestcaseRequest {}
 message DeleteTestcaseReply {}
 
-message GetTestcaseRequest {}
-message GetTestcaseReply {}
+message GetTestcaseRequest {
+  int64 id = 1;
+}
+message GetTestcaseReply {
+  string name = 1;
+  int64 createdAt = 2;
+  uint32 createdBy = 3;
+  int64 updateAt = 4;
+  uint32 updateBy = 5;
+  int32 type = 6;
+  int32 priority = 7;
+  int32 status = 8;
+  string url = 9;
+  string description = 10;
+}
 
 message ListTestcaseRequest {}
 message ListTestcaseReply {}

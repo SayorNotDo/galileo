@@ -24,6 +24,7 @@ type TestCaseSuiteQuery struct {
 	inters       []Interceptor
 	predicates   []predicate.TestCaseSuite
 	withTestcase *TestCaseQuery
+	withFKs      bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -369,11 +370,15 @@ func (tcsq *TestCaseSuiteQuery) prepareQuery(ctx context.Context) error {
 func (tcsq *TestCaseSuiteQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*TestCaseSuite, error) {
 	var (
 		nodes       = []*TestCaseSuite{}
+		withFKs     = tcsq.withFKs
 		_spec       = tcsq.querySpec()
 		loadedTypes = [1]bool{
 			tcsq.withTestcase != nil,
 		}
 	)
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, testcasesuite.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*TestCaseSuite).scanValues(nil, columns)
 	}

@@ -20,10 +20,12 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationTestcaseCreateTestcase = "/api.management.testcase.Testcase/CreateTestcase"
+const OperationTestcaseGetTestcaseById = "/api.management.testcase.Testcase/GetTestcaseById"
 const OperationTestcaseUpdateTestcase = "/api.management.testcase.Testcase/UpdateTestcase"
 
 type TestcaseHTTPServer interface {
 	CreateTestcase(context.Context, *CreateTestcaseRequest) (*CreateTestcaseReply, error)
+	GetTestcaseById(context.Context, *GetTestcaseRequest) (*GetTestcaseReply, error)
 	UpdateTestcase(context.Context, *UpdateTestcaseRequest) (*UpdateTestcaseReply, error)
 }
 
@@ -31,6 +33,7 @@ func RegisterTestcaseHTTPServer(s *http.Server, srv TestcaseHTTPServer) {
 	r := s.Route("/")
 	r.POST("v1/api/testcase", _Testcase_CreateTestcase0_HTTP_Handler(srv))
 	r.PUT("v1/api/testcase", _Testcase_UpdateTestcase0_HTTP_Handler(srv))
+	r.GET("v1/api/testcase/{id}", _Testcase_GetTestcaseById0_HTTP_Handler(srv))
 }
 
 func _Testcase_CreateTestcase0_HTTP_Handler(srv TestcaseHTTPServer) func(ctx http.Context) error {
@@ -71,8 +74,31 @@ func _Testcase_UpdateTestcase0_HTTP_Handler(srv TestcaseHTTPServer) func(ctx htt
 	}
 }
 
+func _Testcase_GetTestcaseById0_HTTP_Handler(srv TestcaseHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetTestcaseRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTestcaseGetTestcaseById)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetTestcaseById(ctx, req.(*GetTestcaseRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetTestcaseReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type TestcaseHTTPClient interface {
 	CreateTestcase(ctx context.Context, req *CreateTestcaseRequest, opts ...http.CallOption) (rsp *CreateTestcaseReply, err error)
+	GetTestcaseById(ctx context.Context, req *GetTestcaseRequest, opts ...http.CallOption) (rsp *GetTestcaseReply, err error)
 	UpdateTestcase(ctx context.Context, req *UpdateTestcaseRequest, opts ...http.CallOption) (rsp *UpdateTestcaseReply, err error)
 }
 
@@ -91,6 +117,19 @@ func (c *TestcaseHTTPClientImpl) CreateTestcase(ctx context.Context, in *CreateT
 	opts = append(opts, http.Operation(OperationTestcaseCreateTestcase))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *TestcaseHTTPClientImpl) GetTestcaseById(ctx context.Context, in *GetTestcaseRequest, opts ...http.CallOption) (*GetTestcaseReply, error) {
+	var out GetTestcaseReply
+	pattern := "v1/api/testcase/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationTestcaseGetTestcaseById))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

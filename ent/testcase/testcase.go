@@ -87,7 +87,7 @@ var (
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus int8
 	// DefaultType holds the default value on creation for the "type" field.
-	DefaultType int16
+	DefaultType int8
 	// DefaultPriority holds the default value on creation for the "priority" field.
 	DefaultPriority int8
 )

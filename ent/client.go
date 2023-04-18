@@ -582,6 +582,22 @@ func (c *TaskClient) GetX(ctx context.Context, id int64) *Task {
 	return obj
 }
 
+// QueryTestcaseSuite queries the testcaseSuite edge of a Task.
+func (c *TaskClient) QueryTestcaseSuite(t *Task) *TestCaseSuiteQuery {
+	query := (&TestCaseSuiteClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(task.Table, task.FieldID, id),
+			sqlgraph.To(testcasesuite.Table, testcasesuite.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, task.TestcaseSuiteTable, task.TestcaseSuiteColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *TaskClient) Hooks() []Hook {
 	return c.hooks.Task

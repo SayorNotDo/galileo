@@ -33,7 +33,7 @@ type Project struct {
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
 	// Status holds the value of the "status" field.
-	Status int16 `json:"status,omitempty"`
+	Status int8 `json:"status,omitempty"`
 	// Description holds the value of the "description" field.
 	Description *string `json:"description,omitempty"`
 	// Remark holds the value of the "remark" field.
@@ -126,7 +126,7 @@ func (pr *Project) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				pr.Status = int16(value.Int64)
+				pr.Status = int8(value.Int64)
 			}
 		case project.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {

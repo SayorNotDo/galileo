@@ -21,7 +21,7 @@ func (TestCase) Fields() []ent.Field {
 		field.Uint32("update_by").Optional(),
 		field.Time("update_at").UpdateDefault(time.Now).Optional(),
 		field.Int8("status").Default(0),
-		field.Int16("type").Default(0),
+		field.Int8("type").Default(0),
 		field.Int8("priority").Default(0),
 		field.Time("deleted_at").Optional(),
 		field.Uint32("deleted_by").Optional(),

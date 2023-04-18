@@ -19,11 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Testcase_CreateTestcase_FullMethodName = "/api.management.testcase.Testcase/CreateTestcase"
-	Testcase_UpdateTestcase_FullMethodName = "/api.management.testcase.Testcase/UpdateTestcase"
-	Testcase_DeleteTestcase_FullMethodName = "/api.management.testcase.Testcase/DeleteTestcase"
-	Testcase_GetTestcase_FullMethodName    = "/api.management.testcase.Testcase/GetTestcase"
-	Testcase_ListTestcase_FullMethodName   = "/api.management.testcase.Testcase/ListTestcase"
+	Testcase_CreateTestcase_FullMethodName  = "/api.management.testcase.Testcase/CreateTestcase"
+	Testcase_UpdateTestcase_FullMethodName  = "/api.management.testcase.Testcase/UpdateTestcase"
+	Testcase_DeleteTestcase_FullMethodName  = "/api.management.testcase.Testcase/DeleteTestcase"
+	Testcase_GetTestcaseById_FullMethodName = "/api.management.testcase.Testcase/GetTestcaseById"
+	Testcase_ListTestcase_FullMethodName    = "/api.management.testcase.Testcase/ListTestcase"
 )
 
 // TestcaseClient is the client API for Testcase service.
@@ -33,7 +33,7 @@ type TestcaseClient interface {
 	CreateTestcase(ctx context.Context, in *CreateTestcaseRequest, opts ...grpc.CallOption) (*CreateTestcaseReply, error)
 	UpdateTestcase(ctx context.Context, in *UpdateTestcaseRequest, opts ...grpc.CallOption) (*UpdateTestcaseReply, error)
 	DeleteTestcase(ctx context.Context, in *DeleteTestcaseRequest, opts ...grpc.CallOption) (*DeleteTestcaseReply, error)
-	GetTestcase(ctx context.Context, in *GetTestcaseRequest, opts ...grpc.CallOption) (*GetTestcaseReply, error)
+	GetTestcaseById(ctx context.Context, in *GetTestcaseRequest, opts ...grpc.CallOption) (*GetTestcaseReply, error)
 	ListTestcase(ctx context.Context, in *ListTestcaseRequest, opts ...grpc.CallOption) (*ListTestcaseReply, error)
 }
 
@@ -72,9 +72,9 @@ func (c *testcaseClient) DeleteTestcase(ctx context.Context, in *DeleteTestcaseR
 	return out, nil
 }
 
-func (c *testcaseClient) GetTestcase(ctx context.Context, in *GetTestcaseRequest, opts ...grpc.CallOption) (*GetTestcaseReply, error) {
+func (c *testcaseClient) GetTestcaseById(ctx context.Context, in *GetTestcaseRequest, opts ...grpc.CallOption) (*GetTestcaseReply, error) {
 	out := new(GetTestcaseReply)
-	err := c.cc.Invoke(ctx, Testcase_GetTestcase_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Testcase_GetTestcaseById_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +97,7 @@ type TestcaseServer interface {
 	CreateTestcase(context.Context, *CreateTestcaseRequest) (*CreateTestcaseReply, error)
 	UpdateTestcase(context.Context, *UpdateTestcaseRequest) (*UpdateTestcaseReply, error)
 	DeleteTestcase(context.Context, *DeleteTestcaseRequest) (*DeleteTestcaseReply, error)
-	GetTestcase(context.Context, *GetTestcaseRequest) (*GetTestcaseReply, error)
+	GetTestcaseById(context.Context, *GetTestcaseRequest) (*GetTestcaseReply, error)
 	ListTestcase(context.Context, *ListTestcaseRequest) (*ListTestcaseReply, error)
 	mustEmbedUnimplementedTestcaseServer()
 }
@@ -115,8 +115,8 @@ func (UnimplementedTestcaseServer) UpdateTestcase(context.Context, *UpdateTestca
 func (UnimplementedTestcaseServer) DeleteTestcase(context.Context, *DeleteTestcaseRequest) (*DeleteTestcaseReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTestcase not implemented")
 }
-func (UnimplementedTestcaseServer) GetTestcase(context.Context, *GetTestcaseRequest) (*GetTestcaseReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTestcase not implemented")
+func (UnimplementedTestcaseServer) GetTestcaseById(context.Context, *GetTestcaseRequest) (*GetTestcaseReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTestcaseById not implemented")
 }
 func (UnimplementedTestcaseServer) ListTestcase(context.Context, *ListTestcaseRequest) (*ListTestcaseReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTestcase not implemented")
@@ -188,20 +188,20 @@ func _Testcase_DeleteTestcase_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Testcase_GetTestcase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Testcase_GetTestcaseById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTestcaseRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TestcaseServer).GetTestcase(ctx, in)
+		return srv.(TestcaseServer).GetTestcaseById(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Testcase_GetTestcase_FullMethodName,
+		FullMethod: Testcase_GetTestcaseById_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TestcaseServer).GetTestcase(ctx, req.(*GetTestcaseRequest))
+		return srv.(TestcaseServer).GetTestcaseById(ctx, req.(*GetTestcaseRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -244,8 +244,8 @@ var Testcase_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Testcase_DeleteTestcase_Handler,
 		},
 		{
-			MethodName: "GetTestcase",
-			Handler:    _Testcase_GetTestcase_Handler,
+			MethodName: "GetTestcaseById",
+			Handler:    _Testcase_GetTestcaseById_Handler,
 		},
 		{
 			MethodName: "ListTestcase",

@@ -19,13 +19,13 @@ message CreateTaskRequest {
   int32 rank = 2;
   int32 type = 3;
   string description = 4;
-  string url = 5;
+  repeated int64 testcaseSuiteId = 5;
 }
+
 message CreateTaskReply {
-  bool success = 1;
-  int64 id = 2;
-  int32 status = 3;
-  int64 createdAt = 4;
+  int64 id = 1;
+  int32 status = 2;
+  int64 createdAt = 3;
 }
 
 message UpdateTaskRequest {}

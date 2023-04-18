@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"galileo/ent/task"
+	"galileo/ent/testcasesuite"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -53,19 +54,19 @@ func (tc *TaskCreate) SetRank(i int8) *TaskCreate {
 }
 
 // SetType sets the "type" field.
-func (tc *TaskCreate) SetType(i int16) *TaskCreate {
+func (tc *TaskCreate) SetType(i int8) *TaskCreate {
 	tc.mutation.SetType(i)
 	return tc
 }
 
 // SetStatus sets the "status" field.
-func (tc *TaskCreate) SetStatus(i int16) *TaskCreate {
+func (tc *TaskCreate) SetStatus(i int8) *TaskCreate {
 	tc.mutation.SetStatus(i)
 	return tc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableStatus(i *int16) *TaskCreate {
+func (tc *TaskCreate) SetNillableStatus(i *int8) *TaskCreate {
 	if i != nil {
 		tc.SetStatus(*i)
 	}
@@ -89,20 +90,6 @@ func (tc *TaskCreate) SetNillableCompleteAt(t *time.Time) *TaskCreate {
 // SetUpdateAt sets the "update_at" field.
 func (tc *TaskCreate) SetUpdateAt(t time.Time) *TaskCreate {
 	tc.mutation.SetUpdateAt(t)
-	return tc
-}
-
-// SetIsDeleted sets the "is_deleted" field.
-func (tc *TaskCreate) SetIsDeleted(b bool) *TaskCreate {
-	tc.mutation.SetIsDeleted(b)
-	return tc
-}
-
-// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableIsDeleted(b *bool) *TaskCreate {
-	if b != nil {
-		tc.SetIsDeleted(*b)
-	}
 	return tc
 }
 
@@ -148,16 +135,25 @@ func (tc *TaskCreate) SetNillableDescription(s *string) *TaskCreate {
 	return tc
 }
 
-// SetURL sets the "url" field.
-func (tc *TaskCreate) SetURL(s string) *TaskCreate {
-	tc.mutation.SetURL(s)
-	return tc
-}
-
 // SetID sets the "id" field.
 func (tc *TaskCreate) SetID(i int64) *TaskCreate {
 	tc.mutation.SetID(i)
 	return tc
+}
+
+// AddTestcaseSuiteIDs adds the "testcaseSuite" edge to the TestCaseSuite entity by IDs.
+func (tc *TaskCreate) AddTestcaseSuiteIDs(ids ...int) *TaskCreate {
+	tc.mutation.AddTestcaseSuiteIDs(ids...)
+	return tc
+}
+
+// AddTestcaseSuite adds the "testcaseSuite" edges to the TestCaseSuite entity.
+func (tc *TaskCreate) AddTestcaseSuite(t ...*TestCaseSuite) *TaskCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tc.AddTestcaseSuiteIDs(ids...)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -228,9 +224,6 @@ func (tc *TaskCreate) check() error {
 	if _, ok := tc.mutation.UpdateAt(); !ok {
 		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "Task.update_at"`)}
 	}
-	if _, ok := tc.mutation.URL(); !ok {
-		return &ValidationError{Name: "url", err: errors.New(`ent: missing required field "Task.url"`)}
-	}
 	return nil
 }
 
@@ -280,11 +273,11 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_node.Rank = value
 	}
 	if value, ok := tc.mutation.GetType(); ok {
-		_spec.SetField(task.FieldType, field.TypeInt16, value)
+		_spec.SetField(task.FieldType, field.TypeInt8, value)
 		_node.Type = value
 	}
 	if value, ok := tc.mutation.Status(); ok {
-		_spec.SetField(task.FieldStatus, field.TypeInt16, value)
+		_spec.SetField(task.FieldStatus, field.TypeInt8, value)
 		_node.Status = value
 	}
 	if value, ok := tc.mutation.CompleteAt(); ok {
@@ -294,10 +287,6 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.UpdateAt(); ok {
 		_spec.SetField(task.FieldUpdateAt, field.TypeTime, value)
 		_node.UpdateAt = value
-	}
-	if value, ok := tc.mutation.IsDeleted(); ok {
-		_spec.SetField(task.FieldIsDeleted, field.TypeBool, value)
-		_node.IsDeleted = &value
 	}
 	if value, ok := tc.mutation.DeletedAt(); ok {
 		_spec.SetField(task.FieldDeletedAt, field.TypeTime, value)
@@ -311,9 +300,21 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_spec.SetField(task.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
-	if value, ok := tc.mutation.URL(); ok {
-		_spec.SetField(task.FieldURL, field.TypeString, value)
-		_node.URL = value
+	if nodes := tc.mutation.TestcaseSuiteIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.TestcaseSuiteTable,
+			Columns: []string{task.TestcaseSuiteColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

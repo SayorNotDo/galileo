@@ -31,7 +31,7 @@ func (Project) Fields() []ent.Field {
 		field.String("update_by"),
 		field.Time("deleted_at").Optional().Nillable(),
 		field.Uint32("deleted_by").Optional().Nillable(),
-		field.Int16("status").Default(0),
+		field.Int8("status").Default(0),
 		field.Text("description").Optional().Nillable(),
 		field.Text("remark").Optional().Nillable(),
 	}

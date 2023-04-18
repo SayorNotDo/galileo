@@ -42,7 +42,7 @@ func init() {
 	// projectDescStatus is the schema descriptor for status field.
 	projectDescStatus := projectFields[9].Descriptor()
 	// project.DefaultStatus holds the default value on creation for the status field.
-	project.DefaultStatus = projectDescStatus.Default.(int16)
+	project.DefaultStatus = projectDescStatus.Default.(int8)
 	taskFields := schema.Task{}.Fields()
 	_ = taskFields
 	// taskDescCreatedAt is the schema descriptor for created_at field.
@@ -52,7 +52,7 @@ func init() {
 	// taskDescStatus is the schema descriptor for status field.
 	taskDescStatus := taskFields[6].Descriptor()
 	// task.DefaultStatus holds the default value on creation for the status field.
-	task.DefaultStatus = taskDescStatus.Default.(int16)
+	task.DefaultStatus = taskDescStatus.Default.(int8)
 	// taskDescUpdateAt is the schema descriptor for update_at field.
 	taskDescUpdateAt := taskFields[8].Descriptor()
 	// task.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
@@ -78,7 +78,7 @@ func init() {
 	// testcaseDescType is the schema descriptor for type field.
 	testcaseDescType := testcaseFields[7].Descriptor()
 	// testcase.DefaultType holds the default value on creation for the type field.
-	testcase.DefaultType = testcaseDescType.Default.(int16)
+	testcase.DefaultType = testcaseDescType.Default.(int8)
 	// testcaseDescPriority is the schema descriptor for priority field.
 	testcaseDescPriority := testcaseFields[8].Descriptor()
 	// testcase.DefaultPriority holds the default value on creation for the priority field.

@@ -617,8 +617,8 @@ type ProjectMutation struct {
 	deleted_at    *time.Time
 	deleted_by    *uint32
 	adddeleted_by *int32
-	status        *int16
-	addstatus     *int16
+	status        *int8
+	addstatus     *int8
 	description   *string
 	remark        *string
 	clearedFields map[string]struct{}
@@ -1087,13 +1087,13 @@ func (m *ProjectMutation) ResetDeletedBy() {
 }
 
 // SetStatus sets the "status" field.
-func (m *ProjectMutation) SetStatus(i int16) {
+func (m *ProjectMutation) SetStatus(i int8) {
 	m.status = &i
 	m.addstatus = nil
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *ProjectMutation) Status() (r int16, exists bool) {
+func (m *ProjectMutation) Status() (r int8, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -1104,7 +1104,7 @@ func (m *ProjectMutation) Status() (r int16, exists bool) {
 // OldStatus returns the old "status" field's value of the Project entity.
 // If the Project object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ProjectMutation) OldStatus(ctx context.Context) (v int16, err error) {
+func (m *ProjectMutation) OldStatus(ctx context.Context) (v int8, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -1119,7 +1119,7 @@ func (m *ProjectMutation) OldStatus(ctx context.Context) (v int16, err error) {
 }
 
 // AddStatus adds i to the "status" field.
-func (m *ProjectMutation) AddStatus(i int16) {
+func (m *ProjectMutation) AddStatus(i int8) {
 	if m.addstatus != nil {
 		*m.addstatus += i
 	} else {
@@ -1128,7 +1128,7 @@ func (m *ProjectMutation) AddStatus(i int16) {
 }
 
 // AddedStatus returns the value that was added to the "status" field in this mutation.
-func (m *ProjectMutation) AddedStatus() (r int16, exists bool) {
+func (m *ProjectMutation) AddedStatus() (r int8, exists bool) {
 	v := m.addstatus
 	if v == nil {
 		return
@@ -1435,7 +1435,7 @@ func (m *ProjectMutation) SetField(name string, value ent.Value) error {
 		m.SetDeletedBy(v)
 		return nil
 	case project.FieldStatus:
-		v, ok := value.(int16)
+		v, ok := value.(int8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1510,7 +1510,7 @@ func (m *ProjectMutation) AddField(name string, value ent.Value) error {
 		m.AddDeletedBy(v)
 		return nil
 	case project.FieldStatus:
-		v, ok := value.(int16)
+		v, ok := value.(int8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1658,31 +1658,32 @@ func (m *ProjectMutation) ResetEdge(name string) error {
 // TaskMutation represents an operation that mutates the Task nodes in the graph.
 type TaskMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int64
-	name          *string
-	created_at    *time.Time
-	created_by    *uint32
-	addcreated_by *int32
-	rank          *int8
-	addrank       *int8
-	_type         *int16
-	add_type      *int16
-	status        *int16
-	addstatus     *int16
-	complete_at   *time.Time
-	update_at     *time.Time
-	is_deleted    *bool
-	deleted_at    *time.Time
-	deleted_by    *uint32
-	adddeleted_by *int32
-	description   *string
-	url           *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Task, error)
-	predicates    []predicate.Task
+	op                   Op
+	typ                  string
+	id                   *int64
+	name                 *string
+	created_at           *time.Time
+	created_by           *uint32
+	addcreated_by        *int32
+	rank                 *int8
+	addrank              *int8
+	_type                *int8
+	add_type             *int8
+	status               *int8
+	addstatus            *int8
+	complete_at          *time.Time
+	update_at            *time.Time
+	deleted_at           *time.Time
+	deleted_by           *uint32
+	adddeleted_by        *int32
+	description          *string
+	clearedFields        map[string]struct{}
+	testcaseSuite        map[int]struct{}
+	removedtestcaseSuite map[int]struct{}
+	clearedtestcaseSuite bool
+	done                 bool
+	oldValue             func(context.Context) (*Task, error)
+	predicates           []predicate.Task
 }
 
 var _ ent.Mutation = (*TaskMutation)(nil)
@@ -1974,13 +1975,13 @@ func (m *TaskMutation) ResetRank() {
 }
 
 // SetType sets the "type" field.
-func (m *TaskMutation) SetType(i int16) {
+func (m *TaskMutation) SetType(i int8) {
 	m._type = &i
 	m.add_type = nil
 }
 
 // GetType returns the value of the "type" field in the mutation.
-func (m *TaskMutation) GetType() (r int16, exists bool) {
+func (m *TaskMutation) GetType() (r int8, exists bool) {
 	v := m._type
 	if v == nil {
 		return
@@ -1991,7 +1992,7 @@ func (m *TaskMutation) GetType() (r int16, exists bool) {
 // OldType returns the old "type" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldType(ctx context.Context) (v int16, err error) {
+func (m *TaskMutation) OldType(ctx context.Context) (v int8, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldType is only allowed on UpdateOne operations")
 	}
@@ -2006,7 +2007,7 @@ func (m *TaskMutation) OldType(ctx context.Context) (v int16, err error) {
 }
 
 // AddType adds i to the "type" field.
-func (m *TaskMutation) AddType(i int16) {
+func (m *TaskMutation) AddType(i int8) {
 	if m.add_type != nil {
 		*m.add_type += i
 	} else {
@@ -2015,7 +2016,7 @@ func (m *TaskMutation) AddType(i int16) {
 }
 
 // AddedType returns the value that was added to the "type" field in this mutation.
-func (m *TaskMutation) AddedType() (r int16, exists bool) {
+func (m *TaskMutation) AddedType() (r int8, exists bool) {
 	v := m.add_type
 	if v == nil {
 		return
@@ -2030,13 +2031,13 @@ func (m *TaskMutation) ResetType() {
 }
 
 // SetStatus sets the "status" field.
-func (m *TaskMutation) SetStatus(i int16) {
+func (m *TaskMutation) SetStatus(i int8) {
 	m.status = &i
 	m.addstatus = nil
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *TaskMutation) Status() (r int16, exists bool) {
+func (m *TaskMutation) Status() (r int8, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -2047,7 +2048,7 @@ func (m *TaskMutation) Status() (r int16, exists bool) {
 // OldStatus returns the old "status" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldStatus(ctx context.Context) (v int16, err error) {
+func (m *TaskMutation) OldStatus(ctx context.Context) (v int8, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -2062,7 +2063,7 @@ func (m *TaskMutation) OldStatus(ctx context.Context) (v int16, err error) {
 }
 
 // AddStatus adds i to the "status" field.
-func (m *TaskMutation) AddStatus(i int16) {
+func (m *TaskMutation) AddStatus(i int8) {
 	if m.addstatus != nil {
 		*m.addstatus += i
 	} else {
@@ -2071,7 +2072,7 @@ func (m *TaskMutation) AddStatus(i int16) {
 }
 
 // AddedStatus returns the value that was added to the "status" field in this mutation.
-func (m *TaskMutation) AddedStatus() (r int16, exists bool) {
+func (m *TaskMutation) AddedStatus() (r int8, exists bool) {
 	v := m.addstatus
 	if v == nil {
 		return
@@ -2168,55 +2169,6 @@ func (m *TaskMutation) OldUpdateAt(ctx context.Context) (v time.Time, err error)
 // ResetUpdateAt resets all changes to the "update_at" field.
 func (m *TaskMutation) ResetUpdateAt() {
 	m.update_at = nil
-}
-
-// SetIsDeleted sets the "is_deleted" field.
-func (m *TaskMutation) SetIsDeleted(b bool) {
-	m.is_deleted = &b
-}
-
-// IsDeleted returns the value of the "is_deleted" field in the mutation.
-func (m *TaskMutation) IsDeleted() (r bool, exists bool) {
-	v := m.is_deleted
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIsDeleted returns the old "is_deleted" field's value of the Task entity.
-// If the Task object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldIsDeleted(ctx context.Context) (v *bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsDeleted is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsDeleted requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsDeleted: %w", err)
-	}
-	return oldValue.IsDeleted, nil
-}
-
-// ClearIsDeleted clears the value of the "is_deleted" field.
-func (m *TaskMutation) ClearIsDeleted() {
-	m.is_deleted = nil
-	m.clearedFields[task.FieldIsDeleted] = struct{}{}
-}
-
-// IsDeletedCleared returns if the "is_deleted" field was cleared in this mutation.
-func (m *TaskMutation) IsDeletedCleared() bool {
-	_, ok := m.clearedFields[task.FieldIsDeleted]
-	return ok
-}
-
-// ResetIsDeleted resets all changes to the "is_deleted" field.
-func (m *TaskMutation) ResetIsDeleted() {
-	m.is_deleted = nil
-	delete(m.clearedFields, task.FieldIsDeleted)
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -2387,40 +2339,58 @@ func (m *TaskMutation) ResetDescription() {
 	delete(m.clearedFields, task.FieldDescription)
 }
 
-// SetURL sets the "url" field.
-func (m *TaskMutation) SetURL(s string) {
-	m.url = &s
+// AddTestcaseSuiteIDs adds the "testcaseSuite" edge to the TestCaseSuite entity by ids.
+func (m *TaskMutation) AddTestcaseSuiteIDs(ids ...int) {
+	if m.testcaseSuite == nil {
+		m.testcaseSuite = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.testcaseSuite[ids[i]] = struct{}{}
+	}
 }
 
-// URL returns the value of the "url" field in the mutation.
-func (m *TaskMutation) URL() (r string, exists bool) {
-	v := m.url
-	if v == nil {
-		return
-	}
-	return *v, true
+// ClearTestcaseSuite clears the "testcaseSuite" edge to the TestCaseSuite entity.
+func (m *TaskMutation) ClearTestcaseSuite() {
+	m.clearedtestcaseSuite = true
 }
 
-// OldURL returns the old "url" field's value of the Task entity.
-// If the Task object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldURL(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldURL is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldURL requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldURL: %w", err)
-	}
-	return oldValue.URL, nil
+// TestcaseSuiteCleared reports if the "testcaseSuite" edge to the TestCaseSuite entity was cleared.
+func (m *TaskMutation) TestcaseSuiteCleared() bool {
+	return m.clearedtestcaseSuite
 }
 
-// ResetURL resets all changes to the "url" field.
-func (m *TaskMutation) ResetURL() {
-	m.url = nil
+// RemoveTestcaseSuiteIDs removes the "testcaseSuite" edge to the TestCaseSuite entity by IDs.
+func (m *TaskMutation) RemoveTestcaseSuiteIDs(ids ...int) {
+	if m.removedtestcaseSuite == nil {
+		m.removedtestcaseSuite = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.testcaseSuite, ids[i])
+		m.removedtestcaseSuite[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTestcaseSuite returns the removed IDs of the "testcaseSuite" edge to the TestCaseSuite entity.
+func (m *TaskMutation) RemovedTestcaseSuiteIDs() (ids []int) {
+	for id := range m.removedtestcaseSuite {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TestcaseSuiteIDs returns the "testcaseSuite" edge IDs in the mutation.
+func (m *TaskMutation) TestcaseSuiteIDs() (ids []int) {
+	for id := range m.testcaseSuite {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTestcaseSuite resets all changes to the "testcaseSuite" edge.
+func (m *TaskMutation) ResetTestcaseSuite() {
+	m.testcaseSuite = nil
+	m.clearedtestcaseSuite = false
+	m.removedtestcaseSuite = nil
 }
 
 // Where appends a list predicates to the TaskMutation builder.
@@ -2457,7 +2427,7 @@ func (m *TaskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 11)
 	if m.name != nil {
 		fields = append(fields, task.FieldName)
 	}
@@ -2482,9 +2452,6 @@ func (m *TaskMutation) Fields() []string {
 	if m.update_at != nil {
 		fields = append(fields, task.FieldUpdateAt)
 	}
-	if m.is_deleted != nil {
-		fields = append(fields, task.FieldIsDeleted)
-	}
 	if m.deleted_at != nil {
 		fields = append(fields, task.FieldDeletedAt)
 	}
@@ -2493,9 +2460,6 @@ func (m *TaskMutation) Fields() []string {
 	}
 	if m.description != nil {
 		fields = append(fields, task.FieldDescription)
-	}
-	if m.url != nil {
-		fields = append(fields, task.FieldURL)
 	}
 	return fields
 }
@@ -2521,16 +2485,12 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 		return m.CompleteAt()
 	case task.FieldUpdateAt:
 		return m.UpdateAt()
-	case task.FieldIsDeleted:
-		return m.IsDeleted()
 	case task.FieldDeletedAt:
 		return m.DeletedAt()
 	case task.FieldDeletedBy:
 		return m.DeletedBy()
 	case task.FieldDescription:
 		return m.Description()
-	case task.FieldURL:
-		return m.URL()
 	}
 	return nil, false
 }
@@ -2556,16 +2516,12 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldCompleteAt(ctx)
 	case task.FieldUpdateAt:
 		return m.OldUpdateAt(ctx)
-	case task.FieldIsDeleted:
-		return m.OldIsDeleted(ctx)
 	case task.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case task.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
 	case task.FieldDescription:
 		return m.OldDescription(ctx)
-	case task.FieldURL:
-		return m.OldURL(ctx)
 	}
 	return nil, fmt.Errorf("unknown Task field %s", name)
 }
@@ -2604,14 +2560,14 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		m.SetRank(v)
 		return nil
 	case task.FieldType:
-		v, ok := value.(int16)
+		v, ok := value.(int8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetType(v)
 		return nil
 	case task.FieldStatus:
-		v, ok := value.(int16)
+		v, ok := value.(int8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -2630,13 +2586,6 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdateAt(v)
-		return nil
-	case task.FieldIsDeleted:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIsDeleted(v)
 		return nil
 	case task.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -2658,13 +2607,6 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
-		return nil
-	case task.FieldURL:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetURL(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Task field %s", name)
@@ -2731,14 +2673,14 @@ func (m *TaskMutation) AddField(name string, value ent.Value) error {
 		m.AddRank(v)
 		return nil
 	case task.FieldType:
-		v, ok := value.(int16)
+		v, ok := value.(int8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddType(v)
 		return nil
 	case task.FieldStatus:
-		v, ok := value.(int16)
+		v, ok := value.(int8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -2761,9 +2703,6 @@ func (m *TaskMutation) ClearedFields() []string {
 	var fields []string
 	if m.FieldCleared(task.FieldCompleteAt) {
 		fields = append(fields, task.FieldCompleteAt)
-	}
-	if m.FieldCleared(task.FieldIsDeleted) {
-		fields = append(fields, task.FieldIsDeleted)
 	}
 	if m.FieldCleared(task.FieldDeletedAt) {
 		fields = append(fields, task.FieldDeletedAt)
@@ -2790,9 +2729,6 @@ func (m *TaskMutation) ClearField(name string) error {
 	switch name {
 	case task.FieldCompleteAt:
 		m.ClearCompleteAt()
-		return nil
-	case task.FieldIsDeleted:
-		m.ClearIsDeleted()
 		return nil
 	case task.FieldDeletedAt:
 		m.ClearDeletedAt()
@@ -2835,9 +2771,6 @@ func (m *TaskMutation) ResetField(name string) error {
 	case task.FieldUpdateAt:
 		m.ResetUpdateAt()
 		return nil
-	case task.FieldIsDeleted:
-		m.ResetIsDeleted()
-		return nil
 	case task.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
@@ -2847,58 +2780,91 @@ func (m *TaskMutation) ResetField(name string) error {
 	case task.FieldDescription:
 		m.ResetDescription()
 		return nil
-	case task.FieldURL:
-		m.ResetURL()
-		return nil
 	}
 	return fmt.Errorf("unknown Task field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TaskMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.testcaseSuite != nil {
+		edges = append(edges, task.EdgeTestcaseSuite)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *TaskMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case task.EdgeTestcaseSuite:
+		ids := make([]ent.Value, 0, len(m.testcaseSuite))
+		for id := range m.testcaseSuite {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TaskMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedtestcaseSuite != nil {
+		edges = append(edges, task.EdgeTestcaseSuite)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *TaskMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case task.EdgeTestcaseSuite:
+		ids := make([]ent.Value, 0, len(m.removedtestcaseSuite))
+		for id := range m.removedtestcaseSuite {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TaskMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedtestcaseSuite {
+		edges = append(edges, task.EdgeTestcaseSuite)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *TaskMutation) EdgeCleared(name string) bool {
+	switch name {
+	case task.EdgeTestcaseSuite:
+		return m.clearedtestcaseSuite
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *TaskMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Task unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *TaskMutation) ResetEdge(name string) error {
+	switch name {
+	case task.EdgeTestcaseSuite:
+		m.ResetTestcaseSuite()
+		return nil
+	}
 	return fmt.Errorf("unknown Task edge %s", name)
 }
 
@@ -2917,8 +2883,8 @@ type TestCaseMutation struct {
 	update_at     *time.Time
 	status        *int8
 	addstatus     *int8
-	_type         *int16
-	add_type      *int16
+	_type         *int8
+	add_type      *int8
 	priority      *int8
 	addpriority   *int8
 	deleted_at    *time.Time
@@ -3340,13 +3306,13 @@ func (m *TestCaseMutation) ResetStatus() {
 }
 
 // SetType sets the "type" field.
-func (m *TestCaseMutation) SetType(i int16) {
+func (m *TestCaseMutation) SetType(i int8) {
 	m._type = &i
 	m.add_type = nil
 }
 
 // GetType returns the value of the "type" field in the mutation.
-func (m *TestCaseMutation) GetType() (r int16, exists bool) {
+func (m *TestCaseMutation) GetType() (r int8, exists bool) {
 	v := m._type
 	if v == nil {
 		return
@@ -3357,7 +3323,7 @@ func (m *TestCaseMutation) GetType() (r int16, exists bool) {
 // OldType returns the old "type" field's value of the TestCase entity.
 // If the TestCase object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseMutation) OldType(ctx context.Context) (v int16, err error) {
+func (m *TestCaseMutation) OldType(ctx context.Context) (v int8, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldType is only allowed on UpdateOne operations")
 	}
@@ -3372,7 +3338,7 @@ func (m *TestCaseMutation) OldType(ctx context.Context) (v int16, err error) {
 }
 
 // AddType adds i to the "type" field.
-func (m *TestCaseMutation) AddType(i int16) {
+func (m *TestCaseMutation) AddType(i int8) {
 	if m.add_type != nil {
 		*m.add_type += i
 	} else {
@@ -3381,7 +3347,7 @@ func (m *TestCaseMutation) AddType(i int16) {
 }
 
 // AddedType returns the value that was added to the "type" field in this mutation.
-func (m *TestCaseMutation) AddedType() (r int16, exists bool) {
+func (m *TestCaseMutation) AddedType() (r int8, exists bool) {
 	v := m.add_type
 	if v == nil {
 		return
@@ -3856,7 +3822,7 @@ func (m *TestCaseMutation) SetField(name string, value ent.Value) error {
 		m.SetStatus(v)
 		return nil
 	case testcase.FieldType:
-		v, ok := value.(int16)
+		v, ok := value.(int8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -3974,7 +3940,7 @@ func (m *TestCaseMutation) AddField(name string, value ent.Value) error {
 		m.AddStatus(v)
 		return nil
 	case testcase.FieldType:
-		v, ok := value.(int16)
+		v, ok := value.(int8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

@@ -24,7 +24,8 @@ type TestCaseSuite struct {
 	CreatedBy uint32 `json:"created_by,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TestCaseSuiteQuery when eager-loading is set.
-	Edges TestCaseSuiteEdges `json:"edges"`
+	Edges               TestCaseSuiteEdges `json:"edges"`
+	task_testcase_suite *int64
 }
 
 // TestCaseSuiteEdges holds the relations/edges for other nodes in the graph.
@@ -56,6 +57,8 @@ func (*TestCaseSuite) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case testcasesuite.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
+		case testcasesuite.ForeignKeys[0]: // task_testcase_suite
+			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type TestCaseSuite", columns[i])
 		}
@@ -94,6 +97,13 @@ func (tcs *TestCaseSuite) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
 				tcs.CreatedBy = uint32(value.Int64)
+			}
+		case testcasesuite.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field task_testcase_suite", value)
+			} else if value.Valid {
+				tcs.task_testcase_suite = new(int64)
+				*tcs.task_testcase_suite = int64(value.Int64)
 			}
 		}
 	}

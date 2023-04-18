@@ -4,6 +4,7 @@ import (
 	"context"
 	"galileo/api/management/task/v1"
 	"galileo/app/management/internal/biz"
+	"galileo/pkg/ctxdata"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -22,6 +23,14 @@ func NewTaskService(uc *biz.TaskUseCase, logger log.Logger) *TaskService {
 }
 
 func (s *TaskService) CreateTask(ctx context.Context, req *v1.CreateTaskRequest) (*v1.CreateTaskReply, error) {
+	uid := ctx.Value(ctxdata.UserIdKey)
+	createTask := &biz.Task{
+		CreatedBy: uid.(uint32),
+		Name:      req.Name,
+		Rank:      int8(req.Rank),
+		Type:      int8(req.Type),
+	}
+	println(createTask)
 	return &v1.CreateTaskReply{}, nil
 }
 func (s *TaskService) UpdateTask(ctx context.Context, req *v1.UpdateTaskRequest) (*v1.UpdateTaskReply, error) {

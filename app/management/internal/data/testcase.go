@@ -24,7 +24,7 @@ func (r *testcaseRepo) CreateTestcase(ctx context.Context, testCase *biz.Testcas
 		SetName(testCase.Name).
 		SetCreatedBy(testCase.CreatedBy).
 		SetPriority(testCase.Priority).
-		SetType(testCase.CaseType).
+		SetType(testCase.Type).
 		SetURL(testCase.Url).
 		SetDescription(testCase.Description).
 		Save(ctx)
@@ -43,7 +43,7 @@ func (r *testcaseRepo) UpdateTestcase(ctx context.Context, testcase *biz.Testcas
 		SetPriority(testcase.Priority).
 		SetDescription(testcase.Description).
 		SetUpdateBy(testcase.UpdatedBy).
-		SetType(testcase.CaseType).
+		SetType(testcase.Type).
 		SetURL(testcase.Url).
 		Exec(ctx)
 	if err != nil {
@@ -64,7 +64,7 @@ func (r *testcaseRepo) TestcaseById(ctx context.Context, id int64) (*biz.Testcas
 		UpdatedBy: queryTestcase.UpdateBy,
 		UpdateAt:  queryTestcase.UpdateAt,
 		Status:    queryTestcase.Status,
-		CaseType:  queryTestcase.Type,
+		Type:      queryTestcase.Type,
 		Priority:  queryTestcase.Priority,
 		Url:       queryTestcase.URL,
 	}, nil
@@ -83,7 +83,7 @@ func (r *testcaseRepo) TestcaseByName(ctx context.Context, name string) (*biz.Te
 		UpdatedBy: queryTestcase.UpdateBy,
 		UpdateAt:  queryTestcase.UpdateAt,
 		Status:    queryTestcase.Status,
-		CaseType:  queryTestcase.Type,
+		Type:      queryTestcase.Type,
 		Priority:  queryTestcase.Priority,
 		Url:       queryTestcase.URL,
 	}, nil

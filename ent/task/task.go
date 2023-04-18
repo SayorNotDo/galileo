@@ -27,18 +27,23 @@ const (
 	FieldCompleteAt = "complete_at"
 	// FieldUpdateAt holds the string denoting the update_at field in the database.
 	FieldUpdateAt = "update_at"
-	// FieldIsDeleted holds the string denoting the is_deleted field in the database.
-	FieldIsDeleted = "is_deleted"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
 	FieldDeletedBy = "deleted_by"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
-	// FieldURL holds the string denoting the url field in the database.
-	FieldURL = "url"
+	// EdgeTestcaseSuite holds the string denoting the testcasesuite edge name in mutations.
+	EdgeTestcaseSuite = "testcaseSuite"
 	// Table holds the table name of the task in the database.
 	Table = "task"
+	// TestcaseSuiteTable is the table that holds the testcaseSuite relation/edge.
+	TestcaseSuiteTable = "test_case_suites"
+	// TestcaseSuiteInverseTable is the table name for the TestCaseSuite entity.
+	// It exists in this package in order to avoid circular dependency with the "testcasesuite" package.
+	TestcaseSuiteInverseTable = "test_case_suites"
+	// TestcaseSuiteColumn is the table column denoting the testcaseSuite relation/edge.
+	TestcaseSuiteColumn = "task_testcase_suite"
 )
 
 // Columns holds all SQL columns for task fields.
@@ -52,11 +57,9 @@ var Columns = []string{
 	FieldStatus,
 	FieldCompleteAt,
 	FieldUpdateAt,
-	FieldIsDeleted,
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldDescription,
-	FieldURL,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -73,7 +76,7 @@ var (
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultStatus holds the default value on creation for the "status" field.
-	DefaultStatus int16
+	DefaultStatus int8
 	// UpdateDefaultUpdateAt holds the default value on update for the "update_at" field.
 	UpdateDefaultUpdateAt func() time.Time
 )

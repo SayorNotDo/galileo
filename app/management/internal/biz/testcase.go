@@ -14,7 +14,7 @@ type Testcase struct {
 	UpdateAt    time.Time `json:"update_at,omitempty"`
 	UpdatedBy   uint32    `json:"updated_by,omitempty"`
 	Status      int8      `json:"status,omitempty"`
-	CaseType    int16     `json:"case_type,omitempty"`
+	Type        int8      `json:"type,omitempty"`
 	Priority    int8      `json:"priority,omitempty"`
 	DeletedBy   uint32    `json:"deleted_by,omitempty"`
 	DeletedAt   time.Time `json:"deleted_at,omitempty"`

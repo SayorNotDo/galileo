@@ -85,7 +85,7 @@ func Status(v int8) predicate.TestCase {
 }
 
 // Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
-func Type(v int16) predicate.TestCase {
+func Type(v int8) predicate.TestCase {
 	return predicate.TestCase(sql.FieldEQ(FieldType, v))
 }
 
@@ -400,42 +400,42 @@ func StatusLTE(v int8) predicate.TestCase {
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v int16) predicate.TestCase {
+func TypeEQ(v int8) predicate.TestCase {
 	return predicate.TestCase(sql.FieldEQ(FieldType, v))
 }
 
 // TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v int16) predicate.TestCase {
+func TypeNEQ(v int8) predicate.TestCase {
 	return predicate.TestCase(sql.FieldNEQ(FieldType, v))
 }
 
 // TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...int16) predicate.TestCase {
+func TypeIn(vs ...int8) predicate.TestCase {
 	return predicate.TestCase(sql.FieldIn(FieldType, vs...))
 }
 
 // TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...int16) predicate.TestCase {
+func TypeNotIn(vs ...int8) predicate.TestCase {
 	return predicate.TestCase(sql.FieldNotIn(FieldType, vs...))
 }
 
 // TypeGT applies the GT predicate on the "type" field.
-func TypeGT(v int16) predicate.TestCase {
+func TypeGT(v int8) predicate.TestCase {
 	return predicate.TestCase(sql.FieldGT(FieldType, v))
 }
 
 // TypeGTE applies the GTE predicate on the "type" field.
-func TypeGTE(v int16) predicate.TestCase {
+func TypeGTE(v int8) predicate.TestCase {
 	return predicate.TestCase(sql.FieldGTE(FieldType, v))
 }
 
 // TypeLT applies the LT predicate on the "type" field.
-func TypeLT(v int16) predicate.TestCase {
+func TypeLT(v int8) predicate.TestCase {
 	return predicate.TestCase(sql.FieldLT(FieldType, v))
 }
 
 // TypeLTE applies the LTE predicate on the "type" field.
-func TypeLTE(v int16) predicate.TestCase {
+func TypeLTE(v int8) predicate.TestCase {
 	return predicate.TestCase(sql.FieldLTE(FieldType, v))
 }
 
