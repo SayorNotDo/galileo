@@ -1,20 +1,27 @@
 package server
 
 import (
-	"galileo/api/management/project/v1"
+	projectV1 "galileo/api/management/project/v1"
+	taskV1 "galileo/api/management/task/v1"
 	"galileo/app/management/internal/conf"
 	"galileo/app/management/internal/service"
-
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/logging"
+	"github.com/go-kratos/kratos/v2/middleware/metadata"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
+
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Server, project *service.ProjectService, logger log.Logger) *grpc.Server {
+func NewGRPCServer(c *conf.Server, project *service.ProjectService, task *service.TaskService, logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
+			logging.Server(logger),
+			tracing.Server(),
+			metadata.Server(),
 		),
 	}
 	if c.Grpc.Network != "" {
@@ -27,6 +34,7 @@ func NewGRPCServer(c *conf.Server, project *service.ProjectService, logger log.L
 		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
-	v1.RegisterProjectServer(srv, project)
+	projectV1.RegisterProjectServer(srv, project)
+	taskV1.RegisterTaskServer(srv, task)
 	return srv
 }

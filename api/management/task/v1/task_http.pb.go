@@ -20,14 +20,17 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationTaskCreateTask = "/api.task.v1.Task/CreateTask"
+const OperationTaskUpdateTaskStatus = "/api.task.v1.Task/UpdateTaskStatus"
 
 type TaskHTTPServer interface {
 	CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskReply, error)
+	UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error)
 }
 
 func RegisterTaskHTTPServer(s *http.Server, srv TaskHTTPServer) {
 	r := s.Route("/")
 	r.POST("v1/api/management/task", _Task_CreateTask0_HTTP_Handler(srv))
+	r.PUT("v1/api/management/task/status", _Task_UpdateTaskStatus0_HTTP_Handler(srv))
 }
 
 func _Task_CreateTask0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Context) error {
@@ -49,8 +52,28 @@ func _Task_CreateTask0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Context) e
 	}
 }
 
+func _Task_UpdateTaskStatus0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateTaskStatusRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTaskUpdateTaskStatus)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateTaskStatus(ctx, req.(*UpdateTaskStatusRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UpdateTaskStatusReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type TaskHTTPClient interface {
 	CreateTask(ctx context.Context, req *CreateTaskRequest, opts ...http.CallOption) (rsp *CreateTaskReply, err error)
+	UpdateTaskStatus(ctx context.Context, req *UpdateTaskStatusRequest, opts ...http.CallOption) (rsp *UpdateTaskStatusReply, err error)
 }
 
 type TaskHTTPClientImpl struct {
@@ -68,6 +91,19 @@ func (c *TaskHTTPClientImpl) CreateTask(ctx context.Context, in *CreateTaskReque
 	opts = append(opts, http.Operation(OperationTaskCreateTask))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *TaskHTTPClientImpl) UpdateTaskStatus(ctx context.Context, in *UpdateTaskStatusRequest, opts ...http.CallOption) (*UpdateTaskStatusReply, error) {
+	var out UpdateTaskStatusReply
+	pattern := "v1/api/management/task/status"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationTaskUpdateTaskStatus))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

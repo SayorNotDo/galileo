@@ -16,10 +16,20 @@ service Task {
     };
   };
   rpc UpdateTask (UpdateTaskRequest) returns (UpdateTaskReply);
+  rpc UpdateTaskStatus (UpdateTaskStatusRequest) returns (UpdateTaskStatusReply){
+    option(google.api.http) = {
+      put: "v1/api/management/task/status"
+      body: "*"
+    };
+  };
   rpc DeleteTask (DeleteTaskRequest) returns (DeleteTaskReply);
   rpc GetTask (GetTaskRequest) returns (GetTaskReply);
   rpc ListTask (ListTaskRequest) returns (ListTaskReply);
 }
+
+message UpdateTaskRequest {};
+
+message UpdateTaskReply {};
 
 message CreateTaskRequest {
   string name = 1;
@@ -29,14 +39,29 @@ message CreateTaskRequest {
   repeated int64 testcaseSuiteId = 5;
 }
 
+enum taskStatus {
+  NEW = 0;
+  PENDING = 1;
+  RUNNING = 2;
+  PAUSED = 3;
+  EXCEPTION = 5;
+  CANCELLED = 6;
+  FINISHED = 7;
+}
+
 message CreateTaskReply {
   int64 id = 1;
   int32 status = 2;
   int64 createdAt = 3;
 }
 
-message UpdateTaskRequest {}
-message UpdateTaskReply {}
+message UpdateTaskStatusRequest {
+  int64 id = 1;
+  taskStatus status = 2;
+}
+message UpdateTaskStatusReply {
+  bool success = 1;
+}
 
 message DeleteTaskRequest {}
 message DeleteTaskReply {}

@@ -45,8 +45,9 @@ func (s *TaskService) CreateTask(ctx context.Context, req *v1.CreateTaskRequest)
 	}, nil
 }
 
-func (s *TaskService) UpdateTask(ctx context.Context, req *v1.UpdateTaskRequest) (*v1.UpdateTaskReply, error) {
-	return &v1.UpdateTaskReply{}, nil
+func (s *TaskService) UpdateTaskStatus(ctx context.Context, req *v1.UpdateTaskStatusRequest) (*v1.UpdateTaskStatusReply, error) {
+	println("----------------------------------------------------------------")
+	return &v1.UpdateTaskStatusReply{}, nil
 }
 func (s *TaskService) DeleteTask(ctx context.Context, req *v1.DeleteTaskRequest) (*v1.DeleteTaskReply, error) {
 	return &v1.DeleteTaskReply{}, nil
