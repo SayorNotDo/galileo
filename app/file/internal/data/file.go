@@ -2,11 +2,17 @@ package data
 
 import (
 	"context"
+	"galileo/pkg/errResponse"
+	sts "github.com/alibabacloud-go/sts-20150401/client"
+	"github.com/alibabacloud-go/tea/tea"
+	"github.com/go-kratos/kratos/v2/errors"
 
 	"galileo/app/file/internal/biz"
-
+	openapi "github.com/alibabacloud-go/darabonba-openapi/client"
 	"github.com/go-kratos/kratos/v2/log"
 )
+
+var OssSessionName = "kratos-base-project"
 
 type fileRepo struct {
 	data *Data
@@ -17,22 +23,41 @@ type fileRepo struct {
 func NewFileRepo(data *Data, logger log.Logger) biz.FileRepo {
 	return &fileRepo{
 		data: data,
-		log:  log.NewHelper(logger),
+		log:  log.NewHelper(log.With(logger, "module", "dataService.fileRepo")),
 	}
 }
 
 func (r *fileRepo) UploadFile(ctx context.Context, fileName string, fileType string, content []byte) (string, error) {
-
 	return "", nil
 }
-func (r *fileRepo) Save(ctx context.Context, g *biz.File) (*biz.File, error) {
-	return g, nil
-}
 
-func (r *fileRepo) Update(ctx context.Context, g *biz.File) (*biz.File, error) {
-	return g, nil
-}
+func (r *fileRepo) GetOssStsToken(ctx context.Context) (*biz.OssStsToken, error) {
+	config := &openapi.Config{
+		AccessKeyId:     &r.data.config.Oss.AccessKey,
+		AccessKeySecret: &r.data.config.Oss.AccessSecret,
+	}
 
-func (r *fileRepo) ListAll(context.Context) ([]*biz.File, error) {
-	return nil, nil
+	config.Endpoint = tea.String("file-server-domain")
+	client, err := sts.NewClient(config)
+	if err != nil {
+		return &biz.OssStsToken{}, errors.InternalServer(errResponse.ReasonSystemError, err.Error())
+	}
+	assumeRoleRequest := &sts.AssumeRoleRequest{
+		RoleArn:         &r.data.config.Oss.StsRoleArn,
+		RoleSessionName: &OssSessionName,
+	}
+	res, err := client.AssumeRole(assumeRoleRequest)
+	if err != nil {
+		return &biz.OssStsToken{}, errors.InternalServer(errResponse.ReasonSystemError, err.Error())
+	}
+	return &biz.OssStsToken{
+		AccessKey:     *res.Body.Credentials.AccessKeyId,
+		AccessSecret:  *res.Body.Credentials.AccessKeySecret,
+		Expiration:    *res.Body.Credentials.Expiration,
+		SecurityToken: *res.Body.Credentials.SecurityToken,
+		EndPoint:      r.data.config.Oss.Endpoint,
+		BucketName:    r.data.config.Oss.BucketName,
+		Region:        r.data.config.Oss.Region,
+		Url:           "https://" + r.data.config.Oss.BucketName + "." + r.data.config.Oss.Endpoint + "/",
+	}, nil
 }

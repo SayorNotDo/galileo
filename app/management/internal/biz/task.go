@@ -29,7 +29,8 @@ type TaskRepo interface {
 	ListTask(ctx context.Context, pageNum, pageSize int) ([]*Task, error)
 	CreateTask(ctx context.Context, task *Task) (*Task, error)
 	TaskByName(ctx context.Context, name string) (*Task, error)
-	TaskById(ctx context.Context, id int64) (*Task, error)
+	TaskByID(ctx context.Context, id int64) (*Task, error)
+	UpdateTask(ctx context.Context, task *Task) (bool, error)
 }
 
 // TaskUseCase is a Task useCase.
@@ -54,6 +55,10 @@ func (uc *TaskUseCase) TaskByName(ctx context.Context, name string) (*Task, erro
 	return uc.repo.TaskByName(ctx, name)
 }
 
-func (uc *TaskUseCase) TaskById(ctx context.Context, id int64) (*Task, error) {
-	return uc.repo.TaskById(ctx, id)
+func (uc *TaskUseCase) TaskByID(ctx context.Context, id int64) (*Task, error) {
+	return uc.repo.TaskByID(ctx, id)
+}
+
+func (uc *TaskUseCase) UpdateTask(ctx context.Context, task *Task) (bool, error) {
+	return uc.repo.UpdateTask(ctx, task)
 }

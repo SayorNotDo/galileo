@@ -24,3 +24,5 @@ service:
     endpoint: discovery:///management.project.service
   task:
     endpoint: discovery:///management.task.service
+  file:
+    endpoint: discovery:///file.service

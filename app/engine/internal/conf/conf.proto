@@ -66,5 +66,5 @@ message Registry {
 }
 
 message Auth {
-  string jwt_key = 1;
+  string jwtKey = 1;
 }

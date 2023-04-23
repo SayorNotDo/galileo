@@ -19,10 +19,23 @@ func NewEngineRepo(data *Data, logger log.Logger) biz.EngineRepo {
 	}
 }
 
-func (r *engineRepo) UpdateTaskStatus(ctx context.Context, status taskV1.TaskStatus) (bool, error) {
-	ret, err := r.data.tc.UpdateTaskStatus(ctx, &taskV1.UpdateTaskStatusRequest{Id: 7, Status: status})
+func (r *engineRepo) UpdateTaskStatus(ctx context.Context, id int64, status taskV1.TaskStatus) (bool, error) {
+	ret, err := r.data.tc.UpdateTask(ctx, &taskV1.UpdateTaskRequest{Id: id, Status: status})
 	if err != nil {
 		return false, err
 	}
 	return ret.Success, nil
+}
+
+func (r *engineRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) {
+	ret, err := r.data.tc.TaskByID(ctx, &taskV1.TaskByIDRequest{Id: id})
+	if err != nil {
+		return nil, err
+	}
+	return &biz.Task{
+		Name:        ret.Name,
+		Type:        int8(ret.Type),
+		Rank:        int8(ret.Rank),
+		Description: ret.Description,
+	}, nil
 }

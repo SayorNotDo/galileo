@@ -11,11 +11,20 @@ type File struct {
 	Hello string
 }
 
+type OssStsToken struct {
+	AccessKey     string
+	AccessSecret  string
+	Expiration    string
+	SecurityToken string
+	EndPoint      string
+	BucketName    string
+	Region        string
+	Url           string
+}
+
 // FileRepo is a Greater repo.
 type FileRepo interface {
-	Save(context.Context, *File) (*File, error)
-	Update(context.Context, *File) (*File, error)
-	ListAll(context.Context) ([]*File, error)
+	GetOssStsToken(ctx context.Context) (*OssStsToken, error)
 	UploadFile(ctx context.Context, fileName string, fileType string, content []byte) (string, error)
 }
 
@@ -32,4 +41,8 @@ func NewFileUseCase(repo FileRepo, logger log.Logger) *FileUseCase {
 
 func (c *FileUseCase) UploadFile(ctx context.Context, fileName string, fileType string, content []byte) (string, error) {
 	return c.repo.UploadFile(ctx, fileName, fileType, content)
+}
+
+func (c *FileUseCase) GetOssStsToken(ctx context.Context) (*OssStsToken, error) {
+	return c.repo.GetOssStsToken(ctx)
 }

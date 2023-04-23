@@ -23,6 +23,19 @@ func NewTaskRepo(data *Data, logger log.Logger) biz.TaskRepo {
 	}
 }
 
+func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (bool, error) {
+	if _, err := r.data.entDB.Task.UpdateOneID(task.Id).
+		SetName(task.Name).
+		SetType(task.Type).
+		SetRank(task.Rank).
+		SetDescription(task.Description).
+		SetStatus(task.Status).
+		Save(ctx); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 func (r *taskRepo) TaskByName(ctx context.Context, name string) (*biz.Task, error) {
 	queryTask, err := r.data.entDB.Task.Query().Where(task.Name(name)).Only(ctx)
 	if err != nil {
@@ -39,19 +52,25 @@ func (r *taskRepo) TaskByName(ctx context.Context, name string) (*biz.Task, erro
 	}, nil
 }
 
-func (r *taskRepo) TaskById(ctx context.Context, id int64) (*biz.Task, error) {
+func (r *taskRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) {
 	queryTask, err := r.data.entDB.Task.Query().Where(task.ID(id)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
+	testcaseSuites := queryTask.Edges.TestcaseSuite
+	suites := make([]int64, 0)
+	for _, o := range testcaseSuites {
+		suites = append(suites, o.ID)
+	}
 	return &biz.Task{
-		Id:        queryTask.ID,
-		Name:      queryTask.Name,
-		Rank:      queryTask.Rank,
-		Status:    queryTask.Status,
-		Type:      queryTask.Type,
-		CreatedAt: queryTask.CreatedAt,
-		CreatedBy: queryTask.CreatedBy,
+		Id:             queryTask.ID,
+		Name:           queryTask.Name,
+		Rank:           queryTask.Rank,
+		Status:         queryTask.Status,
+		Type:           queryTask.Type,
+		CreatedAt:      queryTask.CreatedAt,
+		CreatedBy:      queryTask.CreatedBy,
+		TestcaseSuites: suites,
 	}, nil
 }
 
@@ -71,34 +90,6 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, e
 		Id:        createTask.ID,
 		CreatedAt: createTask.CreatedAt,
 	}, nil
-}
-
-func (r *taskRepo) UpdateTaskStatus(ctx context.Context, id int64, status int8) (bool, error) {
-	err := r.data.entDB.Task.UpdateOneID(id).SetStatus(status).Exec(ctx)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-func (r *taskRepo) UpdateTaskName(ctx context.Context, id int64, name string) (bool, error) {
-	err := r.data.entDB.Task.UpdateOneID(id).SetName(name).Exec(ctx)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-func (r *taskRepo) UpdateTaskRank(ctx context.Context, id int64, rank int8) (bool, error) {
-	err := r.data.entDB.Task.UpdateOneID(id).SetRank(rank).Exec(ctx)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-func (r *taskRepo) UpdateTaskDescription(ctx context.Context, description string) (bool, error) {
-	return true, nil
 }
 
 func (r *taskRepo) SoftDeleteTask(ctx context.Context, uid uint32, id int64) (bool, error) {

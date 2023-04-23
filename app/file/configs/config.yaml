@@ -1,15 +1,31 @@
+name: file.api
 server:
   http:
-    addr: 0.0.0.0:8000
+    addr: 0.0.0.0:8888
     timeout: 1s
   grpc:
-    addr: 0.0.0.0:9000
+    addr: 0.0.0.0:8888
     timeout: 1s
 data:
   database:
     driver: mysql
-    source: root:root@tcp(127.0.0.1:3306)/test
+    source: root:test1234@tcp(127.0.0.1:3306)/galileo?charset=utf8mb4&parseTime=true&loc=Local
   redis:
     addr: 127.0.0.1:6379
+    dial_timeout: 1s
     read_timeout: 0.2s
     write_timeout: 0.2s
+  oss:
+    access_key: ""
+    access_secret: ""
+    endpoint: ""
+    bucket_name: ""
+    region: ""
+    sts_expire: ""
+    sts_role_arn: ""
+trace:
+  endpoint: http://127.0.0.1:14268/api/traces
+auth:
+  jwt_key: hqFr%3ddt32DGlSTOI5cO6@TH#fFwYnP$S
+  service_key: "file-service-key"
+  api_key: "file-api-key"

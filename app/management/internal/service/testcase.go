@@ -37,6 +37,10 @@ func NewTestcase(name string, caseType int8, priority int8, description string, 
 	}, nil
 }
 
+func (s *TestcaseService) UploadTestcaseFile(ctx context.Context, req *pb.UpdateTestcaseRequest) (*pb.UpdateTestcaseReply, error) {
+	return &pb.UpdateTestcaseReply{}, nil
+}
+
 func (s *TestcaseService) CreateTestcase(ctx context.Context, req *pb.CreateTestcaseRequest) (*pb.CreateTestcaseReply, error) {
 	newTestcase, err := NewTestcase(req.Name, int8(req.Type), int8(req.Priority), req.Description, req.Url)
 	if err != nil {

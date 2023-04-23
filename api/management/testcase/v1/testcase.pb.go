@@ -21,6 +21,82 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type UploadTestcaseRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *UploadTestcaseRequest) Reset() {
+	*x = UploadTestcaseRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UploadTestcaseRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadTestcaseRequest) ProtoMessage() {}
+
+func (x *UploadTestcaseRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadTestcaseRequest.ProtoReflect.Descriptor instead.
+func (*UploadTestcaseRequest) Descriptor() ([]byte, []int) {
+	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{0}
+}
+
+type UploadTestcaseReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *UploadTestcaseReply) Reset() {
+	*x = UploadTestcaseReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UploadTestcaseReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadTestcaseReply) ProtoMessage() {}
+
+func (x *UploadTestcaseReply) ProtoReflect() protoreflect.Message {
+	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadTestcaseReply.ProtoReflect.Descriptor instead.
+func (*UploadTestcaseReply) Descriptor() ([]byte, []int) {
+	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{1}
+}
+
 type CreateTestcaseRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -37,7 +113,7 @@ type CreateTestcaseRequest struct {
 func (x *CreateTestcaseRequest) Reset() {
 	*x = CreateTestcaseRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[0]
+		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -50,7 +126,7 @@ func (x *CreateTestcaseRequest) String() string {
 func (*CreateTestcaseRequest) ProtoMessage() {}
 
 func (x *CreateTestcaseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[0]
+	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -63,7 +139,7 @@ func (x *CreateTestcaseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTestcaseRequest.ProtoReflect.Descriptor instead.
 func (*CreateTestcaseRequest) Descriptor() ([]byte, []int) {
-	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{0}
+	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateTestcaseRequest) GetName() string {
@@ -120,7 +196,7 @@ type CreateTestcaseReply struct {
 func (x *CreateTestcaseReply) Reset() {
 	*x = CreateTestcaseReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[1]
+		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -133,7 +209,7 @@ func (x *CreateTestcaseReply) String() string {
 func (*CreateTestcaseReply) ProtoMessage() {}
 
 func (x *CreateTestcaseReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[1]
+	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -146,7 +222,7 @@ func (x *CreateTestcaseReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTestcaseReply.ProtoReflect.Descriptor instead.
 func (*CreateTestcaseReply) Descriptor() ([]byte, []int) {
-	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{1}
+	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateTestcaseReply) GetId() int64 {
@@ -179,7 +255,7 @@ type UpdateTestcaseRequest struct {
 func (x *UpdateTestcaseRequest) Reset() {
 	*x = UpdateTestcaseRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[2]
+		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -192,7 +268,7 @@ func (x *UpdateTestcaseRequest) String() string {
 func (*UpdateTestcaseRequest) ProtoMessage() {}
 
 func (x *UpdateTestcaseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[2]
+	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -205,7 +281,7 @@ func (x *UpdateTestcaseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTestcaseRequest.ProtoReflect.Descriptor instead.
 func (*UpdateTestcaseRequest) Descriptor() ([]byte, []int) {
-	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{2}
+	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *UpdateTestcaseRequest) GetId() int64 {
@@ -261,7 +337,7 @@ type UpdateTestcaseReply struct {
 func (x *UpdateTestcaseReply) Reset() {
 	*x = UpdateTestcaseReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[3]
+		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -274,7 +350,7 @@ func (x *UpdateTestcaseReply) String() string {
 func (*UpdateTestcaseReply) ProtoMessage() {}
 
 func (x *UpdateTestcaseReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[3]
+	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -287,7 +363,7 @@ func (x *UpdateTestcaseReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTestcaseReply.ProtoReflect.Descriptor instead.
 func (*UpdateTestcaseReply) Descriptor() ([]byte, []int) {
-	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{3}
+	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UpdateTestcaseReply) GetSuccess() bool {
@@ -306,7 +382,7 @@ type DeleteTestcaseRequest struct {
 func (x *DeleteTestcaseRequest) Reset() {
 	*x = DeleteTestcaseRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[4]
+		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -319,7 +395,7 @@ func (x *DeleteTestcaseRequest) String() string {
 func (*DeleteTestcaseRequest) ProtoMessage() {}
 
 func (x *DeleteTestcaseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[4]
+	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -332,7 +408,7 @@ func (x *DeleteTestcaseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTestcaseRequest.ProtoReflect.Descriptor instead.
 func (*DeleteTestcaseRequest) Descriptor() ([]byte, []int) {
-	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{4}
+	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{6}
 }
 
 type DeleteTestcaseReply struct {
@@ -344,7 +420,7 @@ type DeleteTestcaseReply struct {
 func (x *DeleteTestcaseReply) Reset() {
 	*x = DeleteTestcaseReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[5]
+		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -357,7 +433,7 @@ func (x *DeleteTestcaseReply) String() string {
 func (*DeleteTestcaseReply) ProtoMessage() {}
 
 func (x *DeleteTestcaseReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[5]
+	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -370,7 +446,7 @@ func (x *DeleteTestcaseReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTestcaseReply.ProtoReflect.Descriptor instead.
 func (*DeleteTestcaseReply) Descriptor() ([]byte, []int) {
-	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{5}
+	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{7}
 }
 
 type GetTestcaseRequest struct {
@@ -384,7 +460,7 @@ type GetTestcaseRequest struct {
 func (x *GetTestcaseRequest) Reset() {
 	*x = GetTestcaseRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[6]
+		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -397,7 +473,7 @@ func (x *GetTestcaseRequest) String() string {
 func (*GetTestcaseRequest) ProtoMessage() {}
 
 func (x *GetTestcaseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[6]
+	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -410,7 +486,7 @@ func (x *GetTestcaseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTestcaseRequest.ProtoReflect.Descriptor instead.
 func (*GetTestcaseRequest) Descriptor() ([]byte, []int) {
-	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{6}
+	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetTestcaseRequest) GetId() int64 {
@@ -440,7 +516,7 @@ type GetTestcaseReply struct {
 func (x *GetTestcaseReply) Reset() {
 	*x = GetTestcaseReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[7]
+		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -453,7 +529,7 @@ func (x *GetTestcaseReply) String() string {
 func (*GetTestcaseReply) ProtoMessage() {}
 
 func (x *GetTestcaseReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[7]
+	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -466,7 +542,7 @@ func (x *GetTestcaseReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTestcaseReply.ProtoReflect.Descriptor instead.
 func (*GetTestcaseReply) Descriptor() ([]byte, []int) {
-	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{7}
+	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetTestcaseReply) GetName() string {
@@ -548,7 +624,7 @@ type ListTestcaseRequest struct {
 func (x *ListTestcaseRequest) Reset() {
 	*x = ListTestcaseRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[8]
+		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -561,7 +637,7 @@ func (x *ListTestcaseRequest) String() string {
 func (*ListTestcaseRequest) ProtoMessage() {}
 
 func (x *ListTestcaseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[8]
+	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -574,7 +650,7 @@ func (x *ListTestcaseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTestcaseRequest.ProtoReflect.Descriptor instead.
 func (*ListTestcaseRequest) Descriptor() ([]byte, []int) {
-	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{8}
+	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{10}
 }
 
 type ListTestcaseReply struct {
@@ -586,7 +662,7 @@ type ListTestcaseReply struct {
 func (x *ListTestcaseReply) Reset() {
 	*x = ListTestcaseReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[9]
+		mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -599,7 +675,7 @@ func (x *ListTestcaseReply) String() string {
 func (*ListTestcaseReply) ProtoMessage() {}
 
 func (x *ListTestcaseReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[9]
+	mi := &file_api_management_testcase_v1_testcase_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -612,7 +688,7 @@ func (x *ListTestcaseReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTestcaseReply.ProtoReflect.Descriptor instead.
 func (*ListTestcaseReply) Descriptor() ([]byte, []int) {
-	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{9}
+	return file_api_management_testcase_v1_testcase_proto_rawDescGZIP(), []int{11}
 }
 
 var File_api_management_testcase_v1_testcase_proto protoreflect.FileDescriptor
@@ -624,7 +700,10 @@ var file_api_management_testcase_v1_testcase_proto_rawDesc = []byte{
 	0x2e, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x2e, 0x74, 0x65, 0x73, 0x74,
 	0x63, 0x61, 0x73, 0x65, 0x1a, 0x1c, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x61, 0x70, 0x69,
 	0x2f, 0x61, 0x6e, 0x6e, 0x6f, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x2e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x22, 0xa7, 0x01, 0x0a, 0x15, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x65, 0x73,
+	0x74, 0x6f, 0x22, 0x17, 0x0a, 0x15, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x54, 0x65, 0x73, 0x74,
+	0x63, 0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x15, 0x0a, 0x13, 0x55,
+	0x70, 0x6c, 0x6f, 0x61, 0x64, 0x54, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x52, 0x65, 0x70,
+	0x6c, 0x79, 0x22, 0xa7, 0x01, 0x0a, 0x15, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x65, 0x73,
 	0x74, 0x63, 0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04,
 	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65,
 	0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05,
@@ -678,7 +757,7 @@ var file_api_management_testcase_v1_testcase_proto_rawDesc = []byte{
 	0x69, 0x6f, 0x6e, 0x22, 0x15, 0x0a, 0x13, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x65, 0x73, 0x74, 0x63,
 	0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x13, 0x0a, 0x11, 0x4c, 0x69,
 	0x73, 0x74, 0x54, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x32,
-	0x88, 0x05, 0x0a, 0x08, 0x54, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x12, 0x8a, 0x01, 0x0a,
+	0xfc, 0x05, 0x0a, 0x08, 0x54, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x12, 0x8a, 0x01, 0x0a,
 	0x0e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x12,
 	0x2e, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74,
 	0x2e, 0x74, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
@@ -718,12 +797,19 @@ var file_api_management_testcase_v1_testcase_proto_rawDesc = []byte{
 	0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2a,
 	0x2e, 0x61, 0x70, 0x69, 0x2e, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x2e,
 	0x74, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x65, 0x73,
-	0x74, 0x63, 0x61, 0x73, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x42, 0x45, 0x0a, 0x1a, 0x61, 0x70,
-	0x69, 0x2e, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x2e, 0x74, 0x65, 0x73,
-	0x74, 0x63, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x50, 0x01, 0x5a, 0x25, 0x67, 0x61, 0x6c, 0x69,
-	0x6c, 0x65, 0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65,
-	0x6e, 0x74, 0x2f, 0x74, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x2f, 0x76, 0x31, 0x3b, 0x76,
-	0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x63, 0x61, 0x73, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x72, 0x0a, 0x12, 0x55, 0x70,
+	0x6c, 0x6f, 0x61, 0x64, 0x54, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x46, 0x69, 0x6c, 0x65,
+	0x12, 0x2e, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e,
+	0x74, 0x2e, 0x74, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x2e, 0x55, 0x70, 0x6c, 0x6f, 0x61,
+	0x64, 0x54, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x1a, 0x2c, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e,
+	0x74, 0x2e, 0x74, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x2e, 0x55, 0x70, 0x6c, 0x6f, 0x61,
+	0x64, 0x54, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x42, 0x45,
+	0x0a, 0x1a, 0x61, 0x70, 0x69, 0x2e, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74,
+	0x2e, 0x74, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x2e, 0x76, 0x31, 0x50, 0x01, 0x5a, 0x25,
+	0x67, 0x61, 0x6c, 0x69, 0x6c, 0x65, 0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6d, 0x61, 0x6e, 0x61,
+	0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x2f, 0x74, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x2f,
+	0x76, 0x31, 0x3b, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -738,35 +824,39 @@ func file_api_management_testcase_v1_testcase_proto_rawDescGZIP() []byte {
 	return file_api_management_testcase_v1_testcase_proto_rawDescData
 }
 
-var file_api_management_testcase_v1_testcase_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_api_management_testcase_v1_testcase_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_api_management_testcase_v1_testcase_proto_goTypes = []interface{}{
-	(*CreateTestcaseRequest)(nil), // 0: api.management.testcase.CreateTestcaseRequest
-	(*CreateTestcaseReply)(nil),   // 1: api.management.testcase.CreateTestcaseReply
-	(*UpdateTestcaseRequest)(nil), // 2: api.management.testcase.UpdateTestcaseRequest
-	(*UpdateTestcaseReply)(nil),   // 3: api.management.testcase.UpdateTestcaseReply
-	(*DeleteTestcaseRequest)(nil), // 4: api.management.testcase.DeleteTestcaseRequest
-	(*DeleteTestcaseReply)(nil),   // 5: api.management.testcase.DeleteTestcaseReply
-	(*GetTestcaseRequest)(nil),    // 6: api.management.testcase.GetTestcaseRequest
-	(*GetTestcaseReply)(nil),      // 7: api.management.testcase.GetTestcaseReply
-	(*ListTestcaseRequest)(nil),   // 8: api.management.testcase.ListTestcaseRequest
-	(*ListTestcaseReply)(nil),     // 9: api.management.testcase.ListTestcaseReply
+	(*UploadTestcaseRequest)(nil), // 0: api.management.testcase.UploadTestcaseRequest
+	(*UploadTestcaseReply)(nil),   // 1: api.management.testcase.UploadTestcaseReply
+	(*CreateTestcaseRequest)(nil), // 2: api.management.testcase.CreateTestcaseRequest
+	(*CreateTestcaseReply)(nil),   // 3: api.management.testcase.CreateTestcaseReply
+	(*UpdateTestcaseRequest)(nil), // 4: api.management.testcase.UpdateTestcaseRequest
+	(*UpdateTestcaseReply)(nil),   // 5: api.management.testcase.UpdateTestcaseReply
+	(*DeleteTestcaseRequest)(nil), // 6: api.management.testcase.DeleteTestcaseRequest
+	(*DeleteTestcaseReply)(nil),   // 7: api.management.testcase.DeleteTestcaseReply
+	(*GetTestcaseRequest)(nil),    // 8: api.management.testcase.GetTestcaseRequest
+	(*GetTestcaseReply)(nil),      // 9: api.management.testcase.GetTestcaseReply
+	(*ListTestcaseRequest)(nil),   // 10: api.management.testcase.ListTestcaseRequest
+	(*ListTestcaseReply)(nil),     // 11: api.management.testcase.ListTestcaseReply
 }
 var file_api_management_testcase_v1_testcase_proto_depIdxs = []int32{
-	0, // 0: api.management.testcase.Testcase.CreateTestcase:input_type -> api.management.testcase.CreateTestcaseRequest
-	2, // 1: api.management.testcase.Testcase.UpdateTestcase:input_type -> api.management.testcase.UpdateTestcaseRequest
-	4, // 2: api.management.testcase.Testcase.DeleteTestcase:input_type -> api.management.testcase.DeleteTestcaseRequest
-	6, // 3: api.management.testcase.Testcase.GetTestcaseById:input_type -> api.management.testcase.GetTestcaseRequest
-	8, // 4: api.management.testcase.Testcase.ListTestcase:input_type -> api.management.testcase.ListTestcaseRequest
-	1, // 5: api.management.testcase.Testcase.CreateTestcase:output_type -> api.management.testcase.CreateTestcaseReply
-	3, // 6: api.management.testcase.Testcase.UpdateTestcase:output_type -> api.management.testcase.UpdateTestcaseReply
-	5, // 7: api.management.testcase.Testcase.DeleteTestcase:output_type -> api.management.testcase.DeleteTestcaseReply
-	7, // 8: api.management.testcase.Testcase.GetTestcaseById:output_type -> api.management.testcase.GetTestcaseReply
-	9, // 9: api.management.testcase.Testcase.ListTestcase:output_type -> api.management.testcase.ListTestcaseReply
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2,  // 0: api.management.testcase.Testcase.CreateTestcase:input_type -> api.management.testcase.CreateTestcaseRequest
+	4,  // 1: api.management.testcase.Testcase.UpdateTestcase:input_type -> api.management.testcase.UpdateTestcaseRequest
+	6,  // 2: api.management.testcase.Testcase.DeleteTestcase:input_type -> api.management.testcase.DeleteTestcaseRequest
+	8,  // 3: api.management.testcase.Testcase.GetTestcaseById:input_type -> api.management.testcase.GetTestcaseRequest
+	10, // 4: api.management.testcase.Testcase.ListTestcase:input_type -> api.management.testcase.ListTestcaseRequest
+	0,  // 5: api.management.testcase.Testcase.UploadTestcaseFile:input_type -> api.management.testcase.UploadTestcaseRequest
+	3,  // 6: api.management.testcase.Testcase.CreateTestcase:output_type -> api.management.testcase.CreateTestcaseReply
+	5,  // 7: api.management.testcase.Testcase.UpdateTestcase:output_type -> api.management.testcase.UpdateTestcaseReply
+	7,  // 8: api.management.testcase.Testcase.DeleteTestcase:output_type -> api.management.testcase.DeleteTestcaseReply
+	9,  // 9: api.management.testcase.Testcase.GetTestcaseById:output_type -> api.management.testcase.GetTestcaseReply
+	11, // 10: api.management.testcase.Testcase.ListTestcase:output_type -> api.management.testcase.ListTestcaseReply
+	1,  // 11: api.management.testcase.Testcase.UploadTestcaseFile:output_type -> api.management.testcase.UploadTestcaseReply
+	6,  // [6:12] is the sub-list for method output_type
+	0,  // [0:6] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_api_management_testcase_v1_testcase_proto_init() }
@@ -776,7 +866,7 @@ func file_api_management_testcase_v1_testcase_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_api_management_testcase_v1_testcase_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateTestcaseRequest); i {
+			switch v := v.(*UploadTestcaseRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -788,7 +878,7 @@ func file_api_management_testcase_v1_testcase_proto_init() {
 			}
 		}
 		file_api_management_testcase_v1_testcase_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateTestcaseReply); i {
+			switch v := v.(*UploadTestcaseReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -800,7 +890,7 @@ func file_api_management_testcase_v1_testcase_proto_init() {
 			}
 		}
 		file_api_management_testcase_v1_testcase_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateTestcaseRequest); i {
+			switch v := v.(*CreateTestcaseRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -812,7 +902,7 @@ func file_api_management_testcase_v1_testcase_proto_init() {
 			}
 		}
 		file_api_management_testcase_v1_testcase_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateTestcaseReply); i {
+			switch v := v.(*CreateTestcaseReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -824,7 +914,7 @@ func file_api_management_testcase_v1_testcase_proto_init() {
 			}
 		}
 		file_api_management_testcase_v1_testcase_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteTestcaseRequest); i {
+			switch v := v.(*UpdateTestcaseRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -836,7 +926,7 @@ func file_api_management_testcase_v1_testcase_proto_init() {
 			}
 		}
 		file_api_management_testcase_v1_testcase_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteTestcaseReply); i {
+			switch v := v.(*UpdateTestcaseReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -848,7 +938,7 @@ func file_api_management_testcase_v1_testcase_proto_init() {
 			}
 		}
 		file_api_management_testcase_v1_testcase_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetTestcaseRequest); i {
+			switch v := v.(*DeleteTestcaseRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -860,7 +950,7 @@ func file_api_management_testcase_v1_testcase_proto_init() {
 			}
 		}
 		file_api_management_testcase_v1_testcase_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetTestcaseReply); i {
+			switch v := v.(*DeleteTestcaseReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -872,7 +962,7 @@ func file_api_management_testcase_v1_testcase_proto_init() {
 			}
 		}
 		file_api_management_testcase_v1_testcase_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListTestcaseRequest); i {
+			switch v := v.(*GetTestcaseRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -884,6 +974,30 @@ func file_api_management_testcase_v1_testcase_proto_init() {
 			}
 		}
 		file_api_management_testcase_v1_testcase_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetTestcaseReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_management_testcase_v1_testcase_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListTestcaseRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_management_testcase_v1_testcase_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListTestcaseReply); i {
 			case 0:
 				return &v.state
@@ -902,7 +1016,7 @@ func file_api_management_testcase_v1_testcase_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_management_testcase_v1_testcase_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

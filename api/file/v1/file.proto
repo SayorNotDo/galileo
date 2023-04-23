@@ -20,7 +20,7 @@ message OssStsTokenReply {
   string accessSecret = 2;
   string expiration = 3;
   string securityToken = 4;
-  string endPoint = 5;
+  string endpoint = 5;
   string bucketName = 6;
   string region = 7;
   string url = 8;

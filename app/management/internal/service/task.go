@@ -45,15 +45,36 @@ func (s *TaskService) CreateTask(ctx context.Context, req *v1.CreateTaskRequest)
 	}, nil
 }
 
-func (s *TaskService) UpdateTaskStatus(ctx context.Context, req *v1.UpdateTaskStatusRequest) (*v1.UpdateTaskStatusReply, error) {
-	println("----------------------------------------------------------------")
-	return &v1.UpdateTaskStatusReply{}, nil
+func (s *TaskService) UpdateTask(ctx context.Context, req *v1.UpdateTaskRequest) (*v1.UpdateTaskReply, error) {
+	task, err := s.uc.TaskByID(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	task.Status = int8(req.Status.Number())
+	if _, err := s.uc.UpdateTask(ctx, task); err != nil {
+		return nil, err
+	}
+	return &v1.UpdateTaskReply{
+		Success: true,
+	}, nil
 }
+
 func (s *TaskService) DeleteTask(ctx context.Context, req *v1.DeleteTaskRequest) (*v1.DeleteTaskReply, error) {
 	return &v1.DeleteTaskReply{}, nil
 }
-func (s *TaskService) GetTask(ctx context.Context, req *v1.GetTaskRequest) (*v1.GetTaskReply, error) {
-	return &v1.GetTaskReply{}, nil
+
+func (s *TaskService) TaskByID(ctx context.Context, req *v1.TaskByIDRequest) (*v1.GetTaskReply, error) {
+	task, err := s.uc.TaskByID(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.GetTaskReply{
+		Name:            task.Name,
+		Type:            int32(task.Type),
+		Rank:            int32(task.Rank),
+		Description:     task.Description,
+		TestcaseSuiteId: task.TestcaseSuites,
+	}, nil
 }
 func (s *TaskService) ListTask(ctx context.Context, req *v1.ListTaskRequest) (*v1.ListTaskReply, error) {
 	return &v1.ListTaskReply{}, nil

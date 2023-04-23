@@ -23,7 +23,20 @@ func NewFileService(uc *biz.FileUseCase, logger log.Logger) *FileService {
 }
 
 func (s *FileService) GetOssStsToken(ctx context.Context, req *emptypb.Empty) (*v1.OssStsTokenReply, error) {
-	return &v1.OssStsTokenReply{}, nil
+	stsRes, err := s.uc.GetOssStsToken(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.OssStsTokenReply{
+		AccessKey:     stsRes.AccessKey,
+		AccessSecret:  stsRes.AccessSecret,
+		Expiration:    stsRes.Expiration,
+		SecurityToken: stsRes.SecurityToken,
+		Endpoint:      stsRes.EndPoint,
+		BucketName:    stsRes.BucketName,
+		Region:        stsRes.Region,
+		Url:           stsRes.Url,
+	}, nil
 }
 
 func (s *FileService) UploadFile(ctx context.Context, req *v1.UploadFileRequest) (*v1.UploadFileReply, error) {

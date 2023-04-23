@@ -109,7 +109,7 @@ var reasonCodeAll = map[string]int{
 	ReasonParamsError:    40000,
 	ReasonMissingParams:  10001,
 	ReasonMissingId:      10002,
-	ReasonRecordNotFound: 10003,
+	ReasonRecordNotFound: 40004,
 	TimeFormatError:      10004,
 
 	ReasonAdministratorNotFound:      20001,

@@ -28,7 +28,12 @@ service Testcase {
     };
   };
   rpc ListTestcase (ListTestcaseRequest) returns (ListTestcaseReply);
+  rpc UploadTestcaseFile (UploadTestcaseRequest) returns (UploadTestcaseReply);
 }
+
+message UploadTestcaseRequest {};
+
+message UploadTestcaseReply {};
 
 message CreateTestcaseRequest {
   string name = 1;

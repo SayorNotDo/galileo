@@ -15,21 +15,21 @@ service Task {
       body: "*"
     };
   };
-  rpc UpdateTask (UpdateTaskRequest) returns (UpdateTaskReply);
-  rpc UpdateTaskStatus (UpdateTaskStatusRequest) returns (UpdateTaskStatusReply){
+  rpc UpdateTask (UpdateTaskRequest) returns (UpdateTaskReply){
     option(google.api.http) = {
-      put: "v1/api/management/task/status"
+      put: "v1/api/management/task"
       body: "*"
     };
   };
   rpc DeleteTask (DeleteTaskRequest) returns (DeleteTaskReply);
-  rpc GetTask (GetTaskRequest) returns (GetTaskReply);
+  rpc TaskByID (TaskByIDRequest) returns (GetTaskReply){
+    option(google.api.http) = {
+      get: "v1/api/management/task/{id}"
+    };
+  };
   rpc ListTask (ListTaskRequest) returns (ListTaskReply);
 }
 
-message UpdateTaskRequest {};
-
-message UpdateTaskReply {};
 
 message CreateTaskRequest {
   string name = 1;
@@ -55,19 +55,27 @@ message CreateTaskReply {
   int64 createdAt = 3;
 }
 
-message UpdateTaskStatusRequest {
+message UpdateTaskRequest {
   int64 id = 1;
   taskStatus status = 2;
 }
-message UpdateTaskStatusReply {
+message UpdateTaskReply {
   bool success = 1;
 }
 
 message DeleteTaskRequest {}
 message DeleteTaskReply {}
 
-message GetTaskRequest {}
-message GetTaskReply {}
+message TaskByIDRequest {
+  int64 id = 1;
+}
+message GetTaskReply {
+  string name = 1;
+  int32 rank = 2;
+  int32 type = 3;
+  string description = 4;
+  repeated int64 testcaseSuiteId = 5;
+}
 
 message ListTaskRequest {}
 message ListTaskReply {}
