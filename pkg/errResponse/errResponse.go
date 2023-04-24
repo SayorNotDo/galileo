@@ -90,7 +90,7 @@ var reasonMessageAll = map[string]string{
 	ReasonAuthorizationApiExist:    "API已存在",
 
 	ReasonFileNameMissing:   "文件名称不得为空",
-	ReasonFileMissing:       "文件不得为空",
+	ReasonFileMissing:       "upload file is missing",
 	ReasonFileOverLimitSize: "文件超过最大限制",
 
 	ReasonOssConfigWrong:   "OSS配置错误",

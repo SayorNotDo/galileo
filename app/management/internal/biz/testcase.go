@@ -27,6 +27,7 @@ type TestcaseRepo interface {
 	UpdateTestcase(ctx context.Context, testcase *Testcase) (bool, error)
 	TestcaseById(ctx context.Context, id int64) (*Testcase, error)
 	TestcaseByName(ctx context.Context, name string) (*Testcase, error)
+	UploadTestcaseFile(ctx context.Context, fileName string, fileType string, content []byte) (string, error)
 }
 
 type TestcaseUseCase struct {
@@ -55,4 +56,8 @@ func (uc *TestcaseUseCase) TestcaseById(ctx context.Context, id int64) (*Testcas
 
 func (uc *TestcaseUseCase) TestcaseByName(ctx context.Context, name string) (*Testcase, error) {
 	return uc.repo.TestcaseByName(ctx, name)
+}
+
+func (uc *TestcaseUseCase) UploadTestcaseFile(ctx context.Context, fileName string, fileType string, content []byte) (string, error) {
+	return uc.repo.UploadTestcaseFile(ctx, fileName, fileType, content)
 }

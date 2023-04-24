@@ -1,11 +1,14 @@
 package data
 
 import (
+	"bytes"
 	"context"
 	"galileo/pkg/errResponse"
 	sts "github.com/alibabacloud-go/sts-20150401/client"
 	"github.com/alibabacloud-go/tea/tea"
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/go-kratos/kratos/v2/errors"
+	"strings"
 
 	"galileo/app/file/internal/biz"
 	openapi "github.com/alibabacloud-go/darabonba-openapi/client"
@@ -28,7 +31,22 @@ func NewFileRepo(data *Data, logger log.Logger) biz.FileRepo {
 }
 
 func (r *fileRepo) UploadFile(ctx context.Context, fileName string, fileType string, content []byte) (string, error) {
-	return "", nil
+	client, err := oss.New(r.data.config.Oss.Endpoint, r.data.config.Oss.AccessKey, r.data.config.Oss.AccessSecret)
+	if err != nil {
+		return "", errResponse.SetErrByReason(errResponse.ReasonOssConfigWrong)
+	}
+
+	bucket, err := client.Bucket(r.data.config.Oss.BucketName)
+	if err != nil {
+		return "", errResponse.SetErrByReason(errResponse.ReasonOssConfigWrong)
+	}
+	path := "uploadFile/" + strings.Trim(fileType, ".") + "/" + fileName + fileType
+	err = bucket.PutObject(path, bytes.NewReader(content))
+	if err != nil {
+		return "", errResponse.SetErrByReason(errResponse.ReasonOssPutObjectFail)
+	}
+	url := "https://" + r.data.config.Oss.BucketName + "." + r.data.config.Oss.Endpoint + "/" + path
+	return url, nil
 }
 
 func (r *fileRepo) GetOssStsToken(ctx context.Context) (*biz.OssStsToken, error) {

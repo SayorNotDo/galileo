@@ -5,6 +5,7 @@ import (
 	"galileo/app/file/internal/conf"
 	"galileo/pkg/utils/bootstrap"
 	"github.com/go-kratos/kratos/v2/encoding/json"
+	"github.com/go-kratos/kratos/v2/registry"
 	"google.golang.org/protobuf/encoding/protojson"
 
 	"github.com/go-kratos/kratos/v2"
@@ -16,8 +17,8 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	Service = bootstrap.NewServiceInfo(
-		"galileo.file.api",
-		"0.0.0",
+		"galileo.file.service",
+		"file.v1",
 		"")
 
 	// Flags is the config flag.
@@ -53,7 +54,7 @@ func loadConfig() (*conf.Bootstrap, *conf.Registry) {
 	return &bc, &rc
 }
 
-func newApp(logger log.Logger, gs *grpc.Server) *kratos.App {
+func newApp(logger log.Logger, gs *grpc.Server, rr registry.Registrar) *kratos.App {
 	return kratos.New(
 		kratos.ID(Service.GetInstanceId()),
 		kratos.Name(Service.Name),
@@ -63,6 +64,7 @@ func newApp(logger log.Logger, gs *grpc.Server) *kratos.App {
 		kratos.Server(
 			gs,
 		),
+		kratos.Registrar(rr),
 	)
 }
 
@@ -82,7 +84,7 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := wireApp(bc.Server, bc.Auth, bc.Data, bc.Service, rc, logger)
+	app, cleanup, err := wireApp(bc.Server, bc.Data, rc, logger)
 	if err != nil {
 		panic(err)
 	}

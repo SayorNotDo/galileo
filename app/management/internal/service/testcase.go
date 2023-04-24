@@ -1,13 +1,17 @@
 package service
 
 import (
+	"bytes"
 	"context"
-	"errors"
 	pb "galileo/api/management/testcase/v1"
 	"galileo/app/management/internal/biz"
 	"galileo/pkg/ctxdata"
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/transport/http"
+	"io"
+	"mime/multipart"
+	"path"
 )
 
 type TestcaseService struct {
@@ -26,7 +30,7 @@ func NewTestcaseService(uc *biz.TestcaseUseCase, logger log.Logger) *TestcaseSer
 
 func NewTestcase(name string, caseType int8, priority int8, description string, url string) (biz.Testcase, error) {
 	if len(name) <= 0 {
-		return biz.Testcase{}, errors.New("testcase name must not be empty")
+		return biz.Testcase{}, SetCustomizeErrMsg(ReasonParamsError, "testcase name must not be empty")
 	}
 	return biz.Testcase{
 		Name:        name,
@@ -37,8 +41,35 @@ func NewTestcase(name string, caseType int8, priority int8, description string, 
 	}, nil
 }
 
-func (s *TestcaseService) UploadTestcaseFile(ctx context.Context, req *pb.UpdateTestcaseRequest) (*pb.UpdateTestcaseReply, error) {
-	return &pb.UpdateTestcaseReply{}, nil
+func (s *TestcaseService) UploadTestcaseFile(ctx http.Context) (err error) {
+	fileName := ctx.Request().FormValue("fileName")
+	file, fileHeader, _ := ctx.Request().FormFile("file")
+	if fileName == "" {
+		return SetCustomizeErrInfoByReason(ReasonFileMissing)
+	}
+	if file == nil {
+		return SetCustomizeErrInfoByReason(ReasonFileMissing)
+	}
+	defer func(file multipart.File) {
+		err := file.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(file)
+	if fileHeader.Size > 1024*1024*5 {
+		return SetCustomizeErrInfoByReason(ReasonFileOverLimitSize)
+	}
+	buf := bytes.NewBuffer(nil)
+	if _, err := io.Copy(buf, file); err != nil {
+		return err
+	}
+	log.Debug("--------------------------------\n")
+	url, err := s.uc.UploadTestcaseFile(ctx, fileName, path.Ext(fileHeader.Filename), buf.Bytes())
+	if err != nil {
+		return SetCustomizeErrMsg(ReasonSystemError, err.Error())
+	}
+	log.Debug("--------------------------------\n")
+	return ctx.Result(20000, url)
 }
 
 func (s *TestcaseService) CreateTestcase(ctx context.Context, req *pb.CreateTestcaseRequest) (*pb.CreateTestcaseReply, error) {

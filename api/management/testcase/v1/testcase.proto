@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 
 package api.management.testcase;
 
@@ -28,12 +29,13 @@ service Testcase {
     };
   };
   rpc ListTestcase (ListTestcaseRequest) returns (ListTestcaseReply);
-  rpc UploadTestcaseFile (UploadTestcaseRequest) returns (UploadTestcaseReply);
+  rpc UploadTestcaseFile (google.protobuf.Empty) returns (UploadTestcaseReply) {};
 }
 
-message UploadTestcaseRequest {};
 
-message UploadTestcaseReply {};
+message UploadTestcaseReply {
+  string url = 1;
+};
 
 message CreateTestcaseRequest {
   string name = 1;

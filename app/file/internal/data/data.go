@@ -23,7 +23,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewFileRepo, NewEntDB, NewRedis, NewRegistrar, NewDiscovery, NewOssClient)
+var ProviderSet = wire.NewSet(NewData, NewFileRepo, NewEntDB, NewRedis, NewDiscovery, NewOssClient)
 
 var RedisCli redis.Cmdable
 
@@ -105,18 +105,6 @@ func NewRedis(conf *conf.Data, logger log.Logger) redis.Cmdable {
 	}
 	RedisCli = rdb
 	return rdb
-}
-
-func NewRegistrar(conf *conf.Registry) registry.Registrar {
-	c := consulAPI.DefaultConfig()
-	c.Address = conf.Consul.Address
-	c.Scheme = conf.Consul.Scheme
-	cli, err := consulAPI.NewClient(c)
-	if err != nil {
-		panic(err)
-	}
-	r := consul.New(cli, consul.WithHealthCheck(false))
-	return r
 }
 
 func NewDiscovery(conf *conf.Registry) registry.Discovery {

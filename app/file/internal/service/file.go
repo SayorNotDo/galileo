@@ -44,13 +44,7 @@ func (s *FileService) UploadFile(ctx context.Context, req *v1.UploadFileRequest)
 	if err != nil {
 		return nil, err
 	}
-	response := &v1.UploadFileReply{}
-	response.Url = url
-	return response, nil
-}
-
-func (s *FileService) UpdateFile(ctx context.Context, req *v1.UpdateFileRequest) (*v1.UpdateFileReply, error) {
-	return &v1.UpdateFileReply{}, nil
+	return &v1.UploadFileReply{Url: url}, nil
 }
 
 func (s *FileService) DeleteFile(ctx context.Context, req *v1.DeleteFileRequest) (*v1.DeleteFileReply, error) {

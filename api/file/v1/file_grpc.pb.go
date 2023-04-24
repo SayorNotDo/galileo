@@ -22,7 +22,6 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	File_GetOssStsToken_FullMethodName = "/api.file.v1.File/GetOssStsToken"
 	File_UploadFile_FullMethodName     = "/api.file.v1.File/UploadFile"
-	File_UpdateFile_FullMethodName     = "/api.file.v1.File/UpdateFile"
 	File_DeleteFile_FullMethodName     = "/api.file.v1.File/DeleteFile"
 	File_DownloadFile_FullMethodName   = "/api.file.v1.File/DownloadFile"
 )
@@ -33,7 +32,6 @@ const (
 type FileClient interface {
 	GetOssStsToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*OssStsTokenReply, error)
 	UploadFile(ctx context.Context, in *UploadFileRequest, opts ...grpc.CallOption) (*UploadFileReply, error)
-	UpdateFile(ctx context.Context, in *UpdateFileRequest, opts ...grpc.CallOption) (*UpdateFileReply, error)
 	DeleteFile(ctx context.Context, in *DeleteFileRequest, opts ...grpc.CallOption) (*DeleteFileReply, error)
 	DownloadFile(ctx context.Context, in *DownloadFileRequest, opts ...grpc.CallOption) (*DownloadFileReply, error)
 }
@@ -64,15 +62,6 @@ func (c *fileClient) UploadFile(ctx context.Context, in *UploadFileRequest, opts
 	return out, nil
 }
 
-func (c *fileClient) UpdateFile(ctx context.Context, in *UpdateFileRequest, opts ...grpc.CallOption) (*UpdateFileReply, error) {
-	out := new(UpdateFileReply)
-	err := c.cc.Invoke(ctx, File_UpdateFile_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *fileClient) DeleteFile(ctx context.Context, in *DeleteFileRequest, opts ...grpc.CallOption) (*DeleteFileReply, error) {
 	out := new(DeleteFileReply)
 	err := c.cc.Invoke(ctx, File_DeleteFile_FullMethodName, in, out, opts...)
@@ -97,7 +86,6 @@ func (c *fileClient) DownloadFile(ctx context.Context, in *DownloadFileRequest, 
 type FileServer interface {
 	GetOssStsToken(context.Context, *emptypb.Empty) (*OssStsTokenReply, error)
 	UploadFile(context.Context, *UploadFileRequest) (*UploadFileReply, error)
-	UpdateFile(context.Context, *UpdateFileRequest) (*UpdateFileReply, error)
 	DeleteFile(context.Context, *DeleteFileRequest) (*DeleteFileReply, error)
 	DownloadFile(context.Context, *DownloadFileRequest) (*DownloadFileReply, error)
 	mustEmbedUnimplementedFileServer()
@@ -112,9 +100,6 @@ func (UnimplementedFileServer) GetOssStsToken(context.Context, *emptypb.Empty) (
 }
 func (UnimplementedFileServer) UploadFile(context.Context, *UploadFileRequest) (*UploadFileReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
-}
-func (UnimplementedFileServer) UpdateFile(context.Context, *UpdateFileRequest) (*UpdateFileReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateFile not implemented")
 }
 func (UnimplementedFileServer) DeleteFile(context.Context, *DeleteFileRequest) (*DeleteFileReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFile not implemented")
@@ -171,24 +156,6 @@ func _File_UploadFile_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _File_UpdateFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateFileRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FileServer).UpdateFile(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: File_UpdateFile_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileServer).UpdateFile(ctx, req.(*UpdateFileRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _File_DeleteFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteFileRequest)
 	if err := dec(in); err != nil {
@@ -239,10 +206,6 @@ var File_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UploadFile",
 			Handler:    _File_UploadFile_Handler,
-		},
-		{
-			MethodName: "UpdateFile",
-			Handler:    _File_UpdateFile_Handler,
 		},
 		{
 			MethodName: "DeleteFile",

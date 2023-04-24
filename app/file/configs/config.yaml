@@ -1,10 +1,10 @@
 name: file.api
 server:
   http:
-    addr: 0.0.0.0:8888
+    addr: 0.0.0.0:6018
     timeout: 1s
   grpc:
-    addr: 0.0.0.0:8888
+    addr: 0.0.0.0:60018
     timeout: 1s
 data:
   database:

@@ -20,9 +20,5 @@ trace:
 auth:
   jwt_key: hqFr%3ddt32DGlSTOI5cO6@TH#fFwYnP$S
 service:
-  project:
-    endpoint: discovery:///management.project.service
-  task:
-    endpoint: discovery:///management.task.service
   file:
-    endpoint: discovery:///file.service
+    endpoint: discovery:///galileo.file.service

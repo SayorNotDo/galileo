@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	fileService "galileo/api/file/v1"
 	"galileo/app/management/internal/biz"
 	"galileo/ent/testcase"
 	"github.com/go-kratos/kratos/v2/log"
@@ -87,4 +88,15 @@ func (r *testcaseRepo) TestcaseByName(ctx context.Context, name string) (*biz.Te
 		Priority:  queryTestcase.Priority,
 		Url:       queryTestcase.URL,
 	}, nil
+}
+
+func (r *testcaseRepo) UploadTestcaseFile(ctx context.Context, fileName, fileType string, content []byte) (string, error) {
+	res, err := r.data.fileCli.UploadFile(ctx, &fileService.UploadFileRequest{
+		Name:    fileName,
+		Type:    fileType,
+		Content: content})
+	if err != nil {
+		return "", err
+	}
+	return res.Url, nil
 }

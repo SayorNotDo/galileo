@@ -47,10 +47,10 @@ message Data {
 }
 
 message Service {
-  message Project {
+  message File {
     string endpoint = 1;
   }
-  Project project = 1;
+  File file = 2;
 }
 
 message Trace {

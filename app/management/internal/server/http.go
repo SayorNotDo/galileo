@@ -70,6 +70,8 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, project *service.ProjectServic
 	// add error custom json response
 	opts = append(opts, http.ErrorEncoder(responseEncoder.ErrorEncoder))
 	srv := http.NewServer(opts...)
+	route := srv.Route("/")
+	route.POST("v1/api/file/testcase/upload", testcase.UploadTestcaseFile)
 	taskV1.RegisterTaskHTTPServer(srv, task)
 	projectV1.RegisterProjectHTTPServer(srv, project)
 	testCaseV1.RegisterTestcaseHTTPServer(srv, testcase)

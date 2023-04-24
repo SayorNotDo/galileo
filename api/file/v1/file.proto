@@ -10,7 +10,6 @@ option java_package = "api.file.v1";
 service File {
   rpc GetOssStsToken (google.protobuf.Empty) returns (OssStsTokenReply);
   rpc UploadFile (UploadFileRequest) returns (UploadFileReply);
-  rpc UpdateFile (UpdateFileRequest) returns (UpdateFileReply);
   rpc DeleteFile (DeleteFileRequest) returns (DeleteFileReply);
   rpc DownloadFile (DownloadFileRequest) returns (DownloadFileReply);
 }

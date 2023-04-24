@@ -5,10 +5,15 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"fmt"
+	fileV1 "galileo/api/file/v1"
 	"galileo/app/management/internal/conf"
 	"galileo/ent"
-	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
+	consul "github.com/go-kratos/kratos/contrib/registry/consul/v2"
+	"github.com/go-kratos/kratos/v2/middleware/metadata"
+	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-redis/redis/extra/redisotel"
 	"github.com/go-redis/redis/v8"
 	_ "github.com/go-sql-driver/mysql"
@@ -16,6 +21,7 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
+	grpcx "google.golang.org/grpc"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -23,25 +29,33 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewEntDB, NewRedis, NewProjectRepo, NewTaskRepo, NewTestCaseRepo, NewRegistrar, NewDiscovery)
+var ProviderSet = wire.NewSet(NewData,
+	NewEntDB,
+	NewRedis,
+	NewProjectRepo,
+	NewTaskRepo,
+	NewTestCaseRepo,
+	NewRegistrar,
+	NewDiscovery,
+	NewFileServiceClient)
 
 var RedisCli redis.Cmdable
 
 // Data .
 type Data struct {
-	// TODO wrapped database client
+	fileCli  fileV1.FileClient
 	entDB    *ent.Client
 	log      *log.Helper
 	redisCli redis.Cmdable
 }
 
 // NewData .
-func NewData(c *conf.Data, db *ent.Client, logger log.Logger, redisCli redis.Cmdable) (*Data, func(), error) {
+func NewData(c *conf.Data, db *ent.Client, logger log.Logger, redisCli redis.Cmdable, fc fileV1.FileClient) (*Data, func(), error) {
 	l := log.NewHelper(log.With(logger, "module", "management.DataService"))
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
 	}
-	return &Data{entDB: db, log: l, redisCli: redisCli}, cleanup, nil
+	return &Data{entDB: db, log: l, redisCli: redisCli, fileCli: fc}, cleanup, nil
 }
 
 func NewRegistrar(conf *conf.Registry) registry.Registrar {
@@ -118,4 +132,24 @@ func NewRedis(conf *conf.Data, logger log.Logger) redis.Cmdable {
 	}
 	RedisCli = rdb
 	return rdb
+}
+
+func NewFileServiceClient(sr *conf.Service, rr registry.Discovery) fileV1.FileClient {
+	conn, err := grpc.DialInsecure(
+		context.Background(),
+		grpc.WithEndpoint(sr.File.Endpoint),
+		grpc.WithDiscovery(rr),
+		grpc.WithMiddleware(
+			tracing.Client(),
+			recovery.Recovery(),
+			metadata.Client(),
+		),
+		grpc.WithTimeout(2*time.Second),
+		grpc.WithOptions(grpcx.WithStatsHandler(&tracing.ClientHandler{})),
+	)
+	if err != nil {
+		panic(err)
+	}
+	c := fileV1.NewFileClient(conn)
+	return c
 }

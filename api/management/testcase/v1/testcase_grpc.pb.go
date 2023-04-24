@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -36,7 +37,7 @@ type TestcaseClient interface {
 	DeleteTestcase(ctx context.Context, in *DeleteTestcaseRequest, opts ...grpc.CallOption) (*DeleteTestcaseReply, error)
 	GetTestcaseById(ctx context.Context, in *GetTestcaseRequest, opts ...grpc.CallOption) (*GetTestcaseReply, error)
 	ListTestcase(ctx context.Context, in *ListTestcaseRequest, opts ...grpc.CallOption) (*ListTestcaseReply, error)
-	UploadTestcaseFile(ctx context.Context, in *UploadTestcaseRequest, opts ...grpc.CallOption) (*UploadTestcaseReply, error)
+	UploadTestcaseFile(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UploadTestcaseReply, error)
 }
 
 type testcaseClient struct {
@@ -92,7 +93,7 @@ func (c *testcaseClient) ListTestcase(ctx context.Context, in *ListTestcaseReque
 	return out, nil
 }
 
-func (c *testcaseClient) UploadTestcaseFile(ctx context.Context, in *UploadTestcaseRequest, opts ...grpc.CallOption) (*UploadTestcaseReply, error) {
+func (c *testcaseClient) UploadTestcaseFile(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UploadTestcaseReply, error) {
 	out := new(UploadTestcaseReply)
 	err := c.cc.Invoke(ctx, Testcase_UploadTestcaseFile_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -110,7 +111,7 @@ type TestcaseServer interface {
 	DeleteTestcase(context.Context, *DeleteTestcaseRequest) (*DeleteTestcaseReply, error)
 	GetTestcaseById(context.Context, *GetTestcaseRequest) (*GetTestcaseReply, error)
 	ListTestcase(context.Context, *ListTestcaseRequest) (*ListTestcaseReply, error)
-	UploadTestcaseFile(context.Context, *UploadTestcaseRequest) (*UploadTestcaseReply, error)
+	UploadTestcaseFile(context.Context, *emptypb.Empty) (*UploadTestcaseReply, error)
 	mustEmbedUnimplementedTestcaseServer()
 }
 
@@ -133,7 +134,7 @@ func (UnimplementedTestcaseServer) GetTestcaseById(context.Context, *GetTestcase
 func (UnimplementedTestcaseServer) ListTestcase(context.Context, *ListTestcaseRequest) (*ListTestcaseReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTestcase not implemented")
 }
-func (UnimplementedTestcaseServer) UploadTestcaseFile(context.Context, *UploadTestcaseRequest) (*UploadTestcaseReply, error) {
+func (UnimplementedTestcaseServer) UploadTestcaseFile(context.Context, *emptypb.Empty) (*UploadTestcaseReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadTestcaseFile not implemented")
 }
 func (UnimplementedTestcaseServer) mustEmbedUnimplementedTestcaseServer() {}
@@ -240,7 +241,7 @@ func _Testcase_ListTestcase_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _Testcase_UploadTestcaseFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UploadTestcaseRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -252,7 +253,7 @@ func _Testcase_UploadTestcaseFile_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: Testcase_UploadTestcaseFile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TestcaseServer).UploadTestcaseFile(ctx, req.(*UploadTestcaseRequest))
+		return srv.(TestcaseServer).UploadTestcaseFile(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
