@@ -15,6 +15,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/metadata"
+	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/http"
@@ -30,6 +31,7 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, s *service.CoreService, logger
 		http.Middleware(
 			// logging record
 			logging.Server(logger),
+			recovery.Recovery(),
 			selector.Server(
 				// set header information
 				setHeaderInfo(),

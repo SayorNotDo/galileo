@@ -20,6 +20,7 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationEngineBuildContainer = "/api.engine.v1.Engine/BuildContainer"
 const OperationEngineCancelJob = "/api.engine.v1.Engine/CancelJob"
 const OperationEngineCronJob = "/api.engine.v1.Engine/CronJob"
 const OperationEngineDeleteJob = "/api.engine.v1.Engine/DeleteJob"
@@ -29,6 +30,7 @@ const OperationEngineRunJob = "/api.engine.v1.Engine/RunJob"
 const OperationEngineTestEngine = "/api.engine.v1.Engine/TestEngine"
 
 type EngineHTTPServer interface {
+	BuildContainer(context.Context, *emptypb.Empty) (*BuildContainerReply, error)
 	CancelJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	CronJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	DeleteJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
@@ -47,6 +49,7 @@ func RegisterEngineHTTPServer(s *http.Server, srv EngineHTTPServer) {
 	r.PUT("v1/api/engine/job/resume", _Engine_ResumeJob0_HTTP_Handler(srv))
 	r.DELETE("v1/api/engine/job/delete", _Engine_DeleteJob0_HTTP_Handler(srv))
 	r.POST("v1/api/engine/cronJob", _Engine_CronJob0_HTTP_Handler(srv))
+	r.POST("v1/api/engine/container/build", _Engine_BuildContainer0_HTTP_Handler(srv))
 }
 
 func _Engine_TestEngine0_HTTP_Handler(srv EngineHTTPServer) func(ctx http.Context) error {
@@ -182,7 +185,27 @@ func _Engine_CronJob0_HTTP_Handler(srv EngineHTTPServer) func(ctx http.Context) 
 	}
 }
 
+func _Engine_BuildContainer0_HTTP_Handler(srv EngineHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationEngineBuildContainer)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.BuildContainer(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*BuildContainerReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type EngineHTTPClient interface {
+	BuildContainer(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *BuildContainerReply, err error)
 	CancelJob(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	CronJob(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	DeleteJob(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
@@ -198,6 +221,19 @@ type EngineHTTPClientImpl struct {
 
 func NewEngineHTTPClient(client *http.Client) EngineHTTPClient {
 	return &EngineHTTPClientImpl{client}
+}
+
+func (c *EngineHTTPClientImpl) BuildContainer(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*BuildContainerReply, error) {
+	var out BuildContainerReply
+	pattern := "v1/api/engine/container/build"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationEngineBuildContainer))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
 }
 
 func (c *EngineHTTPClientImpl) CancelJob(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*emptypb.Empty, error) {

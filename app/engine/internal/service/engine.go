@@ -7,6 +7,7 @@ import (
 	"galileo/app/engine/internal/biz"
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/golang/protobuf/ptypes/empty"
 )
 
 type EngineService struct {
@@ -14,6 +15,13 @@ type EngineService struct {
 
 	uc  *biz.EngineUseCase
 	log *log.Helper
+}
+
+func NewEngineService(uc *biz.EngineUseCase, logger log.Logger) *EngineService {
+	return &EngineService{
+		uc:  uc,
+		log: log.NewHelper(log.With(logger, "module", "engine.Service")),
+	}
 }
 
 func (s *EngineService) RunJob(ctx context.Context, req *pb.RunJobRequest) (*pb.RunJobReply, error) {
@@ -36,5 +44,17 @@ func (s *EngineService) RunJob(ctx context.Context, req *pb.RunJobRequest) (*pb.
 	// TODO: return response
 	return &pb.RunJobReply{
 		Success: true,
+	}, nil
+}
+
+func (s *EngineService) BuildContainer(ctx context.Context, req *empty.Empty) (*pb.BuildContainerReply, error) {
+	container, err := s.uc.BuildContainer(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.BuildContainerReply{
+		Id:    container.Id,
+		Name:  container.Name,
+		Image: container.Image,
 	}, nil
 }

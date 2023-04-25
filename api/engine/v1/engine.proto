@@ -52,6 +52,18 @@ service Engine {
       body: "*"
     };
   }
+  rpc BuildContainer(google.protobuf.Empty) returns (BuildContainerReply){
+    option(google.api.http) = {
+      post: "v1/api/engine/container/build"
+      body: "*"
+    };
+  }
+}
+
+message BuildContainerReply {
+  string id = 1;
+  string name = 2;
+  string image = 3;
 }
 
 message RunJobRequest {

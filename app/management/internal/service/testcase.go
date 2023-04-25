@@ -63,12 +63,10 @@ func (s *TestcaseService) UploadTestcaseFile(ctx http.Context) (err error) {
 	if _, err := io.Copy(buf, file); err != nil {
 		return err
 	}
-	log.Debug("--------------------------------\n")
 	url, err := s.uc.UploadTestcaseFile(ctx, fileName, path.Ext(fileHeader.Filename), buf.Bytes())
 	if err != nil {
 		return SetCustomizeErrMsg(ReasonSystemError, err.Error())
 	}
-	log.Debug("--------------------------------\n")
 	return ctx.Result(20000, url)
 }
 
@@ -108,6 +106,7 @@ func (s *TestcaseService) UpdateTestcase(ctx context.Context, req *pb.UpdateTest
 		Success: ok,
 	}, nil
 }
+
 func (s *TestcaseService) DeleteTestcase(ctx context.Context, req *pb.DeleteTestcaseRequest) (*pb.DeleteTestcaseReply, error) {
 	return &pb.DeleteTestcaseReply{}, nil
 }
@@ -133,4 +132,12 @@ func (s *TestcaseService) GetTestcaseById(ctx context.Context, req *pb.GetTestca
 
 func (s *TestcaseService) ListTestcase(ctx context.Context, req *pb.ListTestcaseRequest) (*pb.ListTestcaseReply, error) {
 	return &pb.ListTestcaseReply{}, nil
+}
+
+func (s *TestcaseService) LoadFramework(ctx context.Context, req *pb.LoadFrameworkRequest) (*pb.LoadFrameworkReply, error) {
+	fpath, lang, config := req.Path, req.Lang, req.Config
+	log.Debugf("LoadFrameWork request path: %s, lang: %d, config: %s", fpath, lang, string(config))
+	// run docker return container-id
+	// initialize container based on request param: config & language
+	return &pb.LoadFrameworkReply{Success: true, Worker: "docker-container-id"}, nil
 }

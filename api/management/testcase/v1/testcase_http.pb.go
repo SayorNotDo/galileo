@@ -20,12 +20,16 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationTestcaseCreateTestcase = "/api.management.testcase.Testcase/CreateTestcase"
+const OperationTestcaseDebugTestcase = "/api.management.testcase.Testcase/DebugTestcase"
 const OperationTestcaseGetTestcaseById = "/api.management.testcase.Testcase/GetTestcaseById"
+const OperationTestcaseLoadFramework = "/api.management.testcase.Testcase/LoadFramework"
 const OperationTestcaseUpdateTestcase = "/api.management.testcase.Testcase/UpdateTestcase"
 
 type TestcaseHTTPServer interface {
 	CreateTestcase(context.Context, *CreateTestcaseRequest) (*CreateTestcaseReply, error)
+	DebugTestcase(context.Context, *DebugTestcaseRequest) (*DebugTestcaseReply, error)
 	GetTestcaseById(context.Context, *GetTestcaseRequest) (*GetTestcaseReply, error)
+	LoadFramework(context.Context, *LoadFrameworkRequest) (*LoadFrameworkReply, error)
 	UpdateTestcase(context.Context, *UpdateTestcaseRequest) (*UpdateTestcaseReply, error)
 }
 
@@ -34,6 +38,8 @@ func RegisterTestcaseHTTPServer(s *http.Server, srv TestcaseHTTPServer) {
 	r.POST("v1/api/testcase", _Testcase_CreateTestcase0_HTTP_Handler(srv))
 	r.PUT("v1/api/testcase", _Testcase_UpdateTestcase0_HTTP_Handler(srv))
 	r.GET("v1/api/testcase/{id}", _Testcase_GetTestcaseById0_HTTP_Handler(srv))
+	r.POST("v1/api/testcase/debug", _Testcase_DebugTestcase0_HTTP_Handler(srv))
+	r.POST("v1/api/testcase/loadFramework", _Testcase_LoadFramework0_HTTP_Handler(srv))
 }
 
 func _Testcase_CreateTestcase0_HTTP_Handler(srv TestcaseHTTPServer) func(ctx http.Context) error {
@@ -96,9 +102,49 @@ func _Testcase_GetTestcaseById0_HTTP_Handler(srv TestcaseHTTPServer) func(ctx ht
 	}
 }
 
+func _Testcase_DebugTestcase0_HTTP_Handler(srv TestcaseHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DebugTestcaseRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTestcaseDebugTestcase)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DebugTestcase(ctx, req.(*DebugTestcaseRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*DebugTestcaseReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Testcase_LoadFramework0_HTTP_Handler(srv TestcaseHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in LoadFrameworkRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTestcaseLoadFramework)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.LoadFramework(ctx, req.(*LoadFrameworkRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*LoadFrameworkReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type TestcaseHTTPClient interface {
 	CreateTestcase(ctx context.Context, req *CreateTestcaseRequest, opts ...http.CallOption) (rsp *CreateTestcaseReply, err error)
+	DebugTestcase(ctx context.Context, req *DebugTestcaseRequest, opts ...http.CallOption) (rsp *DebugTestcaseReply, err error)
 	GetTestcaseById(ctx context.Context, req *GetTestcaseRequest, opts ...http.CallOption) (rsp *GetTestcaseReply, err error)
+	LoadFramework(ctx context.Context, req *LoadFrameworkRequest, opts ...http.CallOption) (rsp *LoadFrameworkReply, err error)
 	UpdateTestcase(ctx context.Context, req *UpdateTestcaseRequest, opts ...http.CallOption) (rsp *UpdateTestcaseReply, err error)
 }
 
@@ -123,6 +169,19 @@ func (c *TestcaseHTTPClientImpl) CreateTestcase(ctx context.Context, in *CreateT
 	return &out, err
 }
 
+func (c *TestcaseHTTPClientImpl) DebugTestcase(ctx context.Context, in *DebugTestcaseRequest, opts ...http.CallOption) (*DebugTestcaseReply, error) {
+	var out DebugTestcaseReply
+	pattern := "v1/api/testcase/debug"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationTestcaseDebugTestcase))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
 func (c *TestcaseHTTPClientImpl) GetTestcaseById(ctx context.Context, in *GetTestcaseRequest, opts ...http.CallOption) (*GetTestcaseReply, error) {
 	var out GetTestcaseReply
 	pattern := "v1/api/testcase/{id}"
@@ -130,6 +189,19 @@ func (c *TestcaseHTTPClientImpl) GetTestcaseById(ctx context.Context, in *GetTes
 	opts = append(opts, http.Operation(OperationTestcaseGetTestcaseById))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *TestcaseHTTPClientImpl) LoadFramework(ctx context.Context, in *LoadFrameworkRequest, opts ...http.CallOption) (*LoadFrameworkReply, error) {
+	var out LoadFrameworkReply
+	pattern := "v1/api/testcase/loadFramework"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationTestcaseLoadFramework))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

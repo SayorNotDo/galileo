@@ -20,13 +20,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Engine_TestEngine_FullMethodName = "/api.engine.v1.Engine/TestEngine"
-	Engine_RunJob_FullMethodName     = "/api.engine.v1.Engine/RunJob"
-	Engine_CancelJob_FullMethodName  = "/api.engine.v1.Engine/CancelJob"
-	Engine_PauseJob_FullMethodName   = "/api.engine.v1.Engine/PauseJob"
-	Engine_ResumeJob_FullMethodName  = "/api.engine.v1.Engine/ResumeJob"
-	Engine_DeleteJob_FullMethodName  = "/api.engine.v1.Engine/DeleteJob"
-	Engine_CronJob_FullMethodName    = "/api.engine.v1.Engine/CronJob"
+	Engine_TestEngine_FullMethodName     = "/api.engine.v1.Engine/TestEngine"
+	Engine_RunJob_FullMethodName         = "/api.engine.v1.Engine/RunJob"
+	Engine_CancelJob_FullMethodName      = "/api.engine.v1.Engine/CancelJob"
+	Engine_PauseJob_FullMethodName       = "/api.engine.v1.Engine/PauseJob"
+	Engine_ResumeJob_FullMethodName      = "/api.engine.v1.Engine/ResumeJob"
+	Engine_DeleteJob_FullMethodName      = "/api.engine.v1.Engine/DeleteJob"
+	Engine_CronJob_FullMethodName        = "/api.engine.v1.Engine/CronJob"
+	Engine_BuildContainer_FullMethodName = "/api.engine.v1.Engine/BuildContainer"
 )
 
 // EngineClient is the client API for Engine service.
@@ -40,6 +41,7 @@ type EngineClient interface {
 	ResumeJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CronJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	BuildContainer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BuildContainerReply, error)
 }
 
 type engineClient struct {
@@ -113,6 +115,15 @@ func (c *engineClient) CronJob(ctx context.Context, in *emptypb.Empty, opts ...g
 	return out, nil
 }
 
+func (c *engineClient) BuildContainer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BuildContainerReply, error) {
+	out := new(BuildContainerReply)
+	err := c.cc.Invoke(ctx, Engine_BuildContainer_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EngineServer is the server API for Engine service.
 // All implementations must embed UnimplementedEngineServer
 // for forward compatibility
@@ -124,6 +135,7 @@ type EngineServer interface {
 	ResumeJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	DeleteJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	CronJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	BuildContainer(context.Context, *emptypb.Empty) (*BuildContainerReply, error)
 	mustEmbedUnimplementedEngineServer()
 }
 
@@ -151,6 +163,9 @@ func (UnimplementedEngineServer) DeleteJob(context.Context, *emptypb.Empty) (*em
 }
 func (UnimplementedEngineServer) CronJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CronJob not implemented")
+}
+func (UnimplementedEngineServer) BuildContainer(context.Context, *emptypb.Empty) (*BuildContainerReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BuildContainer not implemented")
 }
 func (UnimplementedEngineServer) mustEmbedUnimplementedEngineServer() {}
 
@@ -291,6 +306,24 @@ func _Engine_CronJob_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Engine_BuildContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServer).BuildContainer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Engine_BuildContainer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServer).BuildContainer(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Engine_ServiceDesc is the grpc.ServiceDesc for Engine service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -325,6 +358,10 @@ var Engine_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CronJob",
 			Handler:    _Engine_CronJob_Handler,
+		},
+		{
+			MethodName: "BuildContainer",
+			Handler:    _Engine_BuildContainer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

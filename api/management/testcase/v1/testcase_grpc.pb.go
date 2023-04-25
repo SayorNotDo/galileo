@@ -26,6 +26,8 @@ const (
 	Testcase_GetTestcaseById_FullMethodName    = "/api.management.testcase.Testcase/GetTestcaseById"
 	Testcase_ListTestcase_FullMethodName       = "/api.management.testcase.Testcase/ListTestcase"
 	Testcase_UploadTestcaseFile_FullMethodName = "/api.management.testcase.Testcase/UploadTestcaseFile"
+	Testcase_DebugTestcase_FullMethodName      = "/api.management.testcase.Testcase/DebugTestcase"
+	Testcase_LoadFramework_FullMethodName      = "/api.management.testcase.Testcase/LoadFramework"
 )
 
 // TestcaseClient is the client API for Testcase service.
@@ -38,6 +40,8 @@ type TestcaseClient interface {
 	GetTestcaseById(ctx context.Context, in *GetTestcaseRequest, opts ...grpc.CallOption) (*GetTestcaseReply, error)
 	ListTestcase(ctx context.Context, in *ListTestcaseRequest, opts ...grpc.CallOption) (*ListTestcaseReply, error)
 	UploadTestcaseFile(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UploadTestcaseReply, error)
+	DebugTestcase(ctx context.Context, in *DebugTestcaseRequest, opts ...grpc.CallOption) (*DebugTestcaseReply, error)
+	LoadFramework(ctx context.Context, in *LoadFrameworkRequest, opts ...grpc.CallOption) (*LoadFrameworkReply, error)
 }
 
 type testcaseClient struct {
@@ -102,6 +106,24 @@ func (c *testcaseClient) UploadTestcaseFile(ctx context.Context, in *emptypb.Emp
 	return out, nil
 }
 
+func (c *testcaseClient) DebugTestcase(ctx context.Context, in *DebugTestcaseRequest, opts ...grpc.CallOption) (*DebugTestcaseReply, error) {
+	out := new(DebugTestcaseReply)
+	err := c.cc.Invoke(ctx, Testcase_DebugTestcase_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *testcaseClient) LoadFramework(ctx context.Context, in *LoadFrameworkRequest, opts ...grpc.CallOption) (*LoadFrameworkReply, error) {
+	out := new(LoadFrameworkReply)
+	err := c.cc.Invoke(ctx, Testcase_LoadFramework_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TestcaseServer is the server API for Testcase service.
 // All implementations must embed UnimplementedTestcaseServer
 // for forward compatibility
@@ -112,6 +134,8 @@ type TestcaseServer interface {
 	GetTestcaseById(context.Context, *GetTestcaseRequest) (*GetTestcaseReply, error)
 	ListTestcase(context.Context, *ListTestcaseRequest) (*ListTestcaseReply, error)
 	UploadTestcaseFile(context.Context, *emptypb.Empty) (*UploadTestcaseReply, error)
+	DebugTestcase(context.Context, *DebugTestcaseRequest) (*DebugTestcaseReply, error)
+	LoadFramework(context.Context, *LoadFrameworkRequest) (*LoadFrameworkReply, error)
 	mustEmbedUnimplementedTestcaseServer()
 }
 
@@ -136,6 +160,12 @@ func (UnimplementedTestcaseServer) ListTestcase(context.Context, *ListTestcaseRe
 }
 func (UnimplementedTestcaseServer) UploadTestcaseFile(context.Context, *emptypb.Empty) (*UploadTestcaseReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadTestcaseFile not implemented")
+}
+func (UnimplementedTestcaseServer) DebugTestcase(context.Context, *DebugTestcaseRequest) (*DebugTestcaseReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DebugTestcase not implemented")
+}
+func (UnimplementedTestcaseServer) LoadFramework(context.Context, *LoadFrameworkRequest) (*LoadFrameworkReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoadFramework not implemented")
 }
 func (UnimplementedTestcaseServer) mustEmbedUnimplementedTestcaseServer() {}
 
@@ -258,6 +288,42 @@ func _Testcase_UploadTestcaseFile_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Testcase_DebugTestcase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DebugTestcaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TestcaseServer).DebugTestcase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Testcase_DebugTestcase_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TestcaseServer).DebugTestcase(ctx, req.(*DebugTestcaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Testcase_LoadFramework_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoadFrameworkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TestcaseServer).LoadFramework(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Testcase_LoadFramework_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TestcaseServer).LoadFramework(ctx, req.(*LoadFrameworkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Testcase_ServiceDesc is the grpc.ServiceDesc for Testcase service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -288,6 +354,14 @@ var Testcase_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UploadTestcaseFile",
 			Handler:    _Testcase_UploadTestcaseFile_Handler,
+		},
+		{
+			MethodName: "DebugTestcase",
+			Handler:    _Testcase_DebugTestcase_Handler,
+		},
+		{
+			MethodName: "LoadFramework",
+			Handler:    _Testcase_LoadFramework_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

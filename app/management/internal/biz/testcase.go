@@ -61,3 +61,7 @@ func (uc *TestcaseUseCase) TestcaseByName(ctx context.Context, name string) (*Te
 func (uc *TestcaseUseCase) UploadTestcaseFile(ctx context.Context, fileName string, fileType string, content []byte) (string, error) {
 	return uc.repo.UploadTestcaseFile(ctx, fileName, fileType, content)
 }
+
+func (uc *TestcaseUseCase) LoadFramework(ctx context.Context) {
+	
+}

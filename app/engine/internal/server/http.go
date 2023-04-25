@@ -19,6 +19,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	jwt2 "github.com/golang-jwt/jwt/v4"
+	"github.com/gorilla/handlers"
 	"strings"
 )
 
@@ -42,6 +43,11 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, engine *service.EngineService,
 			).Match(NewWhiteListMatcher()).Build(),
 			metadata.Server(),
 		),
+		http.Filter(handlers.CORS(
+			handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Accept"}),
+			handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "PATCH", "DELETE", "OPTIONS"}),
+			handlers.AllowedOrigins([]string{"*"}),
+		)),
 	}
 	if c.Http.Network != "" {
 		opts = append(opts, http.Network(c.Http.Network))

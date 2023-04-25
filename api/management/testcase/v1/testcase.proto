@@ -29,9 +29,44 @@ service Testcase {
     };
   };
   rpc ListTestcase (ListTestcaseRequest) returns (ListTestcaseReply);
-  rpc UploadTestcaseFile (google.protobuf.Empty) returns (UploadTestcaseReply) {};
+  rpc UploadTestcaseFile (google.protobuf.Empty) returns (UploadTestcaseReply);
+  rpc DebugTestcase (DebugTestcaseRequest) returns (DebugTestcaseReply){
+    option(google.api.http) = {
+      post: "v1/api/testcase/debug"
+      body: "*"
+    };
+  };
+  rpc LoadFramework (LoadFrameworkRequest) returns (LoadFrameworkReply){
+    option(google.api.http) = {
+      post: "v1/api/testcase/loadFramework"
+      body: "*"
+    };
+  };
 }
 
+message LoadFrameworkRequest {
+  string path = 1;
+  enum language{
+    Python = 0;
+    Javascript = 1;
+    Golang = 2;
+  }
+  language lang = 2;
+  bytes config = 3;
+};
+
+message LoadFrameworkReply {
+  bool success = 1;
+  string worker = 2;
+};
+
+message DebugTestcaseRequest {
+  string name = 1;
+  string type = 2;
+  bytes content = 3;
+};
+
+message DebugTestcaseReply {};
 
 message UploadTestcaseReply {
   string url = 1;
