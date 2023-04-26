@@ -19,7 +19,7 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	Service = bootstrap.NewServiceInfo(
-		"galileo.management.api",
+		"galileo.management.service",
 		"0.0.0",
 		"")
 

@@ -22,3 +22,5 @@ auth:
 service:
   file:
     endpoint: discovery:///galileo.file.service
+  engine:
+    endpoint: discovery:///galileo.engine.service

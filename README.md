@@ -1,53 +1,50 @@
-# Galileo (AutoTest & Analysis)
+# 基于go-kratos框架开发的自动化测试与分析：Galileo
 
-# (develop by Kratos Framework from Bilibili.com)
+## 项目初始化
 
-## Install Kratos
-```
-go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
-```
-## Create a service
-```
-# Create a template project
-kratos new server
+    项目初始化基于kratos cli 的官方模版，使用大仓模式（--no mod）开发
 
-cd server
-# Add a proto template
-kratos proto add api/server/server.proto
-# Generate the proto code
-kratos proto client api/server/server.proto
-# Generate the source code of service by proto file
-kratos proto server api/server/server.proto -t internal/service
+## 项目结构
 
-go generate ./...
-go build -o ./bin/ ./...
-./bin/server -conf ./configs
-```
-## Generate other auxiliary files by Makefile
-```
-# Download and update dependencies
-make init
-# Generate API files (include: pb.go, http, grpc, validate, swagger) by proto file
-make api
-# Generate all files
-make all
-```
-## Automated Initialization (wire)
-```
-# install wire
-go get github.com/google/wire/cmd/wire
+```.
+├── api
+│   ├── core
+│   ├── engine
+│   ├── file
+│   ├── management
+│   └── user
+├── app
+│   ├── core
+│   ├── engine
+│   ├── file
+│   ├── management
+│   ├── runner
+│   └── user
+├── database
+├── deploy
+├── docs
+├── ent
+│   ├── enttest
+│   ├── group
+│   ├── hook
+│   ├── migrate
+│   ├── predicate
+│   ├── project
+│   ├── runtime
+│   ├── schema
+│   ├── task
+│   ├── testcase
+│   ├── testcasesuite
+│   └── user
+└── pkg
+    ├── ctxdata
+    ├── encryption
+    ├── errResponse
+    ├── responseEncoder
+    ├── transport
+    └── utils
 
-# generate wire
-cd cmd/server
-wire
-```
-
-## Docker
-```bash
-# build
-docker build -t <your-docker-image-name> .
-
-# run
-docker run --rm -p 8000:8000 -p 9000:9000 -v </path/to/your/configs>:/data/conf <your-docker-image-name>
+36 directories
 ```
 
+    

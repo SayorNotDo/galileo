@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"fmt"
+	engineV1 "galileo/api/engine/v1"
 	fileV1 "galileo/api/file/v1"
 	"galileo/app/management/internal/conf"
 	"galileo/ent"
@@ -29,7 +30,8 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData,
+var ProviderSet = wire.NewSet(
+	NewData,
 	NewEntDB,
 	NewRedis,
 	NewProjectRepo,
@@ -37,7 +39,9 @@ var ProviderSet = wire.NewSet(NewData,
 	NewTestCaseRepo,
 	NewRegistrar,
 	NewDiscovery,
-	NewFileServiceClient)
+	NewFileServiceClient,
+	NewEngineServiceClient,
+)
 
 var RedisCli redis.Cmdable
 
@@ -151,5 +155,25 @@ func NewFileServiceClient(sr *conf.Service, rr registry.Discovery) fileV1.FileCl
 		panic(err)
 	}
 	c := fileV1.NewFileClient(conn)
+	return c
+}
+
+func NewEngineServiceClient(sr *conf.Service, rr registry.Discovery) engineV1.EngineClient {
+	conn, err := grpc.DialInsecure(
+		context.Background(),
+		grpc.WithEndpoint(sr.Engine.Endpoint),
+		grpc.WithDiscovery(rr),
+		grpc.WithMiddleware(
+			tracing.Client(),
+			recovery.Recovery(),
+			metadata.Client(),
+		),
+		grpc.WithTimeout(2*time.Second),
+		grpc.WithOptions(grpcx.WithStatsHandler(&tracing.ClientHandler{})),
+	)
+	if err != nil {
+		panic(err)
+	}
+	c := engineV1.NewEngineClient(conn)
 	return c
 }

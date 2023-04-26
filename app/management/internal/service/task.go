@@ -8,6 +8,7 @@ import (
 	"galileo/pkg/ctxdata"
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/golang/protobuf/ptypes/empty"
 )
 
 type TaskService struct {
@@ -22,6 +23,22 @@ func NewTaskService(uc *biz.TaskUseCase, logger log.Logger) *TaskService {
 		uc:     uc,
 		logger: log.NewHelper(log.With(logger, "module", "management.taskService")),
 	}
+}
+
+func NewTask(name string, rank, status int32, description string, testcaseSuites []int64) (biz.Task, error) {
+	if len(name) <= 0 {
+		return biz.Task{}, errors.New("testcase name must not be empty")
+	}
+	if rank < 0 || status < 0 {
+		return biz.Task{}, errors.New("invalid parameter")
+	}
+	return biz.Task{
+		Name:           name,
+		Rank:           int8(rank),
+		Status:         int8(status),
+		Description:    description,
+		TestcaseSuites: testcaseSuites,
+	}, nil
 }
 
 func (s *TaskService) CreateTask(ctx context.Context, req *v1.CreateTaskRequest) (*v1.CreateTaskReply, error) {
@@ -80,18 +97,7 @@ func (s *TaskService) ListTask(ctx context.Context, req *v1.ListTaskRequest) (*v
 	return &v1.ListTaskReply{}, nil
 }
 
-func NewTask(name string, rank, status int32, description string, testcaseSuites []int64) (biz.Task, error) {
-	if len(name) <= 0 {
-		return biz.Task{}, errors.New("testcase name must not be empty")
-	}
-	if rank < 0 || status < 0 {
-		return biz.Task{}, errors.New("invalid parameter")
-	}
-	return biz.Task{
-		Name:           name,
-		Rank:           int8(rank),
-		Status:         int8(status),
-		Description:    description,
-		TestcaseSuites: testcaseSuites,
-	}, nil
+func (s *TaskService) TestEngine(ctx context.Context, req *empty.Empty) (*v1.TestEngineReply, error) {
+	ret, _ := s.uc.TestEngine(ctx)
+	return &v1.TestEngineReply{Hello: ret}, nil
 }

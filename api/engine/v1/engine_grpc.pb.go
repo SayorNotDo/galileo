@@ -34,7 +34,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EngineClient interface {
-	TestEngine(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	TestEngine(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TestEngineReply, error)
 	RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobReply, error)
 	CancelJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	PauseJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -52,8 +52,8 @@ func NewEngineClient(cc grpc.ClientConnInterface) EngineClient {
 	return &engineClient{cc}
 }
 
-func (c *engineClient) TestEngine(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *engineClient) TestEngine(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TestEngineReply, error) {
+	out := new(TestEngineReply)
 	err := c.cc.Invoke(ctx, Engine_TestEngine_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -128,7 +128,7 @@ func (c *engineClient) BuildContainer(ctx context.Context, in *emptypb.Empty, op
 // All implementations must embed UnimplementedEngineServer
 // for forward compatibility
 type EngineServer interface {
-	TestEngine(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	TestEngine(context.Context, *emptypb.Empty) (*TestEngineReply, error)
 	RunJob(context.Context, *RunJobRequest) (*RunJobReply, error)
 	CancelJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	PauseJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
@@ -143,7 +143,7 @@ type EngineServer interface {
 type UnimplementedEngineServer struct {
 }
 
-func (UnimplementedEngineServer) TestEngine(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedEngineServer) TestEngine(context.Context, *emptypb.Empty) (*TestEngineReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TestEngine not implemented")
 }
 func (UnimplementedEngineServer) RunJob(context.Context, *RunJobRequest) (*RunJobReply, error) {

@@ -2,6 +2,8 @@ package biz
 
 import (
 	"context"
+	engineV1 "galileo/api/engine/v1"
+	"github.com/golang/protobuf/ptypes/empty"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -35,15 +37,17 @@ type TaskRepo interface {
 
 // TaskUseCase is a Task useCase.
 type TaskUseCase struct {
-	repo TaskRepo
-	log  *log.Helper
+	engine engineV1.EngineClient
+	repo   TaskRepo
+	log    *log.Helper
 }
 
 // NewTaskUseCase new a Task useCase.
-func NewTaskUseCase(repo TaskRepo, logger log.Logger) *TaskUseCase {
+func NewTaskUseCase(repo TaskRepo, engine engineV1.EngineClient, logger log.Logger) *TaskUseCase {
 	return &TaskUseCase{
-		repo: repo,
-		log:  log.NewHelper(log.With(logger, "module", "management.taskUseCase")),
+		engine: engine,
+		repo:   repo,
+		log:    log.NewHelper(log.With(logger, "module", "management.taskUseCase")),
 	}
 }
 
@@ -61,4 +65,12 @@ func (uc *TaskUseCase) TaskByID(ctx context.Context, id int64) (*Task, error) {
 
 func (uc *TaskUseCase) UpdateTask(ctx context.Context, task *Task) (bool, error) {
 	return uc.repo.UpdateTask(ctx, task)
+}
+
+func (uc *TaskUseCase) TestEngine(ctx context.Context) (string, error) {
+	resp, err := uc.engine.TestEngine(ctx, &empty.Empty{})
+	if err != nil {
+		return "", err
+	}
+	return resp.Hello, nil
 }

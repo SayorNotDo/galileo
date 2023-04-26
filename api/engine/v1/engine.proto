@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
 
@@ -12,52 +11,18 @@ option java_multiple_files = true;
 option java_package = "api.engine.v1";
 
 service Engine {
-  rpc TestEngine (google.protobuf.Empty) returns (google.protobuf.Empty) {
-    option(google.api.http) = {
-      get: "v1/api/hello"
-    };
-  };
-  rpc RunJob(RunJobRequest) returns (RunJobReply) {
-    option(google.api.http) = {
-      post: "v1/api/engine/job/run"
-      body: "*"
-    };
-  }
-  rpc CancelJob(google.protobuf.Empty) returns (google.protobuf.Empty) {
-    option(google.api.http) = {
-      put: "v1/api/engine/job/cancel"
-      body: "*"
-    };
-  }
-  rpc PauseJob(google.protobuf.Empty) returns (google.protobuf.Empty) {
-    option(google.api.http) = {
-      put: "v1/api/engine/job/pause"
-      body: "*"
-    };
-  }
-  rpc ResumeJob(google.protobuf.Empty) returns (google.protobuf.Empty) {
-    option(google.api.http) = {
-      put: "v1/api/engine/job/resume"
-      body: "*"
-    };
-  }
-  rpc DeleteJob(google.protobuf.Empty) returns (google.protobuf.Empty) {
-    option(google.api.http) = {
-      delete: "v1/api/engine/job/delete"
-    };
-  }
-  rpc CronJob(google.protobuf.Empty) returns (google.protobuf.Empty) {
-    option(google.api.http) = {
-      post: "v1/api/engine/cronJob"
-      body: "*"
-    };
-  }
-  rpc BuildContainer(google.protobuf.Empty) returns (BuildContainerReply){
-    option(google.api.http) = {
-      post: "v1/api/engine/container/build"
-      body: "*"
-    };
-  }
+  rpc TestEngine (google.protobuf.Empty) returns (TestEngineReply) {};
+  rpc RunJob(RunJobRequest) returns (RunJobReply) {}
+  rpc CancelJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc PauseJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc ResumeJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc DeleteJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc CronJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc BuildContainer(google.protobuf.Empty) returns (BuildContainerReply){}
+}
+
+message TestEngineReply {
+  string hello = 1;
 }
 
 message BuildContainerReply {

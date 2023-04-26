@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -24,6 +25,7 @@ const (
 	Task_DeleteTask_FullMethodName = "/api.task.v1.Task/DeleteTask"
 	Task_TaskByID_FullMethodName   = "/api.task.v1.Task/TaskByID"
 	Task_ListTask_FullMethodName   = "/api.task.v1.Task/ListTask"
+	Task_TestEngine_FullMethodName = "/api.task.v1.Task/TestEngine"
 )
 
 // TaskClient is the client API for Task service.
@@ -35,6 +37,7 @@ type TaskClient interface {
 	DeleteTask(ctx context.Context, in *DeleteTaskRequest, opts ...grpc.CallOption) (*DeleteTaskReply, error)
 	TaskByID(ctx context.Context, in *TaskByIDRequest, opts ...grpc.CallOption) (*GetTaskReply, error)
 	ListTask(ctx context.Context, in *ListTaskRequest, opts ...grpc.CallOption) (*ListTaskReply, error)
+	TestEngine(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TestEngineReply, error)
 }
 
 type taskClient struct {
@@ -90,6 +93,15 @@ func (c *taskClient) ListTask(ctx context.Context, in *ListTaskRequest, opts ...
 	return out, nil
 }
 
+func (c *taskClient) TestEngine(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TestEngineReply, error) {
+	out := new(TestEngineReply)
+	err := c.cc.Invoke(ctx, Task_TestEngine_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskServer is the server API for Task service.
 // All implementations must embed UnimplementedTaskServer
 // for forward compatibility
@@ -99,6 +111,7 @@ type TaskServer interface {
 	DeleteTask(context.Context, *DeleteTaskRequest) (*DeleteTaskReply, error)
 	TaskByID(context.Context, *TaskByIDRequest) (*GetTaskReply, error)
 	ListTask(context.Context, *ListTaskRequest) (*ListTaskReply, error)
+	TestEngine(context.Context, *emptypb.Empty) (*TestEngineReply, error)
 	mustEmbedUnimplementedTaskServer()
 }
 
@@ -120,6 +133,9 @@ func (UnimplementedTaskServer) TaskByID(context.Context, *TaskByIDRequest) (*Get
 }
 func (UnimplementedTaskServer) ListTask(context.Context, *ListTaskRequest) (*ListTaskReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTask not implemented")
+}
+func (UnimplementedTaskServer) TestEngine(context.Context, *emptypb.Empty) (*TestEngineReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TestEngine not implemented")
 }
 func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
 
@@ -224,6 +240,24 @@ func _Task_ListTask_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Task_TestEngine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServer).TestEngine(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Task_TestEngine_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServer).TestEngine(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Task_ServiceDesc is the grpc.ServiceDesc for Task service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -250,6 +284,10 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListTask",
 			Handler:    _Task_ListTask_Handler,
+		},
+		{
+			MethodName: "TestEngine",
+			Handler:    _Task_TestEngine_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -3,6 +3,7 @@ syntax = "proto3";
 package api.task.v1;
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 
 option go_package = "galileo/api/management/task/v1;v1";
 option java_multiple_files = true;
@@ -28,8 +29,16 @@ service Task {
     };
   };
   rpc ListTask (ListTaskRequest) returns (ListTaskReply);
+  rpc TestEngine(google.protobuf.Empty) returns (TestEngineReply){
+    option (google.api.http) = {
+      get: "v1/api/engine/ciao"
+    };
+  };
 }
 
+message TestEngineReply {
+  string hello = 1;
+}
 
 message CreateTaskRequest {
   string name = 1;

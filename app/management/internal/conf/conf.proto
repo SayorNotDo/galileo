@@ -50,6 +50,10 @@ message Service {
   message File {
     string endpoint = 1;
   }
+  message Engine {
+    string endpoint = 1;
+  };
+  Engine engine = 1;
   File file = 2;
 }
 

@@ -10,6 +10,7 @@ import (
 	context "context"
 	http "github.com/go-kratos/kratos/v2/transport/http"
 	binding "github.com/go-kratos/kratos/v2/transport/http/binding"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -21,11 +22,13 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationTaskCreateTask = "/api.task.v1.Task/CreateTask"
 const OperationTaskTaskByID = "/api.task.v1.Task/TaskByID"
+const OperationTaskTestEngine = "/api.task.v1.Task/TestEngine"
 const OperationTaskUpdateTask = "/api.task.v1.Task/UpdateTask"
 
 type TaskHTTPServer interface {
 	CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskReply, error)
 	TaskByID(context.Context, *TaskByIDRequest) (*GetTaskReply, error)
+	TestEngine(context.Context, *emptypb.Empty) (*TestEngineReply, error)
 	UpdateTask(context.Context, *UpdateTaskRequest) (*UpdateTaskReply, error)
 }
 
@@ -34,6 +37,7 @@ func RegisterTaskHTTPServer(s *http.Server, srv TaskHTTPServer) {
 	r.POST("v1/api/management/task", _Task_CreateTask0_HTTP_Handler(srv))
 	r.PUT("v1/api/management/task", _Task_UpdateTask0_HTTP_Handler(srv))
 	r.GET("v1/api/management/task/{id}", _Task_TaskByID0_HTTP_Handler(srv))
+	r.GET("v1/api/engine/ciao", _Task_TestEngine0_HTTP_Handler(srv))
 }
 
 func _Task_CreateTask0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Context) error {
@@ -96,9 +100,29 @@ func _Task_TaskByID0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Context) err
 	}
 }
 
+func _Task_TestEngine0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTaskTestEngine)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.TestEngine(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*TestEngineReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type TaskHTTPClient interface {
 	CreateTask(ctx context.Context, req *CreateTaskRequest, opts ...http.CallOption) (rsp *CreateTaskReply, err error)
 	TaskByID(ctx context.Context, req *TaskByIDRequest, opts ...http.CallOption) (rsp *GetTaskReply, err error)
+	TestEngine(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *TestEngineReply, err error)
 	UpdateTask(ctx context.Context, req *UpdateTaskRequest, opts ...http.CallOption) (rsp *UpdateTaskReply, err error)
 }
 
@@ -128,6 +152,19 @@ func (c *TaskHTTPClientImpl) TaskByID(ctx context.Context, in *TaskByIDRequest, 
 	pattern := "v1/api/management/task/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationTaskTaskByID))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *TaskHTTPClientImpl) TestEngine(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*TestEngineReply, error) {
+	var out TestEngineReply
+	pattern := "v1/api/engine/ciao"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationTaskTestEngine))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

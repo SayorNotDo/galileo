@@ -58,3 +58,7 @@ func (s *EngineService) BuildContainer(ctx context.Context, req *empty.Empty) (*
 		Image: container.Image,
 	}, nil
 }
+
+func (s *EngineService) TestEngine(ctx context.Context, req *empty.Empty) (*pb.TestEngineReply, error) {
+	return &pb.TestEngineReply{Hello: "Galileo"}, nil
+}

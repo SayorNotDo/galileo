@@ -11,16 +11,14 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/go-kratos/kratos/v2/transport/http"
-
 	_ "go.uber.org/automaxprocs"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	Service = bootstrap.NewServiceInfo(
-		"galileo.engine.api",
-		"0.0.0",
+		"galileo.engine.service",
+		"engine,v1",
 		"")
 
 	// Flags is the config flag.
@@ -56,7 +54,7 @@ func loadConfig() (*conf.Bootstrap, *conf.Registry) {
 	return &bc, &rc
 }
 
-func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, rr registry.Registrar) *kratos.App {
+func newApp(logger log.Logger, gs *grpc.Server, rr registry.Registrar) *kratos.App {
 	return kratos.New(
 		kratos.ID(Service.GetInstanceId()),
 		kratos.Name(Service.Name),
@@ -65,7 +63,6 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, rr registry.Reg
 		kratos.Logger(logger),
 		kratos.Server(
 			gs,
-			hs,
 		),
 		kratos.Registrar(rr),
 	)
@@ -87,7 +84,7 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := wireApp(bc.Server, bc.Auth, bc.Data, rc, logger)
+	app, cleanup, err := wireApp(bc.Server, bc.Data, rc, logger)
 	if err != nil {
 		panic(err)
 	}
