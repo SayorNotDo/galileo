@@ -21,5 +21,9 @@ func NewApiService(uc *biz.ApiUseCase, logger log.Logger) *ApiService {
 }
 
 func (s *ApiService) CreateApi(ctx context.Context, req *v1.CreateApiRequest) (*v1.CreateApiReply, error) {
-	return nil, nil
+	_, err := s.uc.CreateApi(ctx, &biz.Api{})
+	if err != nil {
+		return nil, err
+	}
+	return &v1.CreateApiReply{}, nil
 }
