@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"galileo/ent/api"
 	"galileo/ent/group"
 	"galileo/ent/predicate"
 	"galileo/ent/project"
@@ -30,6 +31,7 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
+	TypeAPI           = "Api"
 	TypeGroup         = "Group"
 	TypeProject       = "Project"
 	TypeTask          = "Task"
@@ -37,6 +39,1457 @@ const (
 	TypeTestCaseSuite = "TestCaseSuite"
 	TypeUser          = "User"
 )
+
+// APIMutation represents an operation that mutates the Api nodes in the graph.
+type APIMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int64
+	name          *string
+	url           *string
+	_type         *int8
+	add_type      *int8
+	status        *int8
+	addstatus     *int8
+	body          *[]byte
+	query_params  *[]byte
+	response      *[]byte
+	module        *string
+	description   *string
+	created_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	update_at     *time.Time
+	update_by     *uint32
+	addupdate_by  *int32
+	deleted_at    *time.Time
+	deleted_by    *uint32
+	adddeleted_by *int32
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*Api, error)
+	predicates    []predicate.Api
+}
+
+var _ ent.Mutation = (*APIMutation)(nil)
+
+// apiOption allows management of the mutation configuration using functional options.
+type apiOption func(*APIMutation)
+
+// newAPIMutation creates new mutation for the Api entity.
+func newAPIMutation(c config, op Op, opts ...apiOption) *APIMutation {
+	m := &APIMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAPI,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withApiID sets the ID field of the mutation.
+func withApiID(id int64) apiOption {
+	return func(m *APIMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Api
+		)
+		m.oldValue = func(ctx context.Context) (*Api, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Api.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withApi sets the old Api of the mutation.
+func withApi(node *Api) apiOption {
+	return func(m *APIMutation) {
+		m.oldValue = func(context.Context) (*Api, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m APIMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m APIMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Api entities.
+func (m *APIMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *APIMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *APIMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Api.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetName sets the "name" field.
+func (m *APIMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *APIMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *APIMutation) ResetName() {
+	m.name = nil
+}
+
+// SetURL sets the "url" field.
+func (m *APIMutation) SetURL(s string) {
+	m.url = &s
+}
+
+// URL returns the value of the "url" field in the mutation.
+func (m *APIMutation) URL() (r string, exists bool) {
+	v := m.url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldURL returns the old "url" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldURL: %w", err)
+	}
+	return oldValue.URL, nil
+}
+
+// ClearURL clears the value of the "url" field.
+func (m *APIMutation) ClearURL() {
+	m.url = nil
+	m.clearedFields[api.FieldURL] = struct{}{}
+}
+
+// URLCleared returns if the "url" field was cleared in this mutation.
+func (m *APIMutation) URLCleared() bool {
+	_, ok := m.clearedFields[api.FieldURL]
+	return ok
+}
+
+// ResetURL resets all changes to the "url" field.
+func (m *APIMutation) ResetURL() {
+	m.url = nil
+	delete(m.clearedFields, api.FieldURL)
+}
+
+// SetType sets the "type" field.
+func (m *APIMutation) SetType(i int8) {
+	m._type = &i
+	m.add_type = nil
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *APIMutation) GetType() (r int8, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldType(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// AddType adds i to the "type" field.
+func (m *APIMutation) AddType(i int8) {
+	if m.add_type != nil {
+		*m.add_type += i
+	} else {
+		m.add_type = &i
+	}
+}
+
+// AddedType returns the value that was added to the "type" field in this mutation.
+func (m *APIMutation) AddedType() (r int8, exists bool) {
+	v := m.add_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearType clears the value of the "type" field.
+func (m *APIMutation) ClearType() {
+	m._type = nil
+	m.add_type = nil
+	m.clearedFields[api.FieldType] = struct{}{}
+}
+
+// TypeCleared returns if the "type" field was cleared in this mutation.
+func (m *APIMutation) TypeCleared() bool {
+	_, ok := m.clearedFields[api.FieldType]
+	return ok
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *APIMutation) ResetType() {
+	m._type = nil
+	m.add_type = nil
+	delete(m.clearedFields, api.FieldType)
+}
+
+// SetStatus sets the "status" field.
+func (m *APIMutation) SetStatus(i int8) {
+	m.status = &i
+	m.addstatus = nil
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *APIMutation) Status() (r int8, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldStatus(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// AddStatus adds i to the "status" field.
+func (m *APIMutation) AddStatus(i int8) {
+	if m.addstatus != nil {
+		*m.addstatus += i
+	} else {
+		m.addstatus = &i
+	}
+}
+
+// AddedStatus returns the value that was added to the "status" field in this mutation.
+func (m *APIMutation) AddedStatus() (r int8, exists bool) {
+	v := m.addstatus
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *APIMutation) ResetStatus() {
+	m.status = nil
+	m.addstatus = nil
+}
+
+// SetBody sets the "body" field.
+func (m *APIMutation) SetBody(b []byte) {
+	m.body = &b
+}
+
+// Body returns the value of the "body" field in the mutation.
+func (m *APIMutation) Body() (r []byte, exists bool) {
+	v := m.body
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBody returns the old "body" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldBody(ctx context.Context) (v *[]byte, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBody is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBody requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBody: %w", err)
+	}
+	return oldValue.Body, nil
+}
+
+// ClearBody clears the value of the "body" field.
+func (m *APIMutation) ClearBody() {
+	m.body = nil
+	m.clearedFields[api.FieldBody] = struct{}{}
+}
+
+// BodyCleared returns if the "body" field was cleared in this mutation.
+func (m *APIMutation) BodyCleared() bool {
+	_, ok := m.clearedFields[api.FieldBody]
+	return ok
+}
+
+// ResetBody resets all changes to the "body" field.
+func (m *APIMutation) ResetBody() {
+	m.body = nil
+	delete(m.clearedFields, api.FieldBody)
+}
+
+// SetQueryParams sets the "query_params" field.
+func (m *APIMutation) SetQueryParams(b []byte) {
+	m.query_params = &b
+}
+
+// QueryParams returns the value of the "query_params" field in the mutation.
+func (m *APIMutation) QueryParams() (r []byte, exists bool) {
+	v := m.query_params
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldQueryParams returns the old "query_params" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldQueryParams(ctx context.Context) (v []byte, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldQueryParams is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldQueryParams requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldQueryParams: %w", err)
+	}
+	return oldValue.QueryParams, nil
+}
+
+// ClearQueryParams clears the value of the "query_params" field.
+func (m *APIMutation) ClearQueryParams() {
+	m.query_params = nil
+	m.clearedFields[api.FieldQueryParams] = struct{}{}
+}
+
+// QueryParamsCleared returns if the "query_params" field was cleared in this mutation.
+func (m *APIMutation) QueryParamsCleared() bool {
+	_, ok := m.clearedFields[api.FieldQueryParams]
+	return ok
+}
+
+// ResetQueryParams resets all changes to the "query_params" field.
+func (m *APIMutation) ResetQueryParams() {
+	m.query_params = nil
+	delete(m.clearedFields, api.FieldQueryParams)
+}
+
+// SetResponse sets the "response" field.
+func (m *APIMutation) SetResponse(b []byte) {
+	m.response = &b
+}
+
+// Response returns the value of the "response" field in the mutation.
+func (m *APIMutation) Response() (r []byte, exists bool) {
+	v := m.response
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldResponse returns the old "response" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldResponse(ctx context.Context) (v []byte, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldResponse is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldResponse requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldResponse: %w", err)
+	}
+	return oldValue.Response, nil
+}
+
+// ClearResponse clears the value of the "response" field.
+func (m *APIMutation) ClearResponse() {
+	m.response = nil
+	m.clearedFields[api.FieldResponse] = struct{}{}
+}
+
+// ResponseCleared returns if the "response" field was cleared in this mutation.
+func (m *APIMutation) ResponseCleared() bool {
+	_, ok := m.clearedFields[api.FieldResponse]
+	return ok
+}
+
+// ResetResponse resets all changes to the "response" field.
+func (m *APIMutation) ResetResponse() {
+	m.response = nil
+	delete(m.clearedFields, api.FieldResponse)
+}
+
+// SetModule sets the "module" field.
+func (m *APIMutation) SetModule(s string) {
+	m.module = &s
+}
+
+// Module returns the value of the "module" field in the mutation.
+func (m *APIMutation) Module() (r string, exists bool) {
+	v := m.module
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldModule returns the old "module" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldModule(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldModule is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldModule requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldModule: %w", err)
+	}
+	return oldValue.Module, nil
+}
+
+// ClearModule clears the value of the "module" field.
+func (m *APIMutation) ClearModule() {
+	m.module = nil
+	m.clearedFields[api.FieldModule] = struct{}{}
+}
+
+// ModuleCleared returns if the "module" field was cleared in this mutation.
+func (m *APIMutation) ModuleCleared() bool {
+	_, ok := m.clearedFields[api.FieldModule]
+	return ok
+}
+
+// ResetModule resets all changes to the "module" field.
+func (m *APIMutation) ResetModule() {
+	m.module = nil
+	delete(m.clearedFields, api.FieldModule)
+}
+
+// SetDescription sets the "description" field.
+func (m *APIMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *APIMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *APIMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[api.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *APIMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[api.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *APIMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, api.FieldDescription)
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *APIMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *APIMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *APIMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *APIMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *APIMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldCreatedBy(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *APIMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *APIMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *APIMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (m *APIMutation) SetUpdateAt(t time.Time) {
+	m.update_at = &t
+}
+
+// UpdateAt returns the value of the "update_at" field in the mutation.
+func (m *APIMutation) UpdateAt() (r time.Time, exists bool) {
+	v := m.update_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateAt returns the old "update_at" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldUpdateAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdateAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdateAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateAt: %w", err)
+	}
+	return oldValue.UpdateAt, nil
+}
+
+// ClearUpdateAt clears the value of the "update_at" field.
+func (m *APIMutation) ClearUpdateAt() {
+	m.update_at = nil
+	m.clearedFields[api.FieldUpdateAt] = struct{}{}
+}
+
+// UpdateAtCleared returns if the "update_at" field was cleared in this mutation.
+func (m *APIMutation) UpdateAtCleared() bool {
+	_, ok := m.clearedFields[api.FieldUpdateAt]
+	return ok
+}
+
+// ResetUpdateAt resets all changes to the "update_at" field.
+func (m *APIMutation) ResetUpdateAt() {
+	m.update_at = nil
+	delete(m.clearedFields, api.FieldUpdateAt)
+}
+
+// SetUpdateBy sets the "update_by" field.
+func (m *APIMutation) SetUpdateBy(u uint32) {
+	m.update_by = &u
+	m.addupdate_by = nil
+}
+
+// UpdateBy returns the value of the "update_by" field in the mutation.
+func (m *APIMutation) UpdateBy() (r uint32, exists bool) {
+	v := m.update_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateBy returns the old "update_by" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldUpdateBy(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdateBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdateBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateBy: %w", err)
+	}
+	return oldValue.UpdateBy, nil
+}
+
+// AddUpdateBy adds u to the "update_by" field.
+func (m *APIMutation) AddUpdateBy(u int32) {
+	if m.addupdate_by != nil {
+		*m.addupdate_by += u
+	} else {
+		m.addupdate_by = &u
+	}
+}
+
+// AddedUpdateBy returns the value that was added to the "update_by" field in this mutation.
+func (m *APIMutation) AddedUpdateBy() (r int32, exists bool) {
+	v := m.addupdate_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdateBy resets all changes to the "update_by" field.
+func (m *APIMutation) ResetUpdateBy() {
+	m.update_by = nil
+	m.addupdate_by = nil
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *APIMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *APIMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *APIMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[api.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *APIMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[api.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *APIMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, api.FieldDeletedAt)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *APIMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *APIMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *APIMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *APIMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *APIMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[api.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *APIMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[api.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *APIMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, api.FieldDeletedBy)
+}
+
+// Where appends a list predicates to the APIMutation builder.
+func (m *APIMutation) Where(ps ...predicate.Api) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the APIMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *APIMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Api, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *APIMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *APIMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Api).
+func (m *APIMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *APIMutation) Fields() []string {
+	fields := make([]string, 0, 15)
+	if m.name != nil {
+		fields = append(fields, api.FieldName)
+	}
+	if m.url != nil {
+		fields = append(fields, api.FieldURL)
+	}
+	if m._type != nil {
+		fields = append(fields, api.FieldType)
+	}
+	if m.status != nil {
+		fields = append(fields, api.FieldStatus)
+	}
+	if m.body != nil {
+		fields = append(fields, api.FieldBody)
+	}
+	if m.query_params != nil {
+		fields = append(fields, api.FieldQueryParams)
+	}
+	if m.response != nil {
+		fields = append(fields, api.FieldResponse)
+	}
+	if m.module != nil {
+		fields = append(fields, api.FieldModule)
+	}
+	if m.description != nil {
+		fields = append(fields, api.FieldDescription)
+	}
+	if m.created_at != nil {
+		fields = append(fields, api.FieldCreatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, api.FieldCreatedBy)
+	}
+	if m.update_at != nil {
+		fields = append(fields, api.FieldUpdateAt)
+	}
+	if m.update_by != nil {
+		fields = append(fields, api.FieldUpdateBy)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, api.FieldDeletedAt)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, api.FieldDeletedBy)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *APIMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case api.FieldName:
+		return m.Name()
+	case api.FieldURL:
+		return m.URL()
+	case api.FieldType:
+		return m.GetType()
+	case api.FieldStatus:
+		return m.Status()
+	case api.FieldBody:
+		return m.Body()
+	case api.FieldQueryParams:
+		return m.QueryParams()
+	case api.FieldResponse:
+		return m.Response()
+	case api.FieldModule:
+		return m.Module()
+	case api.FieldDescription:
+		return m.Description()
+	case api.FieldCreatedAt:
+		return m.CreatedAt()
+	case api.FieldCreatedBy:
+		return m.CreatedBy()
+	case api.FieldUpdateAt:
+		return m.UpdateAt()
+	case api.FieldUpdateBy:
+		return m.UpdateBy()
+	case api.FieldDeletedAt:
+		return m.DeletedAt()
+	case api.FieldDeletedBy:
+		return m.DeletedBy()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *APIMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case api.FieldName:
+		return m.OldName(ctx)
+	case api.FieldURL:
+		return m.OldURL(ctx)
+	case api.FieldType:
+		return m.OldType(ctx)
+	case api.FieldStatus:
+		return m.OldStatus(ctx)
+	case api.FieldBody:
+		return m.OldBody(ctx)
+	case api.FieldQueryParams:
+		return m.OldQueryParams(ctx)
+	case api.FieldResponse:
+		return m.OldResponse(ctx)
+	case api.FieldModule:
+		return m.OldModule(ctx)
+	case api.FieldDescription:
+		return m.OldDescription(ctx)
+	case api.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case api.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case api.FieldUpdateAt:
+		return m.OldUpdateAt(ctx)
+	case api.FieldUpdateBy:
+		return m.OldUpdateBy(ctx)
+	case api.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case api.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	}
+	return nil, fmt.Errorf("unknown Api field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *APIMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case api.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case api.FieldURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetURL(v)
+		return nil
+	case api.FieldType:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case api.FieldStatus:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case api.FieldBody:
+		v, ok := value.([]byte)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBody(v)
+		return nil
+	case api.FieldQueryParams:
+		v, ok := value.([]byte)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetQueryParams(v)
+		return nil
+	case api.FieldResponse:
+		v, ok := value.([]byte)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetResponse(v)
+		return nil
+	case api.FieldModule:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetModule(v)
+		return nil
+	case api.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case api.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case api.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case api.FieldUpdateAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateAt(v)
+		return nil
+	case api.FieldUpdateBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateBy(v)
+		return nil
+	case api.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case api.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Api field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *APIMutation) AddedFields() []string {
+	var fields []string
+	if m.add_type != nil {
+		fields = append(fields, api.FieldType)
+	}
+	if m.addstatus != nil {
+		fields = append(fields, api.FieldStatus)
+	}
+	if m.addcreated_by != nil {
+		fields = append(fields, api.FieldCreatedBy)
+	}
+	if m.addupdate_by != nil {
+		fields = append(fields, api.FieldUpdateBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, api.FieldDeletedBy)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *APIMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case api.FieldType:
+		return m.AddedType()
+	case api.FieldStatus:
+		return m.AddedStatus()
+	case api.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case api.FieldUpdateBy:
+		return m.AddedUpdateBy()
+	case api.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *APIMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case api.FieldType:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddType(v)
+		return nil
+	case api.FieldStatus:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStatus(v)
+		return nil
+	case api.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case api.FieldUpdateBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdateBy(v)
+		return nil
+	case api.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Api numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *APIMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(api.FieldURL) {
+		fields = append(fields, api.FieldURL)
+	}
+	if m.FieldCleared(api.FieldType) {
+		fields = append(fields, api.FieldType)
+	}
+	if m.FieldCleared(api.FieldBody) {
+		fields = append(fields, api.FieldBody)
+	}
+	if m.FieldCleared(api.FieldQueryParams) {
+		fields = append(fields, api.FieldQueryParams)
+	}
+	if m.FieldCleared(api.FieldResponse) {
+		fields = append(fields, api.FieldResponse)
+	}
+	if m.FieldCleared(api.FieldModule) {
+		fields = append(fields, api.FieldModule)
+	}
+	if m.FieldCleared(api.FieldDescription) {
+		fields = append(fields, api.FieldDescription)
+	}
+	if m.FieldCleared(api.FieldUpdateAt) {
+		fields = append(fields, api.FieldUpdateAt)
+	}
+	if m.FieldCleared(api.FieldDeletedAt) {
+		fields = append(fields, api.FieldDeletedAt)
+	}
+	if m.FieldCleared(api.FieldDeletedBy) {
+		fields = append(fields, api.FieldDeletedBy)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *APIMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *APIMutation) ClearField(name string) error {
+	switch name {
+	case api.FieldURL:
+		m.ClearURL()
+		return nil
+	case api.FieldType:
+		m.ClearType()
+		return nil
+	case api.FieldBody:
+		m.ClearBody()
+		return nil
+	case api.FieldQueryParams:
+		m.ClearQueryParams()
+		return nil
+	case api.FieldResponse:
+		m.ClearResponse()
+		return nil
+	case api.FieldModule:
+		m.ClearModule()
+		return nil
+	case api.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case api.FieldUpdateAt:
+		m.ClearUpdateAt()
+		return nil
+	case api.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case api.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	}
+	return fmt.Errorf("unknown Api nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *APIMutation) ResetField(name string) error {
+	switch name {
+	case api.FieldName:
+		m.ResetName()
+		return nil
+	case api.FieldURL:
+		m.ResetURL()
+		return nil
+	case api.FieldType:
+		m.ResetType()
+		return nil
+	case api.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case api.FieldBody:
+		m.ResetBody()
+		return nil
+	case api.FieldQueryParams:
+		m.ResetQueryParams()
+		return nil
+	case api.FieldResponse:
+		m.ResetResponse()
+		return nil
+	case api.FieldModule:
+		m.ResetModule()
+		return nil
+	case api.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case api.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case api.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case api.FieldUpdateAt:
+		m.ResetUpdateAt()
+		return nil
+	case api.FieldUpdateBy:
+		m.ResetUpdateBy()
+		return nil
+	case api.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case api.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	}
+	return fmt.Errorf("unknown Api field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *APIMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *APIMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *APIMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *APIMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *APIMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *APIMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *APIMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Api unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *APIMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Api edge %s", name)
+}
 
 // GroupMutation represents an operation that mutates the Group nodes in the graph.
 type GroupMutation struct {

@@ -41,6 +41,7 @@ func NewTestcase(name string, caseType int8, priority int8, description string, 
 	}, nil
 }
 
+// UploadTestcaseFile Upload Testcase file get url
 func (s *TestcaseService) UploadTestcaseFile(ctx http.Context) (err error) {
 	fileName := ctx.Request().FormValue("fileName")
 	file, fileHeader, _ := ctx.Request().FormFile("file")

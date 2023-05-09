@@ -102,7 +102,20 @@ func (tcsu *TestCaseSuiteUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (tcsu *TestCaseSuiteUpdate) check() error {
+	if v, ok := tcsu.mutation.Name(); ok {
+		if err := testcasesuite.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "TestCaseSuite.name": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (tcsu *TestCaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := tcsu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(testcasesuite.Table, testcasesuite.Columns, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64))
 	if ps := tcsu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -266,7 +279,20 @@ func (tcsuo *TestCaseSuiteUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (tcsuo *TestCaseSuiteUpdateOne) check() error {
+	if v, ok := tcsuo.mutation.Name(); ok {
+		if err := testcasesuite.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "TestCaseSuite.name": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (tcsuo *TestCaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *TestCaseSuite, err error) {
+	if err := tcsuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(testcasesuite.Table, testcasesuite.Columns, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64))
 	id, ok := tcsuo.mutation.ID()
 	if !ok {

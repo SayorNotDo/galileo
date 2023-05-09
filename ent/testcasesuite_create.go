@@ -114,6 +114,11 @@ func (tcsc *TestCaseSuiteCreate) check() error {
 	if _, ok := tcsc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "TestCaseSuite.name"`)}
 	}
+	if v, ok := tcsc.mutation.Name(); ok {
+		if err := testcasesuite.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "TestCaseSuite.name": %w`, err)}
+		}
+	}
 	if _, ok := tcsc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "TestCaseSuite.created_at"`)}
 	}

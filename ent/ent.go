@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"galileo/ent/api"
 	"galileo/ent/group"
 	"galileo/ent/project"
 	"galileo/ent/task"
@@ -70,6 +71,7 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
+		api.Table:           api.ValidColumn,
 		group.Table:         group.ValidColumn,
 		project.Table:       project.ValidColumn,
 		task.Table:          task.ValidColumn,

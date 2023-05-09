@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"galileo/ent/api"
 	"galileo/ent/group"
 	"galileo/ent/project"
 	"galileo/ent/schema"
@@ -19,6 +20,24 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	apiFields := schema.Api{}.Fields()
+	_ = apiFields
+	// apiDescName is the schema descriptor for name field.
+	apiDescName := apiFields[1].Descriptor()
+	// api.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	api.NameValidator = apiDescName.Validators[0].(func(string) error)
+	// apiDescStatus is the schema descriptor for status field.
+	apiDescStatus := apiFields[4].Descriptor()
+	// api.DefaultStatus holds the default value on creation for the status field.
+	api.DefaultStatus = apiDescStatus.Default.(int8)
+	// apiDescCreatedAt is the schema descriptor for created_at field.
+	apiDescCreatedAt := apiFields[10].Descriptor()
+	// api.DefaultCreatedAt holds the default value on creation for the created_at field.
+	api.DefaultCreatedAt = apiDescCreatedAt.Default.(func() time.Time)
+	// apiDescUpdateAt is the schema descriptor for update_at field.
+	apiDescUpdateAt := apiFields[12].Descriptor()
+	// api.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
+	api.UpdateDefaultUpdateAt = apiDescUpdateAt.UpdateDefault.(func() time.Time)
 	groupFields := schema.Group{}.Fields()
 	_ = groupFields
 	// groupDescName is the schema descriptor for name field.
@@ -31,6 +50,10 @@ func init() {
 	group.DefaultCreatedAt = groupDescCreatedAt.Default.(func() time.Time)
 	projectFields := schema.Project{}.Fields()
 	_ = projectFields
+	// projectDescName is the schema descriptor for name field.
+	projectDescName := projectFields[1].Descriptor()
+	// project.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	project.NameValidator = projectDescName.Validators[0].(func(string) error)
 	// projectDescCreatedAt is the schema descriptor for created_at field.
 	projectDescCreatedAt := projectFields[3].Descriptor()
 	// project.DefaultCreatedAt holds the default value on creation for the created_at field.
@@ -45,6 +68,10 @@ func init() {
 	project.DefaultStatus = projectDescStatus.Default.(int8)
 	taskFields := schema.Task{}.Fields()
 	_ = taskFields
+	// taskDescName is the schema descriptor for name field.
+	taskDescName := taskFields[1].Descriptor()
+	// task.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	task.NameValidator = taskDescName.Validators[0].(func(string) error)
 	// taskDescCreatedAt is the schema descriptor for created_at field.
 	taskDescCreatedAt := taskFields[2].Descriptor()
 	// task.DefaultCreatedAt holds the default value on creation for the created_at field.
@@ -89,6 +116,10 @@ func init() {
 	testcase.DefaultPriority = testcaseDescPriority.Default.(int8)
 	testcasesuiteFields := schema.TestCaseSuite{}.Fields()
 	_ = testcasesuiteFields
+	// testcasesuiteDescName is the schema descriptor for name field.
+	testcasesuiteDescName := testcasesuiteFields[1].Descriptor()
+	// testcasesuite.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	testcasesuite.NameValidator = testcasesuiteDescName.Validators[0].(func(string) error)
 	// testcasesuiteDescCreatedAt is the schema descriptor for created_at field.
 	testcasesuiteDescCreatedAt := testcasesuiteFields[2].Descriptor()
 	// testcasesuite.DefaultCreatedAt holds the default value on creation for the created_at field.

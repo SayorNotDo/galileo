@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package api.management.api;
+
+option go_package = "galileo/api/management/api;api";
+option java_multiple_files = true;
+option java_package = "api.management.api";
+
+service Api {
+  rpc CreateApi (CreateApiRequest) returns (CreateApiReply);
+  rpc UpdateApi (UpdateApiRequest) returns (UpdateApiReply);
+  rpc DeleteApi (DeleteApiRequest) returns (DeleteApiReply);
+  rpc GetApi (GetApiRequest) returns (GetApiReply);
+  rpc DebugApi (DebugApiRequest) returns (DebugApiReply);
+  rpc ListApi (ListApiRequest) returns (ListApiReply);
+}
+
+message DebugApiRequest {}
+message DebugApiReply {}
+
+enum MethodType {
+  GET = 0;
+  POST = 1;
+  PUT = 2;
+  DELETE = 3;
+  PATCH = 4;
+  OPTIONS = 5;
+  HEAD = 6;
+}
+message CreateApiRequest {
+  string name = 1;
+  string url = 2;
+  MethodType type = 3;
+  int32 status = 4;
+  bytes body = 5;
+  bytes queryParams = 6;
+  bytes response = 7;
+  string module = 8;
+  string description = 9;
+}
+message CreateApiReply {}
+
+message UpdateApiRequest {}
+message UpdateApiReply {}
+
+message DeleteApiRequest {}
+message DeleteApiReply {}
+
+message GetApiRequest {}
+message GetApiReply {}
+
+message ListApiRequest {}
+message ListApiReply {}

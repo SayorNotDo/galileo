@@ -2,13 +2,13 @@ package service
 
 import (
 	"context"
-	v12 "galileo/api/management/project/v1"
+	v1 "galileo/api/management/project/v1"
 	"galileo/app/management/internal/biz"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
 type ProjectService struct {
-	v12.UnimplementedProjectServer
+	v1.UnimplementedProjectServer
 	uc     *biz.ProjectUseCase
 	logger *log.Helper
 }
@@ -20,13 +20,13 @@ func NewProjectService(uc *biz.ProjectUseCase, logger log.Logger) *ProjectServic
 	}
 }
 
-func (s *ProjectService) CreateProject(ctx context.Context, req *v12.CreateProjectRequest) (*v12.CreateProjectReply, error) {
+func (s *ProjectService) CreateProject(ctx context.Context, req *v1.CreateProjectRequest) (*v1.CreateProjectReply, error) {
 	_, err := s.uc.CreateProject(ctx, &biz.Project{})
 	if err != nil {
 		return nil, err
 	}
-	return &v12.CreateProjectReply{
-		Data: &v12.ProjectInfo{
+	return &v1.CreateProjectReply{
+		Data: &v1.ProjectInfo{
 			Name:       req.Name,
 			Identifier: req.Identifier,
 			Remark:     req.Remark,

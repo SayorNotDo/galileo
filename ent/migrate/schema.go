@@ -9,6 +9,38 @@ import (
 )
 
 var (
+	// APIColumns holds the columns for the "api" table.
+	APIColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "url", Type: field.TypeString, Nullable: true},
+		{Name: "type", Type: field.TypeInt8, Nullable: true},
+		{Name: "status", Type: field.TypeInt8, Default: 0},
+		{Name: "body", Type: field.TypeBytes, Nullable: true},
+		{Name: "query_params", Type: field.TypeBytes, Nullable: true},
+		{Name: "response", Type: field.TypeBytes, Nullable: true},
+		{Name: "module", Type: field.TypeString, Nullable: true},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeUint32},
+		{Name: "update_at", Type: field.TypeTime, Nullable: true},
+		{Name: "update_by", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
+	}
+	// APITable holds the schema information for the "api" table.
+	APITable = &schema.Table{
+		Name:       "api",
+		Columns:    APIColumns,
+		PrimaryKey: []*schema.Column{APIColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "api_url_type",
+				Unique:  true,
+				Columns: []*schema.Column{APIColumns[2], APIColumns[3]},
+			},
+		},
+	}
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -46,7 +78,7 @@ var (
 	// TaskColumns holds the columns for the "task" table.
 	TaskColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
-		{Name: "name", Type: field.TypeString},
+		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
 		{Name: "rank", Type: field.TypeInt8, Default: 0},
@@ -169,6 +201,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		APITable,
 		GroupsTable,
 		ProjectTable,
 		TaskTable,
@@ -180,6 +213,9 @@ var (
 )
 
 func init() {
+	APITable.Annotation = &entsql.Annotation{
+		Table: "api",
+	}
 	ProjectTable.Annotation = &entsql.Annotation{
 		Table: "project",
 	}

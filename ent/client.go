@@ -10,6 +10,7 @@ import (
 
 	"galileo/ent/migrate"
 
+	"galileo/ent/api"
 	"galileo/ent/group"
 	"galileo/ent/project"
 	"galileo/ent/task"
@@ -28,6 +29,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Api is the client for interacting with the Api builders.
+	Api *APIClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// Project is the client for interacting with the Project builders.
@@ -53,6 +56,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Api = NewAPIClient(c.config)
 	c.Group = NewGroupClient(c.config)
 	c.Project = NewProjectClient(c.config)
 	c.Task = NewTaskClient(c.config)
@@ -141,6 +145,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:           ctx,
 		config:        cfg,
+		Api:           NewAPIClient(cfg),
 		Group:         NewGroupClient(cfg),
 		Project:       NewProjectClient(cfg),
 		Task:          NewTaskClient(cfg),
@@ -166,6 +171,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:           ctx,
 		config:        cfg,
+		Api:           NewAPIClient(cfg),
 		Group:         NewGroupClient(cfg),
 		Project:       NewProjectClient(cfg),
 		Task:          NewTaskClient(cfg),
@@ -178,7 +184,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Group.
+//		Api.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -201,7 +207,7 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Group, c.Project, c.Task, c.TestCase, c.TestCaseSuite, c.User,
+		c.Api, c.Group, c.Project, c.Task, c.TestCase, c.TestCaseSuite, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -211,7 +217,7 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Group, c.Project, c.Task, c.TestCase, c.TestCaseSuite, c.User,
+		c.Api, c.Group, c.Project, c.Task, c.TestCase, c.TestCaseSuite, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -220,6 +226,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *APIMutation:
+		return c.Api.mutate(ctx, m)
 	case *GroupMutation:
 		return c.Group.mutate(ctx, m)
 	case *ProjectMutation:
@@ -234,6 +242,124 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.User.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
+}
+
+// APIClient is a client for the Api schema.
+type APIClient struct {
+	config
+}
+
+// NewAPIClient returns a client for the Api from the given config.
+func NewAPIClient(c config) *APIClient {
+	return &APIClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `api.Hooks(f(g(h())))`.
+func (c *APIClient) Use(hooks ...Hook) {
+	c.hooks.Api = append(c.hooks.Api, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `api.Intercept(f(g(h())))`.
+func (c *APIClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Api = append(c.inters.Api, interceptors...)
+}
+
+// Create returns a builder for creating a Api entity.
+func (c *APIClient) Create() *APICreate {
+	mutation := newAPIMutation(c.config, OpCreate)
+	return &APICreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Api entities.
+func (c *APIClient) CreateBulk(builders ...*APICreate) *APICreateBulk {
+	return &APICreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Api.
+func (c *APIClient) Update() *APIUpdate {
+	mutation := newAPIMutation(c.config, OpUpdate)
+	return &APIUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *APIClient) UpdateOne(a *Api) *APIUpdateOne {
+	mutation := newAPIMutation(c.config, OpUpdateOne, withApi(a))
+	return &APIUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *APIClient) UpdateOneID(id int64) *APIUpdateOne {
+	mutation := newAPIMutation(c.config, OpUpdateOne, withApiID(id))
+	return &APIUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Api.
+func (c *APIClient) Delete() *APIDelete {
+	mutation := newAPIMutation(c.config, OpDelete)
+	return &APIDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *APIClient) DeleteOne(a *Api) *APIDeleteOne {
+	return c.DeleteOneID(a.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *APIClient) DeleteOneID(id int64) *APIDeleteOne {
+	builder := c.Delete().Where(api.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &APIDeleteOne{builder}
+}
+
+// Query returns a query builder for Api.
+func (c *APIClient) Query() *APIQuery {
+	return &APIQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAPI},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Api entity by its id.
+func (c *APIClient) Get(ctx context.Context, id int64) (*Api, error) {
+	return c.Query().Where(api.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *APIClient) GetX(ctx context.Context, id int64) *Api {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *APIClient) Hooks() []Hook {
+	return c.hooks.Api
+}
+
+// Interceptors returns the client interceptors.
+func (c *APIClient) Interceptors() []Interceptor {
+	return c.inters.Api
+}
+
+func (c *APIClient) mutate(ctx context.Context, m *APIMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&APICreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&APIUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&APIUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&APIDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Api mutation op: %q", m.Op())
 	}
 }
 
@@ -1012,9 +1138,9 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Group, Project, Task, TestCase, TestCaseSuite, User []ent.Hook
+		Api, Group, Project, Task, TestCase, TestCaseSuite, User []ent.Hook
 	}
 	inters struct {
-		Group, Project, Task, TestCase, TestCaseSuite, User []ent.Interceptor
+		Api, Group, Project, Task, TestCase, TestCaseSuite, User []ent.Interceptor
 	}
 )

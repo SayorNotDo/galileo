@@ -16,6 +16,7 @@ service Testcase {
       body: "*"
     };
   };
+  rpc GenerateTestcase (GenerateTestcaseFileRequest) returns (GenerateTestcaseFileReply) {}
   rpc UpdateTestcase (UpdateTestcaseRequest) returns (UpdateTestcaseReply) {
     option(google.api.http) = {
       put: "v1/api/testcase"
@@ -43,6 +44,14 @@ service Testcase {
     };
   };
 }
+
+message GenerateTestcaseFileRequest {
+  string name = 1;
+  int32 type = 2;
+  bytes content = 3;
+};
+
+message GenerateTestcaseFileReply {};
 
 message LoadFrameworkRequest {
   string path = 1;
