@@ -20,10 +20,30 @@ func NewApiService(uc *biz.ApiUseCase, logger log.Logger) *ApiService {
 	}
 }
 
+func NewApi(req *v1.CreateApiRequest) (biz.Api, error) {
+	return biz.Api{
+		Name:        req.Name,
+		Url:         req.Url,
+		Module:      req.Module,
+		Type:        int8(req.Type.Number()),
+		Body:        req.Body,
+		QueryParams: req.QueryParams,
+		Response:    req.Response,
+		Description: req.Description,
+	}, nil
+}
+
 func (s *ApiService) CreateApi(ctx context.Context, req *v1.CreateApiRequest) (*v1.CreateApiReply, error) {
-	_, err := s.uc.CreateApi(ctx, &biz.Api{})
+	newApi, err := NewApi(req)
 	if err != nil {
 		return nil, err
 	}
-	return &v1.CreateApiReply{}, nil
+	ret, err := s.uc.CreateApi(ctx, &newApi)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.CreateApiReply{
+		Id:        ret.ID,
+		CreatedAt: ret.CreatedAt.Unix(),
+	}, nil
 }

@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	apiV1 "galileo/api/management/api/v1"
 	projectV1 "galileo/api/management/project/v1"
 	taskV1 "galileo/api/management/task/v1"
 	testCaseV1 "galileo/api/management/testcase/v1"
@@ -31,7 +32,7 @@ const (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, ac *conf.Auth, project *service.ProjectService, testcase *service.TestcaseService, task *service.TaskService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, ac *conf.Auth, project *service.ProjectService, testcase *service.TestcaseService, task *service.TaskService, api *service.ApiService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			logging.Server(logger),
@@ -75,6 +76,7 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, project *service.ProjectServic
 	taskV1.RegisterTaskHTTPServer(srv, task)
 	projectV1.RegisterProjectHTTPServer(srv, project)
 	testCaseV1.RegisterTestcaseHTTPServer(srv, testcase)
+	apiV1.RegisterApiHTTPServer(srv, api)
 	return srv
 }
 
@@ -121,7 +123,7 @@ func setUserInfo() middleware.Middleware {
 func NewWhiteListMatcher() selector.MatchFunc {
 	whiteList := make(map[string]struct{})
 	//whiteList["/api.core.v1.Core/Register"] = struct{}{}
-	//whiteList["/api.core.v1.Core/Login"] = struct{}{}
+	whiteList["/api.task.v1.Task/Test"] = struct{}{}
 	return func(ctx context.Context, operation string) bool {
 		if _, ok := whiteList[operation]; ok {
 			return false

@@ -2,12 +2,19 @@ syntax = "proto3";
 
 package api.management.api;
 
+import "google/api/annotations.proto";
+
 option go_package = "galileo/api/management/api;api";
 option java_multiple_files = true;
 option java_package = "api.management.api";
 
 service Api {
-  rpc CreateApi (CreateApiRequest) returns (CreateApiReply);
+  rpc CreateApi (CreateApiRequest) returns (CreateApiReply){
+    option (google.api.http) = {
+      post: "v1/api/management/interface"
+      body: "*"
+    };
+  };
   rpc UpdateApi (UpdateApiRequest) returns (UpdateApiReply);
   rpc DeleteApi (DeleteApiRequest) returns (DeleteApiReply);
   rpc GetApi (GetApiRequest) returns (GetApiReply);
@@ -38,7 +45,10 @@ message CreateApiRequest {
   string module = 8;
   string description = 9;
 }
-message CreateApiReply {}
+message CreateApiReply {
+  int64 id = 1;
+  int64 createdAt = 2;
+}
 
 message UpdateApiRequest {}
 message UpdateApiReply {}

@@ -1,7 +1,7 @@
 name: management.api
 server:
   http:
-    addr: 0.0.0.0:8000
+    addr: 0.0.0.0:8080
     timeout: 1s
   grpc:
     addr: 0.0.0.0:50052

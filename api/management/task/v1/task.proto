@@ -29,9 +29,9 @@ service Task {
     };
   };
   rpc ListTask (ListTaskRequest) returns (ListTaskReply);
-  rpc TestEngine(google.protobuf.Empty) returns (TestEngineReply){
+  rpc Test(google.protobuf.Empty) returns (TestEngineReply){
     option (google.api.http) = {
-      get: "v1/api/engine/ciao"
+      get: "v1/api/management/ciao"
     };
   };
 }

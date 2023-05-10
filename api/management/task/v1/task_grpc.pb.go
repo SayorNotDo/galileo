@@ -25,7 +25,7 @@ const (
 	Task_DeleteTask_FullMethodName = "/api.task.v1.Task/DeleteTask"
 	Task_TaskByID_FullMethodName   = "/api.task.v1.Task/TaskByID"
 	Task_ListTask_FullMethodName   = "/api.task.v1.Task/ListTask"
-	Task_TestEngine_FullMethodName = "/api.task.v1.Task/TestEngine"
+	Task_Test_FullMethodName       = "/api.task.v1.Task/Test"
 )
 
 // TaskClient is the client API for Task service.
@@ -37,7 +37,7 @@ type TaskClient interface {
 	DeleteTask(ctx context.Context, in *DeleteTaskRequest, opts ...grpc.CallOption) (*DeleteTaskReply, error)
 	TaskByID(ctx context.Context, in *TaskByIDRequest, opts ...grpc.CallOption) (*GetTaskReply, error)
 	ListTask(ctx context.Context, in *ListTaskRequest, opts ...grpc.CallOption) (*ListTaskReply, error)
-	TestEngine(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TestEngineReply, error)
+	Test(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TestEngineReply, error)
 }
 
 type taskClient struct {
@@ -93,9 +93,9 @@ func (c *taskClient) ListTask(ctx context.Context, in *ListTaskRequest, opts ...
 	return out, nil
 }
 
-func (c *taskClient) TestEngine(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TestEngineReply, error) {
+func (c *taskClient) Test(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TestEngineReply, error) {
 	out := new(TestEngineReply)
-	err := c.cc.Invoke(ctx, Task_TestEngine_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Task_Test_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +111,7 @@ type TaskServer interface {
 	DeleteTask(context.Context, *DeleteTaskRequest) (*DeleteTaskReply, error)
 	TaskByID(context.Context, *TaskByIDRequest) (*GetTaskReply, error)
 	ListTask(context.Context, *ListTaskRequest) (*ListTaskReply, error)
-	TestEngine(context.Context, *emptypb.Empty) (*TestEngineReply, error)
+	Test(context.Context, *emptypb.Empty) (*TestEngineReply, error)
 	mustEmbedUnimplementedTaskServer()
 }
 
@@ -134,8 +134,8 @@ func (UnimplementedTaskServer) TaskByID(context.Context, *TaskByIDRequest) (*Get
 func (UnimplementedTaskServer) ListTask(context.Context, *ListTaskRequest) (*ListTaskReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTask not implemented")
 }
-func (UnimplementedTaskServer) TestEngine(context.Context, *emptypb.Empty) (*TestEngineReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TestEngine not implemented")
+func (UnimplementedTaskServer) Test(context.Context, *emptypb.Empty) (*TestEngineReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Test not implemented")
 }
 func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
 
@@ -240,20 +240,20 @@ func _Task_ListTask_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Task_TestEngine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Task_Test_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TaskServer).TestEngine(ctx, in)
+		return srv.(TaskServer).Test(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Task_TestEngine_FullMethodName,
+		FullMethod: Task_Test_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TaskServer).TestEngine(ctx, req.(*emptypb.Empty))
+		return srv.(TaskServer).Test(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -286,8 +286,8 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Task_ListTask_Handler,
 		},
 		{
-			MethodName: "TestEngine",
-			Handler:    _Task_TestEngine_Handler,
+			MethodName: "Test",
+			Handler:    _Task_Test_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
