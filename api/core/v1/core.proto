@@ -41,7 +41,7 @@ service Core {
   };
   rpc UserDetail (google.protobuf.Empty) returns (UserDetailReply){
     option(google.api.http) = {
-      get: "v1/api/user/detail"
+      get: "v1/api/user/info"
     };
   };
   rpc UpdateUserInfo(UserInfoUpdateRequest) returns (UserInfoUpdateReply) {
@@ -180,13 +180,18 @@ message UnregisterReply {}
 
 message UserDetail {
   uint32 id = 1;
-  string username = 2;
   string nickname = 3;
   string chineseName = 4;
   string phone = 5;
   string email = 6;
   int32 role = 7;
 }
+
 message UserDetailReply {
-  UserDetail data = 1;
+  uint32 id = 1;
+  string nickname = 3;
+  string chineseName = 4;
+  string phone = 5;
+  string email = 6;
+  int32 role = 7;
 }

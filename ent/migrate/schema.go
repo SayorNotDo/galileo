@@ -16,13 +16,15 @@ var (
 		{Name: "url", Type: field.TypeString, Nullable: true},
 		{Name: "type", Type: field.TypeInt8, Nullable: true},
 		{Name: "status", Type: field.TypeInt8, Default: 0},
-		{Name: "body", Type: field.TypeBytes, Nullable: true},
-		{Name: "query_params", Type: field.TypeBytes, Nullable: true},
-		{Name: "response", Type: field.TypeBytes, Nullable: true},
+		{Name: "headers", Type: field.TypeString, Nullable: true},
+		{Name: "body", Type: field.TypeString, Nullable: true},
+		{Name: "query_params", Type: field.TypeString, Nullable: true},
+		{Name: "response", Type: field.TypeString, Nullable: true},
 		{Name: "module", Type: field.TypeString, Nullable: true},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
+		{Name: "include_files", Type: field.TypeString, Nullable: true},
 		{Name: "update_at", Type: field.TypeTime, Nullable: true},
 		{Name: "update_by", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
@@ -40,6 +42,79 @@ var (
 				Columns: []*schema.Column{APIColumns[2], APIColumns[3]},
 			},
 		},
+	}
+	// APICategoryColumns holds the columns for the "api_category" table.
+	APICategoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+	}
+	// APICategoryTable holds the schema information for the "api_category" table.
+	APICategoryTable = &schema.Table{
+		Name:       "api_category",
+		Columns:    APICategoryColumns,
+		PrimaryKey: []*schema.Column{APICategoryColumns[0]},
+	}
+	// APIHistoryColumns holds the columns for the "api_history" table.
+	APIHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "version", Type: field.TypeInt64},
+		{Name: "query_params", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeUint32},
+		{Name: "description", Type: field.TypeString},
+	}
+	// APIHistoryTable holds the schema information for the "api_history" table.
+	APIHistoryTable = &schema.Table{
+		Name:       "api_history",
+		Columns:    APIHistoryColumns,
+		PrimaryKey: []*schema.Column{APIHistoryColumns[0]},
+	}
+	// APIStatisticsColumns holds the columns for the "api_statistics" table.
+	APIStatisticsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "call_count", Type: field.TypeInt64},
+		{Name: "success_count", Type: field.TypeInt64},
+		{Name: "failure_count", Type: field.TypeInt64},
+		{Name: "avg_response_time", Type: field.TypeFloat64},
+		{Name: "max_response_time", Type: field.TypeFloat64},
+		{Name: "min_response_time", Type: field.TypeFloat64},
+		{Name: "avg_traffic", Type: field.TypeFloat64},
+		{Name: "max_traffic", Type: field.TypeFloat64},
+		{Name: "min_traffic", Type: field.TypeFloat64},
+		{Name: "description", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "update_at", Type: field.TypeTime},
+		{Name: "api_statistics", Type: field.TypeInt64, Unique: true},
+	}
+	// APIStatisticsTable holds the schema information for the "api_statistics" table.
+	APIStatisticsTable = &schema.Table{
+		Name:       "api_statistics",
+		Columns:    APIStatisticsColumns,
+		PrimaryKey: []*schema.Column{APIStatisticsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "api_statistics_api_statistics",
+				Columns:    []*schema.Column{APIStatisticsColumns[13]},
+				RefColumns: []*schema.Column{APIColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// APITagColumns holds the columns for the "api_tag" table.
+	APITagColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "sort", Type: field.TypeInt64},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeUint32},
+		{Name: "update_at", Type: field.TypeTime},
+		{Name: "update_by", Type: field.TypeUint32},
+		{Name: "description", Type: field.TypeString},
+	}
+	// APITagTable holds the schema information for the "api_tag" table.
+	APITagTable = &schema.Table{
+		Name:       "api_tag",
+		Columns:    APITagColumns,
+		PrimaryKey: []*schema.Column{APITagColumns[0]},
 	}
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
@@ -202,6 +277,10 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		APITable,
+		APICategoryTable,
+		APIHistoryTable,
+		APIStatisticsTable,
+		APITagTable,
 		GroupsTable,
 		ProjectTable,
 		TaskTable,
@@ -215,6 +294,19 @@ var (
 func init() {
 	APITable.Annotation = &entsql.Annotation{
 		Table: "api",
+	}
+	APICategoryTable.Annotation = &entsql.Annotation{
+		Table: "api_category",
+	}
+	APIHistoryTable.Annotation = &entsql.Annotation{
+		Table: "api_history",
+	}
+	APIStatisticsTable.ForeignKeys[0].RefTable = APITable
+	APIStatisticsTable.Annotation = &entsql.Annotation{
+		Table: "api_statistics",
+	}
+	APITagTable.Annotation = &entsql.Annotation{
+		Table: "api_tag",
 	}
 	ProjectTable.Annotation = &entsql.Annotation{
 		Table: "project",

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"galileo/ent/api"
+	"galileo/ent/apistatistics"
 	"galileo/ent/predicate"
 	"time"
 
@@ -102,9 +103,37 @@ func (au *APIUpdate) AddStatus(i int8) *APIUpdate {
 	return au
 }
 
+// SetHeaders sets the "headers" field.
+func (au *APIUpdate) SetHeaders(s string) *APIUpdate {
+	au.mutation.SetHeaders(s)
+	return au
+}
+
+// SetNillableHeaders sets the "headers" field if the given value is not nil.
+func (au *APIUpdate) SetNillableHeaders(s *string) *APIUpdate {
+	if s != nil {
+		au.SetHeaders(*s)
+	}
+	return au
+}
+
+// ClearHeaders clears the value of the "headers" field.
+func (au *APIUpdate) ClearHeaders() *APIUpdate {
+	au.mutation.ClearHeaders()
+	return au
+}
+
 // SetBody sets the "body" field.
-func (au *APIUpdate) SetBody(b []byte) *APIUpdate {
-	au.mutation.SetBody(b)
+func (au *APIUpdate) SetBody(s string) *APIUpdate {
+	au.mutation.SetBody(s)
+	return au
+}
+
+// SetNillableBody sets the "body" field if the given value is not nil.
+func (au *APIUpdate) SetNillableBody(s *string) *APIUpdate {
+	if s != nil {
+		au.SetBody(*s)
+	}
 	return au
 }
 
@@ -115,8 +144,16 @@ func (au *APIUpdate) ClearBody() *APIUpdate {
 }
 
 // SetQueryParams sets the "query_params" field.
-func (au *APIUpdate) SetQueryParams(b []byte) *APIUpdate {
-	au.mutation.SetQueryParams(b)
+func (au *APIUpdate) SetQueryParams(s string) *APIUpdate {
+	au.mutation.SetQueryParams(s)
+	return au
+}
+
+// SetNillableQueryParams sets the "query_params" field if the given value is not nil.
+func (au *APIUpdate) SetNillableQueryParams(s *string) *APIUpdate {
+	if s != nil {
+		au.SetQueryParams(*s)
+	}
 	return au
 }
 
@@ -127,8 +164,16 @@ func (au *APIUpdate) ClearQueryParams() *APIUpdate {
 }
 
 // SetResponse sets the "response" field.
-func (au *APIUpdate) SetResponse(b []byte) *APIUpdate {
-	au.mutation.SetResponse(b)
+func (au *APIUpdate) SetResponse(s string) *APIUpdate {
+	au.mutation.SetResponse(s)
+	return au
+}
+
+// SetNillableResponse sets the "response" field if the given value is not nil.
+func (au *APIUpdate) SetNillableResponse(s *string) *APIUpdate {
+	if s != nil {
+		au.SetResponse(*s)
+	}
 	return au
 }
 
@@ -175,6 +220,26 @@ func (au *APIUpdate) SetNillableDescription(s *string) *APIUpdate {
 // ClearDescription clears the value of the "description" field.
 func (au *APIUpdate) ClearDescription() *APIUpdate {
 	au.mutation.ClearDescription()
+	return au
+}
+
+// SetIncludeFiles sets the "include_files" field.
+func (au *APIUpdate) SetIncludeFiles(s string) *APIUpdate {
+	au.mutation.SetIncludeFiles(s)
+	return au
+}
+
+// SetNillableIncludeFiles sets the "include_files" field if the given value is not nil.
+func (au *APIUpdate) SetNillableIncludeFiles(s *string) *APIUpdate {
+	if s != nil {
+		au.SetIncludeFiles(*s)
+	}
+	return au
+}
+
+// ClearIncludeFiles clears the value of the "include_files" field.
+func (au *APIUpdate) ClearIncludeFiles() *APIUpdate {
+	au.mutation.ClearIncludeFiles()
 	return au
 }
 
@@ -250,9 +315,34 @@ func (au *APIUpdate) ClearDeletedBy() *APIUpdate {
 	return au
 }
 
+// SetStatisticsID sets the "statistics" edge to the ApiStatistics entity by ID.
+func (au *APIUpdate) SetStatisticsID(id int64) *APIUpdate {
+	au.mutation.SetStatisticsID(id)
+	return au
+}
+
+// SetNillableStatisticsID sets the "statistics" edge to the ApiStatistics entity by ID if the given value is not nil.
+func (au *APIUpdate) SetNillableStatisticsID(id *int64) *APIUpdate {
+	if id != nil {
+		au = au.SetStatisticsID(*id)
+	}
+	return au
+}
+
+// SetStatistics sets the "statistics" edge to the ApiStatistics entity.
+func (au *APIUpdate) SetStatistics(a *ApiStatistics) *APIUpdate {
+	return au.SetStatisticsID(a.ID)
+}
+
 // Mutation returns the APIMutation object of the builder.
 func (au *APIUpdate) Mutation() *APIMutation {
 	return au.mutation
+}
+
+// ClearStatistics clears the "statistics" edge to the ApiStatistics entity.
+func (au *APIUpdate) ClearStatistics() *APIUpdate {
+	au.mutation.ClearStatistics()
+	return au
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -337,23 +427,29 @@ func (au *APIUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := au.mutation.AddedStatus(); ok {
 		_spec.AddField(api.FieldStatus, field.TypeInt8, value)
 	}
+	if value, ok := au.mutation.Headers(); ok {
+		_spec.SetField(api.FieldHeaders, field.TypeString, value)
+	}
+	if au.mutation.HeadersCleared() {
+		_spec.ClearField(api.FieldHeaders, field.TypeString)
+	}
 	if value, ok := au.mutation.Body(); ok {
-		_spec.SetField(api.FieldBody, field.TypeBytes, value)
+		_spec.SetField(api.FieldBody, field.TypeString, value)
 	}
 	if au.mutation.BodyCleared() {
-		_spec.ClearField(api.FieldBody, field.TypeBytes)
+		_spec.ClearField(api.FieldBody, field.TypeString)
 	}
 	if value, ok := au.mutation.QueryParams(); ok {
-		_spec.SetField(api.FieldQueryParams, field.TypeBytes, value)
+		_spec.SetField(api.FieldQueryParams, field.TypeString, value)
 	}
 	if au.mutation.QueryParamsCleared() {
-		_spec.ClearField(api.FieldQueryParams, field.TypeBytes)
+		_spec.ClearField(api.FieldQueryParams, field.TypeString)
 	}
 	if value, ok := au.mutation.Response(); ok {
-		_spec.SetField(api.FieldResponse, field.TypeBytes, value)
+		_spec.SetField(api.FieldResponse, field.TypeString, value)
 	}
 	if au.mutation.ResponseCleared() {
-		_spec.ClearField(api.FieldResponse, field.TypeBytes)
+		_spec.ClearField(api.FieldResponse, field.TypeString)
 	}
 	if value, ok := au.mutation.Module(); ok {
 		_spec.SetField(api.FieldModule, field.TypeString, value)
@@ -366,6 +462,12 @@ func (au *APIUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if au.mutation.DescriptionCleared() {
 		_spec.ClearField(api.FieldDescription, field.TypeString)
+	}
+	if value, ok := au.mutation.IncludeFiles(); ok {
+		_spec.SetField(api.FieldIncludeFiles, field.TypeString, value)
+	}
+	if au.mutation.IncludeFilesCleared() {
+		_spec.ClearField(api.FieldIncludeFiles, field.TypeString)
 	}
 	if value, ok := au.mutation.UpdateAt(); ok {
 		_spec.SetField(api.FieldUpdateAt, field.TypeTime, value)
@@ -393,6 +495,35 @@ func (au *APIUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if au.mutation.DeletedByCleared() {
 		_spec.ClearField(api.FieldDeletedBy, field.TypeUint32)
+	}
+	if au.mutation.StatisticsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   api.StatisticsTable,
+			Columns: []string{api.StatisticsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.StatisticsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   api.StatisticsTable,
+			Columns: []string{api.StatisticsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -488,9 +619,37 @@ func (auo *APIUpdateOne) AddStatus(i int8) *APIUpdateOne {
 	return auo
 }
 
+// SetHeaders sets the "headers" field.
+func (auo *APIUpdateOne) SetHeaders(s string) *APIUpdateOne {
+	auo.mutation.SetHeaders(s)
+	return auo
+}
+
+// SetNillableHeaders sets the "headers" field if the given value is not nil.
+func (auo *APIUpdateOne) SetNillableHeaders(s *string) *APIUpdateOne {
+	if s != nil {
+		auo.SetHeaders(*s)
+	}
+	return auo
+}
+
+// ClearHeaders clears the value of the "headers" field.
+func (auo *APIUpdateOne) ClearHeaders() *APIUpdateOne {
+	auo.mutation.ClearHeaders()
+	return auo
+}
+
 // SetBody sets the "body" field.
-func (auo *APIUpdateOne) SetBody(b []byte) *APIUpdateOne {
-	auo.mutation.SetBody(b)
+func (auo *APIUpdateOne) SetBody(s string) *APIUpdateOne {
+	auo.mutation.SetBody(s)
+	return auo
+}
+
+// SetNillableBody sets the "body" field if the given value is not nil.
+func (auo *APIUpdateOne) SetNillableBody(s *string) *APIUpdateOne {
+	if s != nil {
+		auo.SetBody(*s)
+	}
 	return auo
 }
 
@@ -501,8 +660,16 @@ func (auo *APIUpdateOne) ClearBody() *APIUpdateOne {
 }
 
 // SetQueryParams sets the "query_params" field.
-func (auo *APIUpdateOne) SetQueryParams(b []byte) *APIUpdateOne {
-	auo.mutation.SetQueryParams(b)
+func (auo *APIUpdateOne) SetQueryParams(s string) *APIUpdateOne {
+	auo.mutation.SetQueryParams(s)
+	return auo
+}
+
+// SetNillableQueryParams sets the "query_params" field if the given value is not nil.
+func (auo *APIUpdateOne) SetNillableQueryParams(s *string) *APIUpdateOne {
+	if s != nil {
+		auo.SetQueryParams(*s)
+	}
 	return auo
 }
 
@@ -513,8 +680,16 @@ func (auo *APIUpdateOne) ClearQueryParams() *APIUpdateOne {
 }
 
 // SetResponse sets the "response" field.
-func (auo *APIUpdateOne) SetResponse(b []byte) *APIUpdateOne {
-	auo.mutation.SetResponse(b)
+func (auo *APIUpdateOne) SetResponse(s string) *APIUpdateOne {
+	auo.mutation.SetResponse(s)
+	return auo
+}
+
+// SetNillableResponse sets the "response" field if the given value is not nil.
+func (auo *APIUpdateOne) SetNillableResponse(s *string) *APIUpdateOne {
+	if s != nil {
+		auo.SetResponse(*s)
+	}
 	return auo
 }
 
@@ -561,6 +736,26 @@ func (auo *APIUpdateOne) SetNillableDescription(s *string) *APIUpdateOne {
 // ClearDescription clears the value of the "description" field.
 func (auo *APIUpdateOne) ClearDescription() *APIUpdateOne {
 	auo.mutation.ClearDescription()
+	return auo
+}
+
+// SetIncludeFiles sets the "include_files" field.
+func (auo *APIUpdateOne) SetIncludeFiles(s string) *APIUpdateOne {
+	auo.mutation.SetIncludeFiles(s)
+	return auo
+}
+
+// SetNillableIncludeFiles sets the "include_files" field if the given value is not nil.
+func (auo *APIUpdateOne) SetNillableIncludeFiles(s *string) *APIUpdateOne {
+	if s != nil {
+		auo.SetIncludeFiles(*s)
+	}
+	return auo
+}
+
+// ClearIncludeFiles clears the value of the "include_files" field.
+func (auo *APIUpdateOne) ClearIncludeFiles() *APIUpdateOne {
+	auo.mutation.ClearIncludeFiles()
 	return auo
 }
 
@@ -636,9 +831,34 @@ func (auo *APIUpdateOne) ClearDeletedBy() *APIUpdateOne {
 	return auo
 }
 
+// SetStatisticsID sets the "statistics" edge to the ApiStatistics entity by ID.
+func (auo *APIUpdateOne) SetStatisticsID(id int64) *APIUpdateOne {
+	auo.mutation.SetStatisticsID(id)
+	return auo
+}
+
+// SetNillableStatisticsID sets the "statistics" edge to the ApiStatistics entity by ID if the given value is not nil.
+func (auo *APIUpdateOne) SetNillableStatisticsID(id *int64) *APIUpdateOne {
+	if id != nil {
+		auo = auo.SetStatisticsID(*id)
+	}
+	return auo
+}
+
+// SetStatistics sets the "statistics" edge to the ApiStatistics entity.
+func (auo *APIUpdateOne) SetStatistics(a *ApiStatistics) *APIUpdateOne {
+	return auo.SetStatisticsID(a.ID)
+}
+
 // Mutation returns the APIMutation object of the builder.
 func (auo *APIUpdateOne) Mutation() *APIMutation {
 	return auo.mutation
+}
+
+// ClearStatistics clears the "statistics" edge to the ApiStatistics entity.
+func (auo *APIUpdateOne) ClearStatistics() *APIUpdateOne {
+	auo.mutation.ClearStatistics()
+	return auo
 }
 
 // Where appends a list predicates to the APIUpdate builder.
@@ -753,23 +973,29 @@ func (auo *APIUpdateOne) sqlSave(ctx context.Context) (_node *Api, err error) {
 	if value, ok := auo.mutation.AddedStatus(); ok {
 		_spec.AddField(api.FieldStatus, field.TypeInt8, value)
 	}
+	if value, ok := auo.mutation.Headers(); ok {
+		_spec.SetField(api.FieldHeaders, field.TypeString, value)
+	}
+	if auo.mutation.HeadersCleared() {
+		_spec.ClearField(api.FieldHeaders, field.TypeString)
+	}
 	if value, ok := auo.mutation.Body(); ok {
-		_spec.SetField(api.FieldBody, field.TypeBytes, value)
+		_spec.SetField(api.FieldBody, field.TypeString, value)
 	}
 	if auo.mutation.BodyCleared() {
-		_spec.ClearField(api.FieldBody, field.TypeBytes)
+		_spec.ClearField(api.FieldBody, field.TypeString)
 	}
 	if value, ok := auo.mutation.QueryParams(); ok {
-		_spec.SetField(api.FieldQueryParams, field.TypeBytes, value)
+		_spec.SetField(api.FieldQueryParams, field.TypeString, value)
 	}
 	if auo.mutation.QueryParamsCleared() {
-		_spec.ClearField(api.FieldQueryParams, field.TypeBytes)
+		_spec.ClearField(api.FieldQueryParams, field.TypeString)
 	}
 	if value, ok := auo.mutation.Response(); ok {
-		_spec.SetField(api.FieldResponse, field.TypeBytes, value)
+		_spec.SetField(api.FieldResponse, field.TypeString, value)
 	}
 	if auo.mutation.ResponseCleared() {
-		_spec.ClearField(api.FieldResponse, field.TypeBytes)
+		_spec.ClearField(api.FieldResponse, field.TypeString)
 	}
 	if value, ok := auo.mutation.Module(); ok {
 		_spec.SetField(api.FieldModule, field.TypeString, value)
@@ -782,6 +1008,12 @@ func (auo *APIUpdateOne) sqlSave(ctx context.Context) (_node *Api, err error) {
 	}
 	if auo.mutation.DescriptionCleared() {
 		_spec.ClearField(api.FieldDescription, field.TypeString)
+	}
+	if value, ok := auo.mutation.IncludeFiles(); ok {
+		_spec.SetField(api.FieldIncludeFiles, field.TypeString, value)
+	}
+	if auo.mutation.IncludeFilesCleared() {
+		_spec.ClearField(api.FieldIncludeFiles, field.TypeString)
 	}
 	if value, ok := auo.mutation.UpdateAt(); ok {
 		_spec.SetField(api.FieldUpdateAt, field.TypeTime, value)
@@ -809,6 +1041,35 @@ func (auo *APIUpdateOne) sqlSave(ctx context.Context) (_node *Api, err error) {
 	}
 	if auo.mutation.DeletedByCleared() {
 		_spec.ClearField(api.FieldDeletedBy, field.TypeUint32)
+	}
+	if auo.mutation.StatisticsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   api.StatisticsTable,
+			Columns: []string{api.StatisticsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.StatisticsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   api.StatisticsTable,
+			Columns: []string{api.StatisticsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Api{config: auo.config}
 	_spec.Assign = _node.assignValues

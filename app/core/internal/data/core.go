@@ -99,7 +99,6 @@ func (r *coreRepo) ListUser(c context.Context, pageNum, pageSize int32) ([]*v1.U
 	for _, u := range rsp.Data {
 		rv = append(rv, &v1.UserDetail{
 			Id:          u.Id,
-			Username:    u.Username,
 			Nickname:    u.Nickname,
 			ChineseName: u.ChineseName,
 			Phone:       u.Phone,

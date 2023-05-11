@@ -7,6 +7,9 @@ import (
 	"errors"
 	"fmt"
 	"galileo/ent/api"
+	"galileo/ent/apihistory"
+	"galileo/ent/apistatistics"
+	"galileo/ent/apitag"
 	"galileo/ent/group"
 	"galileo/ent/predicate"
 	"galileo/ent/project"
@@ -32,6 +35,10 @@ const (
 
 	// Node types.
 	TypeAPI           = "Api"
+	TypeApiCategory   = "ApiCategory"
+	TypeApiHistory    = "ApiHistory"
+	TypeApiStatistics = "ApiStatistics"
+	TypeApiTag        = "ApiTag"
 	TypeGroup         = "Group"
 	TypeProject       = "Project"
 	TypeTask          = "Task"
@@ -43,33 +50,37 @@ const (
 // APIMutation represents an operation that mutates the Api nodes in the graph.
 type APIMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int64
-	name          *string
-	url           *string
-	_type         *int8
-	add_type      *int8
-	status        *int8
-	addstatus     *int8
-	body          *[]byte
-	query_params  *[]byte
-	response      *[]byte
-	module        *string
-	description   *string
-	created_at    *time.Time
-	created_by    *uint32
-	addcreated_by *int32
-	update_at     *time.Time
-	update_by     *uint32
-	addupdate_by  *int32
-	deleted_at    *time.Time
-	deleted_by    *uint32
-	adddeleted_by *int32
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Api, error)
-	predicates    []predicate.Api
+	op                Op
+	typ               string
+	id                *int64
+	name              *string
+	url               *string
+	_type             *int8
+	add_type          *int8
+	status            *int8
+	addstatus         *int8
+	headers           *string
+	body              *string
+	query_params      *string
+	response          *string
+	module            *string
+	description       *string
+	created_at        *time.Time
+	created_by        *uint32
+	addcreated_by     *int32
+	include_files     *string
+	update_at         *time.Time
+	update_by         *uint32
+	addupdate_by      *int32
+	deleted_at        *time.Time
+	deleted_by        *uint32
+	adddeleted_by     *int32
+	clearedFields     map[string]struct{}
+	statistics        *int64
+	clearedstatistics bool
+	done              bool
+	oldValue          func(context.Context) (*Api, error)
+	predicates        []predicate.Api
 }
 
 var _ ent.Mutation = (*APIMutation)(nil)
@@ -387,13 +398,62 @@ func (m *APIMutation) ResetStatus() {
 	m.addstatus = nil
 }
 
+// SetHeaders sets the "headers" field.
+func (m *APIMutation) SetHeaders(s string) {
+	m.headers = &s
+}
+
+// Headers returns the value of the "headers" field in the mutation.
+func (m *APIMutation) Headers() (r string, exists bool) {
+	v := m.headers
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHeaders returns the old "headers" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldHeaders(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHeaders is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHeaders requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHeaders: %w", err)
+	}
+	return oldValue.Headers, nil
+}
+
+// ClearHeaders clears the value of the "headers" field.
+func (m *APIMutation) ClearHeaders() {
+	m.headers = nil
+	m.clearedFields[api.FieldHeaders] = struct{}{}
+}
+
+// HeadersCleared returns if the "headers" field was cleared in this mutation.
+func (m *APIMutation) HeadersCleared() bool {
+	_, ok := m.clearedFields[api.FieldHeaders]
+	return ok
+}
+
+// ResetHeaders resets all changes to the "headers" field.
+func (m *APIMutation) ResetHeaders() {
+	m.headers = nil
+	delete(m.clearedFields, api.FieldHeaders)
+}
+
 // SetBody sets the "body" field.
-func (m *APIMutation) SetBody(b []byte) {
-	m.body = &b
+func (m *APIMutation) SetBody(s string) {
+	m.body = &s
 }
 
 // Body returns the value of the "body" field in the mutation.
-func (m *APIMutation) Body() (r []byte, exists bool) {
+func (m *APIMutation) Body() (r string, exists bool) {
 	v := m.body
 	if v == nil {
 		return
@@ -404,7 +464,7 @@ func (m *APIMutation) Body() (r []byte, exists bool) {
 // OldBody returns the old "body" field's value of the Api entity.
 // If the Api object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *APIMutation) OldBody(ctx context.Context) (v *[]byte, err error) {
+func (m *APIMutation) OldBody(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldBody is only allowed on UpdateOne operations")
 	}
@@ -437,12 +497,12 @@ func (m *APIMutation) ResetBody() {
 }
 
 // SetQueryParams sets the "query_params" field.
-func (m *APIMutation) SetQueryParams(b []byte) {
-	m.query_params = &b
+func (m *APIMutation) SetQueryParams(s string) {
+	m.query_params = &s
 }
 
 // QueryParams returns the value of the "query_params" field in the mutation.
-func (m *APIMutation) QueryParams() (r []byte, exists bool) {
+func (m *APIMutation) QueryParams() (r string, exists bool) {
 	v := m.query_params
 	if v == nil {
 		return
@@ -453,7 +513,7 @@ func (m *APIMutation) QueryParams() (r []byte, exists bool) {
 // OldQueryParams returns the old "query_params" field's value of the Api entity.
 // If the Api object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *APIMutation) OldQueryParams(ctx context.Context) (v []byte, err error) {
+func (m *APIMutation) OldQueryParams(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldQueryParams is only allowed on UpdateOne operations")
 	}
@@ -486,12 +546,12 @@ func (m *APIMutation) ResetQueryParams() {
 }
 
 // SetResponse sets the "response" field.
-func (m *APIMutation) SetResponse(b []byte) {
-	m.response = &b
+func (m *APIMutation) SetResponse(s string) {
+	m.response = &s
 }
 
 // Response returns the value of the "response" field in the mutation.
-func (m *APIMutation) Response() (r []byte, exists bool) {
+func (m *APIMutation) Response() (r string, exists bool) {
 	v := m.response
 	if v == nil {
 		return
@@ -502,7 +562,7 @@ func (m *APIMutation) Response() (r []byte, exists bool) {
 // OldResponse returns the old "response" field's value of the Api entity.
 // If the Api object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *APIMutation) OldResponse(ctx context.Context) (v []byte, err error) {
+func (m *APIMutation) OldResponse(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldResponse is only allowed on UpdateOne operations")
 	}
@@ -722,6 +782,55 @@ func (m *APIMutation) AddedCreatedBy() (r int32, exists bool) {
 func (m *APIMutation) ResetCreatedBy() {
 	m.created_by = nil
 	m.addcreated_by = nil
+}
+
+// SetIncludeFiles sets the "include_files" field.
+func (m *APIMutation) SetIncludeFiles(s string) {
+	m.include_files = &s
+}
+
+// IncludeFiles returns the value of the "include_files" field in the mutation.
+func (m *APIMutation) IncludeFiles() (r string, exists bool) {
+	v := m.include_files
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIncludeFiles returns the old "include_files" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldIncludeFiles(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIncludeFiles is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIncludeFiles requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIncludeFiles: %w", err)
+	}
+	return oldValue.IncludeFiles, nil
+}
+
+// ClearIncludeFiles clears the value of the "include_files" field.
+func (m *APIMutation) ClearIncludeFiles() {
+	m.include_files = nil
+	m.clearedFields[api.FieldIncludeFiles] = struct{}{}
+}
+
+// IncludeFilesCleared returns if the "include_files" field was cleared in this mutation.
+func (m *APIMutation) IncludeFilesCleared() bool {
+	_, ok := m.clearedFields[api.FieldIncludeFiles]
+	return ok
+}
+
+// ResetIncludeFiles resets all changes to the "include_files" field.
+func (m *APIMutation) ResetIncludeFiles() {
+	m.include_files = nil
+	delete(m.clearedFields, api.FieldIncludeFiles)
 }
 
 // SetUpdateAt sets the "update_at" field.
@@ -948,6 +1057,45 @@ func (m *APIMutation) ResetDeletedBy() {
 	delete(m.clearedFields, api.FieldDeletedBy)
 }
 
+// SetStatisticsID sets the "statistics" edge to the ApiStatistics entity by id.
+func (m *APIMutation) SetStatisticsID(id int64) {
+	m.statistics = &id
+}
+
+// ClearStatistics clears the "statistics" edge to the ApiStatistics entity.
+func (m *APIMutation) ClearStatistics() {
+	m.clearedstatistics = true
+}
+
+// StatisticsCleared reports if the "statistics" edge to the ApiStatistics entity was cleared.
+func (m *APIMutation) StatisticsCleared() bool {
+	return m.clearedstatistics
+}
+
+// StatisticsID returns the "statistics" edge ID in the mutation.
+func (m *APIMutation) StatisticsID() (id int64, exists bool) {
+	if m.statistics != nil {
+		return *m.statistics, true
+	}
+	return
+}
+
+// StatisticsIDs returns the "statistics" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// StatisticsID instead. It exists only for internal usage by the builders.
+func (m *APIMutation) StatisticsIDs() (ids []int64) {
+	if id := m.statistics; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetStatistics resets all changes to the "statistics" edge.
+func (m *APIMutation) ResetStatistics() {
+	m.statistics = nil
+	m.clearedstatistics = false
+}
+
 // Where appends a list predicates to the APIMutation builder.
 func (m *APIMutation) Where(ps ...predicate.Api) {
 	m.predicates = append(m.predicates, ps...)
@@ -982,7 +1130,7 @@ func (m *APIMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *APIMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 17)
 	if m.name != nil {
 		fields = append(fields, api.FieldName)
 	}
@@ -994,6 +1142,9 @@ func (m *APIMutation) Fields() []string {
 	}
 	if m.status != nil {
 		fields = append(fields, api.FieldStatus)
+	}
+	if m.headers != nil {
+		fields = append(fields, api.FieldHeaders)
 	}
 	if m.body != nil {
 		fields = append(fields, api.FieldBody)
@@ -1015,6 +1166,9 @@ func (m *APIMutation) Fields() []string {
 	}
 	if m.created_by != nil {
 		fields = append(fields, api.FieldCreatedBy)
+	}
+	if m.include_files != nil {
+		fields = append(fields, api.FieldIncludeFiles)
 	}
 	if m.update_at != nil {
 		fields = append(fields, api.FieldUpdateAt)
@@ -1044,6 +1198,8 @@ func (m *APIMutation) Field(name string) (ent.Value, bool) {
 		return m.GetType()
 	case api.FieldStatus:
 		return m.Status()
+	case api.FieldHeaders:
+		return m.Headers()
 	case api.FieldBody:
 		return m.Body()
 	case api.FieldQueryParams:
@@ -1058,6 +1214,8 @@ func (m *APIMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case api.FieldCreatedBy:
 		return m.CreatedBy()
+	case api.FieldIncludeFiles:
+		return m.IncludeFiles()
 	case api.FieldUpdateAt:
 		return m.UpdateAt()
 	case api.FieldUpdateBy:
@@ -1083,6 +1241,8 @@ func (m *APIMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldType(ctx)
 	case api.FieldStatus:
 		return m.OldStatus(ctx)
+	case api.FieldHeaders:
+		return m.OldHeaders(ctx)
 	case api.FieldBody:
 		return m.OldBody(ctx)
 	case api.FieldQueryParams:
@@ -1097,6 +1257,8 @@ func (m *APIMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldCreatedAt(ctx)
 	case api.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
+	case api.FieldIncludeFiles:
+		return m.OldIncludeFiles(ctx)
 	case api.FieldUpdateAt:
 		return m.OldUpdateAt(ctx)
 	case api.FieldUpdateBy:
@@ -1142,22 +1304,29 @@ func (m *APIMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetStatus(v)
 		return nil
+	case api.FieldHeaders:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHeaders(v)
+		return nil
 	case api.FieldBody:
-		v, ok := value.([]byte)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBody(v)
 		return nil
 	case api.FieldQueryParams:
-		v, ok := value.([]byte)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetQueryParams(v)
 		return nil
 	case api.FieldResponse:
-		v, ok := value.([]byte)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1190,6 +1359,13 @@ func (m *APIMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedBy(v)
+		return nil
+	case api.FieldIncludeFiles:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIncludeFiles(v)
 		return nil
 	case api.FieldUpdateAt:
 		v, ok := value.(time.Time)
@@ -1318,6 +1494,9 @@ func (m *APIMutation) ClearedFields() []string {
 	if m.FieldCleared(api.FieldType) {
 		fields = append(fields, api.FieldType)
 	}
+	if m.FieldCleared(api.FieldHeaders) {
+		fields = append(fields, api.FieldHeaders)
+	}
 	if m.FieldCleared(api.FieldBody) {
 		fields = append(fields, api.FieldBody)
 	}
@@ -1332,6 +1511,9 @@ func (m *APIMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(api.FieldDescription) {
 		fields = append(fields, api.FieldDescription)
+	}
+	if m.FieldCleared(api.FieldIncludeFiles) {
+		fields = append(fields, api.FieldIncludeFiles)
 	}
 	if m.FieldCleared(api.FieldUpdateAt) {
 		fields = append(fields, api.FieldUpdateAt)
@@ -1362,6 +1544,9 @@ func (m *APIMutation) ClearField(name string) error {
 	case api.FieldType:
 		m.ClearType()
 		return nil
+	case api.FieldHeaders:
+		m.ClearHeaders()
+		return nil
 	case api.FieldBody:
 		m.ClearBody()
 		return nil
@@ -1376,6 +1561,9 @@ func (m *APIMutation) ClearField(name string) error {
 		return nil
 	case api.FieldDescription:
 		m.ClearDescription()
+		return nil
+	case api.FieldIncludeFiles:
+		m.ClearIncludeFiles()
 		return nil
 	case api.FieldUpdateAt:
 		m.ClearUpdateAt()
@@ -1406,6 +1594,9 @@ func (m *APIMutation) ResetField(name string) error {
 	case api.FieldStatus:
 		m.ResetStatus()
 		return nil
+	case api.FieldHeaders:
+		m.ResetHeaders()
+		return nil
 	case api.FieldBody:
 		m.ResetBody()
 		return nil
@@ -1427,6 +1618,9 @@ func (m *APIMutation) ResetField(name string) error {
 	case api.FieldCreatedBy:
 		m.ResetCreatedBy()
 		return nil
+	case api.FieldIncludeFiles:
+		m.ResetIncludeFiles()
+		return nil
 	case api.FieldUpdateAt:
 		m.ResetUpdateAt()
 		return nil
@@ -1445,19 +1639,28 @@ func (m *APIMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *APIMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.statistics != nil {
+		edges = append(edges, api.EdgeStatistics)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *APIMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case api.EdgeStatistics:
+		if id := m.statistics; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *APIMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -1469,26 +1672,2969 @@ func (m *APIMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *APIMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedstatistics {
+		edges = append(edges, api.EdgeStatistics)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *APIMutation) EdgeCleared(name string) bool {
+	switch name {
+	case api.EdgeStatistics:
+		return m.clearedstatistics
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *APIMutation) ClearEdge(name string) error {
+	switch name {
+	case api.EdgeStatistics:
+		m.ClearStatistics()
+		return nil
+	}
 	return fmt.Errorf("unknown Api unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *APIMutation) ResetEdge(name string) error {
+	switch name {
+	case api.EdgeStatistics:
+		m.ResetStatistics()
+		return nil
+	}
 	return fmt.Errorf("unknown Api edge %s", name)
+}
+
+// ApiCategoryMutation represents an operation that mutates the ApiCategory nodes in the graph.
+type ApiCategoryMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ApiCategory, error)
+	predicates    []predicate.ApiCategory
+}
+
+var _ ent.Mutation = (*ApiCategoryMutation)(nil)
+
+// apicategoryOption allows management of the mutation configuration using functional options.
+type apicategoryOption func(*ApiCategoryMutation)
+
+// newApiCategoryMutation creates new mutation for the ApiCategory entity.
+func newApiCategoryMutation(c config, op Op, opts ...apicategoryOption) *ApiCategoryMutation {
+	m := &ApiCategoryMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeApiCategory,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withApiCategoryID sets the ID field of the mutation.
+func withApiCategoryID(id int) apicategoryOption {
+	return func(m *ApiCategoryMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ApiCategory
+		)
+		m.oldValue = func(ctx context.Context) (*ApiCategory, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ApiCategory.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withApiCategory sets the old ApiCategory of the mutation.
+func withApiCategory(node *ApiCategory) apicategoryOption {
+	return func(m *ApiCategoryMutation) {
+		m.oldValue = func(context.Context) (*ApiCategory, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ApiCategoryMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ApiCategoryMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ApiCategoryMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ApiCategoryMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ApiCategory.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// Where appends a list predicates to the ApiCategoryMutation builder.
+func (m *ApiCategoryMutation) Where(ps ...predicate.ApiCategory) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ApiCategoryMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ApiCategoryMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ApiCategory, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ApiCategoryMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ApiCategoryMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ApiCategory).
+func (m *ApiCategoryMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ApiCategoryMutation) Fields() []string {
+	fields := make([]string, 0, 0)
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ApiCategoryMutation) Field(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ApiCategoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	return nil, fmt.Errorf("unknown ApiCategory field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ApiCategoryMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown ApiCategory field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ApiCategoryMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ApiCategoryMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ApiCategoryMutation) AddField(name string, value ent.Value) error {
+	return fmt.Errorf("unknown ApiCategory numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ApiCategoryMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ApiCategoryMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ApiCategoryMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ApiCategory nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ApiCategoryMutation) ResetField(name string) error {
+	return fmt.Errorf("unknown ApiCategory field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ApiCategoryMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ApiCategoryMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ApiCategoryMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ApiCategoryMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ApiCategoryMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ApiCategoryMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ApiCategoryMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ApiCategory unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ApiCategoryMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ApiCategory edge %s", name)
+}
+
+// ApiHistoryMutation represents an operation that mutates the ApiHistory nodes in the graph.
+type ApiHistoryMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	version       *int64
+	addversion    *int64
+	query_params  *string
+	created_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	description   *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ApiHistory, error)
+	predicates    []predicate.ApiHistory
+}
+
+var _ ent.Mutation = (*ApiHistoryMutation)(nil)
+
+// apihistoryOption allows management of the mutation configuration using functional options.
+type apihistoryOption func(*ApiHistoryMutation)
+
+// newApiHistoryMutation creates new mutation for the ApiHistory entity.
+func newApiHistoryMutation(c config, op Op, opts ...apihistoryOption) *ApiHistoryMutation {
+	m := &ApiHistoryMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeApiHistory,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withApiHistoryID sets the ID field of the mutation.
+func withApiHistoryID(id int) apihistoryOption {
+	return func(m *ApiHistoryMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ApiHistory
+		)
+		m.oldValue = func(ctx context.Context) (*ApiHistory, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ApiHistory.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withApiHistory sets the old ApiHistory of the mutation.
+func withApiHistory(node *ApiHistory) apihistoryOption {
+	return func(m *ApiHistoryMutation) {
+		m.oldValue = func(context.Context) (*ApiHistory, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ApiHistoryMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ApiHistoryMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ApiHistoryMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ApiHistoryMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ApiHistory.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetVersion sets the "version" field.
+func (m *ApiHistoryMutation) SetVersion(i int64) {
+	m.version = &i
+	m.addversion = nil
+}
+
+// Version returns the value of the "version" field in the mutation.
+func (m *ApiHistoryMutation) Version() (r int64, exists bool) {
+	v := m.version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVersion returns the old "version" field's value of the ApiHistory entity.
+// If the ApiHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiHistoryMutation) OldVersion(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+	}
+	return oldValue.Version, nil
+}
+
+// AddVersion adds i to the "version" field.
+func (m *ApiHistoryMutation) AddVersion(i int64) {
+	if m.addversion != nil {
+		*m.addversion += i
+	} else {
+		m.addversion = &i
+	}
+}
+
+// AddedVersion returns the value that was added to the "version" field in this mutation.
+func (m *ApiHistoryMutation) AddedVersion() (r int64, exists bool) {
+	v := m.addversion
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetVersion resets all changes to the "version" field.
+func (m *ApiHistoryMutation) ResetVersion() {
+	m.version = nil
+	m.addversion = nil
+}
+
+// SetQueryParams sets the "query_params" field.
+func (m *ApiHistoryMutation) SetQueryParams(s string) {
+	m.query_params = &s
+}
+
+// QueryParams returns the value of the "query_params" field in the mutation.
+func (m *ApiHistoryMutation) QueryParams() (r string, exists bool) {
+	v := m.query_params
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldQueryParams returns the old "query_params" field's value of the ApiHistory entity.
+// If the ApiHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiHistoryMutation) OldQueryParams(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldQueryParams is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldQueryParams requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldQueryParams: %w", err)
+	}
+	return oldValue.QueryParams, nil
+}
+
+// ResetQueryParams resets all changes to the "query_params" field.
+func (m *ApiHistoryMutation) ResetQueryParams() {
+	m.query_params = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ApiHistoryMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ApiHistoryMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ApiHistory entity.
+// If the ApiHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiHistoryMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ApiHistoryMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *ApiHistoryMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *ApiHistoryMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the ApiHistory entity.
+// If the ApiHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiHistoryMutation) OldCreatedBy(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *ApiHistoryMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *ApiHistoryMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *ApiHistoryMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *ApiHistoryMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *ApiHistoryMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the ApiHistory entity.
+// If the ApiHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiHistoryMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *ApiHistoryMutation) ResetDescription() {
+	m.description = nil
+}
+
+// Where appends a list predicates to the ApiHistoryMutation builder.
+func (m *ApiHistoryMutation) Where(ps ...predicate.ApiHistory) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ApiHistoryMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ApiHistoryMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ApiHistory, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ApiHistoryMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ApiHistoryMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ApiHistory).
+func (m *ApiHistoryMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ApiHistoryMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.version != nil {
+		fields = append(fields, apihistory.FieldVersion)
+	}
+	if m.query_params != nil {
+		fields = append(fields, apihistory.FieldQueryParams)
+	}
+	if m.created_at != nil {
+		fields = append(fields, apihistory.FieldCreatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, apihistory.FieldCreatedBy)
+	}
+	if m.description != nil {
+		fields = append(fields, apihistory.FieldDescription)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ApiHistoryMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case apihistory.FieldVersion:
+		return m.Version()
+	case apihistory.FieldQueryParams:
+		return m.QueryParams()
+	case apihistory.FieldCreatedAt:
+		return m.CreatedAt()
+	case apihistory.FieldCreatedBy:
+		return m.CreatedBy()
+	case apihistory.FieldDescription:
+		return m.Description()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ApiHistoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case apihistory.FieldVersion:
+		return m.OldVersion(ctx)
+	case apihistory.FieldQueryParams:
+		return m.OldQueryParams(ctx)
+	case apihistory.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case apihistory.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case apihistory.FieldDescription:
+		return m.OldDescription(ctx)
+	}
+	return nil, fmt.Errorf("unknown ApiHistory field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ApiHistoryMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case apihistory.FieldVersion:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVersion(v)
+		return nil
+	case apihistory.FieldQueryParams:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetQueryParams(v)
+		return nil
+	case apihistory.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case apihistory.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case apihistory.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ApiHistory field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ApiHistoryMutation) AddedFields() []string {
+	var fields []string
+	if m.addversion != nil {
+		fields = append(fields, apihistory.FieldVersion)
+	}
+	if m.addcreated_by != nil {
+		fields = append(fields, apihistory.FieldCreatedBy)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ApiHistoryMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case apihistory.FieldVersion:
+		return m.AddedVersion()
+	case apihistory.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ApiHistoryMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case apihistory.FieldVersion:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddVersion(v)
+		return nil
+	case apihistory.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ApiHistory numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ApiHistoryMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ApiHistoryMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ApiHistoryMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ApiHistory nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ApiHistoryMutation) ResetField(name string) error {
+	switch name {
+	case apihistory.FieldVersion:
+		m.ResetVersion()
+		return nil
+	case apihistory.FieldQueryParams:
+		m.ResetQueryParams()
+		return nil
+	case apihistory.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case apihistory.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case apihistory.FieldDescription:
+		m.ResetDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown ApiHistory field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ApiHistoryMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ApiHistoryMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ApiHistoryMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ApiHistoryMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ApiHistoryMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ApiHistoryMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ApiHistoryMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ApiHistory unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ApiHistoryMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ApiHistory edge %s", name)
+}
+
+// ApiStatisticsMutation represents an operation that mutates the ApiStatistics nodes in the graph.
+type ApiStatisticsMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int64
+	call_count           *int64
+	addcall_count        *int64
+	success_count        *int64
+	addsuccess_count     *int64
+	failure_count        *int64
+	addfailure_count     *int64
+	avg_response_time    *float64
+	addavg_response_time *float64
+	max_response_time    *float64
+	addmax_response_time *float64
+	min_response_time    *float64
+	addmin_response_time *float64
+	avg_traffic          *float64
+	addavg_traffic       *float64
+	max_traffic          *float64
+	addmax_traffic       *float64
+	min_traffic          *float64
+	addmin_traffic       *float64
+	description          *string
+	created_at           *time.Time
+	update_at            *time.Time
+	clearedFields        map[string]struct{}
+	api                  *int64
+	clearedapi           bool
+	done                 bool
+	oldValue             func(context.Context) (*ApiStatistics, error)
+	predicates           []predicate.ApiStatistics
+}
+
+var _ ent.Mutation = (*ApiStatisticsMutation)(nil)
+
+// apistatisticsOption allows management of the mutation configuration using functional options.
+type apistatisticsOption func(*ApiStatisticsMutation)
+
+// newApiStatisticsMutation creates new mutation for the ApiStatistics entity.
+func newApiStatisticsMutation(c config, op Op, opts ...apistatisticsOption) *ApiStatisticsMutation {
+	m := &ApiStatisticsMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeApiStatistics,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withApiStatisticsID sets the ID field of the mutation.
+func withApiStatisticsID(id int64) apistatisticsOption {
+	return func(m *ApiStatisticsMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ApiStatistics
+		)
+		m.oldValue = func(ctx context.Context) (*ApiStatistics, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ApiStatistics.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withApiStatistics sets the old ApiStatistics of the mutation.
+func withApiStatistics(node *ApiStatistics) apistatisticsOption {
+	return func(m *ApiStatisticsMutation) {
+		m.oldValue = func(context.Context) (*ApiStatistics, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ApiStatisticsMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ApiStatisticsMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ApiStatistics entities.
+func (m *ApiStatisticsMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ApiStatisticsMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ApiStatisticsMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ApiStatistics.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCallCount sets the "call_count" field.
+func (m *ApiStatisticsMutation) SetCallCount(i int64) {
+	m.call_count = &i
+	m.addcall_count = nil
+}
+
+// CallCount returns the value of the "call_count" field in the mutation.
+func (m *ApiStatisticsMutation) CallCount() (r int64, exists bool) {
+	v := m.call_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCallCount returns the old "call_count" field's value of the ApiStatistics entity.
+// If the ApiStatistics object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiStatisticsMutation) OldCallCount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCallCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCallCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCallCount: %w", err)
+	}
+	return oldValue.CallCount, nil
+}
+
+// AddCallCount adds i to the "call_count" field.
+func (m *ApiStatisticsMutation) AddCallCount(i int64) {
+	if m.addcall_count != nil {
+		*m.addcall_count += i
+	} else {
+		m.addcall_count = &i
+	}
+}
+
+// AddedCallCount returns the value that was added to the "call_count" field in this mutation.
+func (m *ApiStatisticsMutation) AddedCallCount() (r int64, exists bool) {
+	v := m.addcall_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCallCount resets all changes to the "call_count" field.
+func (m *ApiStatisticsMutation) ResetCallCount() {
+	m.call_count = nil
+	m.addcall_count = nil
+}
+
+// SetSuccessCount sets the "success_count" field.
+func (m *ApiStatisticsMutation) SetSuccessCount(i int64) {
+	m.success_count = &i
+	m.addsuccess_count = nil
+}
+
+// SuccessCount returns the value of the "success_count" field in the mutation.
+func (m *ApiStatisticsMutation) SuccessCount() (r int64, exists bool) {
+	v := m.success_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSuccessCount returns the old "success_count" field's value of the ApiStatistics entity.
+// If the ApiStatistics object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiStatisticsMutation) OldSuccessCount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSuccessCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSuccessCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSuccessCount: %w", err)
+	}
+	return oldValue.SuccessCount, nil
+}
+
+// AddSuccessCount adds i to the "success_count" field.
+func (m *ApiStatisticsMutation) AddSuccessCount(i int64) {
+	if m.addsuccess_count != nil {
+		*m.addsuccess_count += i
+	} else {
+		m.addsuccess_count = &i
+	}
+}
+
+// AddedSuccessCount returns the value that was added to the "success_count" field in this mutation.
+func (m *ApiStatisticsMutation) AddedSuccessCount() (r int64, exists bool) {
+	v := m.addsuccess_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSuccessCount resets all changes to the "success_count" field.
+func (m *ApiStatisticsMutation) ResetSuccessCount() {
+	m.success_count = nil
+	m.addsuccess_count = nil
+}
+
+// SetFailureCount sets the "failure_count" field.
+func (m *ApiStatisticsMutation) SetFailureCount(i int64) {
+	m.failure_count = &i
+	m.addfailure_count = nil
+}
+
+// FailureCount returns the value of the "failure_count" field in the mutation.
+func (m *ApiStatisticsMutation) FailureCount() (r int64, exists bool) {
+	v := m.failure_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFailureCount returns the old "failure_count" field's value of the ApiStatistics entity.
+// If the ApiStatistics object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiStatisticsMutation) OldFailureCount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFailureCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFailureCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFailureCount: %w", err)
+	}
+	return oldValue.FailureCount, nil
+}
+
+// AddFailureCount adds i to the "failure_count" field.
+func (m *ApiStatisticsMutation) AddFailureCount(i int64) {
+	if m.addfailure_count != nil {
+		*m.addfailure_count += i
+	} else {
+		m.addfailure_count = &i
+	}
+}
+
+// AddedFailureCount returns the value that was added to the "failure_count" field in this mutation.
+func (m *ApiStatisticsMutation) AddedFailureCount() (r int64, exists bool) {
+	v := m.addfailure_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetFailureCount resets all changes to the "failure_count" field.
+func (m *ApiStatisticsMutation) ResetFailureCount() {
+	m.failure_count = nil
+	m.addfailure_count = nil
+}
+
+// SetAvgResponseTime sets the "avg_response_time" field.
+func (m *ApiStatisticsMutation) SetAvgResponseTime(f float64) {
+	m.avg_response_time = &f
+	m.addavg_response_time = nil
+}
+
+// AvgResponseTime returns the value of the "avg_response_time" field in the mutation.
+func (m *ApiStatisticsMutation) AvgResponseTime() (r float64, exists bool) {
+	v := m.avg_response_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAvgResponseTime returns the old "avg_response_time" field's value of the ApiStatistics entity.
+// If the ApiStatistics object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiStatisticsMutation) OldAvgResponseTime(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAvgResponseTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAvgResponseTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAvgResponseTime: %w", err)
+	}
+	return oldValue.AvgResponseTime, nil
+}
+
+// AddAvgResponseTime adds f to the "avg_response_time" field.
+func (m *ApiStatisticsMutation) AddAvgResponseTime(f float64) {
+	if m.addavg_response_time != nil {
+		*m.addavg_response_time += f
+	} else {
+		m.addavg_response_time = &f
+	}
+}
+
+// AddedAvgResponseTime returns the value that was added to the "avg_response_time" field in this mutation.
+func (m *ApiStatisticsMutation) AddedAvgResponseTime() (r float64, exists bool) {
+	v := m.addavg_response_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAvgResponseTime resets all changes to the "avg_response_time" field.
+func (m *ApiStatisticsMutation) ResetAvgResponseTime() {
+	m.avg_response_time = nil
+	m.addavg_response_time = nil
+}
+
+// SetMaxResponseTime sets the "max_response_time" field.
+func (m *ApiStatisticsMutation) SetMaxResponseTime(f float64) {
+	m.max_response_time = &f
+	m.addmax_response_time = nil
+}
+
+// MaxResponseTime returns the value of the "max_response_time" field in the mutation.
+func (m *ApiStatisticsMutation) MaxResponseTime() (r float64, exists bool) {
+	v := m.max_response_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMaxResponseTime returns the old "max_response_time" field's value of the ApiStatistics entity.
+// If the ApiStatistics object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiStatisticsMutation) OldMaxResponseTime(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMaxResponseTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMaxResponseTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMaxResponseTime: %w", err)
+	}
+	return oldValue.MaxResponseTime, nil
+}
+
+// AddMaxResponseTime adds f to the "max_response_time" field.
+func (m *ApiStatisticsMutation) AddMaxResponseTime(f float64) {
+	if m.addmax_response_time != nil {
+		*m.addmax_response_time += f
+	} else {
+		m.addmax_response_time = &f
+	}
+}
+
+// AddedMaxResponseTime returns the value that was added to the "max_response_time" field in this mutation.
+func (m *ApiStatisticsMutation) AddedMaxResponseTime() (r float64, exists bool) {
+	v := m.addmax_response_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMaxResponseTime resets all changes to the "max_response_time" field.
+func (m *ApiStatisticsMutation) ResetMaxResponseTime() {
+	m.max_response_time = nil
+	m.addmax_response_time = nil
+}
+
+// SetMinResponseTime sets the "min_response_time" field.
+func (m *ApiStatisticsMutation) SetMinResponseTime(f float64) {
+	m.min_response_time = &f
+	m.addmin_response_time = nil
+}
+
+// MinResponseTime returns the value of the "min_response_time" field in the mutation.
+func (m *ApiStatisticsMutation) MinResponseTime() (r float64, exists bool) {
+	v := m.min_response_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMinResponseTime returns the old "min_response_time" field's value of the ApiStatistics entity.
+// If the ApiStatistics object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiStatisticsMutation) OldMinResponseTime(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMinResponseTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMinResponseTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMinResponseTime: %w", err)
+	}
+	return oldValue.MinResponseTime, nil
+}
+
+// AddMinResponseTime adds f to the "min_response_time" field.
+func (m *ApiStatisticsMutation) AddMinResponseTime(f float64) {
+	if m.addmin_response_time != nil {
+		*m.addmin_response_time += f
+	} else {
+		m.addmin_response_time = &f
+	}
+}
+
+// AddedMinResponseTime returns the value that was added to the "min_response_time" field in this mutation.
+func (m *ApiStatisticsMutation) AddedMinResponseTime() (r float64, exists bool) {
+	v := m.addmin_response_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMinResponseTime resets all changes to the "min_response_time" field.
+func (m *ApiStatisticsMutation) ResetMinResponseTime() {
+	m.min_response_time = nil
+	m.addmin_response_time = nil
+}
+
+// SetAvgTraffic sets the "avg_traffic" field.
+func (m *ApiStatisticsMutation) SetAvgTraffic(f float64) {
+	m.avg_traffic = &f
+	m.addavg_traffic = nil
+}
+
+// AvgTraffic returns the value of the "avg_traffic" field in the mutation.
+func (m *ApiStatisticsMutation) AvgTraffic() (r float64, exists bool) {
+	v := m.avg_traffic
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAvgTraffic returns the old "avg_traffic" field's value of the ApiStatistics entity.
+// If the ApiStatistics object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiStatisticsMutation) OldAvgTraffic(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAvgTraffic is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAvgTraffic requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAvgTraffic: %w", err)
+	}
+	return oldValue.AvgTraffic, nil
+}
+
+// AddAvgTraffic adds f to the "avg_traffic" field.
+func (m *ApiStatisticsMutation) AddAvgTraffic(f float64) {
+	if m.addavg_traffic != nil {
+		*m.addavg_traffic += f
+	} else {
+		m.addavg_traffic = &f
+	}
+}
+
+// AddedAvgTraffic returns the value that was added to the "avg_traffic" field in this mutation.
+func (m *ApiStatisticsMutation) AddedAvgTraffic() (r float64, exists bool) {
+	v := m.addavg_traffic
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAvgTraffic resets all changes to the "avg_traffic" field.
+func (m *ApiStatisticsMutation) ResetAvgTraffic() {
+	m.avg_traffic = nil
+	m.addavg_traffic = nil
+}
+
+// SetMaxTraffic sets the "max_traffic" field.
+func (m *ApiStatisticsMutation) SetMaxTraffic(f float64) {
+	m.max_traffic = &f
+	m.addmax_traffic = nil
+}
+
+// MaxTraffic returns the value of the "max_traffic" field in the mutation.
+func (m *ApiStatisticsMutation) MaxTraffic() (r float64, exists bool) {
+	v := m.max_traffic
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMaxTraffic returns the old "max_traffic" field's value of the ApiStatistics entity.
+// If the ApiStatistics object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiStatisticsMutation) OldMaxTraffic(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMaxTraffic is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMaxTraffic requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMaxTraffic: %w", err)
+	}
+	return oldValue.MaxTraffic, nil
+}
+
+// AddMaxTraffic adds f to the "max_traffic" field.
+func (m *ApiStatisticsMutation) AddMaxTraffic(f float64) {
+	if m.addmax_traffic != nil {
+		*m.addmax_traffic += f
+	} else {
+		m.addmax_traffic = &f
+	}
+}
+
+// AddedMaxTraffic returns the value that was added to the "max_traffic" field in this mutation.
+func (m *ApiStatisticsMutation) AddedMaxTraffic() (r float64, exists bool) {
+	v := m.addmax_traffic
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMaxTraffic resets all changes to the "max_traffic" field.
+func (m *ApiStatisticsMutation) ResetMaxTraffic() {
+	m.max_traffic = nil
+	m.addmax_traffic = nil
+}
+
+// SetMinTraffic sets the "min_traffic" field.
+func (m *ApiStatisticsMutation) SetMinTraffic(f float64) {
+	m.min_traffic = &f
+	m.addmin_traffic = nil
+}
+
+// MinTraffic returns the value of the "min_traffic" field in the mutation.
+func (m *ApiStatisticsMutation) MinTraffic() (r float64, exists bool) {
+	v := m.min_traffic
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMinTraffic returns the old "min_traffic" field's value of the ApiStatistics entity.
+// If the ApiStatistics object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiStatisticsMutation) OldMinTraffic(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMinTraffic is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMinTraffic requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMinTraffic: %w", err)
+	}
+	return oldValue.MinTraffic, nil
+}
+
+// AddMinTraffic adds f to the "min_traffic" field.
+func (m *ApiStatisticsMutation) AddMinTraffic(f float64) {
+	if m.addmin_traffic != nil {
+		*m.addmin_traffic += f
+	} else {
+		m.addmin_traffic = &f
+	}
+}
+
+// AddedMinTraffic returns the value that was added to the "min_traffic" field in this mutation.
+func (m *ApiStatisticsMutation) AddedMinTraffic() (r float64, exists bool) {
+	v := m.addmin_traffic
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMinTraffic resets all changes to the "min_traffic" field.
+func (m *ApiStatisticsMutation) ResetMinTraffic() {
+	m.min_traffic = nil
+	m.addmin_traffic = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *ApiStatisticsMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *ApiStatisticsMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the ApiStatistics entity.
+// If the ApiStatistics object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiStatisticsMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *ApiStatisticsMutation) ResetDescription() {
+	m.description = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ApiStatisticsMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ApiStatisticsMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ApiStatistics entity.
+// If the ApiStatistics object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiStatisticsMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ApiStatisticsMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (m *ApiStatisticsMutation) SetUpdateAt(t time.Time) {
+	m.update_at = &t
+}
+
+// UpdateAt returns the value of the "update_at" field in the mutation.
+func (m *ApiStatisticsMutation) UpdateAt() (r time.Time, exists bool) {
+	v := m.update_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateAt returns the old "update_at" field's value of the ApiStatistics entity.
+// If the ApiStatistics object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiStatisticsMutation) OldUpdateAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdateAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdateAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateAt: %w", err)
+	}
+	return oldValue.UpdateAt, nil
+}
+
+// ResetUpdateAt resets all changes to the "update_at" field.
+func (m *ApiStatisticsMutation) ResetUpdateAt() {
+	m.update_at = nil
+}
+
+// SetAPIID sets the "api" edge to the Api entity by id.
+func (m *ApiStatisticsMutation) SetAPIID(id int64) {
+	m.api = &id
+}
+
+// ClearAPI clears the "api" edge to the Api entity.
+func (m *ApiStatisticsMutation) ClearAPI() {
+	m.clearedapi = true
+}
+
+// APICleared reports if the "api" edge to the Api entity was cleared.
+func (m *ApiStatisticsMutation) APICleared() bool {
+	return m.clearedapi
+}
+
+// APIID returns the "api" edge ID in the mutation.
+func (m *ApiStatisticsMutation) APIID() (id int64, exists bool) {
+	if m.api != nil {
+		return *m.api, true
+	}
+	return
+}
+
+// APIIDs returns the "api" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// APIID instead. It exists only for internal usage by the builders.
+func (m *ApiStatisticsMutation) APIIDs() (ids []int64) {
+	if id := m.api; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAPI resets all changes to the "api" edge.
+func (m *ApiStatisticsMutation) ResetAPI() {
+	m.api = nil
+	m.clearedapi = false
+}
+
+// Where appends a list predicates to the ApiStatisticsMutation builder.
+func (m *ApiStatisticsMutation) Where(ps ...predicate.ApiStatistics) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ApiStatisticsMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ApiStatisticsMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ApiStatistics, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ApiStatisticsMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ApiStatisticsMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ApiStatistics).
+func (m *ApiStatisticsMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ApiStatisticsMutation) Fields() []string {
+	fields := make([]string, 0, 12)
+	if m.call_count != nil {
+		fields = append(fields, apistatistics.FieldCallCount)
+	}
+	if m.success_count != nil {
+		fields = append(fields, apistatistics.FieldSuccessCount)
+	}
+	if m.failure_count != nil {
+		fields = append(fields, apistatistics.FieldFailureCount)
+	}
+	if m.avg_response_time != nil {
+		fields = append(fields, apistatistics.FieldAvgResponseTime)
+	}
+	if m.max_response_time != nil {
+		fields = append(fields, apistatistics.FieldMaxResponseTime)
+	}
+	if m.min_response_time != nil {
+		fields = append(fields, apistatistics.FieldMinResponseTime)
+	}
+	if m.avg_traffic != nil {
+		fields = append(fields, apistatistics.FieldAvgTraffic)
+	}
+	if m.max_traffic != nil {
+		fields = append(fields, apistatistics.FieldMaxTraffic)
+	}
+	if m.min_traffic != nil {
+		fields = append(fields, apistatistics.FieldMinTraffic)
+	}
+	if m.description != nil {
+		fields = append(fields, apistatistics.FieldDescription)
+	}
+	if m.created_at != nil {
+		fields = append(fields, apistatistics.FieldCreatedAt)
+	}
+	if m.update_at != nil {
+		fields = append(fields, apistatistics.FieldUpdateAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ApiStatisticsMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case apistatistics.FieldCallCount:
+		return m.CallCount()
+	case apistatistics.FieldSuccessCount:
+		return m.SuccessCount()
+	case apistatistics.FieldFailureCount:
+		return m.FailureCount()
+	case apistatistics.FieldAvgResponseTime:
+		return m.AvgResponseTime()
+	case apistatistics.FieldMaxResponseTime:
+		return m.MaxResponseTime()
+	case apistatistics.FieldMinResponseTime:
+		return m.MinResponseTime()
+	case apistatistics.FieldAvgTraffic:
+		return m.AvgTraffic()
+	case apistatistics.FieldMaxTraffic:
+		return m.MaxTraffic()
+	case apistatistics.FieldMinTraffic:
+		return m.MinTraffic()
+	case apistatistics.FieldDescription:
+		return m.Description()
+	case apistatistics.FieldCreatedAt:
+		return m.CreatedAt()
+	case apistatistics.FieldUpdateAt:
+		return m.UpdateAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ApiStatisticsMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case apistatistics.FieldCallCount:
+		return m.OldCallCount(ctx)
+	case apistatistics.FieldSuccessCount:
+		return m.OldSuccessCount(ctx)
+	case apistatistics.FieldFailureCount:
+		return m.OldFailureCount(ctx)
+	case apistatistics.FieldAvgResponseTime:
+		return m.OldAvgResponseTime(ctx)
+	case apistatistics.FieldMaxResponseTime:
+		return m.OldMaxResponseTime(ctx)
+	case apistatistics.FieldMinResponseTime:
+		return m.OldMinResponseTime(ctx)
+	case apistatistics.FieldAvgTraffic:
+		return m.OldAvgTraffic(ctx)
+	case apistatistics.FieldMaxTraffic:
+		return m.OldMaxTraffic(ctx)
+	case apistatistics.FieldMinTraffic:
+		return m.OldMinTraffic(ctx)
+	case apistatistics.FieldDescription:
+		return m.OldDescription(ctx)
+	case apistatistics.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case apistatistics.FieldUpdateAt:
+		return m.OldUpdateAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown ApiStatistics field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ApiStatisticsMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case apistatistics.FieldCallCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCallCount(v)
+		return nil
+	case apistatistics.FieldSuccessCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSuccessCount(v)
+		return nil
+	case apistatistics.FieldFailureCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFailureCount(v)
+		return nil
+	case apistatistics.FieldAvgResponseTime:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAvgResponseTime(v)
+		return nil
+	case apistatistics.FieldMaxResponseTime:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMaxResponseTime(v)
+		return nil
+	case apistatistics.FieldMinResponseTime:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMinResponseTime(v)
+		return nil
+	case apistatistics.FieldAvgTraffic:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAvgTraffic(v)
+		return nil
+	case apistatistics.FieldMaxTraffic:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMaxTraffic(v)
+		return nil
+	case apistatistics.FieldMinTraffic:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMinTraffic(v)
+		return nil
+	case apistatistics.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case apistatistics.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case apistatistics.FieldUpdateAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ApiStatistics field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ApiStatisticsMutation) AddedFields() []string {
+	var fields []string
+	if m.addcall_count != nil {
+		fields = append(fields, apistatistics.FieldCallCount)
+	}
+	if m.addsuccess_count != nil {
+		fields = append(fields, apistatistics.FieldSuccessCount)
+	}
+	if m.addfailure_count != nil {
+		fields = append(fields, apistatistics.FieldFailureCount)
+	}
+	if m.addavg_response_time != nil {
+		fields = append(fields, apistatistics.FieldAvgResponseTime)
+	}
+	if m.addmax_response_time != nil {
+		fields = append(fields, apistatistics.FieldMaxResponseTime)
+	}
+	if m.addmin_response_time != nil {
+		fields = append(fields, apistatistics.FieldMinResponseTime)
+	}
+	if m.addavg_traffic != nil {
+		fields = append(fields, apistatistics.FieldAvgTraffic)
+	}
+	if m.addmax_traffic != nil {
+		fields = append(fields, apistatistics.FieldMaxTraffic)
+	}
+	if m.addmin_traffic != nil {
+		fields = append(fields, apistatistics.FieldMinTraffic)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ApiStatisticsMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case apistatistics.FieldCallCount:
+		return m.AddedCallCount()
+	case apistatistics.FieldSuccessCount:
+		return m.AddedSuccessCount()
+	case apistatistics.FieldFailureCount:
+		return m.AddedFailureCount()
+	case apistatistics.FieldAvgResponseTime:
+		return m.AddedAvgResponseTime()
+	case apistatistics.FieldMaxResponseTime:
+		return m.AddedMaxResponseTime()
+	case apistatistics.FieldMinResponseTime:
+		return m.AddedMinResponseTime()
+	case apistatistics.FieldAvgTraffic:
+		return m.AddedAvgTraffic()
+	case apistatistics.FieldMaxTraffic:
+		return m.AddedMaxTraffic()
+	case apistatistics.FieldMinTraffic:
+		return m.AddedMinTraffic()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ApiStatisticsMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case apistatistics.FieldCallCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCallCount(v)
+		return nil
+	case apistatistics.FieldSuccessCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSuccessCount(v)
+		return nil
+	case apistatistics.FieldFailureCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFailureCount(v)
+		return nil
+	case apistatistics.FieldAvgResponseTime:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAvgResponseTime(v)
+		return nil
+	case apistatistics.FieldMaxResponseTime:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMaxResponseTime(v)
+		return nil
+	case apistatistics.FieldMinResponseTime:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMinResponseTime(v)
+		return nil
+	case apistatistics.FieldAvgTraffic:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAvgTraffic(v)
+		return nil
+	case apistatistics.FieldMaxTraffic:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMaxTraffic(v)
+		return nil
+	case apistatistics.FieldMinTraffic:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMinTraffic(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ApiStatistics numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ApiStatisticsMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ApiStatisticsMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ApiStatisticsMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ApiStatistics nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ApiStatisticsMutation) ResetField(name string) error {
+	switch name {
+	case apistatistics.FieldCallCount:
+		m.ResetCallCount()
+		return nil
+	case apistatistics.FieldSuccessCount:
+		m.ResetSuccessCount()
+		return nil
+	case apistatistics.FieldFailureCount:
+		m.ResetFailureCount()
+		return nil
+	case apistatistics.FieldAvgResponseTime:
+		m.ResetAvgResponseTime()
+		return nil
+	case apistatistics.FieldMaxResponseTime:
+		m.ResetMaxResponseTime()
+		return nil
+	case apistatistics.FieldMinResponseTime:
+		m.ResetMinResponseTime()
+		return nil
+	case apistatistics.FieldAvgTraffic:
+		m.ResetAvgTraffic()
+		return nil
+	case apistatistics.FieldMaxTraffic:
+		m.ResetMaxTraffic()
+		return nil
+	case apistatistics.FieldMinTraffic:
+		m.ResetMinTraffic()
+		return nil
+	case apistatistics.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case apistatistics.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case apistatistics.FieldUpdateAt:
+		m.ResetUpdateAt()
+		return nil
+	}
+	return fmt.Errorf("unknown ApiStatistics field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ApiStatisticsMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.api != nil {
+		edges = append(edges, apistatistics.EdgeAPI)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ApiStatisticsMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case apistatistics.EdgeAPI:
+		if id := m.api; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ApiStatisticsMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ApiStatisticsMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ApiStatisticsMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedapi {
+		edges = append(edges, apistatistics.EdgeAPI)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ApiStatisticsMutation) EdgeCleared(name string) bool {
+	switch name {
+	case apistatistics.EdgeAPI:
+		return m.clearedapi
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ApiStatisticsMutation) ClearEdge(name string) error {
+	switch name {
+	case apistatistics.EdgeAPI:
+		m.ClearAPI()
+		return nil
+	}
+	return fmt.Errorf("unknown ApiStatistics unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ApiStatisticsMutation) ResetEdge(name string) error {
+	switch name {
+	case apistatistics.EdgeAPI:
+		m.ResetAPI()
+		return nil
+	}
+	return fmt.Errorf("unknown ApiStatistics edge %s", name)
+}
+
+// ApiTagMutation represents an operation that mutates the ApiTag nodes in the graph.
+type ApiTagMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int64
+	name          *string
+	sort          *int64
+	addsort       *int64
+	created_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	update_at     *time.Time
+	update_by     *uint32
+	addupdate_by  *int32
+	description   *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ApiTag, error)
+	predicates    []predicate.ApiTag
+}
+
+var _ ent.Mutation = (*ApiTagMutation)(nil)
+
+// apitagOption allows management of the mutation configuration using functional options.
+type apitagOption func(*ApiTagMutation)
+
+// newApiTagMutation creates new mutation for the ApiTag entity.
+func newApiTagMutation(c config, op Op, opts ...apitagOption) *ApiTagMutation {
+	m := &ApiTagMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeApiTag,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withApiTagID sets the ID field of the mutation.
+func withApiTagID(id int64) apitagOption {
+	return func(m *ApiTagMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ApiTag
+		)
+		m.oldValue = func(ctx context.Context) (*ApiTag, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ApiTag.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withApiTag sets the old ApiTag of the mutation.
+func withApiTag(node *ApiTag) apitagOption {
+	return func(m *ApiTagMutation) {
+		m.oldValue = func(context.Context) (*ApiTag, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ApiTagMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ApiTagMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ApiTag entities.
+func (m *ApiTagMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ApiTagMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ApiTagMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ApiTag.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetName sets the "name" field.
+func (m *ApiTagMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *ApiTagMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the ApiTag entity.
+// If the ApiTag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiTagMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *ApiTagMutation) ResetName() {
+	m.name = nil
+}
+
+// SetSort sets the "sort" field.
+func (m *ApiTagMutation) SetSort(i int64) {
+	m.sort = &i
+	m.addsort = nil
+}
+
+// Sort returns the value of the "sort" field in the mutation.
+func (m *ApiTagMutation) Sort() (r int64, exists bool) {
+	v := m.sort
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSort returns the old "sort" field's value of the ApiTag entity.
+// If the ApiTag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiTagMutation) OldSort(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSort is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSort requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSort: %w", err)
+	}
+	return oldValue.Sort, nil
+}
+
+// AddSort adds i to the "sort" field.
+func (m *ApiTagMutation) AddSort(i int64) {
+	if m.addsort != nil {
+		*m.addsort += i
+	} else {
+		m.addsort = &i
+	}
+}
+
+// AddedSort returns the value that was added to the "sort" field in this mutation.
+func (m *ApiTagMutation) AddedSort() (r int64, exists bool) {
+	v := m.addsort
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSort resets all changes to the "sort" field.
+func (m *ApiTagMutation) ResetSort() {
+	m.sort = nil
+	m.addsort = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ApiTagMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ApiTagMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ApiTag entity.
+// If the ApiTag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiTagMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ApiTagMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *ApiTagMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *ApiTagMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the ApiTag entity.
+// If the ApiTag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiTagMutation) OldCreatedBy(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *ApiTagMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *ApiTagMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *ApiTagMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+}
+
+// SetUpdateAt sets the "update_at" field.
+func (m *ApiTagMutation) SetUpdateAt(t time.Time) {
+	m.update_at = &t
+}
+
+// UpdateAt returns the value of the "update_at" field in the mutation.
+func (m *ApiTagMutation) UpdateAt() (r time.Time, exists bool) {
+	v := m.update_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateAt returns the old "update_at" field's value of the ApiTag entity.
+// If the ApiTag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiTagMutation) OldUpdateAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdateAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdateAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateAt: %w", err)
+	}
+	return oldValue.UpdateAt, nil
+}
+
+// ResetUpdateAt resets all changes to the "update_at" field.
+func (m *ApiTagMutation) ResetUpdateAt() {
+	m.update_at = nil
+}
+
+// SetUpdateBy sets the "update_by" field.
+func (m *ApiTagMutation) SetUpdateBy(u uint32) {
+	m.update_by = &u
+	m.addupdate_by = nil
+}
+
+// UpdateBy returns the value of the "update_by" field in the mutation.
+func (m *ApiTagMutation) UpdateBy() (r uint32, exists bool) {
+	v := m.update_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateBy returns the old "update_by" field's value of the ApiTag entity.
+// If the ApiTag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiTagMutation) OldUpdateBy(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdateBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdateBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateBy: %w", err)
+	}
+	return oldValue.UpdateBy, nil
+}
+
+// AddUpdateBy adds u to the "update_by" field.
+func (m *ApiTagMutation) AddUpdateBy(u int32) {
+	if m.addupdate_by != nil {
+		*m.addupdate_by += u
+	} else {
+		m.addupdate_by = &u
+	}
+}
+
+// AddedUpdateBy returns the value that was added to the "update_by" field in this mutation.
+func (m *ApiTagMutation) AddedUpdateBy() (r int32, exists bool) {
+	v := m.addupdate_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetUpdateBy resets all changes to the "update_by" field.
+func (m *ApiTagMutation) ResetUpdateBy() {
+	m.update_by = nil
+	m.addupdate_by = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *ApiTagMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *ApiTagMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the ApiTag entity.
+// If the ApiTag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApiTagMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *ApiTagMutation) ResetDescription() {
+	m.description = nil
+}
+
+// Where appends a list predicates to the ApiTagMutation builder.
+func (m *ApiTagMutation) Where(ps ...predicate.ApiTag) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ApiTagMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ApiTagMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ApiTag, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ApiTagMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ApiTagMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ApiTag).
+func (m *ApiTagMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ApiTagMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.name != nil {
+		fields = append(fields, apitag.FieldName)
+	}
+	if m.sort != nil {
+		fields = append(fields, apitag.FieldSort)
+	}
+	if m.created_at != nil {
+		fields = append(fields, apitag.FieldCreatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, apitag.FieldCreatedBy)
+	}
+	if m.update_at != nil {
+		fields = append(fields, apitag.FieldUpdateAt)
+	}
+	if m.update_by != nil {
+		fields = append(fields, apitag.FieldUpdateBy)
+	}
+	if m.description != nil {
+		fields = append(fields, apitag.FieldDescription)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ApiTagMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case apitag.FieldName:
+		return m.Name()
+	case apitag.FieldSort:
+		return m.Sort()
+	case apitag.FieldCreatedAt:
+		return m.CreatedAt()
+	case apitag.FieldCreatedBy:
+		return m.CreatedBy()
+	case apitag.FieldUpdateAt:
+		return m.UpdateAt()
+	case apitag.FieldUpdateBy:
+		return m.UpdateBy()
+	case apitag.FieldDescription:
+		return m.Description()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ApiTagMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case apitag.FieldName:
+		return m.OldName(ctx)
+	case apitag.FieldSort:
+		return m.OldSort(ctx)
+	case apitag.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case apitag.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case apitag.FieldUpdateAt:
+		return m.OldUpdateAt(ctx)
+	case apitag.FieldUpdateBy:
+		return m.OldUpdateBy(ctx)
+	case apitag.FieldDescription:
+		return m.OldDescription(ctx)
+	}
+	return nil, fmt.Errorf("unknown ApiTag field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ApiTagMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case apitag.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case apitag.FieldSort:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSort(v)
+		return nil
+	case apitag.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case apitag.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case apitag.FieldUpdateAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateAt(v)
+		return nil
+	case apitag.FieldUpdateBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateBy(v)
+		return nil
+	case apitag.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ApiTag field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ApiTagMutation) AddedFields() []string {
+	var fields []string
+	if m.addsort != nil {
+		fields = append(fields, apitag.FieldSort)
+	}
+	if m.addcreated_by != nil {
+		fields = append(fields, apitag.FieldCreatedBy)
+	}
+	if m.addupdate_by != nil {
+		fields = append(fields, apitag.FieldUpdateBy)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ApiTagMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case apitag.FieldSort:
+		return m.AddedSort()
+	case apitag.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case apitag.FieldUpdateBy:
+		return m.AddedUpdateBy()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ApiTagMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case apitag.FieldSort:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSort(v)
+		return nil
+	case apitag.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case apitag.FieldUpdateBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdateBy(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ApiTag numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ApiTagMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ApiTagMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ApiTagMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ApiTag nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ApiTagMutation) ResetField(name string) error {
+	switch name {
+	case apitag.FieldName:
+		m.ResetName()
+		return nil
+	case apitag.FieldSort:
+		m.ResetSort()
+		return nil
+	case apitag.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case apitag.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case apitag.FieldUpdateAt:
+		m.ResetUpdateAt()
+		return nil
+	case apitag.FieldUpdateBy:
+		m.ResetUpdateBy()
+		return nil
+	case apitag.FieldDescription:
+		m.ResetDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown ApiTag field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ApiTagMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ApiTagMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ApiTagMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ApiTagMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ApiTagMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ApiTagMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ApiTagMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ApiTag unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ApiTagMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ApiTag edge %s", name)
 }
 
 // GroupMutation represents an operation that mutates the Group nodes in the graph.

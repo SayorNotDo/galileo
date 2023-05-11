@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -74,18 +75,23 @@ func Status(v int8) predicate.Api {
 	return predicate.Api(sql.FieldEQ(FieldStatus, v))
 }
 
+// Headers applies equality check predicate on the "headers" field. It's identical to HeadersEQ.
+func Headers(v string) predicate.Api {
+	return predicate.Api(sql.FieldEQ(FieldHeaders, v))
+}
+
 // Body applies equality check predicate on the "body" field. It's identical to BodyEQ.
-func Body(v []byte) predicate.Api {
+func Body(v string) predicate.Api {
 	return predicate.Api(sql.FieldEQ(FieldBody, v))
 }
 
 // QueryParams applies equality check predicate on the "query_params" field. It's identical to QueryParamsEQ.
-func QueryParams(v []byte) predicate.Api {
+func QueryParams(v string) predicate.Api {
 	return predicate.Api(sql.FieldEQ(FieldQueryParams, v))
 }
 
 // Response applies equality check predicate on the "response" field. It's identical to ResponseEQ.
-func Response(v []byte) predicate.Api {
+func Response(v string) predicate.Api {
 	return predicate.Api(sql.FieldEQ(FieldResponse, v))
 }
 
@@ -107,6 +113,11 @@ func CreatedAt(v time.Time) predicate.Api {
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
 func CreatedBy(v uint32) predicate.Api {
 	return predicate.Api(sql.FieldEQ(FieldCreatedBy, v))
+}
+
+// IncludeFiles applies equality check predicate on the "include_files" field. It's identical to IncludeFilesEQ.
+func IncludeFiles(v string) predicate.Api {
+	return predicate.Api(sql.FieldEQ(FieldIncludeFiles, v))
 }
 
 // UpdateAt applies equality check predicate on the "update_at" field. It's identical to UpdateAtEQ.
@@ -359,44 +370,134 @@ func StatusLTE(v int8) predicate.Api {
 	return predicate.Api(sql.FieldLTE(FieldStatus, v))
 }
 
+// HeadersEQ applies the EQ predicate on the "headers" field.
+func HeadersEQ(v string) predicate.Api {
+	return predicate.Api(sql.FieldEQ(FieldHeaders, v))
+}
+
+// HeadersNEQ applies the NEQ predicate on the "headers" field.
+func HeadersNEQ(v string) predicate.Api {
+	return predicate.Api(sql.FieldNEQ(FieldHeaders, v))
+}
+
+// HeadersIn applies the In predicate on the "headers" field.
+func HeadersIn(vs ...string) predicate.Api {
+	return predicate.Api(sql.FieldIn(FieldHeaders, vs...))
+}
+
+// HeadersNotIn applies the NotIn predicate on the "headers" field.
+func HeadersNotIn(vs ...string) predicate.Api {
+	return predicate.Api(sql.FieldNotIn(FieldHeaders, vs...))
+}
+
+// HeadersGT applies the GT predicate on the "headers" field.
+func HeadersGT(v string) predicate.Api {
+	return predicate.Api(sql.FieldGT(FieldHeaders, v))
+}
+
+// HeadersGTE applies the GTE predicate on the "headers" field.
+func HeadersGTE(v string) predicate.Api {
+	return predicate.Api(sql.FieldGTE(FieldHeaders, v))
+}
+
+// HeadersLT applies the LT predicate on the "headers" field.
+func HeadersLT(v string) predicate.Api {
+	return predicate.Api(sql.FieldLT(FieldHeaders, v))
+}
+
+// HeadersLTE applies the LTE predicate on the "headers" field.
+func HeadersLTE(v string) predicate.Api {
+	return predicate.Api(sql.FieldLTE(FieldHeaders, v))
+}
+
+// HeadersContains applies the Contains predicate on the "headers" field.
+func HeadersContains(v string) predicate.Api {
+	return predicate.Api(sql.FieldContains(FieldHeaders, v))
+}
+
+// HeadersHasPrefix applies the HasPrefix predicate on the "headers" field.
+func HeadersHasPrefix(v string) predicate.Api {
+	return predicate.Api(sql.FieldHasPrefix(FieldHeaders, v))
+}
+
+// HeadersHasSuffix applies the HasSuffix predicate on the "headers" field.
+func HeadersHasSuffix(v string) predicate.Api {
+	return predicate.Api(sql.FieldHasSuffix(FieldHeaders, v))
+}
+
+// HeadersIsNil applies the IsNil predicate on the "headers" field.
+func HeadersIsNil() predicate.Api {
+	return predicate.Api(sql.FieldIsNull(FieldHeaders))
+}
+
+// HeadersNotNil applies the NotNil predicate on the "headers" field.
+func HeadersNotNil() predicate.Api {
+	return predicate.Api(sql.FieldNotNull(FieldHeaders))
+}
+
+// HeadersEqualFold applies the EqualFold predicate on the "headers" field.
+func HeadersEqualFold(v string) predicate.Api {
+	return predicate.Api(sql.FieldEqualFold(FieldHeaders, v))
+}
+
+// HeadersContainsFold applies the ContainsFold predicate on the "headers" field.
+func HeadersContainsFold(v string) predicate.Api {
+	return predicate.Api(sql.FieldContainsFold(FieldHeaders, v))
+}
+
 // BodyEQ applies the EQ predicate on the "body" field.
-func BodyEQ(v []byte) predicate.Api {
+func BodyEQ(v string) predicate.Api {
 	return predicate.Api(sql.FieldEQ(FieldBody, v))
 }
 
 // BodyNEQ applies the NEQ predicate on the "body" field.
-func BodyNEQ(v []byte) predicate.Api {
+func BodyNEQ(v string) predicate.Api {
 	return predicate.Api(sql.FieldNEQ(FieldBody, v))
 }
 
 // BodyIn applies the In predicate on the "body" field.
-func BodyIn(vs ...[]byte) predicate.Api {
+func BodyIn(vs ...string) predicate.Api {
 	return predicate.Api(sql.FieldIn(FieldBody, vs...))
 }
 
 // BodyNotIn applies the NotIn predicate on the "body" field.
-func BodyNotIn(vs ...[]byte) predicate.Api {
+func BodyNotIn(vs ...string) predicate.Api {
 	return predicate.Api(sql.FieldNotIn(FieldBody, vs...))
 }
 
 // BodyGT applies the GT predicate on the "body" field.
-func BodyGT(v []byte) predicate.Api {
+func BodyGT(v string) predicate.Api {
 	return predicate.Api(sql.FieldGT(FieldBody, v))
 }
 
 // BodyGTE applies the GTE predicate on the "body" field.
-func BodyGTE(v []byte) predicate.Api {
+func BodyGTE(v string) predicate.Api {
 	return predicate.Api(sql.FieldGTE(FieldBody, v))
 }
 
 // BodyLT applies the LT predicate on the "body" field.
-func BodyLT(v []byte) predicate.Api {
+func BodyLT(v string) predicate.Api {
 	return predicate.Api(sql.FieldLT(FieldBody, v))
 }
 
 // BodyLTE applies the LTE predicate on the "body" field.
-func BodyLTE(v []byte) predicate.Api {
+func BodyLTE(v string) predicate.Api {
 	return predicate.Api(sql.FieldLTE(FieldBody, v))
+}
+
+// BodyContains applies the Contains predicate on the "body" field.
+func BodyContains(v string) predicate.Api {
+	return predicate.Api(sql.FieldContains(FieldBody, v))
+}
+
+// BodyHasPrefix applies the HasPrefix predicate on the "body" field.
+func BodyHasPrefix(v string) predicate.Api {
+	return predicate.Api(sql.FieldHasPrefix(FieldBody, v))
+}
+
+// BodyHasSuffix applies the HasSuffix predicate on the "body" field.
+func BodyHasSuffix(v string) predicate.Api {
+	return predicate.Api(sql.FieldHasSuffix(FieldBody, v))
 }
 
 // BodyIsNil applies the IsNil predicate on the "body" field.
@@ -409,44 +510,69 @@ func BodyNotNil() predicate.Api {
 	return predicate.Api(sql.FieldNotNull(FieldBody))
 }
 
+// BodyEqualFold applies the EqualFold predicate on the "body" field.
+func BodyEqualFold(v string) predicate.Api {
+	return predicate.Api(sql.FieldEqualFold(FieldBody, v))
+}
+
+// BodyContainsFold applies the ContainsFold predicate on the "body" field.
+func BodyContainsFold(v string) predicate.Api {
+	return predicate.Api(sql.FieldContainsFold(FieldBody, v))
+}
+
 // QueryParamsEQ applies the EQ predicate on the "query_params" field.
-func QueryParamsEQ(v []byte) predicate.Api {
+func QueryParamsEQ(v string) predicate.Api {
 	return predicate.Api(sql.FieldEQ(FieldQueryParams, v))
 }
 
 // QueryParamsNEQ applies the NEQ predicate on the "query_params" field.
-func QueryParamsNEQ(v []byte) predicate.Api {
+func QueryParamsNEQ(v string) predicate.Api {
 	return predicate.Api(sql.FieldNEQ(FieldQueryParams, v))
 }
 
 // QueryParamsIn applies the In predicate on the "query_params" field.
-func QueryParamsIn(vs ...[]byte) predicate.Api {
+func QueryParamsIn(vs ...string) predicate.Api {
 	return predicate.Api(sql.FieldIn(FieldQueryParams, vs...))
 }
 
 // QueryParamsNotIn applies the NotIn predicate on the "query_params" field.
-func QueryParamsNotIn(vs ...[]byte) predicate.Api {
+func QueryParamsNotIn(vs ...string) predicate.Api {
 	return predicate.Api(sql.FieldNotIn(FieldQueryParams, vs...))
 }
 
 // QueryParamsGT applies the GT predicate on the "query_params" field.
-func QueryParamsGT(v []byte) predicate.Api {
+func QueryParamsGT(v string) predicate.Api {
 	return predicate.Api(sql.FieldGT(FieldQueryParams, v))
 }
 
 // QueryParamsGTE applies the GTE predicate on the "query_params" field.
-func QueryParamsGTE(v []byte) predicate.Api {
+func QueryParamsGTE(v string) predicate.Api {
 	return predicate.Api(sql.FieldGTE(FieldQueryParams, v))
 }
 
 // QueryParamsLT applies the LT predicate on the "query_params" field.
-func QueryParamsLT(v []byte) predicate.Api {
+func QueryParamsLT(v string) predicate.Api {
 	return predicate.Api(sql.FieldLT(FieldQueryParams, v))
 }
 
 // QueryParamsLTE applies the LTE predicate on the "query_params" field.
-func QueryParamsLTE(v []byte) predicate.Api {
+func QueryParamsLTE(v string) predicate.Api {
 	return predicate.Api(sql.FieldLTE(FieldQueryParams, v))
+}
+
+// QueryParamsContains applies the Contains predicate on the "query_params" field.
+func QueryParamsContains(v string) predicate.Api {
+	return predicate.Api(sql.FieldContains(FieldQueryParams, v))
+}
+
+// QueryParamsHasPrefix applies the HasPrefix predicate on the "query_params" field.
+func QueryParamsHasPrefix(v string) predicate.Api {
+	return predicate.Api(sql.FieldHasPrefix(FieldQueryParams, v))
+}
+
+// QueryParamsHasSuffix applies the HasSuffix predicate on the "query_params" field.
+func QueryParamsHasSuffix(v string) predicate.Api {
+	return predicate.Api(sql.FieldHasSuffix(FieldQueryParams, v))
 }
 
 // QueryParamsIsNil applies the IsNil predicate on the "query_params" field.
@@ -459,44 +585,69 @@ func QueryParamsNotNil() predicate.Api {
 	return predicate.Api(sql.FieldNotNull(FieldQueryParams))
 }
 
+// QueryParamsEqualFold applies the EqualFold predicate on the "query_params" field.
+func QueryParamsEqualFold(v string) predicate.Api {
+	return predicate.Api(sql.FieldEqualFold(FieldQueryParams, v))
+}
+
+// QueryParamsContainsFold applies the ContainsFold predicate on the "query_params" field.
+func QueryParamsContainsFold(v string) predicate.Api {
+	return predicate.Api(sql.FieldContainsFold(FieldQueryParams, v))
+}
+
 // ResponseEQ applies the EQ predicate on the "response" field.
-func ResponseEQ(v []byte) predicate.Api {
+func ResponseEQ(v string) predicate.Api {
 	return predicate.Api(sql.FieldEQ(FieldResponse, v))
 }
 
 // ResponseNEQ applies the NEQ predicate on the "response" field.
-func ResponseNEQ(v []byte) predicate.Api {
+func ResponseNEQ(v string) predicate.Api {
 	return predicate.Api(sql.FieldNEQ(FieldResponse, v))
 }
 
 // ResponseIn applies the In predicate on the "response" field.
-func ResponseIn(vs ...[]byte) predicate.Api {
+func ResponseIn(vs ...string) predicate.Api {
 	return predicate.Api(sql.FieldIn(FieldResponse, vs...))
 }
 
 // ResponseNotIn applies the NotIn predicate on the "response" field.
-func ResponseNotIn(vs ...[]byte) predicate.Api {
+func ResponseNotIn(vs ...string) predicate.Api {
 	return predicate.Api(sql.FieldNotIn(FieldResponse, vs...))
 }
 
 // ResponseGT applies the GT predicate on the "response" field.
-func ResponseGT(v []byte) predicate.Api {
+func ResponseGT(v string) predicate.Api {
 	return predicate.Api(sql.FieldGT(FieldResponse, v))
 }
 
 // ResponseGTE applies the GTE predicate on the "response" field.
-func ResponseGTE(v []byte) predicate.Api {
+func ResponseGTE(v string) predicate.Api {
 	return predicate.Api(sql.FieldGTE(FieldResponse, v))
 }
 
 // ResponseLT applies the LT predicate on the "response" field.
-func ResponseLT(v []byte) predicate.Api {
+func ResponseLT(v string) predicate.Api {
 	return predicate.Api(sql.FieldLT(FieldResponse, v))
 }
 
 // ResponseLTE applies the LTE predicate on the "response" field.
-func ResponseLTE(v []byte) predicate.Api {
+func ResponseLTE(v string) predicate.Api {
 	return predicate.Api(sql.FieldLTE(FieldResponse, v))
+}
+
+// ResponseContains applies the Contains predicate on the "response" field.
+func ResponseContains(v string) predicate.Api {
+	return predicate.Api(sql.FieldContains(FieldResponse, v))
+}
+
+// ResponseHasPrefix applies the HasPrefix predicate on the "response" field.
+func ResponseHasPrefix(v string) predicate.Api {
+	return predicate.Api(sql.FieldHasPrefix(FieldResponse, v))
+}
+
+// ResponseHasSuffix applies the HasSuffix predicate on the "response" field.
+func ResponseHasSuffix(v string) predicate.Api {
+	return predicate.Api(sql.FieldHasSuffix(FieldResponse, v))
 }
 
 // ResponseIsNil applies the IsNil predicate on the "response" field.
@@ -507,6 +658,16 @@ func ResponseIsNil() predicate.Api {
 // ResponseNotNil applies the NotNil predicate on the "response" field.
 func ResponseNotNil() predicate.Api {
 	return predicate.Api(sql.FieldNotNull(FieldResponse))
+}
+
+// ResponseEqualFold applies the EqualFold predicate on the "response" field.
+func ResponseEqualFold(v string) predicate.Api {
+	return predicate.Api(sql.FieldEqualFold(FieldResponse, v))
+}
+
+// ResponseContainsFold applies the ContainsFold predicate on the "response" field.
+func ResponseContainsFold(v string) predicate.Api {
+	return predicate.Api(sql.FieldContainsFold(FieldResponse, v))
 }
 
 // ModuleEQ applies the EQ predicate on the "module" field.
@@ -739,6 +900,81 @@ func CreatedByLTE(v uint32) predicate.Api {
 	return predicate.Api(sql.FieldLTE(FieldCreatedBy, v))
 }
 
+// IncludeFilesEQ applies the EQ predicate on the "include_files" field.
+func IncludeFilesEQ(v string) predicate.Api {
+	return predicate.Api(sql.FieldEQ(FieldIncludeFiles, v))
+}
+
+// IncludeFilesNEQ applies the NEQ predicate on the "include_files" field.
+func IncludeFilesNEQ(v string) predicate.Api {
+	return predicate.Api(sql.FieldNEQ(FieldIncludeFiles, v))
+}
+
+// IncludeFilesIn applies the In predicate on the "include_files" field.
+func IncludeFilesIn(vs ...string) predicate.Api {
+	return predicate.Api(sql.FieldIn(FieldIncludeFiles, vs...))
+}
+
+// IncludeFilesNotIn applies the NotIn predicate on the "include_files" field.
+func IncludeFilesNotIn(vs ...string) predicate.Api {
+	return predicate.Api(sql.FieldNotIn(FieldIncludeFiles, vs...))
+}
+
+// IncludeFilesGT applies the GT predicate on the "include_files" field.
+func IncludeFilesGT(v string) predicate.Api {
+	return predicate.Api(sql.FieldGT(FieldIncludeFiles, v))
+}
+
+// IncludeFilesGTE applies the GTE predicate on the "include_files" field.
+func IncludeFilesGTE(v string) predicate.Api {
+	return predicate.Api(sql.FieldGTE(FieldIncludeFiles, v))
+}
+
+// IncludeFilesLT applies the LT predicate on the "include_files" field.
+func IncludeFilesLT(v string) predicate.Api {
+	return predicate.Api(sql.FieldLT(FieldIncludeFiles, v))
+}
+
+// IncludeFilesLTE applies the LTE predicate on the "include_files" field.
+func IncludeFilesLTE(v string) predicate.Api {
+	return predicate.Api(sql.FieldLTE(FieldIncludeFiles, v))
+}
+
+// IncludeFilesContains applies the Contains predicate on the "include_files" field.
+func IncludeFilesContains(v string) predicate.Api {
+	return predicate.Api(sql.FieldContains(FieldIncludeFiles, v))
+}
+
+// IncludeFilesHasPrefix applies the HasPrefix predicate on the "include_files" field.
+func IncludeFilesHasPrefix(v string) predicate.Api {
+	return predicate.Api(sql.FieldHasPrefix(FieldIncludeFiles, v))
+}
+
+// IncludeFilesHasSuffix applies the HasSuffix predicate on the "include_files" field.
+func IncludeFilesHasSuffix(v string) predicate.Api {
+	return predicate.Api(sql.FieldHasSuffix(FieldIncludeFiles, v))
+}
+
+// IncludeFilesIsNil applies the IsNil predicate on the "include_files" field.
+func IncludeFilesIsNil() predicate.Api {
+	return predicate.Api(sql.FieldIsNull(FieldIncludeFiles))
+}
+
+// IncludeFilesNotNil applies the NotNil predicate on the "include_files" field.
+func IncludeFilesNotNil() predicate.Api {
+	return predicate.Api(sql.FieldNotNull(FieldIncludeFiles))
+}
+
+// IncludeFilesEqualFold applies the EqualFold predicate on the "include_files" field.
+func IncludeFilesEqualFold(v string) predicate.Api {
+	return predicate.Api(sql.FieldEqualFold(FieldIncludeFiles, v))
+}
+
+// IncludeFilesContainsFold applies the ContainsFold predicate on the "include_files" field.
+func IncludeFilesContainsFold(v string) predicate.Api {
+	return predicate.Api(sql.FieldContainsFold(FieldIncludeFiles, v))
+}
+
 // UpdateAtEQ applies the EQ predicate on the "update_at" field.
 func UpdateAtEQ(v time.Time) predicate.Api {
 	return predicate.Api(sql.FieldEQ(FieldUpdateAt, v))
@@ -927,6 +1163,33 @@ func DeletedByIsNil() predicate.Api {
 // DeletedByNotNil applies the NotNil predicate on the "deleted_by" field.
 func DeletedByNotNil() predicate.Api {
 	return predicate.Api(sql.FieldNotNull(FieldDeletedBy))
+}
+
+// HasStatistics applies the HasEdge predicate on the "statistics" edge.
+func HasStatistics() predicate.Api {
+	return predicate.Api(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, StatisticsTable, StatisticsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasStatisticsWith applies the HasEdge predicate on the "statistics" edge with a given conditions (other predicates).
+func HasStatisticsWith(preds ...predicate.ApiStatistics) predicate.Api {
+	return predicate.Api(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(StatisticsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, StatisticsTable, StatisticsColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

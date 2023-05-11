@@ -11,6 +11,10 @@ import (
 	"galileo/ent/migrate"
 
 	"galileo/ent/api"
+	"galileo/ent/apicategory"
+	"galileo/ent/apihistory"
+	"galileo/ent/apistatistics"
+	"galileo/ent/apitag"
 	"galileo/ent/group"
 	"galileo/ent/project"
 	"galileo/ent/task"
@@ -31,6 +35,14 @@ type Client struct {
 	Schema *migrate.Schema
 	// Api is the client for interacting with the Api builders.
 	Api *APIClient
+	// ApiCategory is the client for interacting with the ApiCategory builders.
+	ApiCategory *ApiCategoryClient
+	// ApiHistory is the client for interacting with the ApiHistory builders.
+	ApiHistory *ApiHistoryClient
+	// ApiStatistics is the client for interacting with the ApiStatistics builders.
+	ApiStatistics *ApiStatisticsClient
+	// ApiTag is the client for interacting with the ApiTag builders.
+	ApiTag *ApiTagClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// Project is the client for interacting with the Project builders.
@@ -57,6 +69,10 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Api = NewAPIClient(c.config)
+	c.ApiCategory = NewApiCategoryClient(c.config)
+	c.ApiHistory = NewApiHistoryClient(c.config)
+	c.ApiStatistics = NewApiStatisticsClient(c.config)
+	c.ApiTag = NewApiTagClient(c.config)
 	c.Group = NewGroupClient(c.config)
 	c.Project = NewProjectClient(c.config)
 	c.Task = NewTaskClient(c.config)
@@ -146,6 +162,10 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:           ctx,
 		config:        cfg,
 		Api:           NewAPIClient(cfg),
+		ApiCategory:   NewApiCategoryClient(cfg),
+		ApiHistory:    NewApiHistoryClient(cfg),
+		ApiStatistics: NewApiStatisticsClient(cfg),
+		ApiTag:        NewApiTagClient(cfg),
 		Group:         NewGroupClient(cfg),
 		Project:       NewProjectClient(cfg),
 		Task:          NewTaskClient(cfg),
@@ -172,6 +192,10 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:           ctx,
 		config:        cfg,
 		Api:           NewAPIClient(cfg),
+		ApiCategory:   NewApiCategoryClient(cfg),
+		ApiHistory:    NewApiHistoryClient(cfg),
+		ApiStatistics: NewApiStatisticsClient(cfg),
+		ApiTag:        NewApiTagClient(cfg),
 		Group:         NewGroupClient(cfg),
 		Project:       NewProjectClient(cfg),
 		Task:          NewTaskClient(cfg),
@@ -207,7 +231,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Api, c.Group, c.Project, c.Task, c.TestCase, c.TestCaseSuite, c.User,
+		c.Api, c.ApiCategory, c.ApiHistory, c.ApiStatistics, c.ApiTag, c.Group,
+		c.Project, c.Task, c.TestCase, c.TestCaseSuite, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -217,7 +242,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Api, c.Group, c.Project, c.Task, c.TestCase, c.TestCaseSuite, c.User,
+		c.Api, c.ApiCategory, c.ApiHistory, c.ApiStatistics, c.ApiTag, c.Group,
+		c.Project, c.Task, c.TestCase, c.TestCaseSuite, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -228,6 +254,14 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *APIMutation:
 		return c.Api.mutate(ctx, m)
+	case *ApiCategoryMutation:
+		return c.ApiCategory.mutate(ctx, m)
+	case *ApiHistoryMutation:
+		return c.ApiHistory.mutate(ctx, m)
+	case *ApiStatisticsMutation:
+		return c.ApiStatistics.mutate(ctx, m)
+	case *ApiTagMutation:
+		return c.ApiTag.mutate(ctx, m)
 	case *GroupMutation:
 		return c.Group.mutate(ctx, m)
 	case *ProjectMutation:
@@ -338,6 +372,22 @@ func (c *APIClient) GetX(ctx context.Context, id int64) *Api {
 	return obj
 }
 
+// QueryStatistics queries the statistics edge of a Api.
+func (c *APIClient) QueryStatistics(a *Api) *ApiStatisticsQuery {
+	query := (&ApiStatisticsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(api.Table, api.FieldID, id),
+			sqlgraph.To(apistatistics.Table, apistatistics.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, api.StatisticsTable, api.StatisticsColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *APIClient) Hooks() []Hook {
 	return c.hooks.Api
@@ -360,6 +410,494 @@ func (c *APIClient) mutate(ctx context.Context, m *APIMutation) (Value, error) {
 		return (&APIDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Api mutation op: %q", m.Op())
+	}
+}
+
+// ApiCategoryClient is a client for the ApiCategory schema.
+type ApiCategoryClient struct {
+	config
+}
+
+// NewApiCategoryClient returns a client for the ApiCategory from the given config.
+func NewApiCategoryClient(c config) *ApiCategoryClient {
+	return &ApiCategoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `apicategory.Hooks(f(g(h())))`.
+func (c *ApiCategoryClient) Use(hooks ...Hook) {
+	c.hooks.ApiCategory = append(c.hooks.ApiCategory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `apicategory.Intercept(f(g(h())))`.
+func (c *ApiCategoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ApiCategory = append(c.inters.ApiCategory, interceptors...)
+}
+
+// Create returns a builder for creating a ApiCategory entity.
+func (c *ApiCategoryClient) Create() *ApiCategoryCreate {
+	mutation := newApiCategoryMutation(c.config, OpCreate)
+	return &ApiCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ApiCategory entities.
+func (c *ApiCategoryClient) CreateBulk(builders ...*ApiCategoryCreate) *ApiCategoryCreateBulk {
+	return &ApiCategoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ApiCategory.
+func (c *ApiCategoryClient) Update() *ApiCategoryUpdate {
+	mutation := newApiCategoryMutation(c.config, OpUpdate)
+	return &ApiCategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ApiCategoryClient) UpdateOne(ac *ApiCategory) *ApiCategoryUpdateOne {
+	mutation := newApiCategoryMutation(c.config, OpUpdateOne, withApiCategory(ac))
+	return &ApiCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ApiCategoryClient) UpdateOneID(id int) *ApiCategoryUpdateOne {
+	mutation := newApiCategoryMutation(c.config, OpUpdateOne, withApiCategoryID(id))
+	return &ApiCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ApiCategory.
+func (c *ApiCategoryClient) Delete() *ApiCategoryDelete {
+	mutation := newApiCategoryMutation(c.config, OpDelete)
+	return &ApiCategoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ApiCategoryClient) DeleteOne(ac *ApiCategory) *ApiCategoryDeleteOne {
+	return c.DeleteOneID(ac.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ApiCategoryClient) DeleteOneID(id int) *ApiCategoryDeleteOne {
+	builder := c.Delete().Where(apicategory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ApiCategoryDeleteOne{builder}
+}
+
+// Query returns a query builder for ApiCategory.
+func (c *ApiCategoryClient) Query() *ApiCategoryQuery {
+	return &ApiCategoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeApiCategory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ApiCategory entity by its id.
+func (c *ApiCategoryClient) Get(ctx context.Context, id int) (*ApiCategory, error) {
+	return c.Query().Where(apicategory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ApiCategoryClient) GetX(ctx context.Context, id int) *ApiCategory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ApiCategoryClient) Hooks() []Hook {
+	return c.hooks.ApiCategory
+}
+
+// Interceptors returns the client interceptors.
+func (c *ApiCategoryClient) Interceptors() []Interceptor {
+	return c.inters.ApiCategory
+}
+
+func (c *ApiCategoryClient) mutate(ctx context.Context, m *ApiCategoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ApiCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ApiCategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ApiCategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ApiCategoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ApiCategory mutation op: %q", m.Op())
+	}
+}
+
+// ApiHistoryClient is a client for the ApiHistory schema.
+type ApiHistoryClient struct {
+	config
+}
+
+// NewApiHistoryClient returns a client for the ApiHistory from the given config.
+func NewApiHistoryClient(c config) *ApiHistoryClient {
+	return &ApiHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `apihistory.Hooks(f(g(h())))`.
+func (c *ApiHistoryClient) Use(hooks ...Hook) {
+	c.hooks.ApiHistory = append(c.hooks.ApiHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `apihistory.Intercept(f(g(h())))`.
+func (c *ApiHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ApiHistory = append(c.inters.ApiHistory, interceptors...)
+}
+
+// Create returns a builder for creating a ApiHistory entity.
+func (c *ApiHistoryClient) Create() *ApiHistoryCreate {
+	mutation := newApiHistoryMutation(c.config, OpCreate)
+	return &ApiHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ApiHistory entities.
+func (c *ApiHistoryClient) CreateBulk(builders ...*ApiHistoryCreate) *ApiHistoryCreateBulk {
+	return &ApiHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ApiHistory.
+func (c *ApiHistoryClient) Update() *ApiHistoryUpdate {
+	mutation := newApiHistoryMutation(c.config, OpUpdate)
+	return &ApiHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ApiHistoryClient) UpdateOne(ah *ApiHistory) *ApiHistoryUpdateOne {
+	mutation := newApiHistoryMutation(c.config, OpUpdateOne, withApiHistory(ah))
+	return &ApiHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ApiHistoryClient) UpdateOneID(id int) *ApiHistoryUpdateOne {
+	mutation := newApiHistoryMutation(c.config, OpUpdateOne, withApiHistoryID(id))
+	return &ApiHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ApiHistory.
+func (c *ApiHistoryClient) Delete() *ApiHistoryDelete {
+	mutation := newApiHistoryMutation(c.config, OpDelete)
+	return &ApiHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ApiHistoryClient) DeleteOne(ah *ApiHistory) *ApiHistoryDeleteOne {
+	return c.DeleteOneID(ah.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ApiHistoryClient) DeleteOneID(id int) *ApiHistoryDeleteOne {
+	builder := c.Delete().Where(apihistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ApiHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for ApiHistory.
+func (c *ApiHistoryClient) Query() *ApiHistoryQuery {
+	return &ApiHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeApiHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ApiHistory entity by its id.
+func (c *ApiHistoryClient) Get(ctx context.Context, id int) (*ApiHistory, error) {
+	return c.Query().Where(apihistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ApiHistoryClient) GetX(ctx context.Context, id int) *ApiHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ApiHistoryClient) Hooks() []Hook {
+	return c.hooks.ApiHistory
+}
+
+// Interceptors returns the client interceptors.
+func (c *ApiHistoryClient) Interceptors() []Interceptor {
+	return c.inters.ApiHistory
+}
+
+func (c *ApiHistoryClient) mutate(ctx context.Context, m *ApiHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ApiHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ApiHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ApiHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ApiHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ApiHistory mutation op: %q", m.Op())
+	}
+}
+
+// ApiStatisticsClient is a client for the ApiStatistics schema.
+type ApiStatisticsClient struct {
+	config
+}
+
+// NewApiStatisticsClient returns a client for the ApiStatistics from the given config.
+func NewApiStatisticsClient(c config) *ApiStatisticsClient {
+	return &ApiStatisticsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `apistatistics.Hooks(f(g(h())))`.
+func (c *ApiStatisticsClient) Use(hooks ...Hook) {
+	c.hooks.ApiStatistics = append(c.hooks.ApiStatistics, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `apistatistics.Intercept(f(g(h())))`.
+func (c *ApiStatisticsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ApiStatistics = append(c.inters.ApiStatistics, interceptors...)
+}
+
+// Create returns a builder for creating a ApiStatistics entity.
+func (c *ApiStatisticsClient) Create() *ApiStatisticsCreate {
+	mutation := newApiStatisticsMutation(c.config, OpCreate)
+	return &ApiStatisticsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ApiStatistics entities.
+func (c *ApiStatisticsClient) CreateBulk(builders ...*ApiStatisticsCreate) *ApiStatisticsCreateBulk {
+	return &ApiStatisticsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ApiStatistics.
+func (c *ApiStatisticsClient) Update() *ApiStatisticsUpdate {
+	mutation := newApiStatisticsMutation(c.config, OpUpdate)
+	return &ApiStatisticsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ApiStatisticsClient) UpdateOne(as *ApiStatistics) *ApiStatisticsUpdateOne {
+	mutation := newApiStatisticsMutation(c.config, OpUpdateOne, withApiStatistics(as))
+	return &ApiStatisticsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ApiStatisticsClient) UpdateOneID(id int64) *ApiStatisticsUpdateOne {
+	mutation := newApiStatisticsMutation(c.config, OpUpdateOne, withApiStatisticsID(id))
+	return &ApiStatisticsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ApiStatistics.
+func (c *ApiStatisticsClient) Delete() *ApiStatisticsDelete {
+	mutation := newApiStatisticsMutation(c.config, OpDelete)
+	return &ApiStatisticsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ApiStatisticsClient) DeleteOne(as *ApiStatistics) *ApiStatisticsDeleteOne {
+	return c.DeleteOneID(as.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ApiStatisticsClient) DeleteOneID(id int64) *ApiStatisticsDeleteOne {
+	builder := c.Delete().Where(apistatistics.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ApiStatisticsDeleteOne{builder}
+}
+
+// Query returns a query builder for ApiStatistics.
+func (c *ApiStatisticsClient) Query() *ApiStatisticsQuery {
+	return &ApiStatisticsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeApiStatistics},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ApiStatistics entity by its id.
+func (c *ApiStatisticsClient) Get(ctx context.Context, id int64) (*ApiStatistics, error) {
+	return c.Query().Where(apistatistics.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ApiStatisticsClient) GetX(ctx context.Context, id int64) *ApiStatistics {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAPI queries the api edge of a ApiStatistics.
+func (c *ApiStatisticsClient) QueryAPI(as *ApiStatistics) *APIQuery {
+	query := (&APIClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := as.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(apistatistics.Table, apistatistics.FieldID, id),
+			sqlgraph.To(api.Table, api.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, apistatistics.APITable, apistatistics.APIColumn),
+		)
+		fromV = sqlgraph.Neighbors(as.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ApiStatisticsClient) Hooks() []Hook {
+	return c.hooks.ApiStatistics
+}
+
+// Interceptors returns the client interceptors.
+func (c *ApiStatisticsClient) Interceptors() []Interceptor {
+	return c.inters.ApiStatistics
+}
+
+func (c *ApiStatisticsClient) mutate(ctx context.Context, m *ApiStatisticsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ApiStatisticsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ApiStatisticsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ApiStatisticsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ApiStatisticsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ApiStatistics mutation op: %q", m.Op())
+	}
+}
+
+// ApiTagClient is a client for the ApiTag schema.
+type ApiTagClient struct {
+	config
+}
+
+// NewApiTagClient returns a client for the ApiTag from the given config.
+func NewApiTagClient(c config) *ApiTagClient {
+	return &ApiTagClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `apitag.Hooks(f(g(h())))`.
+func (c *ApiTagClient) Use(hooks ...Hook) {
+	c.hooks.ApiTag = append(c.hooks.ApiTag, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `apitag.Intercept(f(g(h())))`.
+func (c *ApiTagClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ApiTag = append(c.inters.ApiTag, interceptors...)
+}
+
+// Create returns a builder for creating a ApiTag entity.
+func (c *ApiTagClient) Create() *ApiTagCreate {
+	mutation := newApiTagMutation(c.config, OpCreate)
+	return &ApiTagCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ApiTag entities.
+func (c *ApiTagClient) CreateBulk(builders ...*ApiTagCreate) *ApiTagCreateBulk {
+	return &ApiTagCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ApiTag.
+func (c *ApiTagClient) Update() *ApiTagUpdate {
+	mutation := newApiTagMutation(c.config, OpUpdate)
+	return &ApiTagUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ApiTagClient) UpdateOne(at *ApiTag) *ApiTagUpdateOne {
+	mutation := newApiTagMutation(c.config, OpUpdateOne, withApiTag(at))
+	return &ApiTagUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ApiTagClient) UpdateOneID(id int64) *ApiTagUpdateOne {
+	mutation := newApiTagMutation(c.config, OpUpdateOne, withApiTagID(id))
+	return &ApiTagUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ApiTag.
+func (c *ApiTagClient) Delete() *ApiTagDelete {
+	mutation := newApiTagMutation(c.config, OpDelete)
+	return &ApiTagDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ApiTagClient) DeleteOne(at *ApiTag) *ApiTagDeleteOne {
+	return c.DeleteOneID(at.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ApiTagClient) DeleteOneID(id int64) *ApiTagDeleteOne {
+	builder := c.Delete().Where(apitag.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ApiTagDeleteOne{builder}
+}
+
+// Query returns a query builder for ApiTag.
+func (c *ApiTagClient) Query() *ApiTagQuery {
+	return &ApiTagQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeApiTag},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ApiTag entity by its id.
+func (c *ApiTagClient) Get(ctx context.Context, id int64) (*ApiTag, error) {
+	return c.Query().Where(apitag.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ApiTagClient) GetX(ctx context.Context, id int64) *ApiTag {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ApiTagClient) Hooks() []Hook {
+	return c.hooks.ApiTag
+}
+
+// Interceptors returns the client interceptors.
+func (c *ApiTagClient) Interceptors() []Interceptor {
+	return c.inters.ApiTag
+}
+
+func (c *ApiTagClient) mutate(ctx context.Context, m *ApiTagMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ApiTagCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ApiTagUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ApiTagUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ApiTagDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ApiTag mutation op: %q", m.Op())
 	}
 }
 
@@ -1138,9 +1676,11 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Api, Group, Project, Task, TestCase, TestCaseSuite, User []ent.Hook
+		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Group, Project, Task,
+		TestCase, TestCaseSuite, User []ent.Hook
 	}
 	inters struct {
-		Api, Group, Project, Task, TestCase, TestCaseSuite, User []ent.Interceptor
+		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Group, Project, Task,
+		TestCase, TestCaseSuite, User []ent.Interceptor
 	}
 )

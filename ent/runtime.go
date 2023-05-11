@@ -31,11 +31,11 @@ func init() {
 	// api.DefaultStatus holds the default value on creation for the status field.
 	api.DefaultStatus = apiDescStatus.Default.(int8)
 	// apiDescCreatedAt is the schema descriptor for created_at field.
-	apiDescCreatedAt := apiFields[10].Descriptor()
+	apiDescCreatedAt := apiFields[11].Descriptor()
 	// api.DefaultCreatedAt holds the default value on creation for the created_at field.
 	api.DefaultCreatedAt = apiDescCreatedAt.Default.(func() time.Time)
 	// apiDescUpdateAt is the schema descriptor for update_at field.
-	apiDescUpdateAt := apiFields[12].Descriptor()
+	apiDescUpdateAt := apiFields[14].Descriptor()
 	// api.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
 	api.UpdateDefaultUpdateAt = apiDescUpdateAt.UpdateDefault.(func() time.Time)
 	groupFields := schema.Group{}.Fields()

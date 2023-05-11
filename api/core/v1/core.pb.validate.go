@@ -2564,8 +2564,6 @@ func (m *UserDetail) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for Username
-
 	// no validation rules for Nickname
 
 	// no validation rules for ChineseName
@@ -2675,34 +2673,17 @@ func (m *UserDetailReply) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetData()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UserDetailReplyValidationError{
-					field:  "Data",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UserDetailReplyValidationError{
-					field:  "Data",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UserDetailReplyValidationError{
-				field:  "Data",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for Id
+
+	// no validation rules for Nickname
+
+	// no validation rules for ChineseName
+
+	// no validation rules for Phone
+
+	// no validation rules for Email
+
+	// no validation rules for Role
 
 	if len(errors) > 0 {
 		return UserDetailReplyMultiError(errors)

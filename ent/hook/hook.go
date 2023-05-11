@@ -20,6 +20,54 @@ func (f ApiFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.APIMutation", m)
 }
 
+// The ApiCategoryFunc type is an adapter to allow the use of ordinary
+// function as ApiCategory mutator.
+type ApiCategoryFunc func(context.Context, *ent.ApiCategoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ApiCategoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ApiCategoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ApiCategoryMutation", m)
+}
+
+// The ApiHistoryFunc type is an adapter to allow the use of ordinary
+// function as ApiHistory mutator.
+type ApiHistoryFunc func(context.Context, *ent.ApiHistoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ApiHistoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ApiHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ApiHistoryMutation", m)
+}
+
+// The ApiStatisticsFunc type is an adapter to allow the use of ordinary
+// function as ApiStatistics mutator.
+type ApiStatisticsFunc func(context.Context, *ent.ApiStatisticsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ApiStatisticsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ApiStatisticsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ApiStatisticsMutation", m)
+}
+
+// The ApiTagFunc type is an adapter to allow the use of ordinary
+// function as ApiTag mutator.
+type ApiTagFunc func(context.Context, *ent.ApiTagMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ApiTagFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ApiTagMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ApiTagMutation", m)
+}
+
 // The GroupFunc type is an adapter to allow the use of ordinary
 // function as Group mutator.
 type GroupFunc func(context.Context, *ent.GroupMutation) (ent.Value, error)

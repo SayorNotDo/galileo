@@ -39,9 +39,9 @@ message CreateApiRequest {
   string url = 2;
   MethodType type = 3;
   int32 status = 4;
-  bytes body = 5;
-  bytes queryParams = 6;
-  bytes response = 7;
+  string body = 5;
+  string queryParams = 6;
+  string response = 7;
   string module = 8;
   string description = 9;
 }

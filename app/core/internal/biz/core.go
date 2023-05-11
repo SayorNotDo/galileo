@@ -131,15 +131,12 @@ func (c *CoreUseCase) UserDetail(ctx context.Context, empty *emptypb.Empty) (*v1
 		return nil, err
 	}
 	return &v1.UserDetailReply{
-		Data: &v1.UserDetail{
-			Id:          user.Id,
-			Username:    user.Username,
-			Nickname:    user.Nickname,
-			ChineseName: user.ChineseName,
-			Phone:       user.Phone,
-			Email:       user.Email,
-			Role:        user.Role,
-		},
+		Id:          user.Id,
+		Nickname:    user.Nickname,
+		ChineseName: user.ChineseName,
+		Phone:       user.Phone,
+		Email:       user.Email,
+		Role:        user.Role,
 	}, nil
 }
 

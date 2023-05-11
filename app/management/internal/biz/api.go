@@ -12,9 +12,9 @@ type Api struct {
 	Url         string    `json:"url"`
 	Type        int8      `json:"type"`
 	Status      int8      `json:"status"`
-	Body        []byte    `json:"body"`
-	QueryParams []byte    `json:"query_params"`
-	Response    []byte    `json:"response"`
+	Body        string    `json:"body"`
+	QueryParams string    `json:"query_params"`
+	Response    string    `json:"response"`
 	Module      string    `json:"module"`
 	Description string    `json:"description"`
 	CreatedAt   time.Time `json:"created_at"`

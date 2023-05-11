@@ -7,6 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"galileo/ent/api"
+	"galileo/ent/apicategory"
+	"galileo/ent/apihistory"
+	"galileo/ent/apistatistics"
+	"galileo/ent/apitag"
 	"galileo/ent/group"
 	"galileo/ent/project"
 	"galileo/ent/task"
@@ -72,6 +76,10 @@ type OrderFunc func(*sql.Selector)
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		api.Table:           api.ValidColumn,
+		apicategory.Table:   apicategory.ValidColumn,
+		apihistory.Table:    apihistory.ValidColumn,
+		apistatistics.Table: apistatistics.ValidColumn,
+		apitag.Table:        apitag.ValidColumn,
 		group.Table:         group.ValidColumn,
 		project.Table:       project.ValidColumn,
 		task.Table:          task.ValidColumn,

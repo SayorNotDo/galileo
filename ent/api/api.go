@@ -19,6 +19,8 @@ const (
 	FieldType = "type"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldHeaders holds the string denoting the headers field in the database.
+	FieldHeaders = "headers"
 	// FieldBody holds the string denoting the body field in the database.
 	FieldBody = "body"
 	// FieldQueryParams holds the string denoting the query_params field in the database.
@@ -33,6 +35,8 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldCreatedBy holds the string denoting the created_by field in the database.
 	FieldCreatedBy = "created_by"
+	// FieldIncludeFiles holds the string denoting the include_files field in the database.
+	FieldIncludeFiles = "include_files"
 	// FieldUpdateAt holds the string denoting the update_at field in the database.
 	FieldUpdateAt = "update_at"
 	// FieldUpdateBy holds the string denoting the update_by field in the database.
@@ -41,8 +45,17 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
 	FieldDeletedBy = "deleted_by"
+	// EdgeStatistics holds the string denoting the statistics edge name in mutations.
+	EdgeStatistics = "statistics"
 	// Table holds the table name of the api in the database.
 	Table = "api"
+	// StatisticsTable is the table that holds the statistics relation/edge.
+	StatisticsTable = "api_statistics"
+	// StatisticsInverseTable is the table name for the ApiStatistics entity.
+	// It exists in this package in order to avoid circular dependency with the "apistatistics" package.
+	StatisticsInverseTable = "api_statistics"
+	// StatisticsColumn is the table column denoting the statistics relation/edge.
+	StatisticsColumn = "api_statistics"
 )
 
 // Columns holds all SQL columns for api fields.
@@ -52,6 +65,7 @@ var Columns = []string{
 	FieldURL,
 	FieldType,
 	FieldStatus,
+	FieldHeaders,
 	FieldBody,
 	FieldQueryParams,
 	FieldResponse,
@@ -59,6 +73,7 @@ var Columns = []string{
 	FieldDescription,
 	FieldCreatedAt,
 	FieldCreatedBy,
+	FieldIncludeFiles,
 	FieldUpdateAt,
 	FieldUpdateBy,
 	FieldDeletedAt,

@@ -9,6 +9,18 @@ import (
 // Api is the predicate function for api builders.
 type Api func(*sql.Selector)
 
+// ApiCategory is the predicate function for apicategory builders.
+type ApiCategory func(*sql.Selector)
+
+// ApiHistory is the predicate function for apihistory builders.
+type ApiHistory func(*sql.Selector)
+
+// ApiStatistics is the predicate function for apistatistics builders.
+type ApiStatistics func(*sql.Selector)
+
+// ApiTag is the predicate function for apitag builders.
+type ApiTag func(*sql.Selector)
+
 // Group is the predicate function for group builders.
 type Group func(*sql.Selector)
 

@@ -2,14 +2,14 @@ package server
 
 import (
 	"context"
-	"encoding/json"
 	v1 "galileo/api/core/v1"
 	"galileo/app/core/internal/conf"
 	"galileo/app/core/internal/data"
 	"galileo/app/core/internal/service"
 	"galileo/pkg/ctxdata"
+	"galileo/pkg/responseEncoder"
+
 	"galileo/pkg/errResponse"
-	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
@@ -21,7 +21,6 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 	jwt2 "github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/handlers"
-	stdHttp "net/http"
 	"strings"
 )
 
@@ -62,9 +61,9 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, s *service.CoreService, logger
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	// add success custom json response
-	opts = append(opts, http.ResponseEncoder(responseEncoder))
+	opts = append(opts, http.ResponseEncoder(responseEncoder.ResponseEncoder))
 	// add error custom json response
-	opts = append(opts, http.ErrorEncoder(errorEncoder))
+	opts = append(opts, http.ErrorEncoder(responseEncoder.ErrorEncoder))
 	srv := http.NewServer(opts...)
 	v1.RegisterCoreHTTPServer(srv, s)
 	return srv
@@ -74,41 +73,6 @@ type Response struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
-}
-
-func responseEncoder(w stdHttp.ResponseWriter, r *stdHttp.Request, v interface{}) error {
-	reply := &Response{}
-	reply.Code = stdHttp.StatusOK
-	reply.Message = "success"
-
-	codec, _ := http.CodecForRequest(r, "Accept")
-	marshalData, err := codec.Marshal(v)
-	if err != nil {
-		return err
-	}
-	_ = json.Unmarshal(marshalData, &reply.Data)
-	resp, err := codec.Marshal(reply)
-	if err != nil {
-		return err
-	}
-	w.Header().Set("Content-Type", codec.Name())
-	w.WriteHeader(stdHttp.StatusOK)
-	_, _ = w.Write(resp)
-	return nil
-}
-
-func errorEncoder(w stdHttp.ResponseWriter, r *stdHttp.Request, err error) {
-	codec, _ := http.CodecForRequest(r, "Accept")
-	w.Header().Set("Content-Type", "application/"+codec.Name())
-	// status code set 200
-	err = errResponse.SetCustomizeErrInfo(err)
-	se := errors.FromError(err)
-	body, err := codec.Marshal(se)
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	}
-	_, _ = w.Write(body)
 }
 
 func setHeaderInfo() middleware.Middleware {

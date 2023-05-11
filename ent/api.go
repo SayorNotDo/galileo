@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"galileo/ent/api"
+	"galileo/ent/apistatistics"
 	"strings"
 	"time"
 
@@ -24,12 +25,14 @@ type Api struct {
 	Type int8 `json:"type,omitempty"`
 	// Status holds the value of the "status" field.
 	Status int8 `json:"status,omitempty"`
+	// Headers holds the value of the "headers" field.
+	Headers *string `json:"headers,omitempty"`
 	// Body holds the value of the "body" field.
-	Body *[]byte `json:"body,omitempty"`
+	Body *string `json:"body,omitempty"`
 	// QueryParams holds the value of the "query_params" field.
-	QueryParams []byte `json:"query_params,omitempty"`
+	QueryParams string `json:"query_params,omitempty"`
 	// Response holds the value of the "response" field.
-	Response []byte `json:"response,omitempty"`
+	Response string `json:"response,omitempty"`
 	// Module holds the value of the "module" field.
 	Module string `json:"module,omitempty"`
 	// Description holds the value of the "description" field.
@@ -38,6 +41,8 @@ type Api struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy uint32 `json:"created_by,omitempty"`
+	// IncludeFiles holds the value of the "include_files" field.
+	IncludeFiles *string `json:"include_files,omitempty"`
 	// UpdateAt holds the value of the "update_at" field.
 	UpdateAt *time.Time `json:"update_at,omitempty"`
 	// UpdateBy holds the value of the "update_by" field.
@@ -46,6 +51,31 @@ type Api struct {
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the ApiQuery when eager-loading is set.
+	Edges ApiEdges `json:"edges"`
+}
+
+// ApiEdges holds the relations/edges for other nodes in the graph.
+type ApiEdges struct {
+	// Statistics holds the value of the statistics edge.
+	Statistics *ApiStatistics `json:"statistics,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// StatisticsOrErr returns the Statistics value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e ApiEdges) StatisticsOrErr() (*ApiStatistics, error) {
+	if e.loadedTypes[0] {
+		if e.Statistics == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: apistatistics.Label}
+		}
+		return e.Statistics, nil
+	}
+	return nil, &NotLoadedError{edge: "statistics"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -53,11 +83,9 @@ func (*Api) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case api.FieldBody, api.FieldQueryParams, api.FieldResponse:
-			values[i] = new([]byte)
 		case api.FieldID, api.FieldType, api.FieldStatus, api.FieldCreatedBy, api.FieldUpdateBy, api.FieldDeletedBy:
 			values[i] = new(sql.NullInt64)
-		case api.FieldName, api.FieldURL, api.FieldModule, api.FieldDescription:
+		case api.FieldName, api.FieldURL, api.FieldHeaders, api.FieldBody, api.FieldQueryParams, api.FieldResponse, api.FieldModule, api.FieldDescription, api.FieldIncludeFiles:
 			values[i] = new(sql.NullString)
 		case api.FieldCreatedAt, api.FieldUpdateAt, api.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -106,23 +134,31 @@ func (a *Api) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				a.Status = int8(value.Int64)
 			}
+		case api.FieldHeaders:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field headers", values[i])
+			} else if value.Valid {
+				a.Headers = new(string)
+				*a.Headers = value.String
+			}
 		case api.FieldBody:
-			if value, ok := values[i].(*[]byte); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field body", values[i])
-			} else if value != nil {
-				a.Body = value
+			} else if value.Valid {
+				a.Body = new(string)
+				*a.Body = value.String
 			}
 		case api.FieldQueryParams:
-			if value, ok := values[i].(*[]byte); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field query_params", values[i])
-			} else if value != nil {
-				a.QueryParams = *value
+			} else if value.Valid {
+				a.QueryParams = value.String
 			}
 		case api.FieldResponse:
-			if value, ok := values[i].(*[]byte); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field response", values[i])
-			} else if value != nil {
-				a.Response = *value
+			} else if value.Valid {
+				a.Response = value.String
 			}
 		case api.FieldModule:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -147,6 +183,13 @@ func (a *Api) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
 				a.CreatedBy = uint32(value.Int64)
+			}
+		case api.FieldIncludeFiles:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field include_files", values[i])
+			} else if value.Valid {
+				a.IncludeFiles = new(string)
+				*a.IncludeFiles = value.String
 			}
 		case api.FieldUpdateAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -178,6 +221,11 @@ func (a *Api) assignValues(columns []string, values []any) error {
 		}
 	}
 	return nil
+}
+
+// QueryStatistics queries the "statistics" edge of the Api entity.
+func (a *Api) QueryStatistics() *ApiStatisticsQuery {
+	return NewAPIClient(a.config).QueryStatistics(a)
 }
 
 // Update returns a builder for updating this Api.
@@ -215,16 +263,21 @@ func (a *Api) String() string {
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", a.Status))
 	builder.WriteString(", ")
+	if v := a.Headers; v != nil {
+		builder.WriteString("headers=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
 	if v := a.Body; v != nil {
 		builder.WriteString("body=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
+		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
 	builder.WriteString("query_params=")
-	builder.WriteString(fmt.Sprintf("%v", a.QueryParams))
+	builder.WriteString(a.QueryParams)
 	builder.WriteString(", ")
 	builder.WriteString("response=")
-	builder.WriteString(fmt.Sprintf("%v", a.Response))
+	builder.WriteString(a.Response)
 	builder.WriteString(", ")
 	builder.WriteString("module=")
 	builder.WriteString(a.Module)
@@ -237,6 +290,11 @@ func (a *Api) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
 	builder.WriteString(fmt.Sprintf("%v", a.CreatedBy))
+	builder.WriteString(", ")
+	if v := a.IncludeFiles; v != nil {
+		builder.WriteString("include_files=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	if v := a.UpdateAt; v != nil {
 		builder.WriteString("update_at=")

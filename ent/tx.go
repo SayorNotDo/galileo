@@ -14,6 +14,14 @@ type Tx struct {
 	config
 	// Api is the client for interacting with the Api builders.
 	Api *APIClient
+	// ApiCategory is the client for interacting with the ApiCategory builders.
+	ApiCategory *ApiCategoryClient
+	// ApiHistory is the client for interacting with the ApiHistory builders.
+	ApiHistory *ApiHistoryClient
+	// ApiStatistics is the client for interacting with the ApiStatistics builders.
+	ApiStatistics *ApiStatisticsClient
+	// ApiTag is the client for interacting with the ApiTag builders.
+	ApiTag *ApiTagClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// Project is the client for interacting with the Project builders.
@@ -158,6 +166,10 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Api = NewAPIClient(tx.config)
+	tx.ApiCategory = NewApiCategoryClient(tx.config)
+	tx.ApiHistory = NewApiHistoryClient(tx.config)
+	tx.ApiStatistics = NewApiStatisticsClient(tx.config)
+	tx.ApiTag = NewApiTagClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)

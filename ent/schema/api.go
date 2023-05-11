@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	"time"
@@ -36,13 +37,15 @@ func (Api) Fields() []ent.Field {
 		field.String("url").Optional(),
 		field.Int8("type").Optional(),
 		field.Int8("status").Default(0),
-		field.Bytes("body").Optional().Nillable(),
-		field.Bytes("query_params").Optional(),
-		field.Bytes("response").Optional(),
+		field.String("headers").Optional().Nillable(),
+		field.String("body").Optional().Nillable(),
+		field.String("query_params").Optional(),
+		field.String("response").Optional(),
 		field.String("module").Optional(),
 		field.String("description").Optional(),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("created_by").Immutable(),
+		field.String("include_files").Optional().Nillable(),
 		field.Time("update_at").UpdateDefault(time.Now).Optional().Nillable(),
 		field.Uint32("update_by"),
 		field.Time("deleted_at").Optional().Nillable(),
@@ -52,5 +55,8 @@ func (Api) Fields() []ent.Field {
 
 // Edges of the Api.
 func (Api) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.To("statistics", ApiStatistics.Type).
+			Unique(),
+	}
 }

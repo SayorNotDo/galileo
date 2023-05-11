@@ -27,7 +27,7 @@ type ApiHTTPServer interface {
 
 func RegisterApiHTTPServer(s *http.Server, srv ApiHTTPServer) {
 	r := s.Route("/")
-	r.POST("v1/api/management/target", _Api_CreateApi0_HTTP_Handler(srv))
+	r.POST("v1/api/management/interface", _Api_CreateApi0_HTTP_Handler(srv))
 }
 
 func _Api_CreateApi0_HTTP_Handler(srv ApiHTTPServer) func(ctx http.Context) error {
@@ -63,7 +63,7 @@ func NewApiHTTPClient(client *http.Client) ApiHTTPClient {
 
 func (c *ApiHTTPClientImpl) CreateApi(ctx context.Context, in *CreateApiRequest, opts ...http.CallOption) (*CreateApiReply, error) {
 	var out CreateApiReply
-	pattern := "v1/api/management/target"
+	pattern := "v1/api/management/interface"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationApiCreateApi))
 	opts = append(opts, http.PathTemplate(pattern))

@@ -57,7 +57,7 @@ func RegisterCoreHTTPServer(s *http.Server, srv CoreHTTPServer) {
 	r.DELETE("v1/api/user/unregister", _Core_Unregister0_HTTP_Handler(srv))
 	r.POST("v1/api/user/logout", _Core_Logout0_HTTP_Handler(srv))
 	r.DELETE("v1/api/user/delete/{id}", _Core_DeleteUser0_HTTP_Handler(srv))
-	r.GET("v1/api/user/detail", _Core_UserDetail0_HTTP_Handler(srv))
+	r.GET("v1/api/user/info", _Core_UserDetail0_HTTP_Handler(srv))
 	r.PUT("v1/api/user/update", _Core_UpdateUserInfo0_HTTP_Handler(srv))
 	r.PUT("v1/api/user/password", _Core_UpdatePassword0_HTTP_Handler(srv))
 	r.PUT("v1/api/user/email", _Core_UpdateEmail0_HTTP_Handler(srv))
@@ -502,7 +502,7 @@ func (c *CoreHTTPClientImpl) UpdateUserInfo(ctx context.Context, in *UserInfoUpd
 
 func (c *CoreHTTPClientImpl) UserDetail(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*UserDetailReply, error) {
 	var out UserDetailReply
-	pattern := "v1/api/user/detail"
+	pattern := "v1/api/user/info"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCoreUserDetail))
 	opts = append(opts, http.PathTemplate(pattern))

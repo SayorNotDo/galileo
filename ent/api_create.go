@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"galileo/ent/api"
+	"galileo/ent/apistatistics"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -68,21 +69,59 @@ func (ac *APICreate) SetNillableStatus(i *int8) *APICreate {
 	return ac
 }
 
+// SetHeaders sets the "headers" field.
+func (ac *APICreate) SetHeaders(s string) *APICreate {
+	ac.mutation.SetHeaders(s)
+	return ac
+}
+
+// SetNillableHeaders sets the "headers" field if the given value is not nil.
+func (ac *APICreate) SetNillableHeaders(s *string) *APICreate {
+	if s != nil {
+		ac.SetHeaders(*s)
+	}
+	return ac
+}
+
 // SetBody sets the "body" field.
-func (ac *APICreate) SetBody(b []byte) *APICreate {
-	ac.mutation.SetBody(b)
+func (ac *APICreate) SetBody(s string) *APICreate {
+	ac.mutation.SetBody(s)
+	return ac
+}
+
+// SetNillableBody sets the "body" field if the given value is not nil.
+func (ac *APICreate) SetNillableBody(s *string) *APICreate {
+	if s != nil {
+		ac.SetBody(*s)
+	}
 	return ac
 }
 
 // SetQueryParams sets the "query_params" field.
-func (ac *APICreate) SetQueryParams(b []byte) *APICreate {
-	ac.mutation.SetQueryParams(b)
+func (ac *APICreate) SetQueryParams(s string) *APICreate {
+	ac.mutation.SetQueryParams(s)
+	return ac
+}
+
+// SetNillableQueryParams sets the "query_params" field if the given value is not nil.
+func (ac *APICreate) SetNillableQueryParams(s *string) *APICreate {
+	if s != nil {
+		ac.SetQueryParams(*s)
+	}
 	return ac
 }
 
 // SetResponse sets the "response" field.
-func (ac *APICreate) SetResponse(b []byte) *APICreate {
-	ac.mutation.SetResponse(b)
+func (ac *APICreate) SetResponse(s string) *APICreate {
+	ac.mutation.SetResponse(s)
+	return ac
+}
+
+// SetNillableResponse sets the "response" field if the given value is not nil.
+func (ac *APICreate) SetNillableResponse(s *string) *APICreate {
+	if s != nil {
+		ac.SetResponse(*s)
+	}
 	return ac
 }
 
@@ -131,6 +170,20 @@ func (ac *APICreate) SetNillableCreatedAt(t *time.Time) *APICreate {
 // SetCreatedBy sets the "created_by" field.
 func (ac *APICreate) SetCreatedBy(u uint32) *APICreate {
 	ac.mutation.SetCreatedBy(u)
+	return ac
+}
+
+// SetIncludeFiles sets the "include_files" field.
+func (ac *APICreate) SetIncludeFiles(s string) *APICreate {
+	ac.mutation.SetIncludeFiles(s)
+	return ac
+}
+
+// SetNillableIncludeFiles sets the "include_files" field if the given value is not nil.
+func (ac *APICreate) SetNillableIncludeFiles(s *string) *APICreate {
+	if s != nil {
+		ac.SetIncludeFiles(*s)
+	}
 	return ac
 }
 
@@ -186,6 +239,25 @@ func (ac *APICreate) SetNillableDeletedBy(u *uint32) *APICreate {
 func (ac *APICreate) SetID(i int64) *APICreate {
 	ac.mutation.SetID(i)
 	return ac
+}
+
+// SetStatisticsID sets the "statistics" edge to the ApiStatistics entity by ID.
+func (ac *APICreate) SetStatisticsID(id int64) *APICreate {
+	ac.mutation.SetStatisticsID(id)
+	return ac
+}
+
+// SetNillableStatisticsID sets the "statistics" edge to the ApiStatistics entity by ID if the given value is not nil.
+func (ac *APICreate) SetNillableStatisticsID(id *int64) *APICreate {
+	if id != nil {
+		ac = ac.SetStatisticsID(*id)
+	}
+	return ac
+}
+
+// SetStatistics sets the "statistics" edge to the ApiStatistics entity.
+func (ac *APICreate) SetStatistics(a *ApiStatistics) *APICreate {
+	return ac.SetStatisticsID(a.ID)
 }
 
 // Mutation returns the APIMutation object of the builder.
@@ -303,16 +375,20 @@ func (ac *APICreate) createSpec() (*Api, *sqlgraph.CreateSpec) {
 		_spec.SetField(api.FieldStatus, field.TypeInt8, value)
 		_node.Status = value
 	}
+	if value, ok := ac.mutation.Headers(); ok {
+		_spec.SetField(api.FieldHeaders, field.TypeString, value)
+		_node.Headers = &value
+	}
 	if value, ok := ac.mutation.Body(); ok {
-		_spec.SetField(api.FieldBody, field.TypeBytes, value)
+		_spec.SetField(api.FieldBody, field.TypeString, value)
 		_node.Body = &value
 	}
 	if value, ok := ac.mutation.QueryParams(); ok {
-		_spec.SetField(api.FieldQueryParams, field.TypeBytes, value)
+		_spec.SetField(api.FieldQueryParams, field.TypeString, value)
 		_node.QueryParams = value
 	}
 	if value, ok := ac.mutation.Response(); ok {
-		_spec.SetField(api.FieldResponse, field.TypeBytes, value)
+		_spec.SetField(api.FieldResponse, field.TypeString, value)
 		_node.Response = value
 	}
 	if value, ok := ac.mutation.Module(); ok {
@@ -331,6 +407,10 @@ func (ac *APICreate) createSpec() (*Api, *sqlgraph.CreateSpec) {
 		_spec.SetField(api.FieldCreatedBy, field.TypeUint32, value)
 		_node.CreatedBy = value
 	}
+	if value, ok := ac.mutation.IncludeFiles(); ok {
+		_spec.SetField(api.FieldIncludeFiles, field.TypeString, value)
+		_node.IncludeFiles = &value
+	}
 	if value, ok := ac.mutation.UpdateAt(); ok {
 		_spec.SetField(api.FieldUpdateAt, field.TypeTime, value)
 		_node.UpdateAt = &value
@@ -346,6 +426,22 @@ func (ac *APICreate) createSpec() (*Api, *sqlgraph.CreateSpec) {
 	if value, ok := ac.mutation.DeletedBy(); ok {
 		_spec.SetField(api.FieldDeletedBy, field.TypeUint32, value)
 		_node.DeletedBy = &value
+	}
+	if nodes := ac.mutation.StatisticsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   api.StatisticsTable,
+			Columns: []string{api.StatisticsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
