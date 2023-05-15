@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package api.management.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "galileo/api/management/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.management.v1";
+
+service Management {
+  rpc BaseInfo(google.protobuf.Empty) returns (BaseInfoReply) {
+    option (google.api.http) = {
+      get: "v1/api/management/info"
+    };
+  }
+}
+
+message BaseInfoReply {
+  int64 apiCount = 1;
+  int64 sceneCaseCount = 2;
+  int64 apiCaseCount = 3;
+  int64 cronJobCount = 4;
+};

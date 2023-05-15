@@ -42,6 +42,7 @@ var ProviderSet = wire.NewSet(
 	NewDiscovery,
 	NewFileServiceClient,
 	NewEngineServiceClient,
+	NewManagementRepo,
 )
 
 var RedisCli redis.Cmdable

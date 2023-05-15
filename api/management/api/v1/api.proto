@@ -22,6 +22,9 @@ service Api {
   rpc ListApi (ListApiRequest) returns (ListApiReply);
 }
 
+message BaseInfoApiRequest {}
+message BaseInfoApiReply {}
+
 message DebugApiRequest {}
 message DebugApiReply {}
 
@@ -34,6 +37,7 @@ enum MethodType {
   OPTIONS = 5;
   HEAD = 6;
 }
+
 message CreateApiRequest {
   string name = 1;
   string url = 2;
