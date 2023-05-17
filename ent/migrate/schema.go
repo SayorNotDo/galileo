@@ -13,11 +13,12 @@ var (
 	APIColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
-		{Name: "url", Type: field.TypeString, Nullable: true},
-		{Name: "type", Type: field.TypeInt8, Nullable: true},
+		{Name: "url", Type: field.TypeString},
+		{Name: "type", Type: field.TypeInt8},
 		{Name: "status", Type: field.TypeInt8, Default: 0},
 		{Name: "headers", Type: field.TypeString, Nullable: true},
 		{Name: "body", Type: field.TypeString, Nullable: true},
+		{Name: "label", Type: field.TypeString, Nullable: true},
 		{Name: "query_params", Type: field.TypeString, Nullable: true},
 		{Name: "response", Type: field.TypeString, Nullable: true},
 		{Name: "module", Type: field.TypeString, Nullable: true},
@@ -26,7 +27,7 @@ var (
 		{Name: "created_by", Type: field.TypeUint32},
 		{Name: "include_files", Type: field.TypeString, Nullable: true},
 		{Name: "update_at", Type: field.TypeTime, Nullable: true},
-		{Name: "update_by", Type: field.TypeUint32},
+		{Name: "update_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 	}

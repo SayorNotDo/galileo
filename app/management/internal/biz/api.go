@@ -12,10 +12,12 @@ type Api struct {
 	Url         string    `json:"url"`
 	Type        int8      `json:"type"`
 	Status      int8      `json:"status"`
+	Headers     string    `json:"headers"`
 	Body        string    `json:"body"`
 	QueryParams string    `json:"query_params"`
 	Response    string    `json:"response"`
 	Module      string    `json:"module"`
+	Label       string    `json:"label"`
 	Description string    `json:"description"`
 	CreatedAt   time.Time `json:"created_at"`
 	CreatedBy   uint32    `json:"created_by"`
@@ -27,6 +29,7 @@ type Api struct {
 
 type ApiRepo interface {
 	CreateApi(ctx context.Context, api *Api) (*Api, error)
+	ApiByName(ctx context.Context, name string) (*Api, error)
 }
 
 type ApiUseCase struct {
@@ -43,4 +46,8 @@ func NewApiUseCase(repo ApiRepo, logger log.Logger) *ApiUseCase {
 
 func (uc *ApiUseCase) CreateApi(ctx context.Context, api *Api) (*Api, error) {
 	return uc.repo.CreateApi(ctx, api)
+}
+
+func (uc *ApiUseCase) ApiByName(ctx context.Context, name string) (*Api, error) {
+	return uc.repo.ApiByName(ctx, name)
 }

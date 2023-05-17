@@ -41,20 +41,6 @@ func (au *APIUpdate) SetURL(s string) *APIUpdate {
 	return au
 }
 
-// SetNillableURL sets the "url" field if the given value is not nil.
-func (au *APIUpdate) SetNillableURL(s *string) *APIUpdate {
-	if s != nil {
-		au.SetURL(*s)
-	}
-	return au
-}
-
-// ClearURL clears the value of the "url" field.
-func (au *APIUpdate) ClearURL() *APIUpdate {
-	au.mutation.ClearURL()
-	return au
-}
-
 // SetType sets the "type" field.
 func (au *APIUpdate) SetType(i int8) *APIUpdate {
 	au.mutation.ResetType()
@@ -62,23 +48,9 @@ func (au *APIUpdate) SetType(i int8) *APIUpdate {
 	return au
 }
 
-// SetNillableType sets the "type" field if the given value is not nil.
-func (au *APIUpdate) SetNillableType(i *int8) *APIUpdate {
-	if i != nil {
-		au.SetType(*i)
-	}
-	return au
-}
-
 // AddType adds i to the "type" field.
 func (au *APIUpdate) AddType(i int8) *APIUpdate {
 	au.mutation.AddType(i)
-	return au
-}
-
-// ClearType clears the value of the "type" field.
-func (au *APIUpdate) ClearType() *APIUpdate {
-	au.mutation.ClearType()
 	return au
 }
 
@@ -140,6 +112,26 @@ func (au *APIUpdate) SetNillableBody(s *string) *APIUpdate {
 // ClearBody clears the value of the "body" field.
 func (au *APIUpdate) ClearBody() *APIUpdate {
 	au.mutation.ClearBody()
+	return au
+}
+
+// SetLabel sets the "label" field.
+func (au *APIUpdate) SetLabel(s string) *APIUpdate {
+	au.mutation.SetLabel(s)
+	return au
+}
+
+// SetNillableLabel sets the "label" field if the given value is not nil.
+func (au *APIUpdate) SetNillableLabel(s *string) *APIUpdate {
+	if s != nil {
+		au.SetLabel(*s)
+	}
+	return au
+}
+
+// ClearLabel clears the value of the "label" field.
+func (au *APIUpdate) ClearLabel() *APIUpdate {
+	au.mutation.ClearLabel()
 	return au
 }
 
@@ -262,9 +254,23 @@ func (au *APIUpdate) SetUpdateBy(u uint32) *APIUpdate {
 	return au
 }
 
+// SetNillableUpdateBy sets the "update_by" field if the given value is not nil.
+func (au *APIUpdate) SetNillableUpdateBy(u *uint32) *APIUpdate {
+	if u != nil {
+		au.SetUpdateBy(*u)
+	}
+	return au
+}
+
 // AddUpdateBy adds u to the "update_by" field.
 func (au *APIUpdate) AddUpdateBy(u int32) *APIUpdate {
 	au.mutation.AddUpdateBy(u)
+	return au
+}
+
+// ClearUpdateBy clears the value of the "update_by" field.
+func (au *APIUpdate) ClearUpdateBy() *APIUpdate {
+	au.mutation.ClearUpdateBy()
 	return au
 }
 
@@ -388,6 +394,16 @@ func (au *APIUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Api.name": %w`, err)}
 		}
 	}
+	if v, ok := au.mutation.URL(); ok {
+		if err := api.URLValidator(v); err != nil {
+			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Api.url": %w`, err)}
+		}
+	}
+	if v, ok := au.mutation.GetType(); ok {
+		if err := api.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Api.type": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -409,17 +425,11 @@ func (au *APIUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := au.mutation.URL(); ok {
 		_spec.SetField(api.FieldURL, field.TypeString, value)
 	}
-	if au.mutation.URLCleared() {
-		_spec.ClearField(api.FieldURL, field.TypeString)
-	}
 	if value, ok := au.mutation.GetType(); ok {
 		_spec.SetField(api.FieldType, field.TypeInt8, value)
 	}
 	if value, ok := au.mutation.AddedType(); ok {
 		_spec.AddField(api.FieldType, field.TypeInt8, value)
-	}
-	if au.mutation.TypeCleared() {
-		_spec.ClearField(api.FieldType, field.TypeInt8)
 	}
 	if value, ok := au.mutation.Status(); ok {
 		_spec.SetField(api.FieldStatus, field.TypeInt8, value)
@@ -438,6 +448,12 @@ func (au *APIUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if au.mutation.BodyCleared() {
 		_spec.ClearField(api.FieldBody, field.TypeString)
+	}
+	if value, ok := au.mutation.Label(); ok {
+		_spec.SetField(api.FieldLabel, field.TypeString, value)
+	}
+	if au.mutation.LabelCleared() {
+		_spec.ClearField(api.FieldLabel, field.TypeString)
 	}
 	if value, ok := au.mutation.QueryParams(); ok {
 		_spec.SetField(api.FieldQueryParams, field.TypeString, value)
@@ -480,6 +496,9 @@ func (au *APIUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := au.mutation.AddedUpdateBy(); ok {
 		_spec.AddField(api.FieldUpdateBy, field.TypeUint32, value)
+	}
+	if au.mutation.UpdateByCleared() {
+		_spec.ClearField(api.FieldUpdateBy, field.TypeUint32)
 	}
 	if value, ok := au.mutation.DeletedAt(); ok {
 		_spec.SetField(api.FieldDeletedAt, field.TypeTime, value)
@@ -557,20 +576,6 @@ func (auo *APIUpdateOne) SetURL(s string) *APIUpdateOne {
 	return auo
 }
 
-// SetNillableURL sets the "url" field if the given value is not nil.
-func (auo *APIUpdateOne) SetNillableURL(s *string) *APIUpdateOne {
-	if s != nil {
-		auo.SetURL(*s)
-	}
-	return auo
-}
-
-// ClearURL clears the value of the "url" field.
-func (auo *APIUpdateOne) ClearURL() *APIUpdateOne {
-	auo.mutation.ClearURL()
-	return auo
-}
-
 // SetType sets the "type" field.
 func (auo *APIUpdateOne) SetType(i int8) *APIUpdateOne {
 	auo.mutation.ResetType()
@@ -578,23 +583,9 @@ func (auo *APIUpdateOne) SetType(i int8) *APIUpdateOne {
 	return auo
 }
 
-// SetNillableType sets the "type" field if the given value is not nil.
-func (auo *APIUpdateOne) SetNillableType(i *int8) *APIUpdateOne {
-	if i != nil {
-		auo.SetType(*i)
-	}
-	return auo
-}
-
 // AddType adds i to the "type" field.
 func (auo *APIUpdateOne) AddType(i int8) *APIUpdateOne {
 	auo.mutation.AddType(i)
-	return auo
-}
-
-// ClearType clears the value of the "type" field.
-func (auo *APIUpdateOne) ClearType() *APIUpdateOne {
-	auo.mutation.ClearType()
 	return auo
 }
 
@@ -656,6 +647,26 @@ func (auo *APIUpdateOne) SetNillableBody(s *string) *APIUpdateOne {
 // ClearBody clears the value of the "body" field.
 func (auo *APIUpdateOne) ClearBody() *APIUpdateOne {
 	auo.mutation.ClearBody()
+	return auo
+}
+
+// SetLabel sets the "label" field.
+func (auo *APIUpdateOne) SetLabel(s string) *APIUpdateOne {
+	auo.mutation.SetLabel(s)
+	return auo
+}
+
+// SetNillableLabel sets the "label" field if the given value is not nil.
+func (auo *APIUpdateOne) SetNillableLabel(s *string) *APIUpdateOne {
+	if s != nil {
+		auo.SetLabel(*s)
+	}
+	return auo
+}
+
+// ClearLabel clears the value of the "label" field.
+func (auo *APIUpdateOne) ClearLabel() *APIUpdateOne {
+	auo.mutation.ClearLabel()
 	return auo
 }
 
@@ -778,9 +789,23 @@ func (auo *APIUpdateOne) SetUpdateBy(u uint32) *APIUpdateOne {
 	return auo
 }
 
+// SetNillableUpdateBy sets the "update_by" field if the given value is not nil.
+func (auo *APIUpdateOne) SetNillableUpdateBy(u *uint32) *APIUpdateOne {
+	if u != nil {
+		auo.SetUpdateBy(*u)
+	}
+	return auo
+}
+
 // AddUpdateBy adds u to the "update_by" field.
 func (auo *APIUpdateOne) AddUpdateBy(u int32) *APIUpdateOne {
 	auo.mutation.AddUpdateBy(u)
+	return auo
+}
+
+// ClearUpdateBy clears the value of the "update_by" field.
+func (auo *APIUpdateOne) ClearUpdateBy() *APIUpdateOne {
+	auo.mutation.ClearUpdateBy()
 	return auo
 }
 
@@ -917,6 +942,16 @@ func (auo *APIUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Api.name": %w`, err)}
 		}
 	}
+	if v, ok := auo.mutation.URL(); ok {
+		if err := api.URLValidator(v); err != nil {
+			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Api.url": %w`, err)}
+		}
+	}
+	if v, ok := auo.mutation.GetType(); ok {
+		if err := api.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Api.type": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -955,17 +990,11 @@ func (auo *APIUpdateOne) sqlSave(ctx context.Context) (_node *Api, err error) {
 	if value, ok := auo.mutation.URL(); ok {
 		_spec.SetField(api.FieldURL, field.TypeString, value)
 	}
-	if auo.mutation.URLCleared() {
-		_spec.ClearField(api.FieldURL, field.TypeString)
-	}
 	if value, ok := auo.mutation.GetType(); ok {
 		_spec.SetField(api.FieldType, field.TypeInt8, value)
 	}
 	if value, ok := auo.mutation.AddedType(); ok {
 		_spec.AddField(api.FieldType, field.TypeInt8, value)
-	}
-	if auo.mutation.TypeCleared() {
-		_spec.ClearField(api.FieldType, field.TypeInt8)
 	}
 	if value, ok := auo.mutation.Status(); ok {
 		_spec.SetField(api.FieldStatus, field.TypeInt8, value)
@@ -984,6 +1013,12 @@ func (auo *APIUpdateOne) sqlSave(ctx context.Context) (_node *Api, err error) {
 	}
 	if auo.mutation.BodyCleared() {
 		_spec.ClearField(api.FieldBody, field.TypeString)
+	}
+	if value, ok := auo.mutation.Label(); ok {
+		_spec.SetField(api.FieldLabel, field.TypeString, value)
+	}
+	if auo.mutation.LabelCleared() {
+		_spec.ClearField(api.FieldLabel, field.TypeString)
 	}
 	if value, ok := auo.mutation.QueryParams(); ok {
 		_spec.SetField(api.FieldQueryParams, field.TypeString, value)
@@ -1026,6 +1061,9 @@ func (auo *APIUpdateOne) sqlSave(ctx context.Context) (_node *Api, err error) {
 	}
 	if value, ok := auo.mutation.AddedUpdateBy(); ok {
 		_spec.AddField(api.FieldUpdateBy, field.TypeUint32, value)
+	}
+	if auo.mutation.UpdateByCleared() {
+		_spec.ClearField(api.FieldUpdateBy, field.TypeUint32)
 	}
 	if value, ok := auo.mutation.DeletedAt(); ok {
 		_spec.SetField(api.FieldDeletedAt, field.TypeTime, value)

@@ -97,7 +97,6 @@ func (s *TaskService) ListTask(ctx context.Context, req *v1.ListTaskRequest) (*v
 	return &v1.ListTaskReply{}, nil
 }
 
-func (s *TaskService) TestEngine(ctx context.Context, req *empty.Empty) (*v1.TestEngineReply, error) {
-	ret, _ := s.uc.TestEngine(ctx)
-	return &v1.TestEngineReply{Hello: ret}, nil
+func (s *TaskService) Test(ctx context.Context, req *empty.Empty) (*v1.TestEngineReply, error) {
+	return &v1.TestEngineReply{}, nil
 }

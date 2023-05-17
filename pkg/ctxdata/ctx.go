@@ -3,8 +3,8 @@ package ctxdata
 import "context"
 
 const (
-	UserIdKey         = "galileo-userId"
-	Username          = "galileo-username"
+	UserIdKey         = "x-md-global-userId"
+	Username          = "x-md-global-username"
 	AuthorizationKey  = "Authorization"
 	AuthorizationType = "Bearer"
 )

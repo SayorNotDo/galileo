@@ -260,16 +260,6 @@ func URLHasSuffix(v string) predicate.Api {
 	return predicate.Api(sql.FieldHasSuffix(FieldURL, v))
 }
 
-// URLIsNil applies the IsNil predicate on the "url" field.
-func URLIsNil() predicate.Api {
-	return predicate.Api(sql.FieldIsNull(FieldURL))
-}
-
-// URLNotNil applies the NotNil predicate on the "url" field.
-func URLNotNil() predicate.Api {
-	return predicate.Api(sql.FieldNotNull(FieldURL))
-}
-
 // URLEqualFold applies the EqualFold predicate on the "url" field.
 func URLEqualFold(v string) predicate.Api {
 	return predicate.Api(sql.FieldEqualFold(FieldURL, v))
@@ -318,16 +308,6 @@ func TypeLT(v int8) predicate.Api {
 // TypeLTE applies the LTE predicate on the "type" field.
 func TypeLTE(v int8) predicate.Api {
 	return predicate.Api(sql.FieldLTE(FieldType, v))
-}
-
-// TypeIsNil applies the IsNil predicate on the "type" field.
-func TypeIsNil() predicate.Api {
-	return predicate.Api(sql.FieldIsNull(FieldType))
-}
-
-// TypeNotNil applies the NotNil predicate on the "type" field.
-func TypeNotNil() predicate.Api {
-	return predicate.Api(sql.FieldNotNull(FieldType))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
@@ -518,6 +498,81 @@ func BodyEqualFold(v string) predicate.Api {
 // BodyContainsFold applies the ContainsFold predicate on the "body" field.
 func BodyContainsFold(v string) predicate.Api {
 	return predicate.Api(sql.FieldContainsFold(FieldBody, v))
+}
+
+// LabelEQ applies the EQ predicate on the "label" field.
+func LabelEQ(v string) predicate.Api {
+	return predicate.Api(sql.FieldEQ(FieldLabel, v))
+}
+
+// LabelNEQ applies the NEQ predicate on the "label" field.
+func LabelNEQ(v string) predicate.Api {
+	return predicate.Api(sql.FieldNEQ(FieldLabel, v))
+}
+
+// LabelIn applies the In predicate on the "label" field.
+func LabelIn(vs ...string) predicate.Api {
+	return predicate.Api(sql.FieldIn(FieldLabel, vs...))
+}
+
+// LabelNotIn applies the NotIn predicate on the "label" field.
+func LabelNotIn(vs ...string) predicate.Api {
+	return predicate.Api(sql.FieldNotIn(FieldLabel, vs...))
+}
+
+// LabelGT applies the GT predicate on the "label" field.
+func LabelGT(v string) predicate.Api {
+	return predicate.Api(sql.FieldGT(FieldLabel, v))
+}
+
+// LabelGTE applies the GTE predicate on the "label" field.
+func LabelGTE(v string) predicate.Api {
+	return predicate.Api(sql.FieldGTE(FieldLabel, v))
+}
+
+// LabelLT applies the LT predicate on the "label" field.
+func LabelLT(v string) predicate.Api {
+	return predicate.Api(sql.FieldLT(FieldLabel, v))
+}
+
+// LabelLTE applies the LTE predicate on the "label" field.
+func LabelLTE(v string) predicate.Api {
+	return predicate.Api(sql.FieldLTE(FieldLabel, v))
+}
+
+// LabelContains applies the Contains predicate on the "label" field.
+func LabelContains(v string) predicate.Api {
+	return predicate.Api(sql.FieldContains(FieldLabel, v))
+}
+
+// LabelHasPrefix applies the HasPrefix predicate on the "label" field.
+func LabelHasPrefix(v string) predicate.Api {
+	return predicate.Api(sql.FieldHasPrefix(FieldLabel, v))
+}
+
+// LabelHasSuffix applies the HasSuffix predicate on the "label" field.
+func LabelHasSuffix(v string) predicate.Api {
+	return predicate.Api(sql.FieldHasSuffix(FieldLabel, v))
+}
+
+// LabelIsNil applies the IsNil predicate on the "label" field.
+func LabelIsNil() predicate.Api {
+	return predicate.Api(sql.FieldIsNull(FieldLabel))
+}
+
+// LabelNotNil applies the NotNil predicate on the "label" field.
+func LabelNotNil() predicate.Api {
+	return predicate.Api(sql.FieldNotNull(FieldLabel))
+}
+
+// LabelEqualFold applies the EqualFold predicate on the "label" field.
+func LabelEqualFold(v string) predicate.Api {
+	return predicate.Api(sql.FieldEqualFold(FieldLabel, v))
+}
+
+// LabelContainsFold applies the ContainsFold predicate on the "label" field.
+func LabelContainsFold(v string) predicate.Api {
+	return predicate.Api(sql.FieldContainsFold(FieldLabel, v))
 }
 
 // QueryParamsEQ applies the EQ predicate on the "query_params" field.
@@ -1063,6 +1118,16 @@ func UpdateByLT(v uint32) predicate.Api {
 // UpdateByLTE applies the LTE predicate on the "update_by" field.
 func UpdateByLTE(v uint32) predicate.Api {
 	return predicate.Api(sql.FieldLTE(FieldUpdateBy, v))
+}
+
+// UpdateByIsNil applies the IsNil predicate on the "update_by" field.
+func UpdateByIsNil() predicate.Api {
+	return predicate.Api(sql.FieldIsNull(FieldUpdateBy))
+}
+
+// UpdateByNotNil applies the NotNil predicate on the "update_by" field.
+func UpdateByNotNil() predicate.Api {
+	return predicate.Api(sql.FieldNotNull(FieldUpdateBy))
 }
 
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.

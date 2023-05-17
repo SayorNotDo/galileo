@@ -33,25 +33,9 @@ func (ac *APICreate) SetURL(s string) *APICreate {
 	return ac
 }
 
-// SetNillableURL sets the "url" field if the given value is not nil.
-func (ac *APICreate) SetNillableURL(s *string) *APICreate {
-	if s != nil {
-		ac.SetURL(*s)
-	}
-	return ac
-}
-
 // SetType sets the "type" field.
 func (ac *APICreate) SetType(i int8) *APICreate {
 	ac.mutation.SetType(i)
-	return ac
-}
-
-// SetNillableType sets the "type" field if the given value is not nil.
-func (ac *APICreate) SetNillableType(i *int8) *APICreate {
-	if i != nil {
-		ac.SetType(*i)
-	}
 	return ac
 }
 
@@ -93,6 +77,20 @@ func (ac *APICreate) SetBody(s string) *APICreate {
 func (ac *APICreate) SetNillableBody(s *string) *APICreate {
 	if s != nil {
 		ac.SetBody(*s)
+	}
+	return ac
+}
+
+// SetLabel sets the "label" field.
+func (ac *APICreate) SetLabel(s string) *APICreate {
+	ac.mutation.SetLabel(s)
+	return ac
+}
+
+// SetNillableLabel sets the "label" field if the given value is not nil.
+func (ac *APICreate) SetNillableLabel(s *string) *APICreate {
+	if s != nil {
+		ac.SetLabel(*s)
 	}
 	return ac
 }
@@ -207,6 +205,14 @@ func (ac *APICreate) SetUpdateBy(u uint32) *APICreate {
 	return ac
 }
 
+// SetNillableUpdateBy sets the "update_by" field if the given value is not nil.
+func (ac *APICreate) SetNillableUpdateBy(u *uint32) *APICreate {
+	if u != nil {
+		ac.SetUpdateBy(*u)
+	}
+	return ac
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (ac *APICreate) SetDeletedAt(t time.Time) *APICreate {
 	ac.mutation.SetDeletedAt(t)
@@ -315,6 +321,22 @@ func (ac *APICreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Api.name": %w`, err)}
 		}
 	}
+	if _, ok := ac.mutation.URL(); !ok {
+		return &ValidationError{Name: "url", err: errors.New(`ent: missing required field "Api.url"`)}
+	}
+	if v, ok := ac.mutation.URL(); ok {
+		if err := api.URLValidator(v); err != nil {
+			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Api.url": %w`, err)}
+		}
+	}
+	if _, ok := ac.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "Api.type"`)}
+	}
+	if v, ok := ac.mutation.GetType(); ok {
+		if err := api.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Api.type": %w`, err)}
+		}
+	}
 	if _, ok := ac.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Api.status"`)}
 	}
@@ -323,9 +345,6 @@ func (ac *APICreate) check() error {
 	}
 	if _, ok := ac.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Api.created_by"`)}
-	}
-	if _, ok := ac.mutation.UpdateBy(); !ok {
-		return &ValidationError{Name: "update_by", err: errors.New(`ent: missing required field "Api.update_by"`)}
 	}
 	return nil
 }
@@ -377,11 +396,15 @@ func (ac *APICreate) createSpec() (*Api, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := ac.mutation.Headers(); ok {
 		_spec.SetField(api.FieldHeaders, field.TypeString, value)
-		_node.Headers = &value
+		_node.Headers = value
 	}
 	if value, ok := ac.mutation.Body(); ok {
 		_spec.SetField(api.FieldBody, field.TypeString, value)
-		_node.Body = &value
+		_node.Body = value
+	}
+	if value, ok := ac.mutation.Label(); ok {
+		_spec.SetField(api.FieldLabel, field.TypeString, value)
+		_node.Label = value
 	}
 	if value, ok := ac.mutation.QueryParams(); ok {
 		_spec.SetField(api.FieldQueryParams, field.TypeString, value)
@@ -409,11 +432,11 @@ func (ac *APICreate) createSpec() (*Api, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := ac.mutation.IncludeFiles(); ok {
 		_spec.SetField(api.FieldIncludeFiles, field.TypeString, value)
-		_node.IncludeFiles = &value
+		_node.IncludeFiles = value
 	}
 	if value, ok := ac.mutation.UpdateAt(); ok {
 		_spec.SetField(api.FieldUpdateAt, field.TypeTime, value)
-		_node.UpdateAt = &value
+		_node.UpdateAt = value
 	}
 	if value, ok := ac.mutation.UpdateBy(); ok {
 		_spec.SetField(api.FieldUpdateBy, field.TypeUint32, value)
@@ -421,11 +444,11 @@ func (ac *APICreate) createSpec() (*Api, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := ac.mutation.DeletedAt(); ok {
 		_spec.SetField(api.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
+		_node.DeletedAt = value
 	}
 	if value, ok := ac.mutation.DeletedBy(); ok {
 		_spec.SetField(api.FieldDeletedBy, field.TypeUint32, value)
-		_node.DeletedBy = &value
+		_node.DeletedBy = value
 	}
 	if nodes := ac.mutation.StatisticsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

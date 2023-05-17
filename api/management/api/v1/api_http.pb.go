@@ -20,14 +20,17 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationApiCreateApi = "/api.management.api.Api/CreateApi"
+const OperationApiUpdateApi = "/api.management.api.Api/UpdateApi"
 
 type ApiHTTPServer interface {
 	CreateApi(context.Context, *CreateApiRequest) (*CreateApiReply, error)
+	UpdateApi(context.Context, *UpdateApiRequest) (*UpdateApiReply, error)
 }
 
 func RegisterApiHTTPServer(s *http.Server, srv ApiHTTPServer) {
 	r := s.Route("/")
 	r.POST("v1/api/management/interface", _Api_CreateApi0_HTTP_Handler(srv))
+	r.PUT("v1/api/management/interface", _Api_UpdateApi0_HTTP_Handler(srv))
 }
 
 func _Api_CreateApi0_HTTP_Handler(srv ApiHTTPServer) func(ctx http.Context) error {
@@ -49,8 +52,28 @@ func _Api_CreateApi0_HTTP_Handler(srv ApiHTTPServer) func(ctx http.Context) erro
 	}
 }
 
+func _Api_UpdateApi0_HTTP_Handler(srv ApiHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateApiRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationApiUpdateApi)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateApi(ctx, req.(*UpdateApiRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UpdateApiReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type ApiHTTPClient interface {
 	CreateApi(ctx context.Context, req *CreateApiRequest, opts ...http.CallOption) (rsp *CreateApiReply, err error)
+	UpdateApi(ctx context.Context, req *UpdateApiRequest, opts ...http.CallOption) (rsp *UpdateApiReply, err error)
 }
 
 type ApiHTTPClientImpl struct {
@@ -68,6 +91,19 @@ func (c *ApiHTTPClientImpl) CreateApi(ctx context.Context, in *CreateApiRequest,
 	opts = append(opts, http.Operation(OperationApiCreateApi))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *ApiHTTPClientImpl) UpdateApi(ctx context.Context, in *UpdateApiRequest, opts ...http.CallOption) (*UpdateApiReply, error) {
+	var out UpdateApiReply
+	pattern := "v1/api/management/interface"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationApiUpdateApi))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

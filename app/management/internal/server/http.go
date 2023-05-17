@@ -18,6 +18,8 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/metadata"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport"
 	jwt2 "github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/handlers"
@@ -38,6 +40,8 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, project *service.ProjectServic
 		http.Middleware(
 			logging.Server(logger),
 			recovery.Recovery(),
+			validate.Validator(),
+			tracing.Server(),
 			selector.Server(
 				// set header information
 				setHeaderInfo(),
@@ -50,7 +54,10 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, project *service.ProjectServic
 				// set global ctx
 				setUserInfo(),
 			).Match(NewWhiteListMatcher()).Build(),
-			metadata.Server(),
+			metadata.Server(
+				metadata.WithPropagatedPrefix("x-md-global", "userId"),
+				metadata.WithPropagatedPrefix("x-md-global", "username"),
+			),
 		),
 		http.Filter(handlers.CORS(
 			handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Accept"}),
@@ -115,8 +122,9 @@ func setUserInfo() middleware.Middleware {
 			}
 			claimInfo := claim.(jwt2.MapClaims)
 			userId := uint32(claimInfo["ID"].(float64))
+			username := claimInfo["Username"].(string)
 			ctx = context.WithValue(ctx, ctxdata.UserIdKey, userId)
-			ctx = context.WithValue(ctx, ctxdata.Username, claimInfo["Username"])
+			ctx = context.WithValue(ctx, ctxdata.Username, username)
 			return handler(ctx, req)
 		}
 	}
@@ -130,6 +138,6 @@ func NewWhiteListMatcher() selector.MatchFunc {
 		if _, ok := whiteList[operation]; ok {
 			return false
 		}
-		return false
+		return true
 	}
 }

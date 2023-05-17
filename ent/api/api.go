@@ -23,6 +23,8 @@ const (
 	FieldHeaders = "headers"
 	// FieldBody holds the string denoting the body field in the database.
 	FieldBody = "body"
+	// FieldLabel holds the string denoting the label field in the database.
+	FieldLabel = "label"
 	// FieldQueryParams holds the string denoting the query_params field in the database.
 	FieldQueryParams = "query_params"
 	// FieldResponse holds the string denoting the response field in the database.
@@ -67,6 +69,7 @@ var Columns = []string{
 	FieldStatus,
 	FieldHeaders,
 	FieldBody,
+	FieldLabel,
 	FieldQueryParams,
 	FieldResponse,
 	FieldModule,
@@ -93,6 +96,10 @@ func ValidColumn(column string) bool {
 var (
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
+	// URLValidator is a validator for the "url" field. It is called by the builders before save.
+	URLValidator func(string) error
+	// TypeValidator is a validator for the "type" field. It is called by the builders before save.
+	TypeValidator func(int8) error
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus int8
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.

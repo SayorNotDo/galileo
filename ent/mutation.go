@@ -61,6 +61,7 @@ type APIMutation struct {
 	addstatus         *int8
 	headers           *string
 	body              *string
+	label             *string
 	query_params      *string
 	response          *string
 	module            *string
@@ -254,22 +255,9 @@ func (m *APIMutation) OldURL(ctx context.Context) (v string, err error) {
 	return oldValue.URL, nil
 }
 
-// ClearURL clears the value of the "url" field.
-func (m *APIMutation) ClearURL() {
-	m.url = nil
-	m.clearedFields[api.FieldURL] = struct{}{}
-}
-
-// URLCleared returns if the "url" field was cleared in this mutation.
-func (m *APIMutation) URLCleared() bool {
-	_, ok := m.clearedFields[api.FieldURL]
-	return ok
-}
-
 // ResetURL resets all changes to the "url" field.
 func (m *APIMutation) ResetURL() {
 	m.url = nil
-	delete(m.clearedFields, api.FieldURL)
 }
 
 // SetType sets the "type" field.
@@ -322,24 +310,10 @@ func (m *APIMutation) AddedType() (r int8, exists bool) {
 	return *v, true
 }
 
-// ClearType clears the value of the "type" field.
-func (m *APIMutation) ClearType() {
-	m._type = nil
-	m.add_type = nil
-	m.clearedFields[api.FieldType] = struct{}{}
-}
-
-// TypeCleared returns if the "type" field was cleared in this mutation.
-func (m *APIMutation) TypeCleared() bool {
-	_, ok := m.clearedFields[api.FieldType]
-	return ok
-}
-
 // ResetType resets all changes to the "type" field.
 func (m *APIMutation) ResetType() {
 	m._type = nil
 	m.add_type = nil
-	delete(m.clearedFields, api.FieldType)
 }
 
 // SetStatus sets the "status" field.
@@ -415,7 +389,7 @@ func (m *APIMutation) Headers() (r string, exists bool) {
 // OldHeaders returns the old "headers" field's value of the Api entity.
 // If the Api object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *APIMutation) OldHeaders(ctx context.Context) (v *string, err error) {
+func (m *APIMutation) OldHeaders(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldHeaders is only allowed on UpdateOne operations")
 	}
@@ -464,7 +438,7 @@ func (m *APIMutation) Body() (r string, exists bool) {
 // OldBody returns the old "body" field's value of the Api entity.
 // If the Api object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *APIMutation) OldBody(ctx context.Context) (v *string, err error) {
+func (m *APIMutation) OldBody(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldBody is only allowed on UpdateOne operations")
 	}
@@ -494,6 +468,55 @@ func (m *APIMutation) BodyCleared() bool {
 func (m *APIMutation) ResetBody() {
 	m.body = nil
 	delete(m.clearedFields, api.FieldBody)
+}
+
+// SetLabel sets the "label" field.
+func (m *APIMutation) SetLabel(s string) {
+	m.label = &s
+}
+
+// Label returns the value of the "label" field in the mutation.
+func (m *APIMutation) Label() (r string, exists bool) {
+	v := m.label
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLabel returns the old "label" field's value of the Api entity.
+// If the Api object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *APIMutation) OldLabel(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLabel is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLabel requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLabel: %w", err)
+	}
+	return oldValue.Label, nil
+}
+
+// ClearLabel clears the value of the "label" field.
+func (m *APIMutation) ClearLabel() {
+	m.label = nil
+	m.clearedFields[api.FieldLabel] = struct{}{}
+}
+
+// LabelCleared returns if the "label" field was cleared in this mutation.
+func (m *APIMutation) LabelCleared() bool {
+	_, ok := m.clearedFields[api.FieldLabel]
+	return ok
+}
+
+// ResetLabel resets all changes to the "label" field.
+func (m *APIMutation) ResetLabel() {
+	m.label = nil
+	delete(m.clearedFields, api.FieldLabel)
 }
 
 // SetQueryParams sets the "query_params" field.
@@ -801,7 +824,7 @@ func (m *APIMutation) IncludeFiles() (r string, exists bool) {
 // OldIncludeFiles returns the old "include_files" field's value of the Api entity.
 // If the Api object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *APIMutation) OldIncludeFiles(ctx context.Context) (v *string, err error) {
+func (m *APIMutation) OldIncludeFiles(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldIncludeFiles is only allowed on UpdateOne operations")
 	}
@@ -850,7 +873,7 @@ func (m *APIMutation) UpdateAt() (r time.Time, exists bool) {
 // OldUpdateAt returns the old "update_at" field's value of the Api entity.
 // If the Api object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *APIMutation) OldUpdateAt(ctx context.Context) (v *time.Time, err error) {
+func (m *APIMutation) OldUpdateAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdateAt is only allowed on UpdateOne operations")
 	}
@@ -932,10 +955,24 @@ func (m *APIMutation) AddedUpdateBy() (r int32, exists bool) {
 	return *v, true
 }
 
+// ClearUpdateBy clears the value of the "update_by" field.
+func (m *APIMutation) ClearUpdateBy() {
+	m.update_by = nil
+	m.addupdate_by = nil
+	m.clearedFields[api.FieldUpdateBy] = struct{}{}
+}
+
+// UpdateByCleared returns if the "update_by" field was cleared in this mutation.
+func (m *APIMutation) UpdateByCleared() bool {
+	_, ok := m.clearedFields[api.FieldUpdateBy]
+	return ok
+}
+
 // ResetUpdateBy resets all changes to the "update_by" field.
 func (m *APIMutation) ResetUpdateBy() {
 	m.update_by = nil
 	m.addupdate_by = nil
+	delete(m.clearedFields, api.FieldUpdateBy)
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -955,7 +992,7 @@ func (m *APIMutation) DeletedAt() (r time.Time, exists bool) {
 // OldDeletedAt returns the old "deleted_at" field's value of the Api entity.
 // If the Api object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *APIMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+func (m *APIMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
 	}
@@ -1005,7 +1042,7 @@ func (m *APIMutation) DeletedBy() (r uint32, exists bool) {
 // OldDeletedBy returns the old "deleted_by" field's value of the Api entity.
 // If the Api object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *APIMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+func (m *APIMutation) OldDeletedBy(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
 	}
@@ -1130,7 +1167,7 @@ func (m *APIMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *APIMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
 	if m.name != nil {
 		fields = append(fields, api.FieldName)
 	}
@@ -1148,6 +1185,9 @@ func (m *APIMutation) Fields() []string {
 	}
 	if m.body != nil {
 		fields = append(fields, api.FieldBody)
+	}
+	if m.label != nil {
+		fields = append(fields, api.FieldLabel)
 	}
 	if m.query_params != nil {
 		fields = append(fields, api.FieldQueryParams)
@@ -1202,6 +1242,8 @@ func (m *APIMutation) Field(name string) (ent.Value, bool) {
 		return m.Headers()
 	case api.FieldBody:
 		return m.Body()
+	case api.FieldLabel:
+		return m.Label()
 	case api.FieldQueryParams:
 		return m.QueryParams()
 	case api.FieldResponse:
@@ -1245,6 +1287,8 @@ func (m *APIMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldHeaders(ctx)
 	case api.FieldBody:
 		return m.OldBody(ctx)
+	case api.FieldLabel:
+		return m.OldLabel(ctx)
 	case api.FieldQueryParams:
 		return m.OldQueryParams(ctx)
 	case api.FieldResponse:
@@ -1317,6 +1361,13 @@ func (m *APIMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBody(v)
+		return nil
+	case api.FieldLabel:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLabel(v)
 		return nil
 	case api.FieldQueryParams:
 		v, ok := value.(string)
@@ -1488,17 +1539,14 @@ func (m *APIMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *APIMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(api.FieldURL) {
-		fields = append(fields, api.FieldURL)
-	}
-	if m.FieldCleared(api.FieldType) {
-		fields = append(fields, api.FieldType)
-	}
 	if m.FieldCleared(api.FieldHeaders) {
 		fields = append(fields, api.FieldHeaders)
 	}
 	if m.FieldCleared(api.FieldBody) {
 		fields = append(fields, api.FieldBody)
+	}
+	if m.FieldCleared(api.FieldLabel) {
+		fields = append(fields, api.FieldLabel)
 	}
 	if m.FieldCleared(api.FieldQueryParams) {
 		fields = append(fields, api.FieldQueryParams)
@@ -1517,6 +1565,9 @@ func (m *APIMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(api.FieldUpdateAt) {
 		fields = append(fields, api.FieldUpdateAt)
+	}
+	if m.FieldCleared(api.FieldUpdateBy) {
+		fields = append(fields, api.FieldUpdateBy)
 	}
 	if m.FieldCleared(api.FieldDeletedAt) {
 		fields = append(fields, api.FieldDeletedAt)
@@ -1538,17 +1589,14 @@ func (m *APIMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *APIMutation) ClearField(name string) error {
 	switch name {
-	case api.FieldURL:
-		m.ClearURL()
-		return nil
-	case api.FieldType:
-		m.ClearType()
-		return nil
 	case api.FieldHeaders:
 		m.ClearHeaders()
 		return nil
 	case api.FieldBody:
 		m.ClearBody()
+		return nil
+	case api.FieldLabel:
+		m.ClearLabel()
 		return nil
 	case api.FieldQueryParams:
 		m.ClearQueryParams()
@@ -1567,6 +1615,9 @@ func (m *APIMutation) ClearField(name string) error {
 		return nil
 	case api.FieldUpdateAt:
 		m.ClearUpdateAt()
+		return nil
+	case api.FieldUpdateBy:
+		m.ClearUpdateBy()
 		return nil
 	case api.FieldDeletedAt:
 		m.ClearDeletedAt()
@@ -1599,6 +1650,9 @@ func (m *APIMutation) ResetField(name string) error {
 		return nil
 	case api.FieldBody:
 		m.ResetBody()
+		return nil
+	case api.FieldLabel:
+		m.ResetLabel()
 		return nil
 	case api.FieldQueryParams:
 		m.ResetQueryParams()

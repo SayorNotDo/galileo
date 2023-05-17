@@ -15,7 +15,12 @@ service Api {
       body: "*"
     };
   };
-  rpc UpdateApi (UpdateApiRequest) returns (UpdateApiReply);
+  rpc UpdateApi (UpdateApiRequest) returns (UpdateApiReply){
+    option (google.api.http) = {
+      put: "v1/api/management/interface"
+      body: "*"
+    };
+  };
   rpc DeleteApi (DeleteApiRequest) returns (DeleteApiReply);
   rpc GetApi (GetApiRequest) returns (GetApiReply);
   rpc DebugApi (DebugApiRequest) returns (DebugApiReply);
@@ -39,6 +44,14 @@ enum MethodType {
 }
 
 message CreateApiRequest {
+  ApiInfo apiInfo = 1;
+}
+message CreateApiReply {
+  int64 id = 1;
+  int64 createdAt = 2;
+}
+
+message ApiInfo {
   string name = 1;
   string url = 2;
   MethodType type = 3;
@@ -49,12 +62,11 @@ message CreateApiRequest {
   string module = 8;
   string description = 9;
 }
-message CreateApiReply {
-  int64 id = 1;
-  int64 createdAt = 2;
-}
 
-message UpdateApiRequest {}
+message UpdateApiRequest {
+  int64 id = 1;
+  ApiInfo apiInfo = 2;
+}
 message UpdateApiReply {}
 
 message DeleteApiRequest {}

@@ -13,6 +13,7 @@ const ReasonMissingId = "MISSING_ID"
 const ReasonParamsError = "PARAMS_ERROR"
 const TimeFormatError = "TIME_FORMAT_ERROR"
 const ReasonRecordNotFound = "RECORD_NOT_FOUND"
+const ReasonRecordExists = "RECORD_EXISTS"
 
 const ReasonUserNotFound = "USER_NOT_FOUND"
 const ReasonUserPasswordError = "USER_PASSWORD_ERROR"
@@ -69,6 +70,7 @@ var reasonMessageAll = map[string]string{
 	TimeFormatError:      "时间格式错误",
 	ReasonMissingId:      "id不得为空",
 	ReasonRecordNotFound: "数据不存在",
+	ReasonRecordExists:   "record already exists",
 
 	ReasonAdministratorNotFound:      "管理员数据不存在",
 	ReasonAdministratorPasswordError: "管理员密码错误",
@@ -110,6 +112,7 @@ var reasonCodeAll = map[string]int{
 	ReasonMissingParams:  10001,
 	ReasonMissingId:      10002,
 	ReasonRecordNotFound: 40004,
+	ReasonRecordExists:   40005,
 	TimeFormatError:      10004,
 
 	ReasonAdministratorNotFound:      20001,

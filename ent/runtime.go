@@ -26,16 +26,24 @@ func init() {
 	apiDescName := apiFields[1].Descriptor()
 	// api.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	api.NameValidator = apiDescName.Validators[0].(func(string) error)
+	// apiDescURL is the schema descriptor for url field.
+	apiDescURL := apiFields[2].Descriptor()
+	// api.URLValidator is a validator for the "url" field. It is called by the builders before save.
+	api.URLValidator = apiDescURL.Validators[0].(func(string) error)
+	// apiDescType is the schema descriptor for type field.
+	apiDescType := apiFields[3].Descriptor()
+	// api.TypeValidator is a validator for the "type" field. It is called by the builders before save.
+	api.TypeValidator = apiDescType.Validators[0].(func(int8) error)
 	// apiDescStatus is the schema descriptor for status field.
 	apiDescStatus := apiFields[4].Descriptor()
 	// api.DefaultStatus holds the default value on creation for the status field.
 	api.DefaultStatus = apiDescStatus.Default.(int8)
 	// apiDescCreatedAt is the schema descriptor for created_at field.
-	apiDescCreatedAt := apiFields[11].Descriptor()
+	apiDescCreatedAt := apiFields[12].Descriptor()
 	// api.DefaultCreatedAt holds the default value on creation for the created_at field.
 	api.DefaultCreatedAt = apiDescCreatedAt.Default.(func() time.Time)
 	// apiDescUpdateAt is the schema descriptor for update_at field.
-	apiDescUpdateAt := apiFields[14].Descriptor()
+	apiDescUpdateAt := apiFields[15].Descriptor()
 	// api.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
 	api.UpdateDefaultUpdateAt = apiDescUpdateAt.UpdateDefault.(func() time.Time)
 	groupFields := schema.Group{}.Fields()

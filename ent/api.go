@@ -26,9 +26,11 @@ type Api struct {
 	// Status holds the value of the "status" field.
 	Status int8 `json:"status,omitempty"`
 	// Headers holds the value of the "headers" field.
-	Headers *string `json:"headers,omitempty"`
+	Headers string `json:"headers,omitempty"`
 	// Body holds the value of the "body" field.
-	Body *string `json:"body,omitempty"`
+	Body string `json:"body,omitempty"`
+	// Label holds the value of the "label" field.
+	Label string `json:"label,omitempty"`
 	// QueryParams holds the value of the "query_params" field.
 	QueryParams string `json:"query_params,omitempty"`
 	// Response holds the value of the "response" field.
@@ -42,15 +44,15 @@ type Api struct {
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy uint32 `json:"created_by,omitempty"`
 	// IncludeFiles holds the value of the "include_files" field.
-	IncludeFiles *string `json:"include_files,omitempty"`
+	IncludeFiles string `json:"include_files,omitempty"`
 	// UpdateAt holds the value of the "update_at" field.
-	UpdateAt *time.Time `json:"update_at,omitempty"`
+	UpdateAt time.Time `json:"update_at,omitempty"`
 	// UpdateBy holds the value of the "update_by" field.
 	UpdateBy uint32 `json:"update_by,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
-	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	DeletedBy uint32 `json:"deleted_by,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ApiQuery when eager-loading is set.
 	Edges ApiEdges `json:"edges"`
@@ -85,7 +87,7 @@ func (*Api) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case api.FieldID, api.FieldType, api.FieldStatus, api.FieldCreatedBy, api.FieldUpdateBy, api.FieldDeletedBy:
 			values[i] = new(sql.NullInt64)
-		case api.FieldName, api.FieldURL, api.FieldHeaders, api.FieldBody, api.FieldQueryParams, api.FieldResponse, api.FieldModule, api.FieldDescription, api.FieldIncludeFiles:
+		case api.FieldName, api.FieldURL, api.FieldHeaders, api.FieldBody, api.FieldLabel, api.FieldQueryParams, api.FieldResponse, api.FieldModule, api.FieldDescription, api.FieldIncludeFiles:
 			values[i] = new(sql.NullString)
 		case api.FieldCreatedAt, api.FieldUpdateAt, api.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -138,15 +140,19 @@ func (a *Api) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field headers", values[i])
 			} else if value.Valid {
-				a.Headers = new(string)
-				*a.Headers = value.String
+				a.Headers = value.String
 			}
 		case api.FieldBody:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field body", values[i])
 			} else if value.Valid {
-				a.Body = new(string)
-				*a.Body = value.String
+				a.Body = value.String
+			}
+		case api.FieldLabel:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field label", values[i])
+			} else if value.Valid {
+				a.Label = value.String
 			}
 		case api.FieldQueryParams:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -188,15 +194,13 @@ func (a *Api) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field include_files", values[i])
 			} else if value.Valid {
-				a.IncludeFiles = new(string)
-				*a.IncludeFiles = value.String
+				a.IncludeFiles = value.String
 			}
 		case api.FieldUpdateAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field update_at", values[i])
 			} else if value.Valid {
-				a.UpdateAt = new(time.Time)
-				*a.UpdateAt = value.Time
+				a.UpdateAt = value.Time
 			}
 		case api.FieldUpdateBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -208,15 +212,13 @@ func (a *Api) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				a.DeletedAt = new(time.Time)
-				*a.DeletedAt = value.Time
+				a.DeletedAt = value.Time
 			}
 		case api.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				a.DeletedBy = new(uint32)
-				*a.DeletedBy = uint32(value.Int64)
+				a.DeletedBy = uint32(value.Int64)
 			}
 		}
 	}
@@ -263,15 +265,14 @@ func (a *Api) String() string {
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", a.Status))
 	builder.WriteString(", ")
-	if v := a.Headers; v != nil {
-		builder.WriteString("headers=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("headers=")
+	builder.WriteString(a.Headers)
 	builder.WriteString(", ")
-	if v := a.Body; v != nil {
-		builder.WriteString("body=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("body=")
+	builder.WriteString(a.Body)
+	builder.WriteString(", ")
+	builder.WriteString("label=")
+	builder.WriteString(a.Label)
 	builder.WriteString(", ")
 	builder.WriteString("query_params=")
 	builder.WriteString(a.QueryParams)
@@ -291,28 +292,20 @@ func (a *Api) String() string {
 	builder.WriteString("created_by=")
 	builder.WriteString(fmt.Sprintf("%v", a.CreatedBy))
 	builder.WriteString(", ")
-	if v := a.IncludeFiles; v != nil {
-		builder.WriteString("include_files=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("include_files=")
+	builder.WriteString(a.IncludeFiles)
 	builder.WriteString(", ")
-	if v := a.UpdateAt; v != nil {
-		builder.WriteString("update_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
+	builder.WriteString("update_at=")
+	builder.WriteString(a.UpdateAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("update_by=")
 	builder.WriteString(fmt.Sprintf("%v", a.UpdateBy))
 	builder.WriteString(", ")
-	if v := a.DeletedAt; v != nil {
-		builder.WriteString("deleted_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
+	builder.WriteString("deleted_at=")
+	builder.WriteString(a.DeletedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	if v := a.DeletedBy; v != nil {
-		builder.WriteString("deleted_by=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("deleted_by=")
+	builder.WriteString(fmt.Sprintf("%v", a.DeletedBy))
 	builder.WriteByte(')')
 	return builder.String()
 }
