@@ -68,7 +68,10 @@ message UpdateApiRequest {
   int64 id = 1;
   ApiInfo apiInfo = 2;
 }
-message UpdateApiReply {}
+message UpdateApiReply {
+  bool success = 1;
+  int64 UpdateAt = 2;
+}
 
 message DeleteApiRequest {}
 message DeleteApiReply {}

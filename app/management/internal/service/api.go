@@ -21,31 +21,31 @@ func NewApiService(uc *biz.ApiUseCase, logger log.Logger) *ApiService {
 	}
 }
 
-func NewApi(req *v1.CreateApiRequest) (biz.Api, error) {
-	if len(req.ApiInfo.Name) <= 0 {
+func NewApi(req *v1.ApiInfo) (biz.Api, error) {
+	if len(req.Name) <= 0 {
 		return biz.Api{}, SetCustomizeErrMsg(ReasonParamsError, "name is required")
 	}
-	if len(req.ApiInfo.Url) <= 0 {
+	if len(req.Url) <= 0 {
 		return biz.Api{}, SetCustomizeErrMsg(ReasonParamsError, "url is required")
 	}
-	if req.ApiInfo.Type <= 0 {
+	if req.Type <= 0 {
 		return biz.Api{}, SetCustomizeErrMsg(ReasonParamsError, "type is required")
 	}
 	return biz.Api{
-		Name:        req.ApiInfo.Name,
-		Url:         req.ApiInfo.Url,
-		Module:      req.ApiInfo.Module,
-		Type:        int8(req.ApiInfo.Type.Number()),
-		Body:        req.ApiInfo.Body,
-		Label:       req.ApiInfo.Label,
-		QueryParams: req.ApiInfo.QueryParams,
-		Response:    req.ApiInfo.Response,
-		Description: req.ApiInfo.Description,
+		Name:        req.Name,
+		Url:         req.Url,
+		Module:      req.Module,
+		Type:        int8(req.Type.Number()),
+		Body:        req.Body,
+		Label:       req.Label,
+		QueryParams: req.QueryParams,
+		Response:    req.Response,
+		Description: req.Description,
 	}, nil
 }
 
 func (s *ApiService) CreateApi(ctx context.Context, req *v1.CreateApiRequest) (*v1.CreateApiReply, error) {
-	newApi, err := NewApi(req)
+	newApi, err := NewApi(req.ApiInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -75,5 +75,16 @@ func (s *ApiService) CreateApi(ctx context.Context, req *v1.CreateApiRequest) (*
 }
 
 func (s *ApiService) UpdateApi(ctx context.Context, req *v1.UpdateApiRequest) (*v1.UpdateApiReply, error) {
-	return nil, nil
+	_, err := s.uc.ApiById(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	updateApi, err := NewApi(req.ApiInfo)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := s.uc.UpdateApi(ctx, &updateApi); err != nil {
+		return nil, err
+	}
+	return &v1.UpdateApiReply{}, nil
 }

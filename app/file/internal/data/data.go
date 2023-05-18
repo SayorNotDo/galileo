@@ -29,7 +29,6 @@ var RedisCli redis.Cmdable
 
 // Data .
 type Data struct {
-	// TODO wrapped database client
 	entDB    *ent.Client
 	log      *log.Helper
 	oss      *OssClient

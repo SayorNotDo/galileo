@@ -29,7 +29,9 @@ type Api struct {
 
 type ApiRepo interface {
 	CreateApi(ctx context.Context, api *Api) (*Api, error)
+	UpdateApi(ctx context.Context, api *Api) (bool, error)
 	ApiByName(ctx context.Context, name string) (*Api, error)
+	ApiById(ctx context.Context, id int64) (*Api, error)
 	IsApiDuplicated(ctx context.Context, method int8, url string) (bool, error)
 }
 
@@ -49,8 +51,16 @@ func (uc *ApiUseCase) CreateApi(ctx context.Context, api *Api) (*Api, error) {
 	return uc.repo.CreateApi(ctx, api)
 }
 
+func (uc *ApiUseCase) UpdateApi(ctx context.Context, api *Api) (bool, error) {
+	return uc.repo.UpdateApi(ctx, api)
+}
+
 func (uc *ApiUseCase) ApiByName(ctx context.Context, name string) (*Api, error) {
 	return uc.repo.ApiByName(ctx, name)
+}
+
+func (uc *ApiUseCase) ApiById(ctx context.Context, id int64) (*Api, error) {
+	return uc.repo.ApiById(ctx, id)
 }
 
 func (uc *ApiUseCase) IsApiDuplicated(ctx context.Context, method int8, url string) (bool, error) {

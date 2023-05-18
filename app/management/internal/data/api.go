@@ -66,6 +66,22 @@ func (repo *ApiRepo) CreateApi(ctx context.Context, api *biz.Api) (*biz.Api, err
 }
 
 func (repo *ApiRepo) UpdateApi(ctx context.Context, api *biz.Api) (bool, error) {
+	err := repo.data.entDB.Api.UpdateOneID(api.ID).
+		SetName(api.Name).
+		SetURL(api.Url).
+		SetType(api.Type).
+		SetLabel(api.Label).
+		SetBody(api.Body).
+		SetModule(api.Module).
+		SetQueryParams(api.QueryParams).
+		SetResponse(api.Response).
+		SetDescription(api.Description).
+		SetStatus(api.Status).
+		SetUpdateBy(api.UpdatedBy).
+		Exec(ctx)
+	if err != nil {
+		return false, err
+	}
 	return true, nil
 }
 
@@ -76,6 +92,15 @@ func (repo *ApiRepo) ApiByName(ctx context.Context, name string) (*biz.Api, erro
 	}
 	ret := convertApi(queryApi)
 	return ret, nil
+}
+
+func (repo *ApiRepo) ApiById(ctx context.Context, id int64) (*biz.Api, error) {
+	queryApi, err := repo.data.entDB.Api.Query().Where(api.ID(id)).First(ctx)
+	if err != nil {
+		return nil, err
+	}
+	ret := convertApi(queryApi)
+	return ret, err
 }
 
 func (repo *ApiRepo) IsApiDuplicated(ctx context.Context, method int8, url string) (bool, error) {
