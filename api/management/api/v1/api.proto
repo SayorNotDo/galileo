@@ -56,11 +56,12 @@ message ApiInfo {
   string url = 2;
   MethodType type = 3;
   int32 status = 4;
-  string body = 5;
-  string queryParams = 6;
-  string response = 7;
-  string module = 8;
-  string description = 9;
+  string label = 6;
+  string body = 7;
+  string queryParams = 8;
+  string response = 9;
+  string module = 10;
+  string description = 11;
 }
 
 message UpdateApiRequest {

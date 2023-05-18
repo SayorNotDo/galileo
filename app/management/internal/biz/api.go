@@ -30,6 +30,7 @@ type Api struct {
 type ApiRepo interface {
 	CreateApi(ctx context.Context, api *Api) (*Api, error)
 	ApiByName(ctx context.Context, name string) (*Api, error)
+	IsApiDuplicated(ctx context.Context, method int8, url string) (bool, error)
 }
 
 type ApiUseCase struct {
@@ -50,4 +51,8 @@ func (uc *ApiUseCase) CreateApi(ctx context.Context, api *Api) (*Api, error) {
 
 func (uc *ApiUseCase) ApiByName(ctx context.Context, name string) (*Api, error) {
 	return uc.repo.ApiByName(ctx, name)
+}
+
+func (uc *ApiUseCase) IsApiDuplicated(ctx context.Context, method int8, url string) (bool, error) {
+	return uc.repo.IsApiDuplicated(ctx, method, url)
 }

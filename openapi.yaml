@@ -68,6 +68,8 @@ components:
                 status:
                     type: integer
                     format: int32
+                label:
+                    type: string
                 body:
                     type: string
                 queryParams:

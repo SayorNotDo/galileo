@@ -77,3 +77,13 @@ func (repo *ApiRepo) ApiByName(ctx context.Context, name string) (*biz.Api, erro
 	ret := convertApi(queryApi)
 	return ret, nil
 }
+
+func (repo *ApiRepo) IsApiDuplicated(ctx context.Context, method int8, url string) (bool, error) {
+	_, err := repo.data.entDB.Api.Query().
+		Where(api.Type(method)).
+		Where(api.URL(url)).First(ctx)
+	if err != nil && err.Error() != "ent: api not found" {
+		return false, err
+	}
+	return true, nil
+}
