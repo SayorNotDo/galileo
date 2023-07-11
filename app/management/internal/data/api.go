@@ -2,6 +2,8 @@ package data
 
 import (
 	"context"
+	"fmt"
+	fileService "galileo/api/file/v1"
 	"galileo/app/management/internal/biz"
 	"galileo/ent"
 	"galileo/ent/api"
@@ -42,8 +44,19 @@ func convertApi(api *ent.Api) *biz.Api {
 	}
 }
 
+func rollback(tx *ent.Tx, err error) error {
+	if rErr := tx.Rollback(); rErr != nil {
+		err = fmt.Errorf("%w: %v", err, rErr)
+	}
+	return err
+}
+
 func (repo *ApiRepo) CreateApi(ctx context.Context, api *biz.Api) (*biz.Api, error) {
-	createApi, err := repo.data.entDB.Api.Create().
+	tx, err := repo.data.entDB.Tx(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("starting a transaction: %w", err)
+	}
+	createApi, err := tx.Api.Create().
 		SetName(api.Name).
 		SetURL(api.Url).
 		SetType(api.Type).
@@ -57,7 +70,11 @@ func (repo *ApiRepo) CreateApi(ctx context.Context, api *biz.Api) (*biz.Api, err
 		SetStatus(api.Status).
 		Save(ctx)
 	if err != nil {
-		return nil, err
+		return nil, rollback(tx, err)
+	}
+	if createApi.Label != "" {
+		// TODO: add label name to tag table
+		println("do not implement")
 	}
 	return &biz.Api{
 		ID:        createApi.ID,
@@ -111,4 +128,15 @@ func (repo *ApiRepo) IsApiDuplicated(ctx context.Context, method int8, url strin
 		return false, err
 	}
 	return true, nil
+}
+
+func (repo *ApiRepo) UploadApiFile(ctx context.Context, fileName, fileType string, content []byte) (string, error) {
+	res, err := repo.data.fileCli.UploadFile(ctx, &fileService.UploadFileRequest{
+		Name:    fileName,
+		Type:    fileType,
+		Content: content})
+	if err != nil {
+		return "", err
+	}
+	return res.Url, nil
 }

@@ -24,13 +24,20 @@ service Api {
   rpc DeleteApi (DeleteApiRequest) returns (DeleteApiReply);
   rpc GetApi (GetApiRequest) returns (GetApiReply);
   rpc DebugApi (DebugApiRequest) returns (DebugApiReply);
-  rpc ListApi (ListApiRequest) returns (ListApiReply);
+  rpc ListApi (ListApiRequest) returns (ListApiReply){
+    option (google.api.http) = {
+      get: "v1/api/management/interface/list/{pageNum}/{pageSize}"
+    };
+  };
 }
 
 message BaseInfoApiRequest {}
 message BaseInfoApiReply {}
 
-message DebugApiRequest {}
+message DebugApiRequest {
+  string network = 1;
+  ApiInfo apiInfo = 2;
+}
 message DebugApiReply {}
 
 enum MethodType {

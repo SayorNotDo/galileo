@@ -25,7 +25,7 @@ func (c *CoreService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	return c.uc.Login(ctx, req)
 }
 
-func (c *CoreService) Logout(ctx context.Context, req *emptypb.Empty) (*emptypb.Empty, error) {
+func (c *CoreService) Logout(ctx context.Context, req *v1.LogoutRequest) (*emptypb.Empty, error) {
 	// add trace
 	tr := otel.Tracer("service")
 	ctx, span := tr.Start(ctx, "logout")

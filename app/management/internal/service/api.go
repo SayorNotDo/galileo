@@ -1,11 +1,16 @@
 package service
 
 import (
+	"bytes"
 	"context"
 	v1 "galileo/api/management/api/v1"
 	"galileo/app/management/internal/biz"
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/transport/http"
+	"io"
+	"mime/multipart"
+	"path"
 )
 
 type ApiService struct {
@@ -64,10 +69,6 @@ func (s *ApiService) CreateApi(ctx context.Context, req *v1.CreateApiRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	if ret.Label != "" {
-		// TODO: add label name to tag table
-		println("do not implement")
-	}
 	return &v1.CreateApiReply{
 		Id:        ret.ID,
 		CreatedAt: ret.CreatedAt.Unix(),
@@ -87,4 +88,34 @@ func (s *ApiService) UpdateApi(ctx context.Context, req *v1.UpdateApiRequest) (*
 		return nil, err
 	}
 	return &v1.UpdateApiReply{}, nil
+}
+
+// UploadApiFile Upload Api File get url
+func (s *ApiService) UploadApiFile(ctx http.Context) (err error) {
+	fileName := ctx.Request().FormValue("fileName")
+	file, fileHeader, _ := ctx.Request().FormFile("file")
+	if fileName == "" {
+		return SetCustomizeErrInfoByReason(ReasonFileMissing)
+	}
+	if file == nil {
+		return SetCustomizeErrInfoByReason(ReasonFileMissing)
+	}
+	defer func(file multipart.File) {
+		err := file.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(file)
+	if fileHeader.Size > 1024*1024*5 {
+		return SetCustomizeErrInfoByReason(ReasonFileOverLimitSize)
+	}
+	buf := bytes.NewBuffer(nil)
+	if _, err := io.Copy(buf, file); err != nil {
+		return err
+	}
+	url, err := s.uc.UploadInterfaceFile(ctx, fileName, path.Ext(fileHeader.Filename), buf.Bytes())
+	if err != nil {
+		return SetCustomizeErrMsg(ReasonSystemError, err.Error())
+	}
+	return ctx.Result(20000, url)
 }

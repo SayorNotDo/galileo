@@ -81,6 +81,7 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, project *service.ProjectServic
 	srv := http.NewServer(opts...)
 	route := srv.Route("/")
 	route.POST("v1/api/file/testcase/upload", testcase.UploadTestcaseFile)
+	route.POST("v1/api/file/interface/upload", api.UploadApiFile)
 	taskV1.RegisterTaskHTTPServer(srv, task)
 	projectV1.RegisterProjectHTTPServer(srv, project)
 	testCaseV1.RegisterTestcaseHTTPServer(srv, testcase)

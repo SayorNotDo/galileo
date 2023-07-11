@@ -33,6 +33,7 @@ type ApiRepo interface {
 	ApiByName(ctx context.Context, name string) (*Api, error)
 	ApiById(ctx context.Context, id int64) (*Api, error)
 	IsApiDuplicated(ctx context.Context, method int8, url string) (bool, error)
+	UploadApiFile(ctx context.Context, fileName, fileType string, content []byte) (string, error)
 }
 
 type ApiUseCase struct {
@@ -65,4 +66,8 @@ func (uc *ApiUseCase) ApiById(ctx context.Context, id int64) (*Api, error) {
 
 func (uc *ApiUseCase) IsApiDuplicated(ctx context.Context, method int8, url string) (bool, error) {
 	return uc.repo.IsApiDuplicated(ctx, method, url)
+}
+
+func (uc *ApiUseCase) UploadInterfaceFile(ctx context.Context, fileName string, fileType string, content []byte) (string, error) {
+	return uc.repo.UploadApiFile(ctx, fileName, fileType, content)
 }
