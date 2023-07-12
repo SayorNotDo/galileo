@@ -9,12 +9,17 @@ option java_multiple_files = true;
 option java_package = "api.management.project.v1";
 
 service Project {
-  rpc CreateProject (CreateProjectRequest) returns (CreateProjectReply);
+  rpc CreateProject (CreateProjectRequest) returns (CreateProjectReply) {
+    option(google.api.http) = {
+      post: "v1/api/project"
+      body: "*"
+    };
+  };
   rpc UpdateProject (UpdateProjectRequest) returns (UpdateProjectReply);
   rpc DeleteProject (DeleteProjectRequest) returns (DeleteProjectReply);
   rpc GetProject (GetProjectRequest) returns (GetProjectReply) {
     option(google.api.http) = {
-      get: "v1/project/{id}"
+      get: "v1/api/project/{id}"
     };
   };
   rpc ListProject (ListProjectRequest) returns (ListProjectReply);
@@ -23,10 +28,13 @@ service Project {
 message CreateProjectRequest {
   string name = 1;
   string identifier = 2;
-  string remark = 3;
+  string description = 3;
+  string remark = 4;
+  uint32 createdBy = 5;
 }
+
 message CreateProjectReply {
-  ProjectInfo data = 1;
+  int64 id = 1;
 }
 
 message ProjectInfo {
@@ -35,6 +43,11 @@ message ProjectInfo {
   string remark = 3;
   int64 id = 4;
   uint32 status = 5;
+  string description = 6;
+  int64 createdAt = 7;
+  uint32 createdBy = 8;
+  int64 updateAt = 9;
+  int64 updateBy = 10;
 }
 
 message UpdateProjectRequest {}

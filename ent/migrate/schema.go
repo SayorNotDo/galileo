@@ -132,12 +132,12 @@ var (
 	}
 	// ProjectColumns holds the columns for the "project" table.
 	ProjectColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "identifier", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
-		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "update_at", Type: field.TypeTime},
 		{Name: "update_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},

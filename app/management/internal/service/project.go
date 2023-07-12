@@ -21,16 +21,17 @@ func NewProjectService(uc *biz.ProjectUseCase, logger log.Logger) *ProjectServic
 }
 
 func (s *ProjectService) CreateProject(ctx context.Context, req *v1.CreateProjectRequest) (*v1.CreateProjectReply, error) {
-	_, err := s.uc.CreateProject(ctx, &biz.Project{})
+	ret, err := s.uc.CreateProject(ctx, &biz.Project{
+		Name:        req.Name,
+		Identifier:  req.Identifier,
+		Description: req.Description,
+		Remark:      req.Remark,
+	})
 	if err != nil {
 		return nil, err
 	}
 	return &v1.CreateProjectReply{
-		Data: &v1.ProjectInfo{
-			Name:       req.Name,
-			Identifier: req.Identifier,
-			Remark:     req.Remark,
-		},
+		Id: ret.ID,
 	}, nil
 }
 

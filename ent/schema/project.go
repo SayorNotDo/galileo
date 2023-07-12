@@ -22,12 +22,12 @@ func (Project) Annotations() []schema.Annotation {
 // Fields of the Project.
 func (Project) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("id"),
+		field.Int64("id"),
 		field.String("name").Unique().NotEmpty(),
 		field.String("identifier").Unique(),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("created_by").Immutable(),
-		field.Time("updated_at").UpdateDefault(time.Now),
+		field.Time("update_at").UpdateDefault(time.Now),
 		field.Uint32("update_by").Optional().Nillable(),
 		field.Time("deleted_at").Optional().Nillable(),
 		field.Uint32("deleted_by").Optional().Nillable(),

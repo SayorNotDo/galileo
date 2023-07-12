@@ -52,9 +52,9 @@ func (pc *ProjectCreate) SetCreatedBy(u uint32) *ProjectCreate {
 	return pc
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (pc *ProjectCreate) SetUpdatedAt(t time.Time) *ProjectCreate {
-	pc.mutation.SetUpdatedAt(t)
+// SetUpdateAt sets the "update_at" field.
+func (pc *ProjectCreate) SetUpdateAt(t time.Time) *ProjectCreate {
+	pc.mutation.SetUpdateAt(t)
 	return pc
 }
 
@@ -143,8 +143,8 @@ func (pc *ProjectCreate) SetNillableRemark(s *string) *ProjectCreate {
 }
 
 // SetID sets the "id" field.
-func (pc *ProjectCreate) SetID(u uint32) *ProjectCreate {
-	pc.mutation.SetID(u)
+func (pc *ProjectCreate) SetID(i int64) *ProjectCreate {
+	pc.mutation.SetID(i)
 	return pc
 }
 
@@ -212,8 +212,8 @@ func (pc *ProjectCreate) check() error {
 	if _, ok := pc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Project.created_by"`)}
 	}
-	if _, ok := pc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Project.updated_at"`)}
+	if _, ok := pc.mutation.UpdateAt(); !ok {
+		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "Project.update_at"`)}
 	}
 	if _, ok := pc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Project.status"`)}
@@ -234,7 +234,7 @@ func (pc *ProjectCreate) sqlSave(ctx context.Context) (*Project, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	pc.mutation.id = &_node.ID
 	pc.mutation.done = true
@@ -244,7 +244,7 @@ func (pc *ProjectCreate) sqlSave(ctx context.Context) (*Project, error) {
 func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Project{config: pc.config}
-		_spec = sqlgraph.NewCreateSpec(project.Table, sqlgraph.NewFieldSpec(project.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(project.Table, sqlgraph.NewFieldSpec(project.FieldID, field.TypeInt64))
 	)
 	if id, ok := pc.mutation.ID(); ok {
 		_node.ID = id
@@ -266,9 +266,9 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 		_spec.SetField(project.FieldCreatedBy, field.TypeUint32, value)
 		_node.CreatedBy = value
 	}
-	if value, ok := pc.mutation.UpdatedAt(); ok {
-		_spec.SetField(project.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
+	if value, ok := pc.mutation.UpdateAt(); ok {
+		_spec.SetField(project.FieldUpdateAt, field.TypeTime, value)
+		_node.UpdateAt = value
 	}
 	if value, ok := pc.mutation.UpdateBy(); ok {
 		_spec.SetField(project.FieldUpdateBy, field.TypeUint32, value)
@@ -340,7 +340,7 @@ func (pcb *ProjectCreateBulk) Save(ctx context.Context) ([]*Project, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

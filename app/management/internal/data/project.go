@@ -2,7 +2,6 @@ package data
 
 import (
 	"context"
-	"fmt"
 	"galileo/app/management/internal/biz"
 	"github.com/go-kratos/kratos/v2/log"
 	"time"
@@ -36,8 +35,15 @@ func NewProjectRepo(data *Data, logger log.Logger) biz.ProjectRepo {
 }
 
 func (repo *projectRepo) CreateProject(ctx context.Context, p *biz.Project) (*biz.Project, error) {
-	//var project Project
-	//res := repo.gormDB.Where("name = ?", p.Name)
-	fmt.Println("not implemented")
-	return &biz.Project{}, nil
+	res, err := repo.data.entDB.Project.Create().
+		SetName(p.Name).
+		SetIdentifier(p.Identifier).
+		SetDescription(p.Description).
+		SetRemark(p.Description).Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &biz.Project{
+		ID: res.ID,
+	}, nil
 }

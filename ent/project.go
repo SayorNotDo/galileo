@@ -15,7 +15,7 @@ import (
 type Project struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uint32 `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Identifier holds the value of the "identifier" field.
@@ -24,8 +24,8 @@ type Project struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy uint32 `json:"created_by,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// UpdateAt holds the value of the "update_at" field.
+	UpdateAt time.Time `json:"update_at,omitempty"`
 	// UpdateBy holds the value of the "update_by" field.
 	UpdateBy *uint32 `json:"update_by,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
@@ -49,7 +49,7 @@ func (*Project) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case project.FieldName, project.FieldIdentifier, project.FieldDescription, project.FieldRemark:
 			values[i] = new(sql.NullString)
-		case project.FieldCreatedAt, project.FieldUpdatedAt, project.FieldDeletedAt:
+		case project.FieldCreatedAt, project.FieldUpdateAt, project.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Project", columns[i])
@@ -71,7 +71,7 @@ func (pr *Project) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			pr.ID = uint32(value.Int64)
+			pr.ID = int64(value.Int64)
 		case project.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -96,11 +96,11 @@ func (pr *Project) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pr.CreatedBy = uint32(value.Int64)
 			}
-		case project.FieldUpdatedAt:
+		case project.FieldUpdateAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+				return fmt.Errorf("unexpected type %T for field update_at", values[i])
 			} else if value.Valid {
-				pr.UpdatedAt = value.Time
+				pr.UpdateAt = value.Time
 			}
 		case project.FieldUpdateBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -183,8 +183,8 @@ func (pr *Project) String() string {
 	builder.WriteString("created_by=")
 	builder.WriteString(fmt.Sprintf("%v", pr.CreatedBy))
 	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(pr.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString("update_at=")
+	builder.WriteString(pr.UpdateAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	if v := pr.UpdateBy; v != nil {
 		builder.WriteString("update_by=")

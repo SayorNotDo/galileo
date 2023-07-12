@@ -1081,7 +1081,7 @@ func (c *ProjectClient) UpdateOne(pr *Project) *ProjectUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *ProjectClient) UpdateOneID(id uint32) *ProjectUpdateOne {
+func (c *ProjectClient) UpdateOneID(id int64) *ProjectUpdateOne {
 	mutation := newProjectMutation(c.config, OpUpdateOne, withProjectID(id))
 	return &ProjectUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1098,7 +1098,7 @@ func (c *ProjectClient) DeleteOne(pr *Project) *ProjectDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *ProjectClient) DeleteOneID(id uint32) *ProjectDeleteOne {
+func (c *ProjectClient) DeleteOneID(id int64) *ProjectDeleteOne {
 	builder := c.Delete().Where(project.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1115,12 +1115,12 @@ func (c *ProjectClient) Query() *ProjectQuery {
 }
 
 // Get returns a Project entity by its id.
-func (c *ProjectClient) Get(ctx context.Context, id uint32) (*Project, error) {
+func (c *ProjectClient) Get(ctx context.Context, id int64) (*Project, error) {
 	return c.Query().Where(project.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *ProjectClient) GetX(ctx context.Context, id uint32) *Project {
+func (c *ProjectClient) GetX(ctx context.Context, id int64) *Project {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

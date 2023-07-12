@@ -7,10 +7,12 @@ import (
 
 // Project is a Project model.
 type Project struct {
-	ID         int64
-	Name       string
-	Identifier string
-	Status     uint32
+	ID          int64
+	Name        string
+	Identifier  string
+	Description string
+	Remark      string
+	Status      uint32
 }
 
 // ProjectRepo is a Greater repo.

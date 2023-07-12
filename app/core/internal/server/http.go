@@ -7,9 +7,8 @@ import (
 	"galileo/app/core/internal/data"
 	"galileo/app/core/internal/service"
 	"galileo/pkg/ctxdata"
-	"galileo/pkg/responseEncoder"
-
 	"galileo/pkg/errResponse"
+	"galileo/pkg/responseEncoder"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
@@ -19,6 +18,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/selector"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/go-kratos/swagger-api/openapiv2"
 	jwt2 "github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/handlers"
 	"strings"
@@ -65,6 +65,8 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, s *service.CoreService, logger
 	// add error custom json response
 	opts = append(opts, http.ErrorEncoder(responseEncoder.ErrorEncoder))
 	srv := http.NewServer(opts...)
+	openAPIHandler := openapiv2.NewHandler()
+	srv.HandlePrefix("/q/", openAPIHandler)
 	v1.RegisterCoreHTTPServer(srv, s)
 	return srv
 }

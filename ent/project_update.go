@@ -40,9 +40,9 @@ func (pu *ProjectUpdate) SetIdentifier(s string) *ProjectUpdate {
 	return pu
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (pu *ProjectUpdate) SetUpdatedAt(t time.Time) *ProjectUpdate {
-	pu.mutation.SetUpdatedAt(t)
+// SetUpdateAt sets the "update_at" field.
+func (pu *ProjectUpdate) SetUpdateAt(t time.Time) *ProjectUpdate {
+	pu.mutation.SetUpdateAt(t)
 	return pu
 }
 
@@ -216,9 +216,9 @@ func (pu *ProjectUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (pu *ProjectUpdate) defaults() {
-	if _, ok := pu.mutation.UpdatedAt(); !ok {
-		v := project.UpdateDefaultUpdatedAt()
-		pu.mutation.SetUpdatedAt(v)
+	if _, ok := pu.mutation.UpdateAt(); !ok {
+		v := project.UpdateDefaultUpdateAt()
+		pu.mutation.SetUpdateAt(v)
 	}
 }
 
@@ -236,7 +236,7 @@ func (pu *ProjectUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := pu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(project.Table, project.Columns, sqlgraph.NewFieldSpec(project.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(project.Table, project.Columns, sqlgraph.NewFieldSpec(project.FieldID, field.TypeInt64))
 	if ps := pu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -250,8 +250,8 @@ func (pu *ProjectUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := pu.mutation.Identifier(); ok {
 		_spec.SetField(project.FieldIdentifier, field.TypeString, value)
 	}
-	if value, ok := pu.mutation.UpdatedAt(); ok {
-		_spec.SetField(project.FieldUpdatedAt, field.TypeTime, value)
+	if value, ok := pu.mutation.UpdateAt(); ok {
+		_spec.SetField(project.FieldUpdateAt, field.TypeTime, value)
 	}
 	if value, ok := pu.mutation.UpdateBy(); ok {
 		_spec.SetField(project.FieldUpdateBy, field.TypeUint32, value)
@@ -327,9 +327,9 @@ func (puo *ProjectUpdateOne) SetIdentifier(s string) *ProjectUpdateOne {
 	return puo
 }
 
-// SetUpdatedAt sets the "updated_at" field.
-func (puo *ProjectUpdateOne) SetUpdatedAt(t time.Time) *ProjectUpdateOne {
-	puo.mutation.SetUpdatedAt(t)
+// SetUpdateAt sets the "update_at" field.
+func (puo *ProjectUpdateOne) SetUpdateAt(t time.Time) *ProjectUpdateOne {
+	puo.mutation.SetUpdateAt(t)
 	return puo
 }
 
@@ -516,9 +516,9 @@ func (puo *ProjectUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (puo *ProjectUpdateOne) defaults() {
-	if _, ok := puo.mutation.UpdatedAt(); !ok {
-		v := project.UpdateDefaultUpdatedAt()
-		puo.mutation.SetUpdatedAt(v)
+	if _, ok := puo.mutation.UpdateAt(); !ok {
+		v := project.UpdateDefaultUpdateAt()
+		puo.mutation.SetUpdateAt(v)
 	}
 }
 
@@ -536,7 +536,7 @@ func (puo *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err e
 	if err := puo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(project.Table, project.Columns, sqlgraph.NewFieldSpec(project.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(project.Table, project.Columns, sqlgraph.NewFieldSpec(project.FieldID, field.TypeInt64))
 	id, ok := puo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Project.id" for update`)}
@@ -567,8 +567,8 @@ func (puo *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err e
 	if value, ok := puo.mutation.Identifier(); ok {
 		_spec.SetField(project.FieldIdentifier, field.TypeString, value)
 	}
-	if value, ok := puo.mutation.UpdatedAt(); ok {
-		_spec.SetField(project.FieldUpdatedAt, field.TypeTime, value)
+	if value, ok := puo.mutation.UpdateAt(); ok {
+		_spec.SetField(project.FieldUpdateAt, field.TypeTime, value)
 	}
 	if value, ok := puo.mutation.UpdateBy(); ok {
 		_spec.SetField(project.FieldUpdateBy, field.TypeUint32, value)
