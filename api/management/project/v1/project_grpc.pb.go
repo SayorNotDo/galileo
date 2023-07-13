@@ -33,7 +33,7 @@ type ProjectClient interface {
 	CreateProject(ctx context.Context, in *CreateProjectRequest, opts ...grpc.CallOption) (*CreateProjectReply, error)
 	UpdateProject(ctx context.Context, in *UpdateProjectRequest, opts ...grpc.CallOption) (*UpdateProjectReply, error)
 	DeleteProject(ctx context.Context, in *DeleteProjectRequest, opts ...grpc.CallOption) (*DeleteProjectReply, error)
-	GetProject(ctx context.Context, in *GetProjectRequest, opts ...grpc.CallOption) (*GetProjectReply, error)
+	GetProject(ctx context.Context, in *GetProjectRequest, opts ...grpc.CallOption) (*ProjectInfo, error)
 	ListProject(ctx context.Context, in *ListProjectRequest, opts ...grpc.CallOption) (*ListProjectReply, error)
 }
 
@@ -72,8 +72,8 @@ func (c *projectClient) DeleteProject(ctx context.Context, in *DeleteProjectRequ
 	return out, nil
 }
 
-func (c *projectClient) GetProject(ctx context.Context, in *GetProjectRequest, opts ...grpc.CallOption) (*GetProjectReply, error) {
-	out := new(GetProjectReply)
+func (c *projectClient) GetProject(ctx context.Context, in *GetProjectRequest, opts ...grpc.CallOption) (*ProjectInfo, error) {
+	out := new(ProjectInfo)
 	err := c.cc.Invoke(ctx, Project_GetProject_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -97,7 +97,7 @@ type ProjectServer interface {
 	CreateProject(context.Context, *CreateProjectRequest) (*CreateProjectReply, error)
 	UpdateProject(context.Context, *UpdateProjectRequest) (*UpdateProjectReply, error)
 	DeleteProject(context.Context, *DeleteProjectRequest) (*DeleteProjectReply, error)
-	GetProject(context.Context, *GetProjectRequest) (*GetProjectReply, error)
+	GetProject(context.Context, *GetProjectRequest) (*ProjectInfo, error)
 	ListProject(context.Context, *ListProjectRequest) (*ListProjectReply, error)
 	mustEmbedUnimplementedProjectServer()
 }
@@ -115,7 +115,7 @@ func (UnimplementedProjectServer) UpdateProject(context.Context, *UpdateProjectR
 func (UnimplementedProjectServer) DeleteProject(context.Context, *DeleteProjectRequest) (*DeleteProjectReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProject not implemented")
 }
-func (UnimplementedProjectServer) GetProject(context.Context, *GetProjectRequest) (*GetProjectReply, error) {
+func (UnimplementedProjectServer) GetProject(context.Context, *GetProjectRequest) (*ProjectInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProject not implemented")
 }
 func (UnimplementedProjectServer) ListProject(context.Context, *ListProjectRequest) (*ListProjectReply, error) {

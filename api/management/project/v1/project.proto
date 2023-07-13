@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 
 package api.project.v1;
 
@@ -15,9 +16,14 @@ service Project {
       body: "*"
     };
   };
-  rpc UpdateProject (UpdateProjectRequest) returns (UpdateProjectReply);
+  rpc UpdateProject (UpdateProjectRequest) returns (UpdateProjectReply){
+    option(google.api.http) = {
+      put: "v1/api/project"
+      body: "*"
+    };
+  };
   rpc DeleteProject (DeleteProjectRequest) returns (DeleteProjectReply);
-  rpc GetProject (GetProjectRequest) returns (GetProjectReply) {
+  rpc GetProject (GetProjectRequest) returns (ProjectInfo) {
     option(google.api.http) = {
       get: "v1/api/project/{id}"
     };
@@ -38,16 +44,16 @@ message CreateProjectReply {
 }
 
 message ProjectInfo {
-  string name = 1;
-  string identifier = 2;
-  string remark = 3;
-  int64 id = 4;
-  uint32 status = 5;
+  int64 id = 1;
+  string name = 2;
+  string identifier = 3;
+  string remark = 4;
+  int32 status = 5;
   string description = 6;
-  int64 createdAt = 7;
+  google.protobuf.Timestamp createdAt = 7;
   uint32 createdBy = 8;
-  int64 updateAt = 9;
-  int64 updateBy = 10;
+  google.protobuf.Timestamp updatedAt = 9;
+  uint32 updatedBy = 10;
 }
 
 message UpdateProjectRequest {}
@@ -59,7 +65,6 @@ message DeleteProjectReply {}
 message GetProjectRequest {
   int64 id = 1;
 }
-message GetProjectReply {}
 
 message ListProjectRequest {}
 message ListProjectReply {}

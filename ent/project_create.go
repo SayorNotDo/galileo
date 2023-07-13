@@ -52,22 +52,30 @@ func (pc *ProjectCreate) SetCreatedBy(u uint32) *ProjectCreate {
 	return pc
 }
 
-// SetUpdateAt sets the "update_at" field.
-func (pc *ProjectCreate) SetUpdateAt(t time.Time) *ProjectCreate {
-	pc.mutation.SetUpdateAt(t)
+// SetUpdatedAt sets the "updated_at" field.
+func (pc *ProjectCreate) SetUpdatedAt(t time.Time) *ProjectCreate {
+	pc.mutation.SetUpdatedAt(t)
 	return pc
 }
 
-// SetUpdateBy sets the "update_by" field.
-func (pc *ProjectCreate) SetUpdateBy(u uint32) *ProjectCreate {
-	pc.mutation.SetUpdateBy(u)
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (pc *ProjectCreate) SetNillableUpdatedAt(t *time.Time) *ProjectCreate {
+	if t != nil {
+		pc.SetUpdatedAt(*t)
+	}
 	return pc
 }
 
-// SetNillableUpdateBy sets the "update_by" field if the given value is not nil.
-func (pc *ProjectCreate) SetNillableUpdateBy(u *uint32) *ProjectCreate {
+// SetUpdatedBy sets the "updated_by" field.
+func (pc *ProjectCreate) SetUpdatedBy(u uint32) *ProjectCreate {
+	pc.mutation.SetUpdatedBy(u)
+	return pc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (pc *ProjectCreate) SetNillableUpdatedBy(u *uint32) *ProjectCreate {
 	if u != nil {
-		pc.SetUpdateBy(*u)
+		pc.SetUpdatedBy(*u)
 	}
 	return pc
 }
@@ -206,14 +214,16 @@ func (pc *ProjectCreate) check() error {
 	if _, ok := pc.mutation.Identifier(); !ok {
 		return &ValidationError{Name: "identifier", err: errors.New(`ent: missing required field "Project.identifier"`)}
 	}
+	if v, ok := pc.mutation.Identifier(); ok {
+		if err := project.IdentifierValidator(v); err != nil {
+			return &ValidationError{Name: "identifier", err: fmt.Errorf(`ent: validator failed for field "Project.identifier": %w`, err)}
+		}
+	}
 	if _, ok := pc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Project.created_at"`)}
 	}
 	if _, ok := pc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Project.created_by"`)}
-	}
-	if _, ok := pc.mutation.UpdateAt(); !ok {
-		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "Project.update_at"`)}
 	}
 	if _, ok := pc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Project.status"`)}
@@ -266,21 +276,21 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 		_spec.SetField(project.FieldCreatedBy, field.TypeUint32, value)
 		_node.CreatedBy = value
 	}
-	if value, ok := pc.mutation.UpdateAt(); ok {
-		_spec.SetField(project.FieldUpdateAt, field.TypeTime, value)
-		_node.UpdateAt = value
+	if value, ok := pc.mutation.UpdatedAt(); ok {
+		_spec.SetField(project.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
 	}
-	if value, ok := pc.mutation.UpdateBy(); ok {
-		_spec.SetField(project.FieldUpdateBy, field.TypeUint32, value)
-		_node.UpdateBy = &value
+	if value, ok := pc.mutation.UpdatedBy(); ok {
+		_spec.SetField(project.FieldUpdatedBy, field.TypeUint32, value)
+		_node.UpdatedBy = value
 	}
 	if value, ok := pc.mutation.DeletedAt(); ok {
 		_spec.SetField(project.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
+		_node.DeletedAt = value
 	}
 	if value, ok := pc.mutation.DeletedBy(); ok {
 		_spec.SetField(project.FieldDeletedBy, field.TypeUint32, value)
-		_node.DeletedBy = &value
+		_node.DeletedBy = value
 	}
 	if value, ok := pc.mutation.Status(); ok {
 		_spec.SetField(project.FieldStatus, field.TypeInt8, value)
@@ -288,11 +298,11 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := pc.mutation.Description(); ok {
 		_spec.SetField(project.FieldDescription, field.TypeString, value)
-		_node.Description = &value
+		_node.Description = value
 	}
 	if value, ok := pc.mutation.Remark(); ok {
 		_spec.SetField(project.FieldRemark, field.TypeString, value)
-		_node.Remark = &value
+		_node.Remark = value
 	}
 	return _node, _spec
 }

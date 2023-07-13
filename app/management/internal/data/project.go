@@ -2,24 +2,11 @@ package data
 
 import (
 	"context"
+	"fmt"
 	"galileo/app/management/internal/biz"
+	"galileo/ent/project"
 	"github.com/go-kratos/kratos/v2/log"
-	"time"
 )
-
-type Project struct {
-	ID         int64     `json:"id" gorm:"primaryKey"`
-	Name       string    `json:"name" gorm:"varchar(255"`
-	Identifier string    `json:"identifier" gorm:"varchar(255)"`
-	Status     uint32    `json:"status" gorm:"default:1"`
-	CreatedBy  uint32    `json:"created_by"`
-	CreateAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
-	UpdateBy   uint32    `json:"update_by"`
-	UpdatedAt  time.Time `json:"updated_at" gorm:"autoUpdateTime"`
-	DeleteBy   uint32    `json:"delete_by"`
-	DeleteAt   time.Time `json:"delete_at" gorm:"default:null"`
-	Remark     string    `json:"remark"`
-}
 
 type projectRepo struct {
 	data *Data
@@ -37,6 +24,7 @@ func NewProjectRepo(data *Data, logger log.Logger) biz.ProjectRepo {
 func (repo *projectRepo) CreateProject(ctx context.Context, p *biz.Project) (*biz.Project, error) {
 	res, err := repo.data.entDB.Project.Create().
 		SetName(p.Name).
+		SetCreatedBy(p.CreatedBy).
 		SetIdentifier(p.Identifier).
 		SetDescription(p.Description).
 		SetRemark(p.Description).Save(ctx)
@@ -46,4 +34,25 @@ func (repo *projectRepo) CreateProject(ctx context.Context, p *biz.Project) (*bi
 	return &biz.Project{
 		ID: res.ID,
 	}, nil
+}
+func (repo *projectRepo) GetProjectById(ctx context.Context, id int64) (*biz.Project, error) {
+	res, err := repo.data.entDB.Project.Query().
+		Where(project.ID(id)).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("----------------------------------------------------")
+	return &biz.Project{
+		ID:          res.ID,
+		Identifier:  res.Identifier,
+		Name:        res.Name,
+		CreatedAt:   res.CreatedAt,
+		CreatedBy:   res.CreatedBy,
+		UpdatedAt:   res.UpdatedAt,
+		UpdatedBy:   res.UpdatedBy,
+		Remark:      res.Remark,
+		Description: res.Description,
+		Status:      res.Status,
+	}, err
 }

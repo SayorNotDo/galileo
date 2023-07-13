@@ -5265,9 +5265,9 @@ type ProjectMutation struct {
 	created_at    *time.Time
 	created_by    *uint32
 	addcreated_by *int32
-	update_at     *time.Time
-	update_by     *uint32
-	addupdate_by  *int32
+	updated_at    *time.Time
+	updated_by    *uint32
+	addupdated_by *int32
 	deleted_at    *time.Time
 	deleted_by    *uint32
 	adddeleted_by *int32
@@ -5549,110 +5549,123 @@ func (m *ProjectMutation) ResetCreatedBy() {
 	m.addcreated_by = nil
 }
 
-// SetUpdateAt sets the "update_at" field.
-func (m *ProjectMutation) SetUpdateAt(t time.Time) {
-	m.update_at = &t
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ProjectMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
 }
 
-// UpdateAt returns the value of the "update_at" field in the mutation.
-func (m *ProjectMutation) UpdateAt() (r time.Time, exists bool) {
-	v := m.update_at
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ProjectMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldUpdateAt returns the old "update_at" field's value of the Project entity.
+// OldUpdatedAt returns the old "updated_at" field's value of the Project entity.
 // If the Project object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ProjectMutation) OldUpdateAt(ctx context.Context) (v time.Time, err error) {
+func (m *ProjectMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdateAt is only allowed on UpdateOne operations")
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdateAt requires an ID field in the mutation")
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateAt: %w", err)
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
 	}
-	return oldValue.UpdateAt, nil
+	return oldValue.UpdatedAt, nil
 }
 
-// ResetUpdateAt resets all changes to the "update_at" field.
-func (m *ProjectMutation) ResetUpdateAt() {
-	m.update_at = nil
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *ProjectMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[project.FieldUpdatedAt] = struct{}{}
 }
 
-// SetUpdateBy sets the "update_by" field.
-func (m *ProjectMutation) SetUpdateBy(u uint32) {
-	m.update_by = &u
-	m.addupdate_by = nil
-}
-
-// UpdateBy returns the value of the "update_by" field in the mutation.
-func (m *ProjectMutation) UpdateBy() (r uint32, exists bool) {
-	v := m.update_by
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdateBy returns the old "update_by" field's value of the Project entity.
-// If the Project object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ProjectMutation) OldUpdateBy(ctx context.Context) (v *uint32, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdateBy is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdateBy requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateBy: %w", err)
-	}
-	return oldValue.UpdateBy, nil
-}
-
-// AddUpdateBy adds u to the "update_by" field.
-func (m *ProjectMutation) AddUpdateBy(u int32) {
-	if m.addupdate_by != nil {
-		*m.addupdate_by += u
-	} else {
-		m.addupdate_by = &u
-	}
-}
-
-// AddedUpdateBy returns the value that was added to the "update_by" field in this mutation.
-func (m *ProjectMutation) AddedUpdateBy() (r int32, exists bool) {
-	v := m.addupdate_by
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearUpdateBy clears the value of the "update_by" field.
-func (m *ProjectMutation) ClearUpdateBy() {
-	m.update_by = nil
-	m.addupdate_by = nil
-	m.clearedFields[project.FieldUpdateBy] = struct{}{}
-}
-
-// UpdateByCleared returns if the "update_by" field was cleared in this mutation.
-func (m *ProjectMutation) UpdateByCleared() bool {
-	_, ok := m.clearedFields[project.FieldUpdateBy]
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *ProjectMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[project.FieldUpdatedAt]
 	return ok
 }
 
-// ResetUpdateBy resets all changes to the "update_by" field.
-func (m *ProjectMutation) ResetUpdateBy() {
-	m.update_by = nil
-	m.addupdate_by = nil
-	delete(m.clearedFields, project.FieldUpdateBy)
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ProjectMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, project.FieldUpdatedAt)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *ProjectMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *ProjectMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Project entity.
+// If the Project object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProjectMutation) OldUpdatedBy(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *ProjectMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *ProjectMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *ProjectMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[project.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *ProjectMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[project.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *ProjectMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, project.FieldUpdatedBy)
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -5672,7 +5685,7 @@ func (m *ProjectMutation) DeletedAt() (r time.Time, exists bool) {
 // OldDeletedAt returns the old "deleted_at" field's value of the Project entity.
 // If the Project object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ProjectMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+func (m *ProjectMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
 	}
@@ -5722,7 +5735,7 @@ func (m *ProjectMutation) DeletedBy() (r uint32, exists bool) {
 // OldDeletedBy returns the old "deleted_by" field's value of the Project entity.
 // If the Project object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ProjectMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+func (m *ProjectMutation) OldDeletedBy(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
 	}
@@ -5847,7 +5860,7 @@ func (m *ProjectMutation) Description() (r string, exists bool) {
 // OldDescription returns the old "description" field's value of the Project entity.
 // If the Project object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ProjectMutation) OldDescription(ctx context.Context) (v *string, err error) {
+func (m *ProjectMutation) OldDescription(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
 	}
@@ -5896,7 +5909,7 @@ func (m *ProjectMutation) Remark() (r string, exists bool) {
 // OldRemark returns the old "remark" field's value of the Project entity.
 // If the Project object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ProjectMutation) OldRemark(ctx context.Context) (v *string, err error) {
+func (m *ProjectMutation) OldRemark(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldRemark is only allowed on UpdateOne operations")
 	}
@@ -5975,11 +5988,11 @@ func (m *ProjectMutation) Fields() []string {
 	if m.created_by != nil {
 		fields = append(fields, project.FieldCreatedBy)
 	}
-	if m.update_at != nil {
-		fields = append(fields, project.FieldUpdateAt)
+	if m.updated_at != nil {
+		fields = append(fields, project.FieldUpdatedAt)
 	}
-	if m.update_by != nil {
-		fields = append(fields, project.FieldUpdateBy)
+	if m.updated_by != nil {
+		fields = append(fields, project.FieldUpdatedBy)
 	}
 	if m.deleted_at != nil {
 		fields = append(fields, project.FieldDeletedAt)
@@ -6012,10 +6025,10 @@ func (m *ProjectMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case project.FieldCreatedBy:
 		return m.CreatedBy()
-	case project.FieldUpdateAt:
-		return m.UpdateAt()
-	case project.FieldUpdateBy:
-		return m.UpdateBy()
+	case project.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case project.FieldUpdatedBy:
+		return m.UpdatedBy()
 	case project.FieldDeletedAt:
 		return m.DeletedAt()
 	case project.FieldDeletedBy:
@@ -6043,10 +6056,10 @@ func (m *ProjectMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCreatedAt(ctx)
 	case project.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
-	case project.FieldUpdateAt:
-		return m.OldUpdateAt(ctx)
-	case project.FieldUpdateBy:
-		return m.OldUpdateBy(ctx)
+	case project.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case project.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
 	case project.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
 	case project.FieldDeletedBy:
@@ -6094,19 +6107,19 @@ func (m *ProjectMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCreatedBy(v)
 		return nil
-	case project.FieldUpdateAt:
+	case project.FieldUpdatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetUpdateAt(v)
+		m.SetUpdatedAt(v)
 		return nil
-	case project.FieldUpdateBy:
+	case project.FieldUpdatedBy:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetUpdateBy(v)
+		m.SetUpdatedBy(v)
 		return nil
 	case project.FieldDeletedAt:
 		v, ok := value.(time.Time)
@@ -6154,8 +6167,8 @@ func (m *ProjectMutation) AddedFields() []string {
 	if m.addcreated_by != nil {
 		fields = append(fields, project.FieldCreatedBy)
 	}
-	if m.addupdate_by != nil {
-		fields = append(fields, project.FieldUpdateBy)
+	if m.addupdated_by != nil {
+		fields = append(fields, project.FieldUpdatedBy)
 	}
 	if m.adddeleted_by != nil {
 		fields = append(fields, project.FieldDeletedBy)
@@ -6173,8 +6186,8 @@ func (m *ProjectMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case project.FieldCreatedBy:
 		return m.AddedCreatedBy()
-	case project.FieldUpdateBy:
-		return m.AddedUpdateBy()
+	case project.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
 	case project.FieldDeletedBy:
 		return m.AddedDeletedBy()
 	case project.FieldStatus:
@@ -6195,12 +6208,12 @@ func (m *ProjectMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddCreatedBy(v)
 		return nil
-	case project.FieldUpdateBy:
+	case project.FieldUpdatedBy:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddUpdateBy(v)
+		m.AddUpdatedBy(v)
 		return nil
 	case project.FieldDeletedBy:
 		v, ok := value.(int32)
@@ -6224,8 +6237,11 @@ func (m *ProjectMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *ProjectMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(project.FieldUpdateBy) {
-		fields = append(fields, project.FieldUpdateBy)
+	if m.FieldCleared(project.FieldUpdatedAt) {
+		fields = append(fields, project.FieldUpdatedAt)
+	}
+	if m.FieldCleared(project.FieldUpdatedBy) {
+		fields = append(fields, project.FieldUpdatedBy)
 	}
 	if m.FieldCleared(project.FieldDeletedAt) {
 		fields = append(fields, project.FieldDeletedAt)
@@ -6253,8 +6269,11 @@ func (m *ProjectMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ProjectMutation) ClearField(name string) error {
 	switch name {
-	case project.FieldUpdateBy:
-		m.ClearUpdateBy()
+	case project.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case project.FieldUpdatedBy:
+		m.ClearUpdatedBy()
 		return nil
 	case project.FieldDeletedAt:
 		m.ClearDeletedAt()
@@ -6288,11 +6307,11 @@ func (m *ProjectMutation) ResetField(name string) error {
 	case project.FieldCreatedBy:
 		m.ResetCreatedBy()
 		return nil
-	case project.FieldUpdateAt:
-		m.ResetUpdateAt()
+	case project.FieldUpdatedAt:
+		m.ResetUpdatedAt()
 		return nil
-	case project.FieldUpdateBy:
-		m.ResetUpdateBy()
+	case project.FieldUpdatedBy:
+		m.ResetUpdatedBy()
 		return nil
 	case project.FieldDeletedAt:
 		m.ResetDeletedAt()

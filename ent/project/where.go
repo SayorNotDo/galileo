@@ -74,14 +74,14 @@ func CreatedBy(v uint32) predicate.Project {
 	return predicate.Project(sql.FieldEQ(FieldCreatedBy, v))
 }
 
-// UpdateAt applies equality check predicate on the "update_at" field. It's identical to UpdateAtEQ.
-func UpdateAt(v time.Time) predicate.Project {
-	return predicate.Project(sql.FieldEQ(FieldUpdateAt, v))
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.Project {
+	return predicate.Project(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// UpdateBy applies equality check predicate on the "update_by" field. It's identical to UpdateByEQ.
-func UpdateBy(v uint32) predicate.Project {
-	return predicate.Project(sql.FieldEQ(FieldUpdateBy, v))
+// UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
+func UpdatedBy(v uint32) predicate.Project {
+	return predicate.Project(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
@@ -319,94 +319,104 @@ func CreatedByLTE(v uint32) predicate.Project {
 	return predicate.Project(sql.FieldLTE(FieldCreatedBy, v))
 }
 
-// UpdateAtEQ applies the EQ predicate on the "update_at" field.
-func UpdateAtEQ(v time.Time) predicate.Project {
-	return predicate.Project(sql.FieldEQ(FieldUpdateAt, v))
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.Project {
+	return predicate.Project(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
-// UpdateAtNEQ applies the NEQ predicate on the "update_at" field.
-func UpdateAtNEQ(v time.Time) predicate.Project {
-	return predicate.Project(sql.FieldNEQ(FieldUpdateAt, v))
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.Project {
+	return predicate.Project(sql.FieldNEQ(FieldUpdatedAt, v))
 }
 
-// UpdateAtIn applies the In predicate on the "update_at" field.
-func UpdateAtIn(vs ...time.Time) predicate.Project {
-	return predicate.Project(sql.FieldIn(FieldUpdateAt, vs...))
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.Project {
+	return predicate.Project(sql.FieldIn(FieldUpdatedAt, vs...))
 }
 
-// UpdateAtNotIn applies the NotIn predicate on the "update_at" field.
-func UpdateAtNotIn(vs ...time.Time) predicate.Project {
-	return predicate.Project(sql.FieldNotIn(FieldUpdateAt, vs...))
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.Project {
+	return predicate.Project(sql.FieldNotIn(FieldUpdatedAt, vs...))
 }
 
-// UpdateAtGT applies the GT predicate on the "update_at" field.
-func UpdateAtGT(v time.Time) predicate.Project {
-	return predicate.Project(sql.FieldGT(FieldUpdateAt, v))
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.Project {
+	return predicate.Project(sql.FieldGT(FieldUpdatedAt, v))
 }
 
-// UpdateAtGTE applies the GTE predicate on the "update_at" field.
-func UpdateAtGTE(v time.Time) predicate.Project {
-	return predicate.Project(sql.FieldGTE(FieldUpdateAt, v))
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.Project {
+	return predicate.Project(sql.FieldGTE(FieldUpdatedAt, v))
 }
 
-// UpdateAtLT applies the LT predicate on the "update_at" field.
-func UpdateAtLT(v time.Time) predicate.Project {
-	return predicate.Project(sql.FieldLT(FieldUpdateAt, v))
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.Project {
+	return predicate.Project(sql.FieldLT(FieldUpdatedAt, v))
 }
 
-// UpdateAtLTE applies the LTE predicate on the "update_at" field.
-func UpdateAtLTE(v time.Time) predicate.Project {
-	return predicate.Project(sql.FieldLTE(FieldUpdateAt, v))
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.Project {
+	return predicate.Project(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
-// UpdateByEQ applies the EQ predicate on the "update_by" field.
-func UpdateByEQ(v uint32) predicate.Project {
-	return predicate.Project(sql.FieldEQ(FieldUpdateBy, v))
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.Project {
+	return predicate.Project(sql.FieldIsNull(FieldUpdatedAt))
 }
 
-// UpdateByNEQ applies the NEQ predicate on the "update_by" field.
-func UpdateByNEQ(v uint32) predicate.Project {
-	return predicate.Project(sql.FieldNEQ(FieldUpdateBy, v))
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.Project {
+	return predicate.Project(sql.FieldNotNull(FieldUpdatedAt))
 }
 
-// UpdateByIn applies the In predicate on the "update_by" field.
-func UpdateByIn(vs ...uint32) predicate.Project {
-	return predicate.Project(sql.FieldIn(FieldUpdateBy, vs...))
+// UpdatedByEQ applies the EQ predicate on the "updated_by" field.
+func UpdatedByEQ(v uint32) predicate.Project {
+	return predicate.Project(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
-// UpdateByNotIn applies the NotIn predicate on the "update_by" field.
-func UpdateByNotIn(vs ...uint32) predicate.Project {
-	return predicate.Project(sql.FieldNotIn(FieldUpdateBy, vs...))
+// UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
+func UpdatedByNEQ(v uint32) predicate.Project {
+	return predicate.Project(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
-// UpdateByGT applies the GT predicate on the "update_by" field.
-func UpdateByGT(v uint32) predicate.Project {
-	return predicate.Project(sql.FieldGT(FieldUpdateBy, v))
+// UpdatedByIn applies the In predicate on the "updated_by" field.
+func UpdatedByIn(vs ...uint32) predicate.Project {
+	return predicate.Project(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
-// UpdateByGTE applies the GTE predicate on the "update_by" field.
-func UpdateByGTE(v uint32) predicate.Project {
-	return predicate.Project(sql.FieldGTE(FieldUpdateBy, v))
+// UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
+func UpdatedByNotIn(vs ...uint32) predicate.Project {
+	return predicate.Project(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
-// UpdateByLT applies the LT predicate on the "update_by" field.
-func UpdateByLT(v uint32) predicate.Project {
-	return predicate.Project(sql.FieldLT(FieldUpdateBy, v))
+// UpdatedByGT applies the GT predicate on the "updated_by" field.
+func UpdatedByGT(v uint32) predicate.Project {
+	return predicate.Project(sql.FieldGT(FieldUpdatedBy, v))
 }
 
-// UpdateByLTE applies the LTE predicate on the "update_by" field.
-func UpdateByLTE(v uint32) predicate.Project {
-	return predicate.Project(sql.FieldLTE(FieldUpdateBy, v))
+// UpdatedByGTE applies the GTE predicate on the "updated_by" field.
+func UpdatedByGTE(v uint32) predicate.Project {
+	return predicate.Project(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
-// UpdateByIsNil applies the IsNil predicate on the "update_by" field.
-func UpdateByIsNil() predicate.Project {
-	return predicate.Project(sql.FieldIsNull(FieldUpdateBy))
+// UpdatedByLT applies the LT predicate on the "updated_by" field.
+func UpdatedByLT(v uint32) predicate.Project {
+	return predicate.Project(sql.FieldLT(FieldUpdatedBy, v))
 }
 
-// UpdateByNotNil applies the NotNil predicate on the "update_by" field.
-func UpdateByNotNil() predicate.Project {
-	return predicate.Project(sql.FieldNotNull(FieldUpdateBy))
+// UpdatedByLTE applies the LTE predicate on the "updated_by" field.
+func UpdatedByLTE(v uint32) predicate.Project {
+	return predicate.Project(sql.FieldLTE(FieldUpdatedBy, v))
+}
+
+// UpdatedByIsNil applies the IsNil predicate on the "updated_by" field.
+func UpdatedByIsNil() predicate.Project {
+	return predicate.Project(sql.FieldIsNull(FieldUpdatedBy))
+}
+
+// UpdatedByNotNil applies the NotNil predicate on the "updated_by" field.
+func UpdatedByNotNil() predicate.Project {
+	return predicate.Project(sql.FieldNotNull(FieldUpdatedBy))
 }
 
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.

@@ -24,20 +24,20 @@ type Project struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy uint32 `json:"created_by,omitempty"`
-	// UpdateAt holds the value of the "update_at" field.
-	UpdateAt time.Time `json:"update_at,omitempty"`
-	// UpdateBy holds the value of the "update_by" field.
-	UpdateBy *uint32 `json:"update_by,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// UpdatedBy holds the value of the "updated_by" field.
+	UpdatedBy uint32 `json:"updated_by,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
-	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	DeletedBy uint32 `json:"deleted_by,omitempty"`
 	// Status holds the value of the "status" field.
 	Status int8 `json:"status,omitempty"`
 	// Description holds the value of the "description" field.
-	Description *string `json:"description,omitempty"`
+	Description string `json:"description,omitempty"`
 	// Remark holds the value of the "remark" field.
-	Remark *string `json:"remark,omitempty"`
+	Remark string `json:"remark,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -45,11 +45,11 @@ func (*Project) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case project.FieldID, project.FieldCreatedBy, project.FieldUpdateBy, project.FieldDeletedBy, project.FieldStatus:
+		case project.FieldID, project.FieldCreatedBy, project.FieldUpdatedBy, project.FieldDeletedBy, project.FieldStatus:
 			values[i] = new(sql.NullInt64)
 		case project.FieldName, project.FieldIdentifier, project.FieldDescription, project.FieldRemark:
 			values[i] = new(sql.NullString)
-		case project.FieldCreatedAt, project.FieldUpdateAt, project.FieldDeletedAt:
+		case project.FieldCreatedAt, project.FieldUpdatedAt, project.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Project", columns[i])
@@ -96,32 +96,29 @@ func (pr *Project) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pr.CreatedBy = uint32(value.Int64)
 			}
-		case project.FieldUpdateAt:
+		case project.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field update_at", values[i])
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				pr.UpdateAt = value.Time
+				pr.UpdatedAt = value.Time
 			}
-		case project.FieldUpdateBy:
+		case project.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field update_by", values[i])
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				pr.UpdateBy = new(uint32)
-				*pr.UpdateBy = uint32(value.Int64)
+				pr.UpdatedBy = uint32(value.Int64)
 			}
 		case project.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				pr.DeletedAt = new(time.Time)
-				*pr.DeletedAt = value.Time
+				pr.DeletedAt = value.Time
 			}
 		case project.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				pr.DeletedBy = new(uint32)
-				*pr.DeletedBy = uint32(value.Int64)
+				pr.DeletedBy = uint32(value.Int64)
 			}
 		case project.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -133,15 +130,13 @@ func (pr *Project) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
-				pr.Description = new(string)
-				*pr.Description = value.String
+				pr.Description = value.String
 			}
 		case project.FieldRemark:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field remark", values[i])
 			} else if value.Valid {
-				pr.Remark = new(string)
-				*pr.Remark = value.String
+				pr.Remark = value.String
 			}
 		}
 	}
@@ -183,36 +178,26 @@ func (pr *Project) String() string {
 	builder.WriteString("created_by=")
 	builder.WriteString(fmt.Sprintf("%v", pr.CreatedBy))
 	builder.WriteString(", ")
-	builder.WriteString("update_at=")
-	builder.WriteString(pr.UpdateAt.Format(time.ANSIC))
+	builder.WriteString("updated_at=")
+	builder.WriteString(pr.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	if v := pr.UpdateBy; v != nil {
-		builder.WriteString("update_by=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("updated_by=")
+	builder.WriteString(fmt.Sprintf("%v", pr.UpdatedBy))
 	builder.WriteString(", ")
-	if v := pr.DeletedAt; v != nil {
-		builder.WriteString("deleted_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
+	builder.WriteString("deleted_at=")
+	builder.WriteString(pr.DeletedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	if v := pr.DeletedBy; v != nil {
-		builder.WriteString("deleted_by=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("deleted_by=")
+	builder.WriteString(fmt.Sprintf("%v", pr.DeletedBy))
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", pr.Status))
 	builder.WriteString(", ")
-	if v := pr.Description; v != nil {
-		builder.WriteString("description=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("description=")
+	builder.WriteString(pr.Description)
 	builder.WriteString(", ")
-	if v := pr.Remark; v != nil {
-		builder.WriteString("remark=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("remark=")
+	builder.WriteString(pr.Remark)
 	builder.WriteByte(')')
 	return builder.String()
 }
