@@ -32,7 +32,6 @@ func (r *coreRepo) UserByUsername(c context.Context, username string) (*biz.User
 	if err != nil {
 		return nil, err
 	}
-	log.Debugf("UserByUsername %v", user)
 	return &biz.User{
 		Id:       user.Id,
 		Phone:    user.Phone,

@@ -8,6 +8,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/metadata"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"strconv"
 	"time"
 )
@@ -42,7 +43,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 	userInfoRep := v1.CreateUserReply{
 		Id:        ret.Id,
 		Username:  ret.Username,
-		CreatedAt: ret.CreatedAt.Unix(),
+		CreatedAt: timestamppb.New(ret.CreatedAt),
 	}
 	return &userInfoRep, nil
 }
@@ -68,14 +69,14 @@ func (s *UserService) DeleteUser(ctx context.Context, req *v1.DeleteUserRequest)
 func (s *UserService) SoftDeleteUser(ctx context.Context, req *v1.SoftDeleteRequest) (*v1.SoftDeleteReply, error) {
 	md, _ := metadata.FromServerContext(ctx)
 	uidStr := md.Get("x-md-local-uid")
-	deleteAt := time.Now()
+	deletedAt := time.Now()
 	uid, _ := strconv.ParseInt(uidStr, 10, 64)
 	ok, err := s.uc.SoftDeleteById(ctx, uint32(uid), req.Id)
 	if err != nil {
 		return nil, err
 	}
 	return &v1.SoftDeleteReply{
-		DeletedAt: deleteAt.Unix(),
+		DeletedAt: timestamppb.New(deletedAt),
 		Deleted:   ok,
 		Status:    ok,
 	}, nil

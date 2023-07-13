@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -31,7 +32,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProjectClient interface {
 	CreateProject(ctx context.Context, in *CreateProjectRequest, opts ...grpc.CallOption) (*CreateProjectReply, error)
-	UpdateProject(ctx context.Context, in *UpdateProjectRequest, opts ...grpc.CallOption) (*UpdateProjectReply, error)
+	UpdateProject(ctx context.Context, in *UpdateProjectRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteProject(ctx context.Context, in *DeleteProjectRequest, opts ...grpc.CallOption) (*DeleteProjectReply, error)
 	GetProject(ctx context.Context, in *GetProjectRequest, opts ...grpc.CallOption) (*ProjectInfo, error)
 	ListProject(ctx context.Context, in *ListProjectRequest, opts ...grpc.CallOption) (*ListProjectReply, error)
@@ -54,8 +55,8 @@ func (c *projectClient) CreateProject(ctx context.Context, in *CreateProjectRequ
 	return out, nil
 }
 
-func (c *projectClient) UpdateProject(ctx context.Context, in *UpdateProjectRequest, opts ...grpc.CallOption) (*UpdateProjectReply, error) {
-	out := new(UpdateProjectReply)
+func (c *projectClient) UpdateProject(ctx context.Context, in *UpdateProjectRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, Project_UpdateProject_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -95,7 +96,7 @@ func (c *projectClient) ListProject(ctx context.Context, in *ListProjectRequest,
 // for forward compatibility
 type ProjectServer interface {
 	CreateProject(context.Context, *CreateProjectRequest) (*CreateProjectReply, error)
-	UpdateProject(context.Context, *UpdateProjectRequest) (*UpdateProjectReply, error)
+	UpdateProject(context.Context, *UpdateProjectRequest) (*emptypb.Empty, error)
 	DeleteProject(context.Context, *DeleteProjectRequest) (*DeleteProjectReply, error)
 	GetProject(context.Context, *GetProjectRequest) (*ProjectInfo, error)
 	ListProject(context.Context, *ListProjectRequest) (*ListProjectReply, error)
@@ -109,7 +110,7 @@ type UnimplementedProjectServer struct {
 func (UnimplementedProjectServer) CreateProject(context.Context, *CreateProjectRequest) (*CreateProjectReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProject not implemented")
 }
-func (UnimplementedProjectServer) UpdateProject(context.Context, *UpdateProjectRequest) (*UpdateProjectReply, error) {
+func (UnimplementedProjectServer) UpdateProject(context.Context, *UpdateProjectRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProject not implemented")
 }
 func (UnimplementedProjectServer) DeleteProject(context.Context, *DeleteProjectRequest) (*DeleteProjectReply, error) {

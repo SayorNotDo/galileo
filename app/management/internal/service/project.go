@@ -6,6 +6,7 @@ import (
 	"galileo/app/management/internal/biz"
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -23,20 +24,11 @@ func NewProjectService(uc *biz.ProjectUseCase, logger log.Logger) *ProjectServic
 }
 
 func (s *ProjectService) CreateProject(ctx context.Context, req *v1.CreateProjectRequest) (*v1.CreateProjectReply, error) {
-	if req.Name == "" {
-		return nil, SetCustomizeErrMsg(ReasonParamsError, "project name must not be empty")
-	} else if req.CreatedBy <= 0 {
-		return nil, SetCustomizeErrMsg(ReasonParamsError, "creator id must be greater than zero")
-	} else if req.Identifier == "" {
-		return nil, SetCustomizeErrMsg(ReasonParamsError, "identifier must not be empty")
+	createProject, err := biz.NewProject(req.Name, req.Identifier, req.CreatedBy)
+	if err != nil {
+		return nil, err
 	}
-	ret, err := s.uc.CreateProject(ctx, &biz.Project{
-		Name:        req.Name,
-		Identifier:  req.Identifier,
-		CreatedBy:   req.CreatedBy,
-		Description: req.Description,
-		Remark:      req.Remark,
-	})
+	ret, err := s.uc.CreateProject(ctx, &createProject)
 	if err != nil {
 		return nil, err
 	}
@@ -67,9 +59,28 @@ func (s *ProjectService) GetProject(ctx context.Context, req *v1.GetProjectReque
 	}, nil
 }
 
-//func (s *ProjectService) UpdateProject(ctx context.Context, req *pb.UpdateProjectRequest) (*pb.UpdateProjectReply, errResponse) {
-//	return &pb.UpdateProjectReply{}, nil
-//}
+func (s *ProjectService) UpdateProject(ctx context.Context, req *v1.UpdateProjectRequest) (*empty.Empty, error) {
+	if req.Id <= 0 {
+		return nil, SetCustomizeErrMsg(ReasonParamsError, "project id must be greater than zero")
+	}
+	ret, err := s.uc.GetProjectById(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	updateProject, err := biz.NewProject(req.Name, req.Identifier, ret.CreatedBy)
+	if err != nil {
+		return nil, err
+	}
+	updateProject.ID = req.Id
+	updateProject.Description = req.Description
+	updateProject.Remark = req.Remark
+	updateProject.Status = int8(req.Status)
+	if _, err := s.uc.UpdateProject(ctx, &updateProject); err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
 //func (s *ProjectService) DeleteProject(ctx context.Context, req *pb.DeleteProjectRequest) (*pb.DeleteProjectReply, errResponse) {
 //	return &pb.DeleteProjectReply{}, nil
 //}

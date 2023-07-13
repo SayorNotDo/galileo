@@ -3,6 +3,7 @@ syntax = "proto3";
 import "google/api/annotations.proto";
 import "validate/validate.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 package api.core.v1;
 
@@ -119,8 +120,8 @@ message DeleteRequest{
 message DeleteReply{
   message DeleteInfo{
     uint32 id = 1;
-    int64 deleteAt = 2;
-    uint32 deleteBy = 3;
+    google.protobuf.Timestamp deleteAt = 2;
+    uint32 deletedBy = 3;
   };
   DeleteInfo data = 1;
 }
@@ -155,7 +156,7 @@ message RegisterRequest {
 message RegisterReply {
   uint32 id = 1;
   string username = 2;
-  int64 createdAt = 3;
+  google.protobuf.Timestamp createdAt = 3;
 }
 
 message LoginRequest{
@@ -166,7 +167,7 @@ message LoginRequest{
 message LoginReply{
   string type = 1;
   string token = 2;
-  int64 expiresAt = 3;
+  google.protobuf.Timestamp expiresAt = 3;
 }
 
 message TokenInfo{

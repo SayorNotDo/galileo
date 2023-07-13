@@ -2,9 +2,10 @@ package data
 
 import (
 	"context"
-	"fmt"
 	"galileo/app/management/internal/biz"
+	"galileo/ent"
 	"galileo/ent/project"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -42,7 +43,6 @@ func (repo *projectRepo) GetProjectById(ctx context.Context, id int64) (*biz.Pro
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("----------------------------------------------------")
 	return &biz.Project{
 		ID:          res.ID,
 		Identifier:  res.Identifier,
@@ -55,4 +55,21 @@ func (repo *projectRepo) GetProjectById(ctx context.Context, id int64) (*biz.Pro
 		Description: res.Description,
 		Status:      res.Status,
 	}, err
+}
+
+func (repo *projectRepo) UpdateProject(ctx context.Context, p *biz.Project) (bool, error) {
+	err := repo.data.entDB.Project.UpdateOneID(p.ID).
+		SetName(p.Name).
+		SetIdentifier(p.Identifier).
+		SetDescription(p.Description).
+		SetRemark(p.Remark).
+		SetUpdatedBy(p.UpdatedBy).
+		Exec(ctx)
+	switch {
+	case ent.IsNotFound(err):
+		return false, errors.NotFound("Project Not Found", err.Error())
+	case err != nil:
+		return false, err
+	}
+	return true, nil
 }

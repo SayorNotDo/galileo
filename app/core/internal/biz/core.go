@@ -13,6 +13,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	jwt2 "github.com/golang-jwt/jwt/v4"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"net/http"
 	"time"
 )
@@ -66,7 +67,7 @@ func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (
 	return &v1.RegisterReply{
 		Id:        createUser.Id,
 		Username:  createUser.Username,
-		CreatedAt: createUser.CreatedAt.Unix(),
+		CreatedAt: timestamppb.New(createUser.CreatedAt),
 	}, nil
 }
 
@@ -116,7 +117,7 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	return &v1.LoginReply{
 		Type:      "Bearer",
 		Token:     encryptionToken,
-		ExpiresAt: claims.ExpiresAt.Unix(),
+		ExpiresAt: timestamppb.New(time.Unix(claims.ExpiresAt.Unix(), 0)),
 	}, nil
 }
 

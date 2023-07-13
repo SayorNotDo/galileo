@@ -1945,7 +1945,34 @@ func (m *RegisterReply) validate(all bool) error {
 
 	// no validation rules for Username
 
-	// no validation rules for CreatedAt
+	if all {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, RegisterReplyValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, RegisterReplyValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return RegisterReplyValidationError{
+				field:  "CreatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return RegisterReplyMultiError(errors)
@@ -2154,7 +2181,34 @@ func (m *LoginReply) validate(all bool) error {
 
 	// no validation rules for Token
 
-	// no validation rules for ExpiresAt
+	if all {
+		switch v := interface{}(m.GetExpiresAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, LoginReplyValidationError{
+					field:  "ExpiresAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, LoginReplyValidationError{
+					field:  "ExpiresAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetExpiresAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return LoginReplyValidationError{
+				field:  "ExpiresAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return LoginReplyMultiError(errors)
@@ -2887,9 +2941,36 @@ func (m *DeleteReply_DeleteInfo) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for DeleteAt
+	if all {
+		switch v := interface{}(m.GetDeleteAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DeleteReply_DeleteInfoValidationError{
+					field:  "DeleteAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DeleteReply_DeleteInfoValidationError{
+					field:  "DeleteAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDeleteAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DeleteReply_DeleteInfoValidationError{
+				field:  "DeleteAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
-	// no validation rules for DeleteBy
+	// no validation rules for DeletedBy
 
 	if len(errors) > 0 {
 		return DeleteReply_DeleteInfoMultiError(errors)

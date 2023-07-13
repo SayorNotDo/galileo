@@ -10,6 +10,7 @@ import (
 	context "context"
 	http "github.com/go-kratos/kratos/v2/transport/http"
 	binding "github.com/go-kratos/kratos/v2/transport/http/binding"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -26,7 +27,7 @@ const OperationProjectUpdateProject = "/api.project.v1.Project/UpdateProject"
 type ProjectHTTPServer interface {
 	CreateProject(context.Context, *CreateProjectRequest) (*CreateProjectReply, error)
 	GetProject(context.Context, *GetProjectRequest) (*ProjectInfo, error)
-	UpdateProject(context.Context, *UpdateProjectRequest) (*UpdateProjectReply, error)
+	UpdateProject(context.Context, *UpdateProjectRequest) (*emptypb.Empty, error)
 }
 
 func RegisterProjectHTTPServer(s *http.Server, srv ProjectHTTPServer) {
@@ -69,7 +70,7 @@ func _Project_UpdateProject0_HTTP_Handler(srv ProjectHTTPServer) func(ctx http.C
 		if err != nil {
 			return err
 		}
-		reply := out.(*UpdateProjectReply)
+		reply := out.(*emptypb.Empty)
 		return ctx.Result(200, reply)
 	}
 }
@@ -99,7 +100,7 @@ func _Project_GetProject0_HTTP_Handler(srv ProjectHTTPServer) func(ctx http.Cont
 type ProjectHTTPClient interface {
 	CreateProject(ctx context.Context, req *CreateProjectRequest, opts ...http.CallOption) (rsp *CreateProjectReply, err error)
 	GetProject(ctx context.Context, req *GetProjectRequest, opts ...http.CallOption) (rsp *ProjectInfo, err error)
-	UpdateProject(ctx context.Context, req *UpdateProjectRequest, opts ...http.CallOption) (rsp *UpdateProjectReply, err error)
+	UpdateProject(ctx context.Context, req *UpdateProjectRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
 type ProjectHTTPClientImpl struct {
@@ -136,8 +137,8 @@ func (c *ProjectHTTPClientImpl) GetProject(ctx context.Context, in *GetProjectRe
 	return &out, err
 }
 
-func (c *ProjectHTTPClientImpl) UpdateProject(ctx context.Context, in *UpdateProjectRequest, opts ...http.CallOption) (*UpdateProjectReply, error) {
-	var out UpdateProjectReply
+func (c *ProjectHTTPClientImpl) UpdateProject(ctx context.Context, in *UpdateProjectRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
 	pattern := "v1/api/project"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationProjectUpdateProject))

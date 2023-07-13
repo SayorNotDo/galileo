@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/empty.proto";
-import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 
 
 package api.user.v1;
@@ -49,7 +49,7 @@ message SoftDeleteRequest {
 message SoftDeleteReply {
   bool deleted = 1;
   bool status = 2;
-  int64 deletedAt = 3;
+  google.protobuf.Timestamp deletedAt = 3;
 }
 
 
@@ -83,7 +83,7 @@ message CreateUserRequest {
 message CreateUserReply {
   uint32 id = 1;
   string username = 2;
-  int64 createdAt = 3;
+  google.protobuf.Timestamp createdAt = 3;
 }
 
 message UpdateUserRequest {
@@ -113,7 +113,7 @@ message userInfoReply {
   string phone = 7;
   int32 role = 8;
   string chineseName = 9;
-  int64 createdAt = 10;
+  google.protobuf.Timestamp createdAt = 10;
 };
 
 message ListUserRequest {

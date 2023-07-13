@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
 	"time"
 )
@@ -20,10 +21,11 @@ type Project struct {
 	Status      int8      `json:"status,omitempty"`
 }
 
-// ProjectRepo is a Greater repo.
+// ProjectRepo is a Project repo.
 type ProjectRepo interface {
 	CreateProject(context.Context, *Project) (*Project, error)
 	GetProjectById(context.Context, int64) (*Project, error)
+	UpdateProject(context.Context, *Project) (bool, error)
 }
 
 // ProjectUseCase is a Project use case.
@@ -32,7 +34,7 @@ type ProjectUseCase struct {
 	log  *log.Helper
 }
 
-// NewProjectUseCase new a Greeter use case.
+// NewProjectUseCase new a Project use case.
 func NewProjectUseCase(repo ProjectRepo, logger log.Logger) *ProjectUseCase {
 	return &ProjectUseCase{
 		repo: repo,
@@ -48,4 +50,24 @@ func (uc *ProjectUseCase) CreateProject(ctx context.Context, project *Project) (
 // GetProjectById returns the Project
 func (uc *ProjectUseCase) GetProjectById(ctx context.Context, id int64) (*Project, error) {
 	return uc.repo.GetProjectById(ctx, id)
+}
+
+// UpdateProject updates the Project
+func (uc *ProjectUseCase) UpdateProject(ctx context.Context, project *Project) (bool, error) {
+	return uc.repo.UpdateProject(ctx, project)
+}
+
+func NewProject(name, identifier string, createdBy uint32) (Project, error) {
+	if len(name) <= 0 {
+		return Project{}, SetCustomizeErrMsg(ReasonParamsError, "project name must not be empty")
+	} else if len(identifier) <= 0 {
+		return Project{}, SetCustomizeErrMsg(ReasonParamsError, "identifier must not be empty")
+	} else if createdBy <= 0 {
+		return Project{}, SetCustomizeErrMsg(ReasonParamsError, "creator id must be greater than zero")
+	}
+	return Project{
+		Name:       name,
+		Identifier: identifier,
+		CreatedBy:  createdBy,
+	}, nil
 }
