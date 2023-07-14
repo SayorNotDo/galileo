@@ -21,4 +21,4 @@ auth:
   jwt_key: hqFr%3ddt32DGlSTOI5cO6@TH#fFwYnP$S
 service:
   user:
-    endpoint: discovery:///core.user.service
+    endpoint: discovery:///core.user.scheduler

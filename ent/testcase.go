@@ -23,9 +23,9 @@ type TestCase struct {
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdateBy holds the value of the "update_by" field.
-	UpdateBy *uint32 `json:"update_by,omitempty"`
+	UpdateBy uint32 `json:"update_by,omitempty"`
 	// UpdateAt holds the value of the "update_at" field.
-	UpdateAt *time.Time `json:"update_at,omitempty"`
+	UpdateAt time.Time `json:"update_at,omitempty"`
 	// Status holds the value of the "status" field.
 	Status int8 `json:"status,omitempty"`
 	// Type holds the value of the "type" field.
@@ -117,15 +117,13 @@ func (tc *TestCase) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field update_by", values[i])
 			} else if value.Valid {
-				tc.UpdateBy = new(uint32)
-				*tc.UpdateBy = uint32(value.Int64)
+				tc.UpdateBy = uint32(value.Int64)
 			}
 		case testcase.FieldUpdateAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field update_at", values[i])
 			} else if value.Valid {
-				tc.UpdateAt = new(time.Time)
-				*tc.UpdateAt = value.Time
+				tc.UpdateAt = value.Time
 			}
 		case testcase.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -211,15 +209,11 @@ func (tc *TestCase) String() string {
 	builder.WriteString("created_at=")
 	builder.WriteString(tc.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	if v := tc.UpdateBy; v != nil {
-		builder.WriteString("update_by=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("update_by=")
+	builder.WriteString(fmt.Sprintf("%v", tc.UpdateBy))
 	builder.WriteString(", ")
-	if v := tc.UpdateAt; v != nil {
-		builder.WriteString("update_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
+	builder.WriteString("update_at=")
+	builder.WriteString(tc.UpdateAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", tc.Status))

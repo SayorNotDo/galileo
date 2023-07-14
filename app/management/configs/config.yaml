@@ -21,6 +21,6 @@ auth:
   jwt_key: hqFr%3ddt32DGlSTOI5cO6@TH#fFwYnP$S
 service:
   file:
-    endpoint: discovery:///galileo.file.service
+    endpoint: discovery:///galileo.file.scheduler
   engine:
-    endpoint: discovery:///galileo.engine.service
+    endpoint: discovery:///galileo.engine.scheduler

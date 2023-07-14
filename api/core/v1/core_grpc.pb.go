@@ -35,7 +35,7 @@ const (
 	Core_UpdateGroup_FullMethodName    = "/api.core.v1.Core/UpdateGroup"
 )
 
-// CoreClient is the client API for Core service.
+// CoreClient is the client API for Core scheduler.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CoreClient interface {
@@ -179,7 +179,7 @@ func (c *coreClient) UpdateGroup(ctx context.Context, in *UpdateGroupRequest, op
 	return out, nil
 }
 
-// CoreServer is the server API for Core service.
+// CoreServer is the server API for Core scheduler.
 // All implementations must embed UnimplementedCoreServer
 // for forward compatibility
 type CoreServer interface {
@@ -244,7 +244,7 @@ func (UnimplementedCoreServer) UpdateGroup(context.Context, *UpdateGroupRequest)
 }
 func (UnimplementedCoreServer) mustEmbedUnimplementedCoreServer() {}
 
-// UnsafeCoreServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeCoreServer may be embedded to opt out of forward compatibility for this scheduler.
 // Use of this interface is not recommended, as added methods to CoreServer will
 // result in compilation errors.
 type UnsafeCoreServer interface {
@@ -489,7 +489,7 @@ func _Core_UpdateGroup_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-// Core_ServiceDesc is the grpc.ServiceDesc for Core service.
+// Core_ServiceDesc is the grpc.ServiceDesc for Core scheduler.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Core_ServiceDesc = grpc.ServiceDesc{

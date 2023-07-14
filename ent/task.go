@@ -22,20 +22,30 @@ type Task struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy uint32 `json:"created_by,omitempty"`
-	// Rank holds the value of the "rank" field.
-	Rank int8 `json:"rank,omitempty"`
+	// Assignee holds the value of the "assignee" field.
+	Assignee uint32 `json:"assignee,omitempty"`
 	// Type holds the value of the "type" field.
 	Type int8 `json:"type,omitempty"`
+	// Config holds the value of the "config" field.
+	Config string `json:"config,omitempty"`
+	// Rank holds the value of the "rank" field.
+	Rank int8 `json:"rank,omitempty"`
 	// Status holds the value of the "status" field.
 	Status int8 `json:"status,omitempty"`
-	// CompleteAt holds the value of the "complete_at" field.
-	CompleteAt *time.Time `json:"complete_at,omitempty"`
-	// UpdateAt holds the value of the "update_at" field.
-	UpdateAt *time.Time `json:"update_at,omitempty"`
+	// StartTime holds the value of the "start_time" field.
+	StartTime time.Time `json:"start_time,omitempty"`
+	// CompletedAt holds the value of the "completed_at" field.
+	CompletedAt time.Time `json:"completed_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// StatusUpdatedAt holds the value of the "status_updated_at" field.
+	StatusUpdatedAt time.Time `json:"status_updated_at,omitempty"`
+	// Deadline holds the value of the "deadline" field.
+	Deadline time.Time `json:"deadline,omitempty"`
 	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
-	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	DeletedBy uint32 `json:"deleted_by,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -66,11 +76,11 @@ func (*Task) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case task.FieldID, task.FieldCreatedBy, task.FieldRank, task.FieldType, task.FieldStatus, task.FieldDeletedBy:
+		case task.FieldID, task.FieldCreatedBy, task.FieldAssignee, task.FieldType, task.FieldRank, task.FieldStatus, task.FieldDeletedBy:
 			values[i] = new(sql.NullInt64)
-		case task.FieldName, task.FieldDescription:
+		case task.FieldName, task.FieldConfig, task.FieldDescription:
 			values[i] = new(sql.NullString)
-		case task.FieldCreatedAt, task.FieldCompleteAt, task.FieldUpdateAt, task.FieldDeletedAt:
+		case task.FieldCreatedAt, task.FieldStartTime, task.FieldCompletedAt, task.FieldUpdatedAt, task.FieldStatusUpdatedAt, task.FieldDeadline, task.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Task", columns[i])
@@ -111,11 +121,11 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.CreatedBy = uint32(value.Int64)
 			}
-		case task.FieldRank:
+		case task.FieldAssignee:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field rank", values[i])
+				return fmt.Errorf("unexpected type %T for field assignee", values[i])
 			} else if value.Valid {
-				t.Rank = int8(value.Int64)
+				t.Assignee = uint32(value.Int64)
 			}
 		case task.FieldType:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -123,39 +133,65 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Type = int8(value.Int64)
 			}
+		case task.FieldConfig:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field config", values[i])
+			} else if value.Valid {
+				t.Config = value.String
+			}
+		case task.FieldRank:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field rank", values[i])
+			} else if value.Valid {
+				t.Rank = int8(value.Int64)
+			}
 		case task.FieldStatus:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
 				t.Status = int8(value.Int64)
 			}
-		case task.FieldCompleteAt:
+		case task.FieldStartTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field complete_at", values[i])
+				return fmt.Errorf("unexpected type %T for field start_time", values[i])
 			} else if value.Valid {
-				t.CompleteAt = new(time.Time)
-				*t.CompleteAt = value.Time
+				t.StartTime = value.Time
 			}
-		case task.FieldUpdateAt:
+		case task.FieldCompletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field update_at", values[i])
+				return fmt.Errorf("unexpected type %T for field completed_at", values[i])
 			} else if value.Valid {
-				t.UpdateAt = new(time.Time)
-				*t.UpdateAt = value.Time
+				t.CompletedAt = value.Time
+			}
+		case task.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				t.UpdatedAt = value.Time
+			}
+		case task.FieldStatusUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field status_updated_at", values[i])
+			} else if value.Valid {
+				t.StatusUpdatedAt = value.Time
+			}
+		case task.FieldDeadline:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deadline", values[i])
+			} else if value.Valid {
+				t.Deadline = value.Time
 			}
 		case task.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
-				t.DeletedAt = new(time.Time)
-				*t.DeletedAt = value.Time
+				t.DeletedAt = value.Time
 			}
 		case task.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				t.DeletedBy = new(uint32)
-				*t.DeletedBy = uint32(value.Int64)
+				t.DeletedBy = uint32(value.Int64)
 			}
 		case task.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -205,34 +241,41 @@ func (t *Task) String() string {
 	builder.WriteString("created_by=")
 	builder.WriteString(fmt.Sprintf("%v", t.CreatedBy))
 	builder.WriteString(", ")
-	builder.WriteString("rank=")
-	builder.WriteString(fmt.Sprintf("%v", t.Rank))
+	builder.WriteString("assignee=")
+	builder.WriteString(fmt.Sprintf("%v", t.Assignee))
 	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", t.Type))
 	builder.WriteString(", ")
+	builder.WriteString("config=")
+	builder.WriteString(t.Config)
+	builder.WriteString(", ")
+	builder.WriteString("rank=")
+	builder.WriteString(fmt.Sprintf("%v", t.Rank))
+	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", t.Status))
 	builder.WriteString(", ")
-	if v := t.CompleteAt; v != nil {
-		builder.WriteString("complete_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
+	builder.WriteString("start_time=")
+	builder.WriteString(t.StartTime.Format(time.ANSIC))
 	builder.WriteString(", ")
-	if v := t.UpdateAt; v != nil {
-		builder.WriteString("update_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
+	builder.WriteString("completed_at=")
+	builder.WriteString(t.CompletedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	if v := t.DeletedAt; v != nil {
-		builder.WriteString("deleted_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
+	builder.WriteString("updated_at=")
+	builder.WriteString(t.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	if v := t.DeletedBy; v != nil {
-		builder.WriteString("deleted_by=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("status_updated_at=")
+	builder.WriteString(t.StatusUpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deadline=")
+	builder.WriteString(t.Deadline.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(t.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_by=")
+	builder.WriteString(fmt.Sprintf("%v", t.DeletedBy))
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(t.Description)

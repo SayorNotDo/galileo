@@ -29,7 +29,6 @@ func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (bool, error)
 		SetType(task.Type).
 		SetRank(task.Rank).
 		SetDescription(task.Description).
-		SetStatus(task.Status).
 		Save(ctx); err != nil {
 		return false, err
 	}
@@ -113,14 +112,14 @@ func (r *taskRepo) TaskDetailById(ctx context.Context, id int64) (*biz.Task, err
 		Name:        queryTask.Name,
 		CreatedAt:   queryTask.CreatedAt,
 		CreatedBy:   queryTask.CreatedBy,
-		UpdateAt:    *queryTask.UpdateAt,
-		CompleteAt:  *queryTask.CompleteAt,
+		UpdatedAt:   queryTask.UpdatedAt,
+		CompletedAt: queryTask.CompletedAt,
 		Status:      queryTask.Status,
 		Type:        queryTask.Type,
 		Rank:        queryTask.Rank,
 		Description: queryTask.Description,
-		DeletedAt:   *queryTask.DeletedAt,
-		DeletedBy:   *queryTask.DeletedBy,
+		DeletedAt:   queryTask.DeletedAt,
+		DeletedBy:   queryTask.DeletedBy,
 	}, nil
 }
 
@@ -129,7 +128,7 @@ func (r *taskRepo) IsTaskDeleted(ctx context.Context, id int64) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if queryTask.CompleteAt != nil && queryTask.DeletedBy != nil {
+	if !queryTask.CompletedAt.IsZero() && queryTask.DeletedBy > 0 {
 		return true, nil
 	}
 	return false, err

@@ -9,6 +9,7 @@ import (
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/golang/protobuf/ptypes/empty"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type TaskService struct {
@@ -25,17 +26,17 @@ func NewTaskService(uc *biz.TaskUseCase, logger log.Logger) *TaskService {
 	}
 }
 
-func NewTask(name string, rank, status int32, description string, testcaseSuites []int64) (biz.Task, error) {
+func NewTask(name string, rank, taskType int32, description string, testcaseSuites []int64) (biz.Task, error) {
 	if len(name) <= 0 {
-		return biz.Task{}, errors.New("testcase name must not be empty")
+		return biz.Task{}, errors.New("task name must not be empty")
 	}
-	if rank < 0 || status < 0 {
+	if rank < 0 || taskType < 0 {
 		return biz.Task{}, errors.New("invalid parameter")
 	}
 	return biz.Task{
 		Name:           name,
 		Rank:           int8(rank),
-		Status:         int8(status),
+		Type:           int8(taskType),
 		Description:    description,
 		TestcaseSuites: testcaseSuites,
 	}, nil
@@ -57,23 +58,25 @@ func (s *TaskService) CreateTask(ctx context.Context, req *v1.CreateTaskRequest)
 	}
 	return &v1.CreateTaskReply{
 		Id:        ret.Id,
-		Status:    int32(ret.Status),
-		CreatedAt: ret.CreatedAt.Unix(),
+		Status:    v1.TaskStatus(ret.Status),
+		CreatedAt: timestamppb.New(ret.CreatedAt),
 	}, nil
 }
 
-func (s *TaskService) UpdateTask(ctx context.Context, req *v1.UpdateTaskRequest) (*v1.UpdateTaskReply, error) {
-	task, err := s.uc.TaskByID(ctx, req.Id)
+func (s *TaskService) UpdateTask(ctx context.Context, req *v1.UpdateTaskRequest) (*empty.Empty, error) {
+	ret, err := s.uc.TaskByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
-	task.Status = int8(req.Status.Number())
-	if _, err := s.uc.UpdateTask(ctx, task); err != nil {
+	updateTask, err := NewTask(req.Name, req.Rank, req.Type, req.Description, req.TestcaseSuiteId)
+	if err != nil {
 		return nil, err
 	}
-	return &v1.UpdateTaskReply{
-		Success: true,
-	}, nil
+	updateTask.Id = ret.Id
+	if _, err := s.uc.UpdateTask(ctx, &updateTask); err != nil {
+		return nil, err
+	}
+	return nil, nil
 }
 
 func (s *TaskService) DeleteTask(ctx context.Context, req *v1.DeleteTaskRequest) (*v1.DeleteTaskReply, error) {
@@ -95,8 +98,4 @@ func (s *TaskService) TaskByID(ctx context.Context, req *v1.TaskByIDRequest) (*v
 }
 func (s *TaskService) ListTask(ctx context.Context, req *v1.ListTaskRequest) (*v1.ListTaskReply, error) {
 	return &v1.ListTaskReply{}, nil
-}
-
-func (s *TaskService) Test(ctx context.Context, req *empty.Empty) (*v1.TestEngineReply, error) {
-	return &v1.TestEngineReply{}, nil
 }

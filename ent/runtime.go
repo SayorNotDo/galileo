@@ -88,18 +88,22 @@ func init() {
 	taskDescCreatedAt := taskFields[2].Descriptor()
 	// task.DefaultCreatedAt holds the default value on creation for the created_at field.
 	task.DefaultCreatedAt = taskDescCreatedAt.Default.(func() time.Time)
+	// taskDescType is the schema descriptor for type field.
+	taskDescType := taskFields[5].Descriptor()
+	// task.DefaultType holds the default value on creation for the type field.
+	task.DefaultType = taskDescType.Default.(int8)
 	// taskDescRank is the schema descriptor for rank field.
-	taskDescRank := taskFields[4].Descriptor()
+	taskDescRank := taskFields[7].Descriptor()
 	// task.DefaultRank holds the default value on creation for the rank field.
 	task.DefaultRank = taskDescRank.Default.(int8)
 	// taskDescStatus is the schema descriptor for status field.
-	taskDescStatus := taskFields[6].Descriptor()
+	taskDescStatus := taskFields[8].Descriptor()
 	// task.DefaultStatus holds the default value on creation for the status field.
 	task.DefaultStatus = taskDescStatus.Default.(int8)
-	// taskDescUpdateAt is the schema descriptor for update_at field.
-	taskDescUpdateAt := taskFields[8].Descriptor()
-	// task.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
-	task.UpdateDefaultUpdateAt = taskDescUpdateAt.UpdateDefault.(func() time.Time)
+	// taskDescUpdatedAt is the schema descriptor for updated_at field.
+	taskDescUpdatedAt := taskFields[11].Descriptor()
+	// task.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	task.UpdateDefaultUpdatedAt = taskDescUpdatedAt.UpdateDefault.(func() time.Time)
 	testcaseFields := schema.TestCase{}.Fields()
 	_ = testcaseFields
 	// testcaseDescName is the schema descriptor for name field.

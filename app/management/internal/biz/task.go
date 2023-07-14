@@ -18,8 +18,8 @@ type Task struct {
 	Status         int8
 	CreatedAt      time.Time
 	CreatedBy      uint32
-	UpdateAt       time.Time
-	CompleteAt     time.Time
+	UpdatedAt      time.Time
+	CompletedAt    time.Time
 	DeletedAt      time.Time
 	DeletedBy      uint32
 	Description    string

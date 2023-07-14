@@ -27,14 +27,19 @@ func (Task) Fields() []ent.Field {
 		field.String("name").Unique().NotEmpty(),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("created_by").Immutable(),
-		field.Int8("rank").Default(0),
-		field.Int8("type"),
-		field.Int8("status").Default(0),
-		field.Time("complete_at").Optional().Nillable(),
-		field.Time("update_at").UpdateDefault(time.Now).Optional().Nillable(),
-		field.Time("deleted_at").Optional().Nillable(),
-		field.Uint32("deleted_by").Optional().Nillable(),
-		field.Text("description").Optional(),
+		field.Uint32("assignee").Optional(),                         // 任务经办人
+		field.Int8("type").Default(0),                               // 任务类型：非定时/定时任务
+		field.String("config").Optional(),                           // 任务配置
+		field.Int8("rank").Default(0),                               // 任务优先级
+		field.Int8("status").Default(0),                             // 任务状态
+		field.Time("start_time").Optional(),                         // 任务开始时间
+		field.Time("completed_at").Optional(),                       // 任务完成时间
+		field.Time("updated_at").Optional().UpdateDefault(time.Now), // 数据库记录更新时间
+		field.Time("status_updated_at").Optional(),                  // 任务状态更新时间
+		field.Time("deadline").Optional(),                           // 任务截止日期
+		field.Time("deleted_at").Optional(),                         // 任务删除时间
+		field.Uint32("deleted_by").Optional(),                       // 任务删除人
+		field.Text("description").Optional(),                        // 任务描述
 	}
 }
 

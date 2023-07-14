@@ -17,7 +17,7 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	Service = bootstrap.NewServiceInfo(
-		"galileo.file.service",
+		"galileo.file.scheduler",
 		"file.v1",
 		"")
 

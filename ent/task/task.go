@@ -17,16 +17,26 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldCreatedBy holds the string denoting the created_by field in the database.
 	FieldCreatedBy = "created_by"
-	// FieldRank holds the string denoting the rank field in the database.
-	FieldRank = "rank"
+	// FieldAssignee holds the string denoting the assignee field in the database.
+	FieldAssignee = "assignee"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
+	// FieldConfig holds the string denoting the config field in the database.
+	FieldConfig = "config"
+	// FieldRank holds the string denoting the rank field in the database.
+	FieldRank = "rank"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
-	// FieldCompleteAt holds the string denoting the complete_at field in the database.
-	FieldCompleteAt = "complete_at"
-	// FieldUpdateAt holds the string denoting the update_at field in the database.
-	FieldUpdateAt = "update_at"
+	// FieldStartTime holds the string denoting the start_time field in the database.
+	FieldStartTime = "start_time"
+	// FieldCompletedAt holds the string denoting the completed_at field in the database.
+	FieldCompletedAt = "completed_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// FieldStatusUpdatedAt holds the string denoting the status_updated_at field in the database.
+	FieldStatusUpdatedAt = "status_updated_at"
+	// FieldDeadline holds the string denoting the deadline field in the database.
+	FieldDeadline = "deadline"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
@@ -52,11 +62,16 @@ var Columns = []string{
 	FieldName,
 	FieldCreatedAt,
 	FieldCreatedBy,
-	FieldRank,
+	FieldAssignee,
 	FieldType,
+	FieldConfig,
+	FieldRank,
 	FieldStatus,
-	FieldCompleteAt,
-	FieldUpdateAt,
+	FieldStartTime,
+	FieldCompletedAt,
+	FieldUpdatedAt,
+	FieldStatusUpdatedAt,
+	FieldDeadline,
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldDescription,
@@ -77,10 +92,12 @@ var (
 	NameValidator func(string) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
+	// DefaultType holds the default value on creation for the "type" field.
+	DefaultType int8
 	// DefaultRank holds the default value on creation for the "rank" field.
 	DefaultRank int8
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus int8
-	// UpdateDefaultUpdateAt holds the default value on update for the "update_at" field.
-	UpdateDefaultUpdateAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
 )

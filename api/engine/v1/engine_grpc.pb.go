@@ -30,7 +30,7 @@ const (
 	Engine_BuildContainer_FullMethodName = "/api.engine.v1.Engine/BuildContainer"
 )
 
-// EngineClient is the client API for Engine service.
+// EngineClient is the client API for Engine scheduler.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EngineClient interface {
@@ -124,7 +124,7 @@ func (c *engineClient) BuildContainer(ctx context.Context, in *emptypb.Empty, op
 	return out, nil
 }
 
-// EngineServer is the server API for Engine service.
+// EngineServer is the server API for Engine scheduler.
 // All implementations must embed UnimplementedEngineServer
 // for forward compatibility
 type EngineServer interface {
@@ -169,7 +169,7 @@ func (UnimplementedEngineServer) BuildContainer(context.Context, *emptypb.Empty)
 }
 func (UnimplementedEngineServer) mustEmbedUnimplementedEngineServer() {}
 
-// UnsafeEngineServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeEngineServer may be embedded to opt out of forward compatibility for this scheduler.
 // Use of this interface is not recommended, as added methods to EngineServer will
 // result in compilation errors.
 type UnsafeEngineServer interface {
@@ -324,7 +324,7 @@ func _Engine_BuildContainer_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-// Engine_ServiceDesc is the grpc.ServiceDesc for Engine service.
+// Engine_ServiceDesc is the grpc.ServiceDesc for Engine scheduler.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Engine_ServiceDesc = grpc.ServiceDesc{

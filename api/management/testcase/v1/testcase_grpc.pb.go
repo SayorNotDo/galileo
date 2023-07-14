@@ -30,7 +30,7 @@ const (
 	Testcase_LoadFramework_FullMethodName      = "/api.management.testcase.Testcase/LoadFramework"
 )
 
-// TestcaseClient is the client API for Testcase service.
+// TestcaseClient is the client API for Testcase scheduler.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TestcaseClient interface {
@@ -124,7 +124,7 @@ func (c *testcaseClient) LoadFramework(ctx context.Context, in *LoadFrameworkReq
 	return out, nil
 }
 
-// TestcaseServer is the server API for Testcase service.
+// TestcaseServer is the server API for Testcase scheduler.
 // All implementations must embed UnimplementedTestcaseServer
 // for forward compatibility
 type TestcaseServer interface {
@@ -169,7 +169,7 @@ func (UnimplementedTestcaseServer) LoadFramework(context.Context, *LoadFramework
 }
 func (UnimplementedTestcaseServer) mustEmbedUnimplementedTestcaseServer() {}
 
-// UnsafeTestcaseServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeTestcaseServer may be embedded to opt out of forward compatibility for this scheduler.
 // Use of this interface is not recommended, as added methods to TestcaseServer will
 // result in compilation errors.
 type UnsafeTestcaseServer interface {
@@ -324,7 +324,7 @@ func _Testcase_LoadFramework_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-// Testcase_ServiceDesc is the grpc.ServiceDesc for Testcase service.
+// Testcase_ServiceDesc is the grpc.ServiceDesc for Testcase scheduler.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Testcase_ServiceDesc = grpc.ServiceDesc{

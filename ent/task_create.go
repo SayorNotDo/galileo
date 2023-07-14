@@ -47,6 +47,48 @@ func (tc *TaskCreate) SetCreatedBy(u uint32) *TaskCreate {
 	return tc
 }
 
+// SetAssignee sets the "assignee" field.
+func (tc *TaskCreate) SetAssignee(u uint32) *TaskCreate {
+	tc.mutation.SetAssignee(u)
+	return tc
+}
+
+// SetNillableAssignee sets the "assignee" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableAssignee(u *uint32) *TaskCreate {
+	if u != nil {
+		tc.SetAssignee(*u)
+	}
+	return tc
+}
+
+// SetType sets the "type" field.
+func (tc *TaskCreate) SetType(i int8) *TaskCreate {
+	tc.mutation.SetType(i)
+	return tc
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableType(i *int8) *TaskCreate {
+	if i != nil {
+		tc.SetType(*i)
+	}
+	return tc
+}
+
+// SetConfig sets the "config" field.
+func (tc *TaskCreate) SetConfig(s string) *TaskCreate {
+	tc.mutation.SetConfig(s)
+	return tc
+}
+
+// SetNillableConfig sets the "config" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableConfig(s *string) *TaskCreate {
+	if s != nil {
+		tc.SetConfig(*s)
+	}
+	return tc
+}
+
 // SetRank sets the "rank" field.
 func (tc *TaskCreate) SetRank(i int8) *TaskCreate {
 	tc.mutation.SetRank(i)
@@ -58,12 +100,6 @@ func (tc *TaskCreate) SetNillableRank(i *int8) *TaskCreate {
 	if i != nil {
 		tc.SetRank(*i)
 	}
-	return tc
-}
-
-// SetType sets the "type" field.
-func (tc *TaskCreate) SetType(i int8) *TaskCreate {
-	tc.mutation.SetType(i)
 	return tc
 }
 
@@ -81,30 +117,72 @@ func (tc *TaskCreate) SetNillableStatus(i *int8) *TaskCreate {
 	return tc
 }
 
-// SetCompleteAt sets the "complete_at" field.
-func (tc *TaskCreate) SetCompleteAt(t time.Time) *TaskCreate {
-	tc.mutation.SetCompleteAt(t)
+// SetStartTime sets the "start_time" field.
+func (tc *TaskCreate) SetStartTime(t time.Time) *TaskCreate {
+	tc.mutation.SetStartTime(t)
 	return tc
 }
 
-// SetNillableCompleteAt sets the "complete_at" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableCompleteAt(t *time.Time) *TaskCreate {
+// SetNillableStartTime sets the "start_time" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableStartTime(t *time.Time) *TaskCreate {
 	if t != nil {
-		tc.SetCompleteAt(*t)
+		tc.SetStartTime(*t)
 	}
 	return tc
 }
 
-// SetUpdateAt sets the "update_at" field.
-func (tc *TaskCreate) SetUpdateAt(t time.Time) *TaskCreate {
-	tc.mutation.SetUpdateAt(t)
+// SetCompletedAt sets the "completed_at" field.
+func (tc *TaskCreate) SetCompletedAt(t time.Time) *TaskCreate {
+	tc.mutation.SetCompletedAt(t)
 	return tc
 }
 
-// SetNillableUpdateAt sets the "update_at" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableUpdateAt(t *time.Time) *TaskCreate {
+// SetNillableCompletedAt sets the "completed_at" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableCompletedAt(t *time.Time) *TaskCreate {
 	if t != nil {
-		tc.SetUpdateAt(*t)
+		tc.SetCompletedAt(*t)
+	}
+	return tc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (tc *TaskCreate) SetUpdatedAt(t time.Time) *TaskCreate {
+	tc.mutation.SetUpdatedAt(t)
+	return tc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableUpdatedAt(t *time.Time) *TaskCreate {
+	if t != nil {
+		tc.SetUpdatedAt(*t)
+	}
+	return tc
+}
+
+// SetStatusUpdatedAt sets the "status_updated_at" field.
+func (tc *TaskCreate) SetStatusUpdatedAt(t time.Time) *TaskCreate {
+	tc.mutation.SetStatusUpdatedAt(t)
+	return tc
+}
+
+// SetNillableStatusUpdatedAt sets the "status_updated_at" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableStatusUpdatedAt(t *time.Time) *TaskCreate {
+	if t != nil {
+		tc.SetStatusUpdatedAt(*t)
+	}
+	return tc
+}
+
+// SetDeadline sets the "deadline" field.
+func (tc *TaskCreate) SetDeadline(t time.Time) *TaskCreate {
+	tc.mutation.SetDeadline(t)
+	return tc
+}
+
+// SetNillableDeadline sets the "deadline" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableDeadline(t *time.Time) *TaskCreate {
+	if t != nil {
+		tc.SetDeadline(*t)
 	}
 	return tc
 }
@@ -211,6 +289,10 @@ func (tc *TaskCreate) defaults() {
 		v := task.DefaultCreatedAt()
 		tc.mutation.SetCreatedAt(v)
 	}
+	if _, ok := tc.mutation.GetType(); !ok {
+		v := task.DefaultType
+		tc.mutation.SetType(v)
+	}
 	if _, ok := tc.mutation.Rank(); !ok {
 		v := task.DefaultRank
 		tc.mutation.SetRank(v)
@@ -237,11 +319,11 @@ func (tc *TaskCreate) check() error {
 	if _, ok := tc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Task.created_by"`)}
 	}
-	if _, ok := tc.mutation.Rank(); !ok {
-		return &ValidationError{Name: "rank", err: errors.New(`ent: missing required field "Task.rank"`)}
-	}
 	if _, ok := tc.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "Task.type"`)}
+	}
+	if _, ok := tc.mutation.Rank(); !ok {
+		return &ValidationError{Name: "rank", err: errors.New(`ent: missing required field "Task.rank"`)}
 	}
 	if _, ok := tc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Task.status"`)}
@@ -290,33 +372,53 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_spec.SetField(task.FieldCreatedBy, field.TypeUint32, value)
 		_node.CreatedBy = value
 	}
-	if value, ok := tc.mutation.Rank(); ok {
-		_spec.SetField(task.FieldRank, field.TypeInt8, value)
-		_node.Rank = value
+	if value, ok := tc.mutation.Assignee(); ok {
+		_spec.SetField(task.FieldAssignee, field.TypeUint32, value)
+		_node.Assignee = value
 	}
 	if value, ok := tc.mutation.GetType(); ok {
 		_spec.SetField(task.FieldType, field.TypeInt8, value)
 		_node.Type = value
 	}
+	if value, ok := tc.mutation.Config(); ok {
+		_spec.SetField(task.FieldConfig, field.TypeString, value)
+		_node.Config = value
+	}
+	if value, ok := tc.mutation.Rank(); ok {
+		_spec.SetField(task.FieldRank, field.TypeInt8, value)
+		_node.Rank = value
+	}
 	if value, ok := tc.mutation.Status(); ok {
 		_spec.SetField(task.FieldStatus, field.TypeInt8, value)
 		_node.Status = value
 	}
-	if value, ok := tc.mutation.CompleteAt(); ok {
-		_spec.SetField(task.FieldCompleteAt, field.TypeTime, value)
-		_node.CompleteAt = &value
+	if value, ok := tc.mutation.StartTime(); ok {
+		_spec.SetField(task.FieldStartTime, field.TypeTime, value)
+		_node.StartTime = value
 	}
-	if value, ok := tc.mutation.UpdateAt(); ok {
-		_spec.SetField(task.FieldUpdateAt, field.TypeTime, value)
-		_node.UpdateAt = &value
+	if value, ok := tc.mutation.CompletedAt(); ok {
+		_spec.SetField(task.FieldCompletedAt, field.TypeTime, value)
+		_node.CompletedAt = value
+	}
+	if value, ok := tc.mutation.UpdatedAt(); ok {
+		_spec.SetField(task.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := tc.mutation.StatusUpdatedAt(); ok {
+		_spec.SetField(task.FieldStatusUpdatedAt, field.TypeTime, value)
+		_node.StatusUpdatedAt = value
+	}
+	if value, ok := tc.mutation.Deadline(); ok {
+		_spec.SetField(task.FieldDeadline, field.TypeTime, value)
+		_node.Deadline = value
 	}
 	if value, ok := tc.mutation.DeletedAt(); ok {
 		_spec.SetField(task.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
+		_node.DeletedAt = value
 	}
 	if value, ok := tc.mutation.DeletedBy(); ok {
 		_spec.SetField(task.FieldDeletedBy, field.TypeUint32, value)
-		_node.DeletedBy = &value
+		_node.DeletedBy = value
 	}
 	if value, ok := tc.mutation.Description(); ok {
 		_spec.SetField(task.FieldDescription, field.TypeString, value)

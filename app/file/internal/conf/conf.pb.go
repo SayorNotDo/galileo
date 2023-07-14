@@ -30,7 +30,7 @@ type Bootstrap struct {
 	Data    *Data    `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	Trace   *Trace   `protobuf:"bytes,3,opt,name=trace,proto3" json:"trace,omitempty"`
 	Auth    *Auth    `protobuf:"bytes,4,opt,name=auth,proto3" json:"auth,omitempty"`
-	Service *Service `protobuf:"bytes,5,opt,name=service,proto3" json:"service,omitempty"`
+	Service *Service `protobuf:"bytes,5,opt,name=scheduler,proto3" json:"scheduler,omitempty"`
 }
 
 func (x *Bootstrap) Reset() {
@@ -980,7 +980,7 @@ var file_conf_conf_proto_depIdxs = []int32{
 	4,  // 1: kratos.api.Bootstrap.data:type_name -> kratos.api.Data
 	1,  // 2: kratos.api.Bootstrap.trace:type_name -> kratos.api.Trace
 	6,  // 3: kratos.api.Bootstrap.auth:type_name -> kratos.api.Auth
-	2,  // 4: kratos.api.Bootstrap.service:type_name -> kratos.api.Service
+	2,  // 4: kratos.api.Bootstrap.scheduler:type_name -> kratos.api.Service
 	7,  // 5: kratos.api.Server.http:type_name -> kratos.api.Server.HTTP
 	8,  // 6: kratos.api.Server.grpc:type_name -> kratos.api.Server.GRPC
 	9,  // 7: kratos.api.Data.database:type_name -> kratos.api.Data.Database

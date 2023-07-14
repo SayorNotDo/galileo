@@ -23,7 +23,7 @@ const (
 	Management_BaseInfo_FullMethodName = "/api.management.v1.Management/BaseInfo"
 )
 
-// ManagementClient is the client API for Management service.
+// ManagementClient is the client API for Management scheduler.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManagementClient interface {
@@ -47,7 +47,7 @@ func (c *managementClient) BaseInfo(ctx context.Context, in *emptypb.Empty, opts
 	return out, nil
 }
 
-// ManagementServer is the server API for Management service.
+// ManagementServer is the server API for Management scheduler.
 // All implementations must embed UnimplementedManagementServer
 // for forward compatibility
 type ManagementServer interface {
@@ -64,7 +64,7 @@ func (UnimplementedManagementServer) BaseInfo(context.Context, *emptypb.Empty) (
 }
 func (UnimplementedManagementServer) mustEmbedUnimplementedManagementServer() {}
 
-// UnsafeManagementServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeManagementServer may be embedded to opt out of forward compatibility for this scheduler.
 // Use of this interface is not recommended, as added methods to ManagementServer will
 // result in compilation errors.
 type UnsafeManagementServer interface {
@@ -93,7 +93,7 @@ func _Management_BaseInfo_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-// Management_ServiceDesc is the grpc.ServiceDesc for Management service.
+// Management_ServiceDesc is the grpc.ServiceDesc for Management scheduler.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Management_ServiceDesc = grpc.ServiceDesc{

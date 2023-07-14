@@ -35,6 +35,74 @@ func (tu *TaskUpdate) SetName(s string) *TaskUpdate {
 	return tu
 }
 
+// SetAssignee sets the "assignee" field.
+func (tu *TaskUpdate) SetAssignee(u uint32) *TaskUpdate {
+	tu.mutation.ResetAssignee()
+	tu.mutation.SetAssignee(u)
+	return tu
+}
+
+// SetNillableAssignee sets the "assignee" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableAssignee(u *uint32) *TaskUpdate {
+	if u != nil {
+		tu.SetAssignee(*u)
+	}
+	return tu
+}
+
+// AddAssignee adds u to the "assignee" field.
+func (tu *TaskUpdate) AddAssignee(u int32) *TaskUpdate {
+	tu.mutation.AddAssignee(u)
+	return tu
+}
+
+// ClearAssignee clears the value of the "assignee" field.
+func (tu *TaskUpdate) ClearAssignee() *TaskUpdate {
+	tu.mutation.ClearAssignee()
+	return tu
+}
+
+// SetType sets the "type" field.
+func (tu *TaskUpdate) SetType(i int8) *TaskUpdate {
+	tu.mutation.ResetType()
+	tu.mutation.SetType(i)
+	return tu
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableType(i *int8) *TaskUpdate {
+	if i != nil {
+		tu.SetType(*i)
+	}
+	return tu
+}
+
+// AddType adds i to the "type" field.
+func (tu *TaskUpdate) AddType(i int8) *TaskUpdate {
+	tu.mutation.AddType(i)
+	return tu
+}
+
+// SetConfig sets the "config" field.
+func (tu *TaskUpdate) SetConfig(s string) *TaskUpdate {
+	tu.mutation.SetConfig(s)
+	return tu
+}
+
+// SetNillableConfig sets the "config" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableConfig(s *string) *TaskUpdate {
+	if s != nil {
+		tu.SetConfig(*s)
+	}
+	return tu
+}
+
+// ClearConfig clears the value of the "config" field.
+func (tu *TaskUpdate) ClearConfig() *TaskUpdate {
+	tu.mutation.ClearConfig()
+	return tu
+}
+
 // SetRank sets the "rank" field.
 func (tu *TaskUpdate) SetRank(i int8) *TaskUpdate {
 	tu.mutation.ResetRank()
@@ -53,19 +121,6 @@ func (tu *TaskUpdate) SetNillableRank(i *int8) *TaskUpdate {
 // AddRank adds i to the "rank" field.
 func (tu *TaskUpdate) AddRank(i int8) *TaskUpdate {
 	tu.mutation.AddRank(i)
-	return tu
-}
-
-// SetType sets the "type" field.
-func (tu *TaskUpdate) SetType(i int8) *TaskUpdate {
-	tu.mutation.ResetType()
-	tu.mutation.SetType(i)
-	return tu
-}
-
-// AddType adds i to the "type" field.
-func (tu *TaskUpdate) AddType(i int8) *TaskUpdate {
-	tu.mutation.AddType(i)
 	return tu
 }
 
@@ -90,35 +145,95 @@ func (tu *TaskUpdate) AddStatus(i int8) *TaskUpdate {
 	return tu
 }
 
-// SetCompleteAt sets the "complete_at" field.
-func (tu *TaskUpdate) SetCompleteAt(t time.Time) *TaskUpdate {
-	tu.mutation.SetCompleteAt(t)
+// SetStartTime sets the "start_time" field.
+func (tu *TaskUpdate) SetStartTime(t time.Time) *TaskUpdate {
+	tu.mutation.SetStartTime(t)
 	return tu
 }
 
-// SetNillableCompleteAt sets the "complete_at" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableCompleteAt(t *time.Time) *TaskUpdate {
+// SetNillableStartTime sets the "start_time" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableStartTime(t *time.Time) *TaskUpdate {
 	if t != nil {
-		tu.SetCompleteAt(*t)
+		tu.SetStartTime(*t)
 	}
 	return tu
 }
 
-// ClearCompleteAt clears the value of the "complete_at" field.
-func (tu *TaskUpdate) ClearCompleteAt() *TaskUpdate {
-	tu.mutation.ClearCompleteAt()
+// ClearStartTime clears the value of the "start_time" field.
+func (tu *TaskUpdate) ClearStartTime() *TaskUpdate {
+	tu.mutation.ClearStartTime()
 	return tu
 }
 
-// SetUpdateAt sets the "update_at" field.
-func (tu *TaskUpdate) SetUpdateAt(t time.Time) *TaskUpdate {
-	tu.mutation.SetUpdateAt(t)
+// SetCompletedAt sets the "completed_at" field.
+func (tu *TaskUpdate) SetCompletedAt(t time.Time) *TaskUpdate {
+	tu.mutation.SetCompletedAt(t)
 	return tu
 }
 
-// ClearUpdateAt clears the value of the "update_at" field.
-func (tu *TaskUpdate) ClearUpdateAt() *TaskUpdate {
-	tu.mutation.ClearUpdateAt()
+// SetNillableCompletedAt sets the "completed_at" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableCompletedAt(t *time.Time) *TaskUpdate {
+	if t != nil {
+		tu.SetCompletedAt(*t)
+	}
+	return tu
+}
+
+// ClearCompletedAt clears the value of the "completed_at" field.
+func (tu *TaskUpdate) ClearCompletedAt() *TaskUpdate {
+	tu.mutation.ClearCompletedAt()
+	return tu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (tu *TaskUpdate) SetUpdatedAt(t time.Time) *TaskUpdate {
+	tu.mutation.SetUpdatedAt(t)
+	return tu
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (tu *TaskUpdate) ClearUpdatedAt() *TaskUpdate {
+	tu.mutation.ClearUpdatedAt()
+	return tu
+}
+
+// SetStatusUpdatedAt sets the "status_updated_at" field.
+func (tu *TaskUpdate) SetStatusUpdatedAt(t time.Time) *TaskUpdate {
+	tu.mutation.SetStatusUpdatedAt(t)
+	return tu
+}
+
+// SetNillableStatusUpdatedAt sets the "status_updated_at" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableStatusUpdatedAt(t *time.Time) *TaskUpdate {
+	if t != nil {
+		tu.SetStatusUpdatedAt(*t)
+	}
+	return tu
+}
+
+// ClearStatusUpdatedAt clears the value of the "status_updated_at" field.
+func (tu *TaskUpdate) ClearStatusUpdatedAt() *TaskUpdate {
+	tu.mutation.ClearStatusUpdatedAt()
+	return tu
+}
+
+// SetDeadline sets the "deadline" field.
+func (tu *TaskUpdate) SetDeadline(t time.Time) *TaskUpdate {
+	tu.mutation.SetDeadline(t)
+	return tu
+}
+
+// SetNillableDeadline sets the "deadline" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableDeadline(t *time.Time) *TaskUpdate {
+	if t != nil {
+		tu.SetDeadline(*t)
+	}
+	return tu
+}
+
+// ClearDeadline clears the value of the "deadline" field.
+func (tu *TaskUpdate) ClearDeadline() *TaskUpdate {
+	tu.mutation.ClearDeadline()
 	return tu
 }
 
@@ -260,9 +375,9 @@ func (tu *TaskUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tu *TaskUpdate) defaults() {
-	if _, ok := tu.mutation.UpdateAt(); !ok && !tu.mutation.UpdateAtCleared() {
-		v := task.UpdateDefaultUpdateAt()
-		tu.mutation.SetUpdateAt(v)
+	if _, ok := tu.mutation.UpdatedAt(); !ok && !tu.mutation.UpdatedAtCleared() {
+		v := task.UpdateDefaultUpdatedAt()
+		tu.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -291,11 +406,14 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.Name(); ok {
 		_spec.SetField(task.FieldName, field.TypeString, value)
 	}
-	if value, ok := tu.mutation.Rank(); ok {
-		_spec.SetField(task.FieldRank, field.TypeInt8, value)
+	if value, ok := tu.mutation.Assignee(); ok {
+		_spec.SetField(task.FieldAssignee, field.TypeUint32, value)
 	}
-	if value, ok := tu.mutation.AddedRank(); ok {
-		_spec.AddField(task.FieldRank, field.TypeInt8, value)
+	if value, ok := tu.mutation.AddedAssignee(); ok {
+		_spec.AddField(task.FieldAssignee, field.TypeUint32, value)
+	}
+	if tu.mutation.AssigneeCleared() {
+		_spec.ClearField(task.FieldAssignee, field.TypeUint32)
 	}
 	if value, ok := tu.mutation.GetType(); ok {
 		_spec.SetField(task.FieldType, field.TypeInt8, value)
@@ -303,23 +421,53 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.AddedType(); ok {
 		_spec.AddField(task.FieldType, field.TypeInt8, value)
 	}
+	if value, ok := tu.mutation.Config(); ok {
+		_spec.SetField(task.FieldConfig, field.TypeString, value)
+	}
+	if tu.mutation.ConfigCleared() {
+		_spec.ClearField(task.FieldConfig, field.TypeString)
+	}
+	if value, ok := tu.mutation.Rank(); ok {
+		_spec.SetField(task.FieldRank, field.TypeInt8, value)
+	}
+	if value, ok := tu.mutation.AddedRank(); ok {
+		_spec.AddField(task.FieldRank, field.TypeInt8, value)
+	}
 	if value, ok := tu.mutation.Status(); ok {
 		_spec.SetField(task.FieldStatus, field.TypeInt8, value)
 	}
 	if value, ok := tu.mutation.AddedStatus(); ok {
 		_spec.AddField(task.FieldStatus, field.TypeInt8, value)
 	}
-	if value, ok := tu.mutation.CompleteAt(); ok {
-		_spec.SetField(task.FieldCompleteAt, field.TypeTime, value)
+	if value, ok := tu.mutation.StartTime(); ok {
+		_spec.SetField(task.FieldStartTime, field.TypeTime, value)
 	}
-	if tu.mutation.CompleteAtCleared() {
-		_spec.ClearField(task.FieldCompleteAt, field.TypeTime)
+	if tu.mutation.StartTimeCleared() {
+		_spec.ClearField(task.FieldStartTime, field.TypeTime)
 	}
-	if value, ok := tu.mutation.UpdateAt(); ok {
-		_spec.SetField(task.FieldUpdateAt, field.TypeTime, value)
+	if value, ok := tu.mutation.CompletedAt(); ok {
+		_spec.SetField(task.FieldCompletedAt, field.TypeTime, value)
 	}
-	if tu.mutation.UpdateAtCleared() {
-		_spec.ClearField(task.FieldUpdateAt, field.TypeTime)
+	if tu.mutation.CompletedAtCleared() {
+		_spec.ClearField(task.FieldCompletedAt, field.TypeTime)
+	}
+	if value, ok := tu.mutation.UpdatedAt(); ok {
+		_spec.SetField(task.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if tu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(task.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := tu.mutation.StatusUpdatedAt(); ok {
+		_spec.SetField(task.FieldStatusUpdatedAt, field.TypeTime, value)
+	}
+	if tu.mutation.StatusUpdatedAtCleared() {
+		_spec.ClearField(task.FieldStatusUpdatedAt, field.TypeTime)
+	}
+	if value, ok := tu.mutation.Deadline(); ok {
+		_spec.SetField(task.FieldDeadline, field.TypeTime, value)
+	}
+	if tu.mutation.DeadlineCleared() {
+		_spec.ClearField(task.FieldDeadline, field.TypeTime)
 	}
 	if value, ok := tu.mutation.DeletedAt(); ok {
 		_spec.SetField(task.FieldDeletedAt, field.TypeTime, value)
@@ -413,6 +561,74 @@ func (tuo *TaskUpdateOne) SetName(s string) *TaskUpdateOne {
 	return tuo
 }
 
+// SetAssignee sets the "assignee" field.
+func (tuo *TaskUpdateOne) SetAssignee(u uint32) *TaskUpdateOne {
+	tuo.mutation.ResetAssignee()
+	tuo.mutation.SetAssignee(u)
+	return tuo
+}
+
+// SetNillableAssignee sets the "assignee" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableAssignee(u *uint32) *TaskUpdateOne {
+	if u != nil {
+		tuo.SetAssignee(*u)
+	}
+	return tuo
+}
+
+// AddAssignee adds u to the "assignee" field.
+func (tuo *TaskUpdateOne) AddAssignee(u int32) *TaskUpdateOne {
+	tuo.mutation.AddAssignee(u)
+	return tuo
+}
+
+// ClearAssignee clears the value of the "assignee" field.
+func (tuo *TaskUpdateOne) ClearAssignee() *TaskUpdateOne {
+	tuo.mutation.ClearAssignee()
+	return tuo
+}
+
+// SetType sets the "type" field.
+func (tuo *TaskUpdateOne) SetType(i int8) *TaskUpdateOne {
+	tuo.mutation.ResetType()
+	tuo.mutation.SetType(i)
+	return tuo
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableType(i *int8) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetType(*i)
+	}
+	return tuo
+}
+
+// AddType adds i to the "type" field.
+func (tuo *TaskUpdateOne) AddType(i int8) *TaskUpdateOne {
+	tuo.mutation.AddType(i)
+	return tuo
+}
+
+// SetConfig sets the "config" field.
+func (tuo *TaskUpdateOne) SetConfig(s string) *TaskUpdateOne {
+	tuo.mutation.SetConfig(s)
+	return tuo
+}
+
+// SetNillableConfig sets the "config" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableConfig(s *string) *TaskUpdateOne {
+	if s != nil {
+		tuo.SetConfig(*s)
+	}
+	return tuo
+}
+
+// ClearConfig clears the value of the "config" field.
+func (tuo *TaskUpdateOne) ClearConfig() *TaskUpdateOne {
+	tuo.mutation.ClearConfig()
+	return tuo
+}
+
 // SetRank sets the "rank" field.
 func (tuo *TaskUpdateOne) SetRank(i int8) *TaskUpdateOne {
 	tuo.mutation.ResetRank()
@@ -431,19 +647,6 @@ func (tuo *TaskUpdateOne) SetNillableRank(i *int8) *TaskUpdateOne {
 // AddRank adds i to the "rank" field.
 func (tuo *TaskUpdateOne) AddRank(i int8) *TaskUpdateOne {
 	tuo.mutation.AddRank(i)
-	return tuo
-}
-
-// SetType sets the "type" field.
-func (tuo *TaskUpdateOne) SetType(i int8) *TaskUpdateOne {
-	tuo.mutation.ResetType()
-	tuo.mutation.SetType(i)
-	return tuo
-}
-
-// AddType adds i to the "type" field.
-func (tuo *TaskUpdateOne) AddType(i int8) *TaskUpdateOne {
-	tuo.mutation.AddType(i)
 	return tuo
 }
 
@@ -468,35 +671,95 @@ func (tuo *TaskUpdateOne) AddStatus(i int8) *TaskUpdateOne {
 	return tuo
 }
 
-// SetCompleteAt sets the "complete_at" field.
-func (tuo *TaskUpdateOne) SetCompleteAt(t time.Time) *TaskUpdateOne {
-	tuo.mutation.SetCompleteAt(t)
+// SetStartTime sets the "start_time" field.
+func (tuo *TaskUpdateOne) SetStartTime(t time.Time) *TaskUpdateOne {
+	tuo.mutation.SetStartTime(t)
 	return tuo
 }
 
-// SetNillableCompleteAt sets the "complete_at" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableCompleteAt(t *time.Time) *TaskUpdateOne {
+// SetNillableStartTime sets the "start_time" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableStartTime(t *time.Time) *TaskUpdateOne {
 	if t != nil {
-		tuo.SetCompleteAt(*t)
+		tuo.SetStartTime(*t)
 	}
 	return tuo
 }
 
-// ClearCompleteAt clears the value of the "complete_at" field.
-func (tuo *TaskUpdateOne) ClearCompleteAt() *TaskUpdateOne {
-	tuo.mutation.ClearCompleteAt()
+// ClearStartTime clears the value of the "start_time" field.
+func (tuo *TaskUpdateOne) ClearStartTime() *TaskUpdateOne {
+	tuo.mutation.ClearStartTime()
 	return tuo
 }
 
-// SetUpdateAt sets the "update_at" field.
-func (tuo *TaskUpdateOne) SetUpdateAt(t time.Time) *TaskUpdateOne {
-	tuo.mutation.SetUpdateAt(t)
+// SetCompletedAt sets the "completed_at" field.
+func (tuo *TaskUpdateOne) SetCompletedAt(t time.Time) *TaskUpdateOne {
+	tuo.mutation.SetCompletedAt(t)
 	return tuo
 }
 
-// ClearUpdateAt clears the value of the "update_at" field.
-func (tuo *TaskUpdateOne) ClearUpdateAt() *TaskUpdateOne {
-	tuo.mutation.ClearUpdateAt()
+// SetNillableCompletedAt sets the "completed_at" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableCompletedAt(t *time.Time) *TaskUpdateOne {
+	if t != nil {
+		tuo.SetCompletedAt(*t)
+	}
+	return tuo
+}
+
+// ClearCompletedAt clears the value of the "completed_at" field.
+func (tuo *TaskUpdateOne) ClearCompletedAt() *TaskUpdateOne {
+	tuo.mutation.ClearCompletedAt()
+	return tuo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (tuo *TaskUpdateOne) SetUpdatedAt(t time.Time) *TaskUpdateOne {
+	tuo.mutation.SetUpdatedAt(t)
+	return tuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (tuo *TaskUpdateOne) ClearUpdatedAt() *TaskUpdateOne {
+	tuo.mutation.ClearUpdatedAt()
+	return tuo
+}
+
+// SetStatusUpdatedAt sets the "status_updated_at" field.
+func (tuo *TaskUpdateOne) SetStatusUpdatedAt(t time.Time) *TaskUpdateOne {
+	tuo.mutation.SetStatusUpdatedAt(t)
+	return tuo
+}
+
+// SetNillableStatusUpdatedAt sets the "status_updated_at" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableStatusUpdatedAt(t *time.Time) *TaskUpdateOne {
+	if t != nil {
+		tuo.SetStatusUpdatedAt(*t)
+	}
+	return tuo
+}
+
+// ClearStatusUpdatedAt clears the value of the "status_updated_at" field.
+func (tuo *TaskUpdateOne) ClearStatusUpdatedAt() *TaskUpdateOne {
+	tuo.mutation.ClearStatusUpdatedAt()
+	return tuo
+}
+
+// SetDeadline sets the "deadline" field.
+func (tuo *TaskUpdateOne) SetDeadline(t time.Time) *TaskUpdateOne {
+	tuo.mutation.SetDeadline(t)
+	return tuo
+}
+
+// SetNillableDeadline sets the "deadline" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableDeadline(t *time.Time) *TaskUpdateOne {
+	if t != nil {
+		tuo.SetDeadline(*t)
+	}
+	return tuo
+}
+
+// ClearDeadline clears the value of the "deadline" field.
+func (tuo *TaskUpdateOne) ClearDeadline() *TaskUpdateOne {
+	tuo.mutation.ClearDeadline()
 	return tuo
 }
 
@@ -651,9 +914,9 @@ func (tuo *TaskUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tuo *TaskUpdateOne) defaults() {
-	if _, ok := tuo.mutation.UpdateAt(); !ok && !tuo.mutation.UpdateAtCleared() {
-		v := task.UpdateDefaultUpdateAt()
-		tuo.mutation.SetUpdateAt(v)
+	if _, ok := tuo.mutation.UpdatedAt(); !ok && !tuo.mutation.UpdatedAtCleared() {
+		v := task.UpdateDefaultUpdatedAt()
+		tuo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -699,11 +962,14 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if value, ok := tuo.mutation.Name(); ok {
 		_spec.SetField(task.FieldName, field.TypeString, value)
 	}
-	if value, ok := tuo.mutation.Rank(); ok {
-		_spec.SetField(task.FieldRank, field.TypeInt8, value)
+	if value, ok := tuo.mutation.Assignee(); ok {
+		_spec.SetField(task.FieldAssignee, field.TypeUint32, value)
 	}
-	if value, ok := tuo.mutation.AddedRank(); ok {
-		_spec.AddField(task.FieldRank, field.TypeInt8, value)
+	if value, ok := tuo.mutation.AddedAssignee(); ok {
+		_spec.AddField(task.FieldAssignee, field.TypeUint32, value)
+	}
+	if tuo.mutation.AssigneeCleared() {
+		_spec.ClearField(task.FieldAssignee, field.TypeUint32)
 	}
 	if value, ok := tuo.mutation.GetType(); ok {
 		_spec.SetField(task.FieldType, field.TypeInt8, value)
@@ -711,23 +977,53 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if value, ok := tuo.mutation.AddedType(); ok {
 		_spec.AddField(task.FieldType, field.TypeInt8, value)
 	}
+	if value, ok := tuo.mutation.Config(); ok {
+		_spec.SetField(task.FieldConfig, field.TypeString, value)
+	}
+	if tuo.mutation.ConfigCleared() {
+		_spec.ClearField(task.FieldConfig, field.TypeString)
+	}
+	if value, ok := tuo.mutation.Rank(); ok {
+		_spec.SetField(task.FieldRank, field.TypeInt8, value)
+	}
+	if value, ok := tuo.mutation.AddedRank(); ok {
+		_spec.AddField(task.FieldRank, field.TypeInt8, value)
+	}
 	if value, ok := tuo.mutation.Status(); ok {
 		_spec.SetField(task.FieldStatus, field.TypeInt8, value)
 	}
 	if value, ok := tuo.mutation.AddedStatus(); ok {
 		_spec.AddField(task.FieldStatus, field.TypeInt8, value)
 	}
-	if value, ok := tuo.mutation.CompleteAt(); ok {
-		_spec.SetField(task.FieldCompleteAt, field.TypeTime, value)
+	if value, ok := tuo.mutation.StartTime(); ok {
+		_spec.SetField(task.FieldStartTime, field.TypeTime, value)
 	}
-	if tuo.mutation.CompleteAtCleared() {
-		_spec.ClearField(task.FieldCompleteAt, field.TypeTime)
+	if tuo.mutation.StartTimeCleared() {
+		_spec.ClearField(task.FieldStartTime, field.TypeTime)
 	}
-	if value, ok := tuo.mutation.UpdateAt(); ok {
-		_spec.SetField(task.FieldUpdateAt, field.TypeTime, value)
+	if value, ok := tuo.mutation.CompletedAt(); ok {
+		_spec.SetField(task.FieldCompletedAt, field.TypeTime, value)
 	}
-	if tuo.mutation.UpdateAtCleared() {
-		_spec.ClearField(task.FieldUpdateAt, field.TypeTime)
+	if tuo.mutation.CompletedAtCleared() {
+		_spec.ClearField(task.FieldCompletedAt, field.TypeTime)
+	}
+	if value, ok := tuo.mutation.UpdatedAt(); ok {
+		_spec.SetField(task.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if tuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(task.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := tuo.mutation.StatusUpdatedAt(); ok {
+		_spec.SetField(task.FieldStatusUpdatedAt, field.TypeTime, value)
+	}
+	if tuo.mutation.StatusUpdatedAtCleared() {
+		_spec.ClearField(task.FieldStatusUpdatedAt, field.TypeTime)
+	}
+	if value, ok := tuo.mutation.Deadline(); ok {
+		_spec.SetField(task.FieldDeadline, field.TypeTime, value)
+	}
+	if tuo.mutation.DeadlineCleared() {
+		_spec.ClearField(task.FieldDeadline, field.TypeTime)
 	}
 	if value, ok := tuo.mutation.DeletedAt(); ok {
 		_spec.SetField(task.FieldDeletedAt, field.TypeTime, value)

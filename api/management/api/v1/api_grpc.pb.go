@@ -27,7 +27,7 @@ const (
 	Api_ListApi_FullMethodName   = "/api.management.api.Api/ListApi"
 )
 
-// ApiClient is the client API for Api service.
+// ApiClient is the client API for Api scheduler.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ApiClient interface {
@@ -101,7 +101,7 @@ func (c *apiClient) ListApi(ctx context.Context, in *ListApiRequest, opts ...grp
 	return out, nil
 }
 
-// ApiServer is the server API for Api service.
+// ApiServer is the server API for Api scheduler.
 // All implementations must embed UnimplementedApiServer
 // for forward compatibility
 type ApiServer interface {
@@ -138,7 +138,7 @@ func (UnimplementedApiServer) ListApi(context.Context, *ListApiRequest) (*ListAp
 }
 func (UnimplementedApiServer) mustEmbedUnimplementedApiServer() {}
 
-// UnsafeApiServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeApiServer may be embedded to opt out of forward compatibility for this scheduler.
 // Use of this interface is not recommended, as added methods to ApiServer will
 // result in compilation errors.
 type UnsafeApiServer interface {
@@ -257,7 +257,7 @@ func _Api_ListApi_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
-// Api_ServiceDesc is the grpc.ServiceDesc for Api service.
+// Api_ServiceDesc is the grpc.ServiceDesc for Api scheduler.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Api_ServiceDesc = grpc.ServiceDesc{

@@ -27,7 +27,7 @@ const (
 	Project_ListProject_FullMethodName   = "/api.project.v1.Project/ListProject"
 )
 
-// ProjectClient is the client API for Project service.
+// ProjectClient is the client API for Project scheduler.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProjectClient interface {
@@ -91,7 +91,7 @@ func (c *projectClient) ListProject(ctx context.Context, in *ListProjectRequest,
 	return out, nil
 }
 
-// ProjectServer is the server API for Project service.
+// ProjectServer is the server API for Project scheduler.
 // All implementations must embed UnimplementedProjectServer
 // for forward compatibility
 type ProjectServer interface {
@@ -124,7 +124,7 @@ func (UnimplementedProjectServer) ListProject(context.Context, *ListProjectReque
 }
 func (UnimplementedProjectServer) mustEmbedUnimplementedProjectServer() {}
 
-// UnsafeProjectServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeProjectServer may be embedded to opt out of forward compatibility for this scheduler.
 // Use of this interface is not recommended, as added methods to ProjectServer will
 // result in compilation errors.
 type UnsafeProjectServer interface {
@@ -225,7 +225,7 @@ func _Project_ListProject_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-// Project_ServiceDesc is the grpc.ServiceDesc for Project service.
+// Project_ServiceDesc is the grpc.ServiceDesc for Project scheduler.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Project_ServiceDesc = grpc.ServiceDesc{

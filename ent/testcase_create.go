@@ -318,11 +318,11 @@ func (tcc *TestCaseCreate) createSpec() (*TestCase, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := tcc.mutation.UpdateBy(); ok {
 		_spec.SetField(testcase.FieldUpdateBy, field.TypeUint32, value)
-		_node.UpdateBy = &value
+		_node.UpdateBy = value
 	}
 	if value, ok := tcc.mutation.UpdateAt(); ok {
 		_spec.SetField(testcase.FieldUpdateAt, field.TypeTime, value)
-		_node.UpdateAt = &value
+		_node.UpdateAt = value
 	}
 	if value, ok := tcc.mutation.Status(); ok {
 		_spec.SetField(testcase.FieldStatus, field.TypeInt8, value)

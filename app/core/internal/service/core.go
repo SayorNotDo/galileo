@@ -9,7 +9,7 @@ import (
 
 func (c *CoreService) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterReply, error) {
 	// add trace
-	tr := otel.Tracer("service")
+	tr := otel.Tracer("scheduler")
 	ctx, span := tr.Start(ctx, "get user info")
 	span.SpanContext()
 	defer span.End()
@@ -18,7 +18,7 @@ func (c *CoreService) Register(ctx context.Context, req *v1.RegisterRequest) (*v
 
 func (c *CoreService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginReply, error) {
 	// add trace
-	tr := otel.Tracer("service")
+	tr := otel.Tracer("scheduler")
 	ctx, span := tr.Start(ctx, "login")
 	span.SpanContext()
 	defer span.End()
@@ -27,7 +27,7 @@ func (c *CoreService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 
 func (c *CoreService) Logout(ctx context.Context, req *v1.LogoutRequest) (*emptypb.Empty, error) {
 	// add trace
-	tr := otel.Tracer("service")
+	tr := otel.Tracer("scheduler")
 	ctx, span := tr.Start(ctx, "logout")
 	span.SpanContext()
 	defer span.End()

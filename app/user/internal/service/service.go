@@ -2,5 +2,5 @@ package service
 
 import "github.com/google/wire"
 
-// ProviderSet is service providers.
+// ProviderSet is scheduler providers.
 var ProviderSet = wire.NewSet(NewUserService)

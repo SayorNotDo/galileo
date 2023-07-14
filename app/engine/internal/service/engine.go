@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	pb "galileo/api/engine/v1"
+	v1 "galileo/api/engine/v1"
 	taskV1 "galileo/api/management/task/v1"
 	"galileo/app/engine/internal/biz"
 	. "galileo/pkg/errResponse"
@@ -11,7 +11,7 @@ import (
 )
 
 type EngineService struct {
-	pb.UnimplementedEngineServer
+	v1.UnimplementedEngineServer
 
 	uc  *biz.EngineUseCase
 	log *log.Helper
@@ -24,7 +24,7 @@ func NewEngineService(uc *biz.EngineUseCase, logger log.Logger) *EngineService {
 	}
 }
 
-func (s *EngineService) RunJob(ctx context.Context, req *pb.RunJobRequest) (*pb.RunJobReply, error) {
+func (s *EngineService) RunJob(ctx context.Context, req *v1.RunJobRequest) (*v1.RunJobReply, error) {
 	// TODO: query task from db
 	task, err := s.uc.TaskByID(ctx, req.TaskId)
 	if err != nil {
@@ -35,30 +35,30 @@ func (s *EngineService) RunJob(ctx context.Context, req *pb.RunJobRequest) (*pb.
 	println("testcaseSuites: ", testcaseSuites)
 	// TODO: Run testcase
 	// TODO: validate worker environment
-	// TODO: send job command through rabbitmq
-	// TODO: get callback from rabbitmq
+	// TODO: send job command
+	// TODO: get callback
 	// TODO: update task status
 	if ok, err := s.uc.UpdateTaskStatus(ctx, req.TaskId, taskV1.TaskStatus_RUNNING); !ok {
 		return nil, SetCustomizeErrMsg(ReasonRecordNotFound, err.Error())
 	}
 	// TODO: return response
-	return &pb.RunJobReply{
+	return &v1.RunJobReply{
 		Success: true,
 	}, nil
 }
 
-func (s *EngineService) BuildContainer(ctx context.Context, req *empty.Empty) (*pb.BuildContainerReply, error) {
+func (s *EngineService) BuildContainer(ctx context.Context, req *empty.Empty) (*v1.BuildContainerReply, error) {
 	container, err := s.uc.BuildContainer(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.BuildContainerReply{
+	return &v1.BuildContainerReply{
 		Id:    container.Id,
 		Name:  container.Name,
 		Image: container.Image,
 	}, nil
 }
 
-func (s *EngineService) TestEngine(ctx context.Context, req *empty.Empty) (*pb.TestEngineReply, error) {
-	return &pb.TestEngineReply{Hello: "Galileo"}, nil
+func (s *EngineService) TestEngine(ctx context.Context, req *empty.Empty) (*v1.TestEngineReply, error) {
+	return &v1.TestEngineReply{Hello: "Galileo"}, nil
 }

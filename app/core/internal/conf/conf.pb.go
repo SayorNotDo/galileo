@@ -30,7 +30,7 @@ type Bootstrap struct {
 	Data    *Data    `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	Trace   *Trace   `protobuf:"bytes,3,opt,name=trace,proto3" json:"trace,omitempty"`
 	Auth    *Auth    `protobuf:"bytes,4,opt,name=auth,proto3" json:"auth,omitempty"`
-	Service *Service `protobuf:"bytes,5,opt,name=service,proto3" json:"service,omitempty"`
+	Service *Service `protobuf:"bytes,5,opt,name=scheduler,proto3" json:"scheduler,omitempty"`
 }
 
 func (x *Bootstrap) Reset() {
@@ -901,7 +901,7 @@ var file_conf_conf_proto_depIdxs = []int32{
 	2,  // 1: core.api.Bootstrap.data:type_name -> core.api.Data
 	4,  // 2: core.api.Bootstrap.trace:type_name -> core.api.Trace
 	6,  // 3: core.api.Bootstrap.auth:type_name -> core.api.Auth
-	3,  // 4: core.api.Bootstrap.service:type_name -> core.api.Service
+	3,  // 4: core.api.Bootstrap.scheduler:type_name -> core.api.Service
 	7,  // 5: core.api.Server.http:type_name -> core.api.Server.HTTP
 	8,  // 6: core.api.Server.grpc:type_name -> core.api.Server.GRPC
 	9,  // 7: core.api.Data.database:type_name -> core.api.Data.Database

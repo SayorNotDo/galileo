@@ -10,7 +10,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
 	"strings"
-	"time"
 )
 
 type coreRepo struct {
@@ -70,7 +69,7 @@ func (r *coreRepo) CreateUser(c context.Context, user *biz.User) (*biz.User, err
 	return &biz.User{
 		Id:        createUser.Id,
 		Username:  createUser.Username,
-		CreatedAt: time.Unix(createUser.CreatedAt, 0),
+		CreatedAt: createUser.CreatedAt.AsTime(),
 	}, nil
 }
 

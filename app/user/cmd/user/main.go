@@ -25,7 +25,7 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name = "core.user.service"
+	Name = "core.user.scheduler"
 	// Version is the version of the compiled software.
 	Version = "user.v1"
 	// flagConf is the config flag.
@@ -78,9 +78,9 @@ func main() {
 	logger := log.With(log.NewStdLogger(os.Stdout),
 		"ts", log.DefaultTimestamp,
 		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
+		"scheduler.id", id,
+		"scheduler.name", Name,
+		"scheduler.version", Version,
 		"trace.id", tracing.TraceID(),
 		"span.id", tracing.SpanID(),
 	)
