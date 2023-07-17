@@ -95,9 +95,12 @@ func (s *TestcaseService) CreateTestcase(ctx context.Context, req *pb.CreateTest
 }
 
 func (s *TestcaseService) UpdateTestcase(ctx context.Context, req *pb.UpdateTestcaseRequest) (*pb.UpdateTestcaseReply, error) {
+	if _, err := s.uc.TestcaseById(ctx, req.Id); err != nil {
+		return nil, SetCustomizeErrMsg(ReasonRecordNotFound, err.Error())
+	}
 	updateTestcase, err := NewTestcase(req.Name, int8(req.Type), int8(req.Priority), req.Description, req.Url)
 	if err != nil {
-		return nil, SetCustomizeErrMsg(ReasonParamsError, err.Error())
+		return nil, err
 	}
 	if ret, _ := s.uc.TestcaseByName(ctx, req.Name); ret != nil {
 		return nil, SetCustomizeErrMsg(ReasonParamsError, "duplicated testcase name")

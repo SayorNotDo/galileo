@@ -6,7 +6,7 @@ info:
     title: Testcase API
     version: 0.0.1
 paths:
-    v1/api/testcase:
+    v1/api/management/testcase:
         put:
             tags:
                 - Testcase
@@ -53,7 +53,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/testcase/debug:
+    v1/api/management/testcase/debug:
         post:
             tags:
                 - Testcase
@@ -77,7 +77,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/testcase/loadFramework:
+    v1/api/management/testcase/loadFramework:
         post:
             tags:
                 - Testcase
@@ -101,7 +101,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/testcase/{id}:
+    v1/api/management/testcase/{id}:
         get:
             tags:
                 - Testcase

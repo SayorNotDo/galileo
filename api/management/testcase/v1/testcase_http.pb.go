@@ -35,11 +35,11 @@ type TestcaseHTTPServer interface {
 
 func RegisterTestcaseHTTPServer(s *http.Server, srv TestcaseHTTPServer) {
 	r := s.Route("/")
-	r.POST("v1/api/testcase", _Testcase_CreateTestcase0_HTTP_Handler(srv))
-	r.PUT("v1/api/testcase", _Testcase_UpdateTestcase0_HTTP_Handler(srv))
-	r.GET("v1/api/testcase/{id}", _Testcase_GetTestcaseById0_HTTP_Handler(srv))
-	r.POST("v1/api/testcase/debug", _Testcase_DebugTestcase0_HTTP_Handler(srv))
-	r.POST("v1/api/testcase/loadFramework", _Testcase_LoadFramework0_HTTP_Handler(srv))
+	r.POST("v1/api/management/testcase", _Testcase_CreateTestcase0_HTTP_Handler(srv))
+	r.PUT("v1/api/management/testcase", _Testcase_UpdateTestcase0_HTTP_Handler(srv))
+	r.GET("v1/api/management/testcase/{id}", _Testcase_GetTestcaseById0_HTTP_Handler(srv))
+	r.POST("v1/api/management/testcase/debug", _Testcase_DebugTestcase0_HTTP_Handler(srv))
+	r.POST("v1/api/management/testcase/loadFramework", _Testcase_LoadFramework0_HTTP_Handler(srv))
 }
 
 func _Testcase_CreateTestcase0_HTTP_Handler(srv TestcaseHTTPServer) func(ctx http.Context) error {
@@ -158,7 +158,7 @@ func NewTestcaseHTTPClient(client *http.Client) TestcaseHTTPClient {
 
 func (c *TestcaseHTTPClientImpl) CreateTestcase(ctx context.Context, in *CreateTestcaseRequest, opts ...http.CallOption) (*CreateTestcaseReply, error) {
 	var out CreateTestcaseReply
-	pattern := "v1/api/testcase"
+	pattern := "v1/api/management/testcase"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationTestcaseCreateTestcase))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -171,7 +171,7 @@ func (c *TestcaseHTTPClientImpl) CreateTestcase(ctx context.Context, in *CreateT
 
 func (c *TestcaseHTTPClientImpl) DebugTestcase(ctx context.Context, in *DebugTestcaseRequest, opts ...http.CallOption) (*DebugTestcaseReply, error) {
 	var out DebugTestcaseReply
-	pattern := "v1/api/testcase/debug"
+	pattern := "v1/api/management/testcase/debug"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationTestcaseDebugTestcase))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -184,7 +184,7 @@ func (c *TestcaseHTTPClientImpl) DebugTestcase(ctx context.Context, in *DebugTes
 
 func (c *TestcaseHTTPClientImpl) GetTestcaseById(ctx context.Context, in *GetTestcaseRequest, opts ...http.CallOption) (*GetTestcaseReply, error) {
 	var out GetTestcaseReply
-	pattern := "v1/api/testcase/{id}"
+	pattern := "v1/api/management/testcase/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationTestcaseGetTestcaseById))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -197,7 +197,7 @@ func (c *TestcaseHTTPClientImpl) GetTestcaseById(ctx context.Context, in *GetTes
 
 func (c *TestcaseHTTPClientImpl) LoadFramework(ctx context.Context, in *LoadFrameworkRequest, opts ...http.CallOption) (*LoadFrameworkReply, error) {
 	var out LoadFrameworkReply
-	pattern := "v1/api/testcase/loadFramework"
+	pattern := "v1/api/management/testcase/loadFramework"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationTestcaseLoadFramework))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -210,7 +210,7 @@ func (c *TestcaseHTTPClientImpl) LoadFramework(ctx context.Context, in *LoadFram
 
 func (c *TestcaseHTTPClientImpl) UpdateTestcase(ctx context.Context, in *UpdateTestcaseRequest, opts ...http.CallOption) (*UpdateTestcaseReply, error) {
 	var out UpdateTestcaseReply
-	pattern := "v1/api/testcase"
+	pattern := "v1/api/management/testcase"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationTestcaseUpdateTestcase))
 	opts = append(opts, http.PathTemplate(pattern))

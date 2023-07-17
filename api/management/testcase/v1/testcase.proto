@@ -13,34 +13,34 @@ option java_package = "api.management.testcase.v1";
 service Testcase {
   rpc CreateTestcase (CreateTestcaseRequest) returns (CreateTestcaseReply) {
     option(google.api.http) = {
-      post: "v1/api/testcase"
+      post: "v1/api/management/testcase"
       body: "*"
     };
   };
   rpc GenerateTestcase (GenerateTestcaseFileRequest) returns (GenerateTestcaseFileReply) {}
   rpc UpdateTestcase (UpdateTestcaseRequest) returns (UpdateTestcaseReply) {
     option(google.api.http) = {
-      put: "v1/api/testcase"
+      put: "v1/api/management/testcase"
       body: "*"
     };
   };
   rpc DeleteTestcase (DeleteTestcaseRequest) returns (DeleteTestcaseReply);
   rpc GetTestcaseById (GetTestcaseRequest) returns (GetTestcaseReply){
     option(google.api.http) = {
-      get: "v1/api/testcase/{id}"
+      get: "v1/api/management/testcase/{id}"
     };
   };
   rpc ListTestcase (ListTestcaseRequest) returns (ListTestcaseReply);
   rpc UploadTestcaseFile (google.protobuf.Empty) returns (UploadTestcaseReply);
   rpc DebugTestcase (DebugTestcaseRequest) returns (DebugTestcaseReply){
     option(google.api.http) = {
-      post: "v1/api/testcase/debug"
+      post: "v1/api/management/testcase/debug"
       body: "*"
     };
   };
   rpc LoadFramework (LoadFrameworkRequest) returns (LoadFrameworkReply){
     option(google.api.http) = {
-      post: "v1/api/testcase/loadFramework"
+      post: "v1/api/management/testcase/loadFramework"
       body: "*"
     };
   };
