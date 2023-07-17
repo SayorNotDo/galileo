@@ -2,6 +2,9 @@ package biz
 
 import (
 	"context"
+	"encoding/json"
+	. "galileo/pkg/errResponse"
+
 	"github.com/go-kratos/kratos/v2/log"
 	"time"
 )
@@ -63,5 +66,34 @@ func (uc *TestcaseUseCase) UploadTestcaseFile(ctx context.Context, fileName stri
 }
 
 func (uc *TestcaseUseCase) LoadFramework(ctx context.Context) {
-	
+
+}
+
+func (uc *TestcaseUseCase) TestcaseValidator(ctx context.Context, fileType, content string) error {
+	if fileType != ".json" {
+		return SetCustomizeErrMsg(ReasonParamsError, "only json files are allowed")
+	}
+	fieldList := []string{"framework", "expected_result", "data", "steps"}
+	var contentJson map[string]interface{}
+	if err := json.Unmarshal([]byte(content), &contentJson); err != nil {
+		return SetCustomizeErrMsg(ReasonParamsError, err.Error())
+	}
+	for _, v := range fieldList {
+		if _, ok := contentJson[v]; !ok {
+			return SetCustomizeErrMsg(ReasonParamsError, "field: "+v+" missing")
+		}
+	}
+	for i, v := range contentJson {
+		switch i {
+		case "framework", "expected_result", "data":
+			if _, ok := v.(string); !ok {
+				return SetCustomizeErrMsg(ReasonParamsError, "field type error")
+			}
+		case "steps":
+			if _, ok := v.([]interface{}); !ok {
+				return SetCustomizeErrMsg(ReasonParamsError, "field type error")
+			}
+		}
+	}
+	return nil
 }

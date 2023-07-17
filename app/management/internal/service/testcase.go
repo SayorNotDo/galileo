@@ -69,6 +69,9 @@ func (s *TestcaseService) UploadTestcaseFile(ctx http.Context) (err error) {
 	if _, err := io.Copy(buf, file); err != nil {
 		return err
 	}
+	if err := s.uc.TestcaseValidator(ctx, path.Ext(fileHeader.Filename), buf.String()); err != nil {
+		return err
+	}
 	url, err := s.uc.UploadTestcaseFile(ctx, fileName, path.Ext(fileHeader.Filename), buf.Bytes())
 	if err != nil {
 		return SetCustomizeErrMsg(ReasonSystemError, err.Error())
