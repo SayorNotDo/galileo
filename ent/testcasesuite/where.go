@@ -11,228 +11,228 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int64) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldEQ(FieldID, id))
+func ID(id int64) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int64) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldEQ(FieldID, id))
+func IDEQ(id int64) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int64) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldNEQ(FieldID, id))
+func IDNEQ(id int64) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int64) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldIn(FieldID, ids...))
+func IDIn(ids ...int64) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int64) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldNotIn(FieldID, ids...))
+func IDNotIn(ids ...int64) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int64) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldGT(FieldID, id))
+func IDGT(id int64) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int64) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldGTE(FieldID, id))
+func IDGTE(id int64) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int64) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldLT(FieldID, id))
+func IDLT(id int64) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int64) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldLTE(FieldID, id))
+func IDLTE(id int64) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldLTE(FieldID, id))
 }
 
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
-func Name(v string) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldEQ(FieldName, v))
+func Name(v string) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldEQ(FieldName, v))
 }
 
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
-func CreatedAt(v time.Time) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldEQ(FieldCreatedAt, v))
+func CreatedAt(v time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldEQ(FieldCreatedAt, v))
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldEQ(FieldCreatedBy, v))
+func CreatedBy(v uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
-func NameEQ(v string) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldEQ(FieldName, v))
+func NameEQ(v string) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldEQ(FieldName, v))
 }
 
 // NameNEQ applies the NEQ predicate on the "name" field.
-func NameNEQ(v string) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldNEQ(FieldName, v))
+func NameNEQ(v string) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldNEQ(FieldName, v))
 }
 
 // NameIn applies the In predicate on the "name" field.
-func NameIn(vs ...string) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldIn(FieldName, vs...))
+func NameIn(vs ...string) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldIn(FieldName, vs...))
 }
 
 // NameNotIn applies the NotIn predicate on the "name" field.
-func NameNotIn(vs ...string) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldNotIn(FieldName, vs...))
+func NameNotIn(vs ...string) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldNotIn(FieldName, vs...))
 }
 
 // NameGT applies the GT predicate on the "name" field.
-func NameGT(v string) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldGT(FieldName, v))
+func NameGT(v string) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldGT(FieldName, v))
 }
 
 // NameGTE applies the GTE predicate on the "name" field.
-func NameGTE(v string) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldGTE(FieldName, v))
+func NameGTE(v string) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldGTE(FieldName, v))
 }
 
 // NameLT applies the LT predicate on the "name" field.
-func NameLT(v string) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldLT(FieldName, v))
+func NameLT(v string) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldLT(FieldName, v))
 }
 
 // NameLTE applies the LTE predicate on the "name" field.
-func NameLTE(v string) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldLTE(FieldName, v))
+func NameLTE(v string) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldLTE(FieldName, v))
 }
 
 // NameContains applies the Contains predicate on the "name" field.
-func NameContains(v string) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldContains(FieldName, v))
+func NameContains(v string) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldContains(FieldName, v))
 }
 
 // NameHasPrefix applies the HasPrefix predicate on the "name" field.
-func NameHasPrefix(v string) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldHasPrefix(FieldName, v))
+func NameHasPrefix(v string) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldHasPrefix(FieldName, v))
 }
 
 // NameHasSuffix applies the HasSuffix predicate on the "name" field.
-func NameHasSuffix(v string) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldHasSuffix(FieldName, v))
+func NameHasSuffix(v string) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldHasSuffix(FieldName, v))
 }
 
 // NameEqualFold applies the EqualFold predicate on the "name" field.
-func NameEqualFold(v string) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldEqualFold(FieldName, v))
+func NameEqualFold(v string) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldEqualFold(FieldName, v))
 }
 
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
-func NameContainsFold(v string) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldContainsFold(FieldName, v))
+func NameContainsFold(v string) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldContainsFold(FieldName, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
-func CreatedAtEQ(v time.Time) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldEQ(FieldCreatedAt, v))
+func CreatedAtEQ(v time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldEQ(FieldCreatedAt, v))
 }
 
 // CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
-func CreatedAtNEQ(v time.Time) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldNEQ(FieldCreatedAt, v))
+func CreatedAtNEQ(v time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldNEQ(FieldCreatedAt, v))
 }
 
 // CreatedAtIn applies the In predicate on the "created_at" field.
-func CreatedAtIn(vs ...time.Time) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldIn(FieldCreatedAt, vs...))
+func CreatedAtIn(vs ...time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldIn(FieldCreatedAt, vs...))
 }
 
 // CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
-func CreatedAtNotIn(vs ...time.Time) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldNotIn(FieldCreatedAt, vs...))
+func CreatedAtNotIn(vs ...time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldNotIn(FieldCreatedAt, vs...))
 }
 
 // CreatedAtGT applies the GT predicate on the "created_at" field.
-func CreatedAtGT(v time.Time) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldGT(FieldCreatedAt, v))
+func CreatedAtGT(v time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldGT(FieldCreatedAt, v))
 }
 
 // CreatedAtGTE applies the GTE predicate on the "created_at" field.
-func CreatedAtGTE(v time.Time) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldGTE(FieldCreatedAt, v))
+func CreatedAtGTE(v time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldGTE(FieldCreatedAt, v))
 }
 
 // CreatedAtLT applies the LT predicate on the "created_at" field.
-func CreatedAtLT(v time.Time) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldLT(FieldCreatedAt, v))
+func CreatedAtLT(v time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldLT(FieldCreatedAt, v))
 }
 
 // CreatedAtLTE applies the LTE predicate on the "created_at" field.
-func CreatedAtLTE(v time.Time) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldLTE(FieldCreatedAt, v))
+func CreatedAtLTE(v time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldLTE(FieldCreatedAt, v))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldEQ(FieldCreatedBy, v))
+func CreatedByEQ(v uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldNEQ(FieldCreatedBy, v))
+func CreatedByNEQ(v uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldIn(FieldCreatedBy, vs...))
+func CreatedByIn(vs ...uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldNotIn(FieldCreatedBy, vs...))
+func CreatedByNotIn(vs ...uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldGT(FieldCreatedBy, v))
+func CreatedByGT(v uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldGTE(FieldCreatedBy, v))
+func CreatedByGTE(v uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldLT(FieldCreatedBy, v))
+func CreatedByLT(v uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(sql.FieldLTE(FieldCreatedBy, v))
+func CreatedByLTE(v uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldLTE(FieldCreatedBy, v))
 }
 
-// HasTestcases applies the HasEdge predicate on the "testcases" edge.
-func HasTestcases() predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(func(s *sql.Selector) {
+// HasTestcase applies the HasEdge predicate on the "testcase" edge.
+func HasTestcase() predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, TestcasesTable, TestcasesPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, false, TestcaseTable, TestcasePrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasTestcasesWith applies the HasEdge predicate on the "testcases" edge with a given conditions (other predicates).
-func HasTestcasesWith(preds ...predicate.TestCase) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(func(s *sql.Selector) {
+// HasTestcaseWith applies the HasEdge predicate on the "testcase" edge with a given conditions (other predicates).
+func HasTestcaseWith(preds ...predicate.Testcase) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(TestcasesInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, TestcasesTable, TestcasesPrimaryKey...),
+			sqlgraph.To(TestcaseInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, TestcaseTable, TestcasePrimaryKey...),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
@@ -243,8 +243,8 @@ func HasTestcasesWith(preds ...predicate.TestCase) predicate.TestCaseSuite {
 }
 
 // And groups predicates with the AND operator between them.
-func And(predicates ...predicate.TestCaseSuite) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(func(s *sql.Selector) {
+func And(predicates ...predicate.TestcaseSuite) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(func(s *sql.Selector) {
 		s1 := s.Clone().SetP(nil)
 		for _, p := range predicates {
 			p(s1)
@@ -254,8 +254,8 @@ func And(predicates ...predicate.TestCaseSuite) predicate.TestCaseSuite {
 }
 
 // Or groups predicates with the OR operator between them.
-func Or(predicates ...predicate.TestCaseSuite) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(func(s *sql.Selector) {
+func Or(predicates ...predicate.TestcaseSuite) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(func(s *sql.Selector) {
 		s1 := s.Clone().SetP(nil)
 		for i, p := range predicates {
 			if i > 0 {
@@ -268,8 +268,8 @@ func Or(predicates ...predicate.TestCaseSuite) predicate.TestCaseSuite {
 }
 
 // Not applies the not operator on the given predicate.
-func Not(p predicate.TestCaseSuite) predicate.TestCaseSuite {
-	return predicate.TestCaseSuite(func(s *sql.Selector) {
+func Not(p predicate.TestcaseSuite) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(func(s *sql.Selector) {
 		p(s.Not())
 	})
 }

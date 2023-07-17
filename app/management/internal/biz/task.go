@@ -18,9 +18,13 @@ type Task struct {
 	Status         int8
 	CreatedAt      time.Time
 	CreatedBy      uint32
+	Assignee       uint32
+	Config         string
 	UpdatedAt      time.Time
 	CompletedAt    time.Time
 	DeletedAt      time.Time
+	StartTime      time.Time
+	Deadline       time.Time
 	DeletedBy      uint32
 	Description    string
 	TestcaseSuites []int64

@@ -28,7 +28,13 @@ func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (bool, error)
 		SetName(task.Name).
 		SetType(task.Type).
 		SetRank(task.Rank).
+		SetAssignee(task.Assignee).
+		SetConfig(task.Config).
+		SetStartTime(task.StartTime).
+		SetDeadline(task.Deadline).
 		SetDescription(task.Description).
+		ClearTestcaseSuite().
+		AddTestcaseSuiteIDs(task.TestcaseSuites...).
 		Save(ctx); err != nil {
 		return false, err
 	}

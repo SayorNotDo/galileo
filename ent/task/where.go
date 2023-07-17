@@ -950,7 +950,7 @@ func DescriptionContainsFold(v string) predicate.Task {
 	return predicate.Task(sql.FieldContainsFold(FieldDescription, v))
 }
 
-// HasTestcaseSuite applies the HasEdge predicate on the "testcaseSuite" edge.
+// HasTestcaseSuite applies the HasEdge predicate on the "testcase_suite" edge.
 func HasTestcaseSuite() predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
@@ -961,8 +961,8 @@ func HasTestcaseSuite() predicate.Task {
 	})
 }
 
-// HasTestcaseSuiteWith applies the HasEdge predicate on the "testcaseSuite" edge with a given conditions (other predicates).
-func HasTestcaseSuiteWith(preds ...predicate.TestCaseSuite) predicate.Task {
+// HasTestcaseSuiteWith applies the HasEdge predicate on the "testcase_suite" edge with a given conditions (other predicates).
+func HasTestcaseSuiteWith(preds ...predicate.TestcaseSuite) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),

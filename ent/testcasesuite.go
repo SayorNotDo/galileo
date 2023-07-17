@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// TestCaseSuite is the model entity for the TestCaseSuite schema.
-type TestCaseSuite struct {
+// TestcaseSuite is the model entity for the TestcaseSuite schema.
+type TestcaseSuite struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int64 `json:"id,omitempty"`
@@ -23,31 +23,31 @@ type TestCaseSuite struct {
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy uint32 `json:"created_by,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the TestCaseSuiteQuery when eager-loading is set.
-	Edges               TestCaseSuiteEdges `json:"edges"`
+	// The values are being populated by the TestcaseSuiteQuery when eager-loading is set.
+	Edges               TestcaseSuiteEdges `json:"edges"`
 	task_testcase_suite *int64
 }
 
-// TestCaseSuiteEdges holds the relations/edges for other nodes in the graph.
-type TestCaseSuiteEdges struct {
-	// Testcases holds the value of the testcases edge.
-	Testcases []*TestCase `json:"testcases,omitempty"`
+// TestcaseSuiteEdges holds the relations/edges for other nodes in the graph.
+type TestcaseSuiteEdges struct {
+	// Testcase holds the value of the testcase edge.
+	Testcase []*Testcase `json:"testcase,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
-// TestcasesOrErr returns the Testcases value or an error if the edge
+// TestcaseOrErr returns the Testcase value or an error if the edge
 // was not loaded in eager-loading.
-func (e TestCaseSuiteEdges) TestcasesOrErr() ([]*TestCase, error) {
+func (e TestcaseSuiteEdges) TestcaseOrErr() ([]*Testcase, error) {
 	if e.loadedTypes[0] {
-		return e.Testcases, nil
+		return e.Testcase, nil
 	}
-	return nil, &NotLoadedError{edge: "testcases"}
+	return nil, &NotLoadedError{edge: "testcase"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*TestCaseSuite) scanValues(columns []string) ([]any, error) {
+func (*TestcaseSuite) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
@@ -60,15 +60,15 @@ func (*TestCaseSuite) scanValues(columns []string) ([]any, error) {
 		case testcasesuite.ForeignKeys[0]: // task_testcase_suite
 			values[i] = new(sql.NullInt64)
 		default:
-			return nil, fmt.Errorf("unexpected column %q for type TestCaseSuite", columns[i])
+			return nil, fmt.Errorf("unexpected column %q for type TestcaseSuite", columns[i])
 		}
 	}
 	return values, nil
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the TestCaseSuite fields.
-func (tcs *TestCaseSuite) assignValues(columns []string, values []any) error {
+// to the TestcaseSuite fields.
+func (ts *TestcaseSuite) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -79,76 +79,76 @@ func (tcs *TestCaseSuite) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			tcs.ID = int64(value.Int64)
+			ts.ID = int64(value.Int64)
 		case testcasesuite.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				tcs.Name = value.String
+				ts.Name = value.String
 			}
 		case testcasesuite.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				tcs.CreatedAt = value.Time
+				ts.CreatedAt = value.Time
 			}
 		case testcasesuite.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				tcs.CreatedBy = uint32(value.Int64)
+				ts.CreatedBy = uint32(value.Int64)
 			}
 		case testcasesuite.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field task_testcase_suite", value)
 			} else if value.Valid {
-				tcs.task_testcase_suite = new(int64)
-				*tcs.task_testcase_suite = int64(value.Int64)
+				ts.task_testcase_suite = new(int64)
+				*ts.task_testcase_suite = int64(value.Int64)
 			}
 		}
 	}
 	return nil
 }
 
-// QueryTestcases queries the "testcases" edge of the TestCaseSuite entity.
-func (tcs *TestCaseSuite) QueryTestcases() *TestCaseQuery {
-	return NewTestCaseSuiteClient(tcs.config).QueryTestcases(tcs)
+// QueryTestcase queries the "testcase" edge of the TestcaseSuite entity.
+func (ts *TestcaseSuite) QueryTestcase() *TestcaseQuery {
+	return NewTestcaseSuiteClient(ts.config).QueryTestcase(ts)
 }
 
-// Update returns a builder for updating this TestCaseSuite.
-// Note that you need to call TestCaseSuite.Unwrap() before calling this method if this TestCaseSuite
+// Update returns a builder for updating this TestcaseSuite.
+// Note that you need to call TestcaseSuite.Unwrap() before calling this method if this TestcaseSuite
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (tcs *TestCaseSuite) Update() *TestCaseSuiteUpdateOne {
-	return NewTestCaseSuiteClient(tcs.config).UpdateOne(tcs)
+func (ts *TestcaseSuite) Update() *TestcaseSuiteUpdateOne {
+	return NewTestcaseSuiteClient(ts.config).UpdateOne(ts)
 }
 
-// Unwrap unwraps the TestCaseSuite entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the TestcaseSuite entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (tcs *TestCaseSuite) Unwrap() *TestCaseSuite {
-	_tx, ok := tcs.config.driver.(*txDriver)
+func (ts *TestcaseSuite) Unwrap() *TestcaseSuite {
+	_tx, ok := ts.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: TestCaseSuite is not a transactional entity")
+		panic("ent: TestcaseSuite is not a transactional entity")
 	}
-	tcs.config.driver = _tx.drv
-	return tcs
+	ts.config.driver = _tx.drv
+	return ts
 }
 
 // String implements the fmt.Stringer.
-func (tcs *TestCaseSuite) String() string {
+func (ts *TestcaseSuite) String() string {
 	var builder strings.Builder
-	builder.WriteString("TestCaseSuite(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", tcs.ID))
+	builder.WriteString("TestcaseSuite(")
+	builder.WriteString(fmt.Sprintf("id=%v, ", ts.ID))
 	builder.WriteString("name=")
-	builder.WriteString(tcs.Name)
+	builder.WriteString(ts.Name)
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
-	builder.WriteString(tcs.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(ts.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
-	builder.WriteString(fmt.Sprintf("%v", tcs.CreatedBy))
+	builder.WriteString(fmt.Sprintf("%v", ts.CreatedBy))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
-// TestCaseSuites is a parsable slice of TestCaseSuite.
-type TestCaseSuites []*TestCaseSuite
+// TestcaseSuites is a parsable slice of TestcaseSuite.
+type TestcaseSuites []*TestcaseSuite

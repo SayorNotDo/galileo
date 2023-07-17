@@ -9,6 +9,7 @@ import (
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"io"
 	"mime/multipart"
 	"path"
@@ -31,6 +32,10 @@ func NewTestcaseService(uc *biz.TestcaseUseCase, logger log.Logger) *TestcaseSer
 func NewTestcase(name string, caseType int8, priority int8, description string, url string) (biz.Testcase, error) {
 	if len(name) <= 0 {
 		return biz.Testcase{}, SetCustomizeErrMsg(ReasonParamsError, "testcase name must not be empty")
+	} else if caseType < 0 {
+		return biz.Testcase{}, SetCustomizeErrMsg(ReasonParamsError, "illegal testcase type")
+	} else if priority < 0 {
+		return biz.Testcase{}, SetCustomizeErrMsg(ReasonParamsError, "illegal testcase priority")
 	}
 	return biz.Testcase{
 		Name:        name,
@@ -71,10 +76,11 @@ func (s *TestcaseService) UploadTestcaseFile(ctx http.Context) (err error) {
 	return ctx.Result(20000, url)
 }
 
+// CreateTestcase creates a new Testcase, returns id, create time
 func (s *TestcaseService) CreateTestcase(ctx context.Context, req *pb.CreateTestcaseRequest) (*pb.CreateTestcaseReply, error) {
 	newTestcase, err := NewTestcase(req.Name, int8(req.Type), int8(req.Priority), req.Description, req.Url)
 	if err != nil {
-		return nil, SetCustomizeErrMsg(ReasonParamsError, err.Error())
+		return nil, err
 	}
 	if ret, _ := s.uc.TestcaseByName(ctx, req.Name); ret != nil {
 		return nil, SetCustomizeErrMsg(ReasonParamsError, "duplicated testcase name")
@@ -85,7 +91,7 @@ func (s *TestcaseService) CreateTestcase(ctx context.Context, req *pb.CreateTest
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonUnknownError, err.Error())
 	}
-	return &pb.CreateTestcaseReply{Id: res.Id, CreatedAt: res.CreatedAt.Unix()}, nil
+	return &pb.CreateTestcaseReply{Id: res.Id, CreatedAt: timestamppb.New(res.CreatedAt)}, nil
 }
 
 func (s *TestcaseService) UpdateTestcase(ctx context.Context, req *pb.UpdateTestcaseRequest) (*pb.UpdateTestcaseReply, error) {

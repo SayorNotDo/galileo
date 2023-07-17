@@ -16,264 +16,284 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// TestCaseUpdate is the builder for updating TestCase entities.
-type TestCaseUpdate struct {
+// TestcaseUpdate is the builder for updating Testcase entities.
+type TestcaseUpdate struct {
 	config
 	hooks    []Hook
-	mutation *TestCaseMutation
+	mutation *TestcaseMutation
 }
 
-// Where appends a list predicates to the TestCaseUpdate builder.
-func (tcu *TestCaseUpdate) Where(ps ...predicate.TestCase) *TestCaseUpdate {
-	tcu.mutation.Where(ps...)
-	return tcu
+// Where appends a list predicates to the TestcaseUpdate builder.
+func (tu *TestcaseUpdate) Where(ps ...predicate.Testcase) *TestcaseUpdate {
+	tu.mutation.Where(ps...)
+	return tu
 }
 
 // SetName sets the "name" field.
-func (tcu *TestCaseUpdate) SetName(s string) *TestCaseUpdate {
-	tcu.mutation.SetName(s)
-	return tcu
+func (tu *TestcaseUpdate) SetName(s string) *TestcaseUpdate {
+	tu.mutation.SetName(s)
+	return tu
 }
 
-// SetUpdateBy sets the "update_by" field.
-func (tcu *TestCaseUpdate) SetUpdateBy(u uint32) *TestCaseUpdate {
-	tcu.mutation.ResetUpdateBy()
-	tcu.mutation.SetUpdateBy(u)
-	return tcu
+// SetUpdatedBy sets the "updated_by" field.
+func (tu *TestcaseUpdate) SetUpdatedBy(u uint32) *TestcaseUpdate {
+	tu.mutation.ResetUpdatedBy()
+	tu.mutation.SetUpdatedBy(u)
+	return tu
 }
 
-// SetNillableUpdateBy sets the "update_by" field if the given value is not nil.
-func (tcu *TestCaseUpdate) SetNillableUpdateBy(u *uint32) *TestCaseUpdate {
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (tu *TestcaseUpdate) SetNillableUpdatedBy(u *uint32) *TestcaseUpdate {
 	if u != nil {
-		tcu.SetUpdateBy(*u)
+		tu.SetUpdatedBy(*u)
 	}
-	return tcu
+	return tu
 }
 
-// AddUpdateBy adds u to the "update_by" field.
-func (tcu *TestCaseUpdate) AddUpdateBy(u int32) *TestCaseUpdate {
-	tcu.mutation.AddUpdateBy(u)
-	return tcu
+// AddUpdatedBy adds u to the "updated_by" field.
+func (tu *TestcaseUpdate) AddUpdatedBy(u int32) *TestcaseUpdate {
+	tu.mutation.AddUpdatedBy(u)
+	return tu
 }
 
-// ClearUpdateBy clears the value of the "update_by" field.
-func (tcu *TestCaseUpdate) ClearUpdateBy() *TestCaseUpdate {
-	tcu.mutation.ClearUpdateBy()
-	return tcu
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (tu *TestcaseUpdate) ClearUpdatedBy() *TestcaseUpdate {
+	tu.mutation.ClearUpdatedBy()
+	return tu
 }
 
-// SetUpdateAt sets the "update_at" field.
-func (tcu *TestCaseUpdate) SetUpdateAt(t time.Time) *TestCaseUpdate {
-	tcu.mutation.SetUpdateAt(t)
-	return tcu
+// SetUpdatedAt sets the "updated_at" field.
+func (tu *TestcaseUpdate) SetUpdatedAt(t time.Time) *TestcaseUpdate {
+	tu.mutation.SetUpdatedAt(t)
+	return tu
 }
 
-// ClearUpdateAt clears the value of the "update_at" field.
-func (tcu *TestCaseUpdate) ClearUpdateAt() *TestCaseUpdate {
-	tcu.mutation.ClearUpdateAt()
-	return tcu
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (tu *TestcaseUpdate) ClearUpdatedAt() *TestcaseUpdate {
+	tu.mutation.ClearUpdatedAt()
+	return tu
 }
 
 // SetStatus sets the "status" field.
-func (tcu *TestCaseUpdate) SetStatus(i int8) *TestCaseUpdate {
-	tcu.mutation.ResetStatus()
-	tcu.mutation.SetStatus(i)
-	return tcu
+func (tu *TestcaseUpdate) SetStatus(i int8) *TestcaseUpdate {
+	tu.mutation.ResetStatus()
+	tu.mutation.SetStatus(i)
+	return tu
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (tcu *TestCaseUpdate) SetNillableStatus(i *int8) *TestCaseUpdate {
+func (tu *TestcaseUpdate) SetNillableStatus(i *int8) *TestcaseUpdate {
 	if i != nil {
-		tcu.SetStatus(*i)
+		tu.SetStatus(*i)
 	}
-	return tcu
+	return tu
 }
 
 // AddStatus adds i to the "status" field.
-func (tcu *TestCaseUpdate) AddStatus(i int8) *TestCaseUpdate {
-	tcu.mutation.AddStatus(i)
-	return tcu
+func (tu *TestcaseUpdate) AddStatus(i int8) *TestcaseUpdate {
+	tu.mutation.AddStatus(i)
+	return tu
 }
 
 // SetType sets the "type" field.
-func (tcu *TestCaseUpdate) SetType(i int8) *TestCaseUpdate {
-	tcu.mutation.ResetType()
-	tcu.mutation.SetType(i)
-	return tcu
+func (tu *TestcaseUpdate) SetType(i int8) *TestcaseUpdate {
+	tu.mutation.ResetType()
+	tu.mutation.SetType(i)
+	return tu
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (tcu *TestCaseUpdate) SetNillableType(i *int8) *TestCaseUpdate {
+func (tu *TestcaseUpdate) SetNillableType(i *int8) *TestcaseUpdate {
 	if i != nil {
-		tcu.SetType(*i)
+		tu.SetType(*i)
 	}
-	return tcu
+	return tu
 }
 
 // AddType adds i to the "type" field.
-func (tcu *TestCaseUpdate) AddType(i int8) *TestCaseUpdate {
-	tcu.mutation.AddType(i)
-	return tcu
+func (tu *TestcaseUpdate) AddType(i int8) *TestcaseUpdate {
+	tu.mutation.AddType(i)
+	return tu
 }
 
 // SetPriority sets the "priority" field.
-func (tcu *TestCaseUpdate) SetPriority(i int8) *TestCaseUpdate {
-	tcu.mutation.ResetPriority()
-	tcu.mutation.SetPriority(i)
-	return tcu
+func (tu *TestcaseUpdate) SetPriority(i int8) *TestcaseUpdate {
+	tu.mutation.ResetPriority()
+	tu.mutation.SetPriority(i)
+	return tu
 }
 
 // SetNillablePriority sets the "priority" field if the given value is not nil.
-func (tcu *TestCaseUpdate) SetNillablePriority(i *int8) *TestCaseUpdate {
+func (tu *TestcaseUpdate) SetNillablePriority(i *int8) *TestcaseUpdate {
 	if i != nil {
-		tcu.SetPriority(*i)
+		tu.SetPriority(*i)
 	}
-	return tcu
+	return tu
 }
 
 // AddPriority adds i to the "priority" field.
-func (tcu *TestCaseUpdate) AddPriority(i int8) *TestCaseUpdate {
-	tcu.mutation.AddPriority(i)
-	return tcu
+func (tu *TestcaseUpdate) AddPriority(i int8) *TestcaseUpdate {
+	tu.mutation.AddPriority(i)
+	return tu
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (tcu *TestCaseUpdate) SetDeletedAt(t time.Time) *TestCaseUpdate {
-	tcu.mutation.SetDeletedAt(t)
-	return tcu
+func (tu *TestcaseUpdate) SetDeletedAt(t time.Time) *TestcaseUpdate {
+	tu.mutation.SetDeletedAt(t)
+	return tu
 }
 
 // SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (tcu *TestCaseUpdate) SetNillableDeletedAt(t *time.Time) *TestCaseUpdate {
+func (tu *TestcaseUpdate) SetNillableDeletedAt(t *time.Time) *TestcaseUpdate {
 	if t != nil {
-		tcu.SetDeletedAt(*t)
+		tu.SetDeletedAt(*t)
 	}
-	return tcu
+	return tu
 }
 
 // ClearDeletedAt clears the value of the "deleted_at" field.
-func (tcu *TestCaseUpdate) ClearDeletedAt() *TestCaseUpdate {
-	tcu.mutation.ClearDeletedAt()
-	return tcu
+func (tu *TestcaseUpdate) ClearDeletedAt() *TestcaseUpdate {
+	tu.mutation.ClearDeletedAt()
+	return tu
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (tcu *TestCaseUpdate) SetDeletedBy(u uint32) *TestCaseUpdate {
-	tcu.mutation.ResetDeletedBy()
-	tcu.mutation.SetDeletedBy(u)
-	return tcu
+func (tu *TestcaseUpdate) SetDeletedBy(u uint32) *TestcaseUpdate {
+	tu.mutation.ResetDeletedBy()
+	tu.mutation.SetDeletedBy(u)
+	return tu
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (tcu *TestCaseUpdate) SetNillableDeletedBy(u *uint32) *TestCaseUpdate {
+func (tu *TestcaseUpdate) SetNillableDeletedBy(u *uint32) *TestcaseUpdate {
 	if u != nil {
-		tcu.SetDeletedBy(*u)
+		tu.SetDeletedBy(*u)
 	}
-	return tcu
+	return tu
 }
 
 // AddDeletedBy adds u to the "deleted_by" field.
-func (tcu *TestCaseUpdate) AddDeletedBy(u int32) *TestCaseUpdate {
-	tcu.mutation.AddDeletedBy(u)
-	return tcu
+func (tu *TestcaseUpdate) AddDeletedBy(u int32) *TestcaseUpdate {
+	tu.mutation.AddDeletedBy(u)
+	return tu
 }
 
 // ClearDeletedBy clears the value of the "deleted_by" field.
-func (tcu *TestCaseUpdate) ClearDeletedBy() *TestCaseUpdate {
-	tcu.mutation.ClearDeletedBy()
-	return tcu
+func (tu *TestcaseUpdate) ClearDeletedBy() *TestcaseUpdate {
+	tu.mutation.ClearDeletedBy()
+	return tu
 }
 
 // SetDescription sets the "description" field.
-func (tcu *TestCaseUpdate) SetDescription(s string) *TestCaseUpdate {
-	tcu.mutation.SetDescription(s)
-	return tcu
+func (tu *TestcaseUpdate) SetDescription(s string) *TestcaseUpdate {
+	tu.mutation.SetDescription(s)
+	return tu
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (tcu *TestCaseUpdate) SetNillableDescription(s *string) *TestCaseUpdate {
+func (tu *TestcaseUpdate) SetNillableDescription(s *string) *TestcaseUpdate {
 	if s != nil {
-		tcu.SetDescription(*s)
+		tu.SetDescription(*s)
 	}
-	return tcu
+	return tu
 }
 
 // ClearDescription clears the value of the "description" field.
-func (tcu *TestCaseUpdate) ClearDescription() *TestCaseUpdate {
-	tcu.mutation.ClearDescription()
-	return tcu
+func (tu *TestcaseUpdate) ClearDescription() *TestcaseUpdate {
+	tu.mutation.ClearDescription()
+	return tu
+}
+
+// SetLabel sets the "label" field.
+func (tu *TestcaseUpdate) SetLabel(s string) *TestcaseUpdate {
+	tu.mutation.SetLabel(s)
+	return tu
+}
+
+// SetNillableLabel sets the "label" field if the given value is not nil.
+func (tu *TestcaseUpdate) SetNillableLabel(s *string) *TestcaseUpdate {
+	if s != nil {
+		tu.SetLabel(*s)
+	}
+	return tu
+}
+
+// ClearLabel clears the value of the "label" field.
+func (tu *TestcaseUpdate) ClearLabel() *TestcaseUpdate {
+	tu.mutation.ClearLabel()
+	return tu
 }
 
 // SetURL sets the "url" field.
-func (tcu *TestCaseUpdate) SetURL(s string) *TestCaseUpdate {
-	tcu.mutation.SetURL(s)
-	return tcu
+func (tu *TestcaseUpdate) SetURL(s string) *TestcaseUpdate {
+	tu.mutation.SetURL(s)
+	return tu
 }
 
 // SetNillableURL sets the "url" field if the given value is not nil.
-func (tcu *TestCaseUpdate) SetNillableURL(s *string) *TestCaseUpdate {
+func (tu *TestcaseUpdate) SetNillableURL(s *string) *TestcaseUpdate {
 	if s != nil {
-		tcu.SetURL(*s)
+		tu.SetURL(*s)
 	}
-	return tcu
+	return tu
 }
 
 // ClearURL clears the value of the "url" field.
-func (tcu *TestCaseUpdate) ClearURL() *TestCaseUpdate {
-	tcu.mutation.ClearURL()
-	return tcu
+func (tu *TestcaseUpdate) ClearURL() *TestcaseUpdate {
+	tu.mutation.ClearURL()
+	return tu
 }
 
-// AddTestcaseSuiteIDs adds the "testcaseSuites" edge to the TestCaseSuite entity by IDs.
-func (tcu *TestCaseUpdate) AddTestcaseSuiteIDs(ids ...int64) *TestCaseUpdate {
-	tcu.mutation.AddTestcaseSuiteIDs(ids...)
-	return tcu
+// AddTestcaseSuiteIDs adds the "testcase_suite" edge to the TestcaseSuite entity by IDs.
+func (tu *TestcaseUpdate) AddTestcaseSuiteIDs(ids ...int64) *TestcaseUpdate {
+	tu.mutation.AddTestcaseSuiteIDs(ids...)
+	return tu
 }
 
-// AddTestcaseSuites adds the "testcaseSuites" edges to the TestCaseSuite entity.
-func (tcu *TestCaseUpdate) AddTestcaseSuites(t ...*TestCaseSuite) *TestCaseUpdate {
+// AddTestcaseSuite adds the "testcase_suite" edges to the TestcaseSuite entity.
+func (tu *TestcaseUpdate) AddTestcaseSuite(t ...*TestcaseSuite) *TestcaseUpdate {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return tcu.AddTestcaseSuiteIDs(ids...)
+	return tu.AddTestcaseSuiteIDs(ids...)
 }
 
-// Mutation returns the TestCaseMutation object of the builder.
-func (tcu *TestCaseUpdate) Mutation() *TestCaseMutation {
-	return tcu.mutation
+// Mutation returns the TestcaseMutation object of the builder.
+func (tu *TestcaseUpdate) Mutation() *TestcaseMutation {
+	return tu.mutation
 }
 
-// ClearTestcaseSuites clears all "testcaseSuites" edges to the TestCaseSuite entity.
-func (tcu *TestCaseUpdate) ClearTestcaseSuites() *TestCaseUpdate {
-	tcu.mutation.ClearTestcaseSuites()
-	return tcu
+// ClearTestcaseSuite clears all "testcase_suite" edges to the TestcaseSuite entity.
+func (tu *TestcaseUpdate) ClearTestcaseSuite() *TestcaseUpdate {
+	tu.mutation.ClearTestcaseSuite()
+	return tu
 }
 
-// RemoveTestcaseSuiteIDs removes the "testcaseSuites" edge to TestCaseSuite entities by IDs.
-func (tcu *TestCaseUpdate) RemoveTestcaseSuiteIDs(ids ...int64) *TestCaseUpdate {
-	tcu.mutation.RemoveTestcaseSuiteIDs(ids...)
-	return tcu
+// RemoveTestcaseSuiteIDs removes the "testcase_suite" edge to TestcaseSuite entities by IDs.
+func (tu *TestcaseUpdate) RemoveTestcaseSuiteIDs(ids ...int64) *TestcaseUpdate {
+	tu.mutation.RemoveTestcaseSuiteIDs(ids...)
+	return tu
 }
 
-// RemoveTestcaseSuites removes "testcaseSuites" edges to TestCaseSuite entities.
-func (tcu *TestCaseUpdate) RemoveTestcaseSuites(t ...*TestCaseSuite) *TestCaseUpdate {
+// RemoveTestcaseSuite removes "testcase_suite" edges to TestcaseSuite entities.
+func (tu *TestcaseUpdate) RemoveTestcaseSuite(t ...*TestcaseSuite) *TestcaseUpdate {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return tcu.RemoveTestcaseSuiteIDs(ids...)
+	return tu.RemoveTestcaseSuiteIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (tcu *TestCaseUpdate) Save(ctx context.Context) (int, error) {
-	tcu.defaults()
-	return withHooks[int, TestCaseMutation](ctx, tcu.sqlSave, tcu.mutation, tcu.hooks)
+func (tu *TestcaseUpdate) Save(ctx context.Context) (int, error) {
+	tu.defaults()
+	return withHooks[int, TestcaseMutation](ctx, tu.sqlSave, tu.mutation, tu.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tcu *TestCaseUpdate) SaveX(ctx context.Context) int {
-	affected, err := tcu.Save(ctx)
+func (tu *TestcaseUpdate) SaveX(ctx context.Context) int {
+	affected, err := tu.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -281,117 +301,123 @@ func (tcu *TestCaseUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (tcu *TestCaseUpdate) Exec(ctx context.Context) error {
-	_, err := tcu.Save(ctx)
+func (tu *TestcaseUpdate) Exec(ctx context.Context) error {
+	_, err := tu.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tcu *TestCaseUpdate) ExecX(ctx context.Context) {
-	if err := tcu.Exec(ctx); err != nil {
+func (tu *TestcaseUpdate) ExecX(ctx context.Context) {
+	if err := tu.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (tcu *TestCaseUpdate) defaults() {
-	if _, ok := tcu.mutation.UpdateAt(); !ok && !tcu.mutation.UpdateAtCleared() {
-		v := testcase.UpdateDefaultUpdateAt()
-		tcu.mutation.SetUpdateAt(v)
+func (tu *TestcaseUpdate) defaults() {
+	if _, ok := tu.mutation.UpdatedAt(); !ok && !tu.mutation.UpdatedAtCleared() {
+		v := testcase.UpdateDefaultUpdatedAt()
+		tu.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (tcu *TestCaseUpdate) check() error {
-	if v, ok := tcu.mutation.Name(); ok {
+func (tu *TestcaseUpdate) check() error {
+	if v, ok := tu.mutation.Name(); ok {
 		if err := testcase.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "TestCase.name": %w`, err)}
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Testcase.name": %w`, err)}
 		}
 	}
 	return nil
 }
 
-func (tcu *TestCaseUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := tcu.check(); err != nil {
+func (tu *TestcaseUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := tu.check(); err != nil {
 		return n, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(testcase.Table, testcase.Columns, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64))
-	if ps := tcu.mutation.predicates; len(ps) > 0 {
+	if ps := tu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := tcu.mutation.Name(); ok {
+	if value, ok := tu.mutation.Name(); ok {
 		_spec.SetField(testcase.FieldName, field.TypeString, value)
 	}
-	if value, ok := tcu.mutation.UpdateBy(); ok {
-		_spec.SetField(testcase.FieldUpdateBy, field.TypeUint32, value)
+	if value, ok := tu.mutation.UpdatedBy(); ok {
+		_spec.SetField(testcase.FieldUpdatedBy, field.TypeUint32, value)
 	}
-	if value, ok := tcu.mutation.AddedUpdateBy(); ok {
-		_spec.AddField(testcase.FieldUpdateBy, field.TypeUint32, value)
+	if value, ok := tu.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(testcase.FieldUpdatedBy, field.TypeUint32, value)
 	}
-	if tcu.mutation.UpdateByCleared() {
-		_spec.ClearField(testcase.FieldUpdateBy, field.TypeUint32)
+	if tu.mutation.UpdatedByCleared() {
+		_spec.ClearField(testcase.FieldUpdatedBy, field.TypeUint32)
 	}
-	if value, ok := tcu.mutation.UpdateAt(); ok {
-		_spec.SetField(testcase.FieldUpdateAt, field.TypeTime, value)
+	if value, ok := tu.mutation.UpdatedAt(); ok {
+		_spec.SetField(testcase.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if tcu.mutation.UpdateAtCleared() {
-		_spec.ClearField(testcase.FieldUpdateAt, field.TypeTime)
+	if tu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(testcase.FieldUpdatedAt, field.TypeTime)
 	}
-	if value, ok := tcu.mutation.Status(); ok {
+	if value, ok := tu.mutation.Status(); ok {
 		_spec.SetField(testcase.FieldStatus, field.TypeInt8, value)
 	}
-	if value, ok := tcu.mutation.AddedStatus(); ok {
+	if value, ok := tu.mutation.AddedStatus(); ok {
 		_spec.AddField(testcase.FieldStatus, field.TypeInt8, value)
 	}
-	if value, ok := tcu.mutation.GetType(); ok {
+	if value, ok := tu.mutation.GetType(); ok {
 		_spec.SetField(testcase.FieldType, field.TypeInt8, value)
 	}
-	if value, ok := tcu.mutation.AddedType(); ok {
+	if value, ok := tu.mutation.AddedType(); ok {
 		_spec.AddField(testcase.FieldType, field.TypeInt8, value)
 	}
-	if value, ok := tcu.mutation.Priority(); ok {
+	if value, ok := tu.mutation.Priority(); ok {
 		_spec.SetField(testcase.FieldPriority, field.TypeInt8, value)
 	}
-	if value, ok := tcu.mutation.AddedPriority(); ok {
+	if value, ok := tu.mutation.AddedPriority(); ok {
 		_spec.AddField(testcase.FieldPriority, field.TypeInt8, value)
 	}
-	if value, ok := tcu.mutation.DeletedAt(); ok {
+	if value, ok := tu.mutation.DeletedAt(); ok {
 		_spec.SetField(testcase.FieldDeletedAt, field.TypeTime, value)
 	}
-	if tcu.mutation.DeletedAtCleared() {
+	if tu.mutation.DeletedAtCleared() {
 		_spec.ClearField(testcase.FieldDeletedAt, field.TypeTime)
 	}
-	if value, ok := tcu.mutation.DeletedBy(); ok {
+	if value, ok := tu.mutation.DeletedBy(); ok {
 		_spec.SetField(testcase.FieldDeletedBy, field.TypeUint32, value)
 	}
-	if value, ok := tcu.mutation.AddedDeletedBy(); ok {
+	if value, ok := tu.mutation.AddedDeletedBy(); ok {
 		_spec.AddField(testcase.FieldDeletedBy, field.TypeUint32, value)
 	}
-	if tcu.mutation.DeletedByCleared() {
+	if tu.mutation.DeletedByCleared() {
 		_spec.ClearField(testcase.FieldDeletedBy, field.TypeUint32)
 	}
-	if value, ok := tcu.mutation.Description(); ok {
+	if value, ok := tu.mutation.Description(); ok {
 		_spec.SetField(testcase.FieldDescription, field.TypeString, value)
 	}
-	if tcu.mutation.DescriptionCleared() {
+	if tu.mutation.DescriptionCleared() {
 		_spec.ClearField(testcase.FieldDescription, field.TypeString)
 	}
-	if value, ok := tcu.mutation.URL(); ok {
+	if value, ok := tu.mutation.Label(); ok {
+		_spec.SetField(testcase.FieldLabel, field.TypeString, value)
+	}
+	if tu.mutation.LabelCleared() {
+		_spec.ClearField(testcase.FieldLabel, field.TypeString)
+	}
+	if value, ok := tu.mutation.URL(); ok {
 		_spec.SetField(testcase.FieldURL, field.TypeString, value)
 	}
-	if tcu.mutation.URLCleared() {
+	if tu.mutation.URLCleared() {
 		_spec.ClearField(testcase.FieldURL, field.TypeString)
 	}
-	if tcu.mutation.TestcaseSuitesCleared() {
+	if tu.mutation.TestcaseSuiteCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   testcase.TestcaseSuitesTable,
-			Columns: testcase.TestcaseSuitesPrimaryKey,
+			Table:   testcase.TestcaseSuiteTable,
+			Columns: testcase.TestcaseSuitePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
@@ -399,12 +425,12 @@ func (tcu *TestCaseUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tcu.mutation.RemovedTestcaseSuitesIDs(); len(nodes) > 0 && !tcu.mutation.TestcaseSuitesCleared() {
+	if nodes := tu.mutation.RemovedTestcaseSuiteIDs(); len(nodes) > 0 && !tu.mutation.TestcaseSuiteCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   testcase.TestcaseSuitesTable,
-			Columns: testcase.TestcaseSuitesPrimaryKey,
+			Table:   testcase.TestcaseSuiteTable,
+			Columns: testcase.TestcaseSuitePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
@@ -415,12 +441,12 @@ func (tcu *TestCaseUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tcu.mutation.TestcaseSuitesIDs(); len(nodes) > 0 {
+	if nodes := tu.mutation.TestcaseSuiteIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   testcase.TestcaseSuitesTable,
-			Columns: testcase.TestcaseSuitesPrimaryKey,
+			Table:   testcase.TestcaseSuiteTable,
+			Columns: testcase.TestcaseSuitePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
@@ -431,7 +457,7 @@ func (tcu *TestCaseUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, tcu.driver, _spec); err != nil {
+	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{testcase.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -439,276 +465,296 @@ func (tcu *TestCaseUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	tcu.mutation.done = true
+	tu.mutation.done = true
 	return n, nil
 }
 
-// TestCaseUpdateOne is the builder for updating a single TestCase entity.
-type TestCaseUpdateOne struct {
+// TestcaseUpdateOne is the builder for updating a single Testcase entity.
+type TestcaseUpdateOne struct {
 	config
 	fields   []string
 	hooks    []Hook
-	mutation *TestCaseMutation
+	mutation *TestcaseMutation
 }
 
 // SetName sets the "name" field.
-func (tcuo *TestCaseUpdateOne) SetName(s string) *TestCaseUpdateOne {
-	tcuo.mutation.SetName(s)
-	return tcuo
+func (tuo *TestcaseUpdateOne) SetName(s string) *TestcaseUpdateOne {
+	tuo.mutation.SetName(s)
+	return tuo
 }
 
-// SetUpdateBy sets the "update_by" field.
-func (tcuo *TestCaseUpdateOne) SetUpdateBy(u uint32) *TestCaseUpdateOne {
-	tcuo.mutation.ResetUpdateBy()
-	tcuo.mutation.SetUpdateBy(u)
-	return tcuo
+// SetUpdatedBy sets the "updated_by" field.
+func (tuo *TestcaseUpdateOne) SetUpdatedBy(u uint32) *TestcaseUpdateOne {
+	tuo.mutation.ResetUpdatedBy()
+	tuo.mutation.SetUpdatedBy(u)
+	return tuo
 }
 
-// SetNillableUpdateBy sets the "update_by" field if the given value is not nil.
-func (tcuo *TestCaseUpdateOne) SetNillableUpdateBy(u *uint32) *TestCaseUpdateOne {
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (tuo *TestcaseUpdateOne) SetNillableUpdatedBy(u *uint32) *TestcaseUpdateOne {
 	if u != nil {
-		tcuo.SetUpdateBy(*u)
+		tuo.SetUpdatedBy(*u)
 	}
-	return tcuo
+	return tuo
 }
 
-// AddUpdateBy adds u to the "update_by" field.
-func (tcuo *TestCaseUpdateOne) AddUpdateBy(u int32) *TestCaseUpdateOne {
-	tcuo.mutation.AddUpdateBy(u)
-	return tcuo
+// AddUpdatedBy adds u to the "updated_by" field.
+func (tuo *TestcaseUpdateOne) AddUpdatedBy(u int32) *TestcaseUpdateOne {
+	tuo.mutation.AddUpdatedBy(u)
+	return tuo
 }
 
-// ClearUpdateBy clears the value of the "update_by" field.
-func (tcuo *TestCaseUpdateOne) ClearUpdateBy() *TestCaseUpdateOne {
-	tcuo.mutation.ClearUpdateBy()
-	return tcuo
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (tuo *TestcaseUpdateOne) ClearUpdatedBy() *TestcaseUpdateOne {
+	tuo.mutation.ClearUpdatedBy()
+	return tuo
 }
 
-// SetUpdateAt sets the "update_at" field.
-func (tcuo *TestCaseUpdateOne) SetUpdateAt(t time.Time) *TestCaseUpdateOne {
-	tcuo.mutation.SetUpdateAt(t)
-	return tcuo
+// SetUpdatedAt sets the "updated_at" field.
+func (tuo *TestcaseUpdateOne) SetUpdatedAt(t time.Time) *TestcaseUpdateOne {
+	tuo.mutation.SetUpdatedAt(t)
+	return tuo
 }
 
-// ClearUpdateAt clears the value of the "update_at" field.
-func (tcuo *TestCaseUpdateOne) ClearUpdateAt() *TestCaseUpdateOne {
-	tcuo.mutation.ClearUpdateAt()
-	return tcuo
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (tuo *TestcaseUpdateOne) ClearUpdatedAt() *TestcaseUpdateOne {
+	tuo.mutation.ClearUpdatedAt()
+	return tuo
 }
 
 // SetStatus sets the "status" field.
-func (tcuo *TestCaseUpdateOne) SetStatus(i int8) *TestCaseUpdateOne {
-	tcuo.mutation.ResetStatus()
-	tcuo.mutation.SetStatus(i)
-	return tcuo
+func (tuo *TestcaseUpdateOne) SetStatus(i int8) *TestcaseUpdateOne {
+	tuo.mutation.ResetStatus()
+	tuo.mutation.SetStatus(i)
+	return tuo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (tcuo *TestCaseUpdateOne) SetNillableStatus(i *int8) *TestCaseUpdateOne {
+func (tuo *TestcaseUpdateOne) SetNillableStatus(i *int8) *TestcaseUpdateOne {
 	if i != nil {
-		tcuo.SetStatus(*i)
+		tuo.SetStatus(*i)
 	}
-	return tcuo
+	return tuo
 }
 
 // AddStatus adds i to the "status" field.
-func (tcuo *TestCaseUpdateOne) AddStatus(i int8) *TestCaseUpdateOne {
-	tcuo.mutation.AddStatus(i)
-	return tcuo
+func (tuo *TestcaseUpdateOne) AddStatus(i int8) *TestcaseUpdateOne {
+	tuo.mutation.AddStatus(i)
+	return tuo
 }
 
 // SetType sets the "type" field.
-func (tcuo *TestCaseUpdateOne) SetType(i int8) *TestCaseUpdateOne {
-	tcuo.mutation.ResetType()
-	tcuo.mutation.SetType(i)
-	return tcuo
+func (tuo *TestcaseUpdateOne) SetType(i int8) *TestcaseUpdateOne {
+	tuo.mutation.ResetType()
+	tuo.mutation.SetType(i)
+	return tuo
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (tcuo *TestCaseUpdateOne) SetNillableType(i *int8) *TestCaseUpdateOne {
+func (tuo *TestcaseUpdateOne) SetNillableType(i *int8) *TestcaseUpdateOne {
 	if i != nil {
-		tcuo.SetType(*i)
+		tuo.SetType(*i)
 	}
-	return tcuo
+	return tuo
 }
 
 // AddType adds i to the "type" field.
-func (tcuo *TestCaseUpdateOne) AddType(i int8) *TestCaseUpdateOne {
-	tcuo.mutation.AddType(i)
-	return tcuo
+func (tuo *TestcaseUpdateOne) AddType(i int8) *TestcaseUpdateOne {
+	tuo.mutation.AddType(i)
+	return tuo
 }
 
 // SetPriority sets the "priority" field.
-func (tcuo *TestCaseUpdateOne) SetPriority(i int8) *TestCaseUpdateOne {
-	tcuo.mutation.ResetPriority()
-	tcuo.mutation.SetPriority(i)
-	return tcuo
+func (tuo *TestcaseUpdateOne) SetPriority(i int8) *TestcaseUpdateOne {
+	tuo.mutation.ResetPriority()
+	tuo.mutation.SetPriority(i)
+	return tuo
 }
 
 // SetNillablePriority sets the "priority" field if the given value is not nil.
-func (tcuo *TestCaseUpdateOne) SetNillablePriority(i *int8) *TestCaseUpdateOne {
+func (tuo *TestcaseUpdateOne) SetNillablePriority(i *int8) *TestcaseUpdateOne {
 	if i != nil {
-		tcuo.SetPriority(*i)
+		tuo.SetPriority(*i)
 	}
-	return tcuo
+	return tuo
 }
 
 // AddPriority adds i to the "priority" field.
-func (tcuo *TestCaseUpdateOne) AddPriority(i int8) *TestCaseUpdateOne {
-	tcuo.mutation.AddPriority(i)
-	return tcuo
+func (tuo *TestcaseUpdateOne) AddPriority(i int8) *TestcaseUpdateOne {
+	tuo.mutation.AddPriority(i)
+	return tuo
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (tcuo *TestCaseUpdateOne) SetDeletedAt(t time.Time) *TestCaseUpdateOne {
-	tcuo.mutation.SetDeletedAt(t)
-	return tcuo
+func (tuo *TestcaseUpdateOne) SetDeletedAt(t time.Time) *TestcaseUpdateOne {
+	tuo.mutation.SetDeletedAt(t)
+	return tuo
 }
 
 // SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (tcuo *TestCaseUpdateOne) SetNillableDeletedAt(t *time.Time) *TestCaseUpdateOne {
+func (tuo *TestcaseUpdateOne) SetNillableDeletedAt(t *time.Time) *TestcaseUpdateOne {
 	if t != nil {
-		tcuo.SetDeletedAt(*t)
+		tuo.SetDeletedAt(*t)
 	}
-	return tcuo
+	return tuo
 }
 
 // ClearDeletedAt clears the value of the "deleted_at" field.
-func (tcuo *TestCaseUpdateOne) ClearDeletedAt() *TestCaseUpdateOne {
-	tcuo.mutation.ClearDeletedAt()
-	return tcuo
+func (tuo *TestcaseUpdateOne) ClearDeletedAt() *TestcaseUpdateOne {
+	tuo.mutation.ClearDeletedAt()
+	return tuo
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (tcuo *TestCaseUpdateOne) SetDeletedBy(u uint32) *TestCaseUpdateOne {
-	tcuo.mutation.ResetDeletedBy()
-	tcuo.mutation.SetDeletedBy(u)
-	return tcuo
+func (tuo *TestcaseUpdateOne) SetDeletedBy(u uint32) *TestcaseUpdateOne {
+	tuo.mutation.ResetDeletedBy()
+	tuo.mutation.SetDeletedBy(u)
+	return tuo
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (tcuo *TestCaseUpdateOne) SetNillableDeletedBy(u *uint32) *TestCaseUpdateOne {
+func (tuo *TestcaseUpdateOne) SetNillableDeletedBy(u *uint32) *TestcaseUpdateOne {
 	if u != nil {
-		tcuo.SetDeletedBy(*u)
+		tuo.SetDeletedBy(*u)
 	}
-	return tcuo
+	return tuo
 }
 
 // AddDeletedBy adds u to the "deleted_by" field.
-func (tcuo *TestCaseUpdateOne) AddDeletedBy(u int32) *TestCaseUpdateOne {
-	tcuo.mutation.AddDeletedBy(u)
-	return tcuo
+func (tuo *TestcaseUpdateOne) AddDeletedBy(u int32) *TestcaseUpdateOne {
+	tuo.mutation.AddDeletedBy(u)
+	return tuo
 }
 
 // ClearDeletedBy clears the value of the "deleted_by" field.
-func (tcuo *TestCaseUpdateOne) ClearDeletedBy() *TestCaseUpdateOne {
-	tcuo.mutation.ClearDeletedBy()
-	return tcuo
+func (tuo *TestcaseUpdateOne) ClearDeletedBy() *TestcaseUpdateOne {
+	tuo.mutation.ClearDeletedBy()
+	return tuo
 }
 
 // SetDescription sets the "description" field.
-func (tcuo *TestCaseUpdateOne) SetDescription(s string) *TestCaseUpdateOne {
-	tcuo.mutation.SetDescription(s)
-	return tcuo
+func (tuo *TestcaseUpdateOne) SetDescription(s string) *TestcaseUpdateOne {
+	tuo.mutation.SetDescription(s)
+	return tuo
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (tcuo *TestCaseUpdateOne) SetNillableDescription(s *string) *TestCaseUpdateOne {
+func (tuo *TestcaseUpdateOne) SetNillableDescription(s *string) *TestcaseUpdateOne {
 	if s != nil {
-		tcuo.SetDescription(*s)
+		tuo.SetDescription(*s)
 	}
-	return tcuo
+	return tuo
 }
 
 // ClearDescription clears the value of the "description" field.
-func (tcuo *TestCaseUpdateOne) ClearDescription() *TestCaseUpdateOne {
-	tcuo.mutation.ClearDescription()
-	return tcuo
+func (tuo *TestcaseUpdateOne) ClearDescription() *TestcaseUpdateOne {
+	tuo.mutation.ClearDescription()
+	return tuo
+}
+
+// SetLabel sets the "label" field.
+func (tuo *TestcaseUpdateOne) SetLabel(s string) *TestcaseUpdateOne {
+	tuo.mutation.SetLabel(s)
+	return tuo
+}
+
+// SetNillableLabel sets the "label" field if the given value is not nil.
+func (tuo *TestcaseUpdateOne) SetNillableLabel(s *string) *TestcaseUpdateOne {
+	if s != nil {
+		tuo.SetLabel(*s)
+	}
+	return tuo
+}
+
+// ClearLabel clears the value of the "label" field.
+func (tuo *TestcaseUpdateOne) ClearLabel() *TestcaseUpdateOne {
+	tuo.mutation.ClearLabel()
+	return tuo
 }
 
 // SetURL sets the "url" field.
-func (tcuo *TestCaseUpdateOne) SetURL(s string) *TestCaseUpdateOne {
-	tcuo.mutation.SetURL(s)
-	return tcuo
+func (tuo *TestcaseUpdateOne) SetURL(s string) *TestcaseUpdateOne {
+	tuo.mutation.SetURL(s)
+	return tuo
 }
 
 // SetNillableURL sets the "url" field if the given value is not nil.
-func (tcuo *TestCaseUpdateOne) SetNillableURL(s *string) *TestCaseUpdateOne {
+func (tuo *TestcaseUpdateOne) SetNillableURL(s *string) *TestcaseUpdateOne {
 	if s != nil {
-		tcuo.SetURL(*s)
+		tuo.SetURL(*s)
 	}
-	return tcuo
+	return tuo
 }
 
 // ClearURL clears the value of the "url" field.
-func (tcuo *TestCaseUpdateOne) ClearURL() *TestCaseUpdateOne {
-	tcuo.mutation.ClearURL()
-	return tcuo
+func (tuo *TestcaseUpdateOne) ClearURL() *TestcaseUpdateOne {
+	tuo.mutation.ClearURL()
+	return tuo
 }
 
-// AddTestcaseSuiteIDs adds the "testcaseSuites" edge to the TestCaseSuite entity by IDs.
-func (tcuo *TestCaseUpdateOne) AddTestcaseSuiteIDs(ids ...int64) *TestCaseUpdateOne {
-	tcuo.mutation.AddTestcaseSuiteIDs(ids...)
-	return tcuo
+// AddTestcaseSuiteIDs adds the "testcase_suite" edge to the TestcaseSuite entity by IDs.
+func (tuo *TestcaseUpdateOne) AddTestcaseSuiteIDs(ids ...int64) *TestcaseUpdateOne {
+	tuo.mutation.AddTestcaseSuiteIDs(ids...)
+	return tuo
 }
 
-// AddTestcaseSuites adds the "testcaseSuites" edges to the TestCaseSuite entity.
-func (tcuo *TestCaseUpdateOne) AddTestcaseSuites(t ...*TestCaseSuite) *TestCaseUpdateOne {
+// AddTestcaseSuite adds the "testcase_suite" edges to the TestcaseSuite entity.
+func (tuo *TestcaseUpdateOne) AddTestcaseSuite(t ...*TestcaseSuite) *TestcaseUpdateOne {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return tcuo.AddTestcaseSuiteIDs(ids...)
+	return tuo.AddTestcaseSuiteIDs(ids...)
 }
 
-// Mutation returns the TestCaseMutation object of the builder.
-func (tcuo *TestCaseUpdateOne) Mutation() *TestCaseMutation {
-	return tcuo.mutation
+// Mutation returns the TestcaseMutation object of the builder.
+func (tuo *TestcaseUpdateOne) Mutation() *TestcaseMutation {
+	return tuo.mutation
 }
 
-// ClearTestcaseSuites clears all "testcaseSuites" edges to the TestCaseSuite entity.
-func (tcuo *TestCaseUpdateOne) ClearTestcaseSuites() *TestCaseUpdateOne {
-	tcuo.mutation.ClearTestcaseSuites()
-	return tcuo
+// ClearTestcaseSuite clears all "testcase_suite" edges to the TestcaseSuite entity.
+func (tuo *TestcaseUpdateOne) ClearTestcaseSuite() *TestcaseUpdateOne {
+	tuo.mutation.ClearTestcaseSuite()
+	return tuo
 }
 
-// RemoveTestcaseSuiteIDs removes the "testcaseSuites" edge to TestCaseSuite entities by IDs.
-func (tcuo *TestCaseUpdateOne) RemoveTestcaseSuiteIDs(ids ...int64) *TestCaseUpdateOne {
-	tcuo.mutation.RemoveTestcaseSuiteIDs(ids...)
-	return tcuo
+// RemoveTestcaseSuiteIDs removes the "testcase_suite" edge to TestcaseSuite entities by IDs.
+func (tuo *TestcaseUpdateOne) RemoveTestcaseSuiteIDs(ids ...int64) *TestcaseUpdateOne {
+	tuo.mutation.RemoveTestcaseSuiteIDs(ids...)
+	return tuo
 }
 
-// RemoveTestcaseSuites removes "testcaseSuites" edges to TestCaseSuite entities.
-func (tcuo *TestCaseUpdateOne) RemoveTestcaseSuites(t ...*TestCaseSuite) *TestCaseUpdateOne {
+// RemoveTestcaseSuite removes "testcase_suite" edges to TestcaseSuite entities.
+func (tuo *TestcaseUpdateOne) RemoveTestcaseSuite(t ...*TestcaseSuite) *TestcaseUpdateOne {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return tcuo.RemoveTestcaseSuiteIDs(ids...)
+	return tuo.RemoveTestcaseSuiteIDs(ids...)
 }
 
-// Where appends a list predicates to the TestCaseUpdate builder.
-func (tcuo *TestCaseUpdateOne) Where(ps ...predicate.TestCase) *TestCaseUpdateOne {
-	tcuo.mutation.Where(ps...)
-	return tcuo
+// Where appends a list predicates to the TestcaseUpdate builder.
+func (tuo *TestcaseUpdateOne) Where(ps ...predicate.Testcase) *TestcaseUpdateOne {
+	tuo.mutation.Where(ps...)
+	return tuo
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (tcuo *TestCaseUpdateOne) Select(field string, fields ...string) *TestCaseUpdateOne {
-	tcuo.fields = append([]string{field}, fields...)
-	return tcuo
+func (tuo *TestcaseUpdateOne) Select(field string, fields ...string) *TestcaseUpdateOne {
+	tuo.fields = append([]string{field}, fields...)
+	return tuo
 }
 
-// Save executes the query and returns the updated TestCase entity.
-func (tcuo *TestCaseUpdateOne) Save(ctx context.Context) (*TestCase, error) {
-	tcuo.defaults()
-	return withHooks[*TestCase, TestCaseMutation](ctx, tcuo.sqlSave, tcuo.mutation, tcuo.hooks)
+// Save executes the query and returns the updated Testcase entity.
+func (tuo *TestcaseUpdateOne) Save(ctx context.Context) (*Testcase, error) {
+	tuo.defaults()
+	return withHooks[*Testcase, TestcaseMutation](ctx, tuo.sqlSave, tuo.mutation, tuo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tcuo *TestCaseUpdateOne) SaveX(ctx context.Context) *TestCase {
-	node, err := tcuo.Save(ctx)
+func (tuo *TestcaseUpdateOne) SaveX(ctx context.Context) *Testcase {
+	node, err := tuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -716,47 +762,47 @@ func (tcuo *TestCaseUpdateOne) SaveX(ctx context.Context) *TestCase {
 }
 
 // Exec executes the query on the entity.
-func (tcuo *TestCaseUpdateOne) Exec(ctx context.Context) error {
-	_, err := tcuo.Save(ctx)
+func (tuo *TestcaseUpdateOne) Exec(ctx context.Context) error {
+	_, err := tuo.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tcuo *TestCaseUpdateOne) ExecX(ctx context.Context) {
-	if err := tcuo.Exec(ctx); err != nil {
+func (tuo *TestcaseUpdateOne) ExecX(ctx context.Context) {
+	if err := tuo.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (tcuo *TestCaseUpdateOne) defaults() {
-	if _, ok := tcuo.mutation.UpdateAt(); !ok && !tcuo.mutation.UpdateAtCleared() {
-		v := testcase.UpdateDefaultUpdateAt()
-		tcuo.mutation.SetUpdateAt(v)
+func (tuo *TestcaseUpdateOne) defaults() {
+	if _, ok := tuo.mutation.UpdatedAt(); !ok && !tuo.mutation.UpdatedAtCleared() {
+		v := testcase.UpdateDefaultUpdatedAt()
+		tuo.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (tcuo *TestCaseUpdateOne) check() error {
-	if v, ok := tcuo.mutation.Name(); ok {
+func (tuo *TestcaseUpdateOne) check() error {
+	if v, ok := tuo.mutation.Name(); ok {
 		if err := testcase.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "TestCase.name": %w`, err)}
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Testcase.name": %w`, err)}
 		}
 	}
 	return nil
 }
 
-func (tcuo *TestCaseUpdateOne) sqlSave(ctx context.Context) (_node *TestCase, err error) {
-	if err := tcuo.check(); err != nil {
+func (tuo *TestcaseUpdateOne) sqlSave(ctx context.Context) (_node *Testcase, err error) {
+	if err := tuo.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(testcase.Table, testcase.Columns, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64))
-	id, ok := tcuo.mutation.ID()
+	id, ok := tuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TestCase.id" for update`)}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Testcase.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := tcuo.fields; len(fields) > 0 {
+	if fields := tuo.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, testcase.FieldID)
 		for _, f := range fields {
@@ -768,82 +814,88 @@ func (tcuo *TestCaseUpdateOne) sqlSave(ctx context.Context) (_node *TestCase, er
 			}
 		}
 	}
-	if ps := tcuo.mutation.predicates; len(ps) > 0 {
+	if ps := tuo.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := tcuo.mutation.Name(); ok {
+	if value, ok := tuo.mutation.Name(); ok {
 		_spec.SetField(testcase.FieldName, field.TypeString, value)
 	}
-	if value, ok := tcuo.mutation.UpdateBy(); ok {
-		_spec.SetField(testcase.FieldUpdateBy, field.TypeUint32, value)
+	if value, ok := tuo.mutation.UpdatedBy(); ok {
+		_spec.SetField(testcase.FieldUpdatedBy, field.TypeUint32, value)
 	}
-	if value, ok := tcuo.mutation.AddedUpdateBy(); ok {
-		_spec.AddField(testcase.FieldUpdateBy, field.TypeUint32, value)
+	if value, ok := tuo.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(testcase.FieldUpdatedBy, field.TypeUint32, value)
 	}
-	if tcuo.mutation.UpdateByCleared() {
-		_spec.ClearField(testcase.FieldUpdateBy, field.TypeUint32)
+	if tuo.mutation.UpdatedByCleared() {
+		_spec.ClearField(testcase.FieldUpdatedBy, field.TypeUint32)
 	}
-	if value, ok := tcuo.mutation.UpdateAt(); ok {
-		_spec.SetField(testcase.FieldUpdateAt, field.TypeTime, value)
+	if value, ok := tuo.mutation.UpdatedAt(); ok {
+		_spec.SetField(testcase.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if tcuo.mutation.UpdateAtCleared() {
-		_spec.ClearField(testcase.FieldUpdateAt, field.TypeTime)
+	if tuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(testcase.FieldUpdatedAt, field.TypeTime)
 	}
-	if value, ok := tcuo.mutation.Status(); ok {
+	if value, ok := tuo.mutation.Status(); ok {
 		_spec.SetField(testcase.FieldStatus, field.TypeInt8, value)
 	}
-	if value, ok := tcuo.mutation.AddedStatus(); ok {
+	if value, ok := tuo.mutation.AddedStatus(); ok {
 		_spec.AddField(testcase.FieldStatus, field.TypeInt8, value)
 	}
-	if value, ok := tcuo.mutation.GetType(); ok {
+	if value, ok := tuo.mutation.GetType(); ok {
 		_spec.SetField(testcase.FieldType, field.TypeInt8, value)
 	}
-	if value, ok := tcuo.mutation.AddedType(); ok {
+	if value, ok := tuo.mutation.AddedType(); ok {
 		_spec.AddField(testcase.FieldType, field.TypeInt8, value)
 	}
-	if value, ok := tcuo.mutation.Priority(); ok {
+	if value, ok := tuo.mutation.Priority(); ok {
 		_spec.SetField(testcase.FieldPriority, field.TypeInt8, value)
 	}
-	if value, ok := tcuo.mutation.AddedPriority(); ok {
+	if value, ok := tuo.mutation.AddedPriority(); ok {
 		_spec.AddField(testcase.FieldPriority, field.TypeInt8, value)
 	}
-	if value, ok := tcuo.mutation.DeletedAt(); ok {
+	if value, ok := tuo.mutation.DeletedAt(); ok {
 		_spec.SetField(testcase.FieldDeletedAt, field.TypeTime, value)
 	}
-	if tcuo.mutation.DeletedAtCleared() {
+	if tuo.mutation.DeletedAtCleared() {
 		_spec.ClearField(testcase.FieldDeletedAt, field.TypeTime)
 	}
-	if value, ok := tcuo.mutation.DeletedBy(); ok {
+	if value, ok := tuo.mutation.DeletedBy(); ok {
 		_spec.SetField(testcase.FieldDeletedBy, field.TypeUint32, value)
 	}
-	if value, ok := tcuo.mutation.AddedDeletedBy(); ok {
+	if value, ok := tuo.mutation.AddedDeletedBy(); ok {
 		_spec.AddField(testcase.FieldDeletedBy, field.TypeUint32, value)
 	}
-	if tcuo.mutation.DeletedByCleared() {
+	if tuo.mutation.DeletedByCleared() {
 		_spec.ClearField(testcase.FieldDeletedBy, field.TypeUint32)
 	}
-	if value, ok := tcuo.mutation.Description(); ok {
+	if value, ok := tuo.mutation.Description(); ok {
 		_spec.SetField(testcase.FieldDescription, field.TypeString, value)
 	}
-	if tcuo.mutation.DescriptionCleared() {
+	if tuo.mutation.DescriptionCleared() {
 		_spec.ClearField(testcase.FieldDescription, field.TypeString)
 	}
-	if value, ok := tcuo.mutation.URL(); ok {
+	if value, ok := tuo.mutation.Label(); ok {
+		_spec.SetField(testcase.FieldLabel, field.TypeString, value)
+	}
+	if tuo.mutation.LabelCleared() {
+		_spec.ClearField(testcase.FieldLabel, field.TypeString)
+	}
+	if value, ok := tuo.mutation.URL(); ok {
 		_spec.SetField(testcase.FieldURL, field.TypeString, value)
 	}
-	if tcuo.mutation.URLCleared() {
+	if tuo.mutation.URLCleared() {
 		_spec.ClearField(testcase.FieldURL, field.TypeString)
 	}
-	if tcuo.mutation.TestcaseSuitesCleared() {
+	if tuo.mutation.TestcaseSuiteCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   testcase.TestcaseSuitesTable,
-			Columns: testcase.TestcaseSuitesPrimaryKey,
+			Table:   testcase.TestcaseSuiteTable,
+			Columns: testcase.TestcaseSuitePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
@@ -851,12 +903,12 @@ func (tcuo *TestCaseUpdateOne) sqlSave(ctx context.Context) (_node *TestCase, er
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tcuo.mutation.RemovedTestcaseSuitesIDs(); len(nodes) > 0 && !tcuo.mutation.TestcaseSuitesCleared() {
+	if nodes := tuo.mutation.RemovedTestcaseSuiteIDs(); len(nodes) > 0 && !tuo.mutation.TestcaseSuiteCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   testcase.TestcaseSuitesTable,
-			Columns: testcase.TestcaseSuitesPrimaryKey,
+			Table:   testcase.TestcaseSuiteTable,
+			Columns: testcase.TestcaseSuitePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
@@ -867,12 +919,12 @@ func (tcuo *TestCaseUpdateOne) sqlSave(ctx context.Context) (_node *TestCase, er
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tcuo.mutation.TestcaseSuitesIDs(); len(nodes) > 0 {
+	if nodes := tuo.mutation.TestcaseSuiteIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   testcase.TestcaseSuitesTable,
-			Columns: testcase.TestcaseSuitesPrimaryKey,
+			Table:   testcase.TestcaseSuiteTable,
+			Columns: testcase.TestcaseSuitePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
@@ -883,10 +935,10 @@ func (tcuo *TestCaseUpdateOne) sqlSave(ctx context.Context) (_node *TestCase, er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &TestCase{config: tcuo.config}
+	_node = &Testcase{config: tuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, tcuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, tuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{testcase.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -894,6 +946,6 @@ func (tcuo *TestCaseUpdateOne) sqlSave(ctx context.Context) (_node *TestCase, er
 		}
 		return nil, err
 	}
-	tcuo.mutation.done = true
+	tuo.mutation.done = true
 	return _node, nil
 }

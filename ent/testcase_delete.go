@@ -12,64 +12,64 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// TestCaseDelete is the builder for deleting a TestCase entity.
-type TestCaseDelete struct {
+// TestcaseDelete is the builder for deleting a Testcase entity.
+type TestcaseDelete struct {
 	config
 	hooks    []Hook
-	mutation *TestCaseMutation
+	mutation *TestcaseMutation
 }
 
-// Where appends a list predicates to the TestCaseDelete builder.
-func (tcd *TestCaseDelete) Where(ps ...predicate.TestCase) *TestCaseDelete {
-	tcd.mutation.Where(ps...)
-	return tcd
+// Where appends a list predicates to the TestcaseDelete builder.
+func (td *TestcaseDelete) Where(ps ...predicate.Testcase) *TestcaseDelete {
+	td.mutation.Where(ps...)
+	return td
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (tcd *TestCaseDelete) Exec(ctx context.Context) (int, error) {
-	return withHooks[int, TestCaseMutation](ctx, tcd.sqlExec, tcd.mutation, tcd.hooks)
+func (td *TestcaseDelete) Exec(ctx context.Context) (int, error) {
+	return withHooks[int, TestcaseMutation](ctx, td.sqlExec, td.mutation, td.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tcd *TestCaseDelete) ExecX(ctx context.Context) int {
-	n, err := tcd.Exec(ctx)
+func (td *TestcaseDelete) ExecX(ctx context.Context) int {
+	n, err := td.Exec(ctx)
 	if err != nil {
 		panic(err)
 	}
 	return n
 }
 
-func (tcd *TestCaseDelete) sqlExec(ctx context.Context) (int, error) {
+func (td *TestcaseDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := sqlgraph.NewDeleteSpec(testcase.Table, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64))
-	if ps := tcd.mutation.predicates; len(ps) > 0 {
+	if ps := td.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	affected, err := sqlgraph.DeleteNodes(ctx, tcd.driver, _spec)
+	affected, err := sqlgraph.DeleteNodes(ctx, td.driver, _spec)
 	if err != nil && sqlgraph.IsConstraintError(err) {
 		err = &ConstraintError{msg: err.Error(), wrap: err}
 	}
-	tcd.mutation.done = true
+	td.mutation.done = true
 	return affected, err
 }
 
-// TestCaseDeleteOne is the builder for deleting a single TestCase entity.
-type TestCaseDeleteOne struct {
-	tcd *TestCaseDelete
+// TestcaseDeleteOne is the builder for deleting a single Testcase entity.
+type TestcaseDeleteOne struct {
+	td *TestcaseDelete
 }
 
-// Where appends a list predicates to the TestCaseDelete builder.
-func (tcdo *TestCaseDeleteOne) Where(ps ...predicate.TestCase) *TestCaseDeleteOne {
-	tcdo.tcd.mutation.Where(ps...)
-	return tcdo
+// Where appends a list predicates to the TestcaseDelete builder.
+func (tdo *TestcaseDeleteOne) Where(ps ...predicate.Testcase) *TestcaseDeleteOne {
+	tdo.td.mutation.Where(ps...)
+	return tdo
 }
 
 // Exec executes the deletion query.
-func (tcdo *TestCaseDeleteOne) Exec(ctx context.Context) error {
-	n, err := tcdo.tcd.Exec(ctx)
+func (tdo *TestcaseDeleteOne) Exec(ctx context.Context) error {
+	n, err := tdo.td.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
@@ -81,8 +81,8 @@ func (tcdo *TestCaseDeleteOne) Exec(ctx context.Context) error {
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tcdo *TestCaseDeleteOne) ExecX(ctx context.Context) {
-	if err := tcdo.Exec(ctx); err != nil {
+func (tdo *TestcaseDeleteOne) ExecX(ctx context.Context) {
+	if err := tdo.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

@@ -304,14 +304,14 @@ func (tu *TaskUpdate) ClearDescription() *TaskUpdate {
 	return tu
 }
 
-// AddTestcaseSuiteIDs adds the "testcaseSuite" edge to the TestCaseSuite entity by IDs.
+// AddTestcaseSuiteIDs adds the "testcase_suite" edge to the TestcaseSuite entity by IDs.
 func (tu *TaskUpdate) AddTestcaseSuiteIDs(ids ...int64) *TaskUpdate {
 	tu.mutation.AddTestcaseSuiteIDs(ids...)
 	return tu
 }
 
-// AddTestcaseSuite adds the "testcaseSuite" edges to the TestCaseSuite entity.
-func (tu *TaskUpdate) AddTestcaseSuite(t ...*TestCaseSuite) *TaskUpdate {
+// AddTestcaseSuite adds the "testcase_suite" edges to the TestcaseSuite entity.
+func (tu *TaskUpdate) AddTestcaseSuite(t ...*TestcaseSuite) *TaskUpdate {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -324,20 +324,20 @@ func (tu *TaskUpdate) Mutation() *TaskMutation {
 	return tu.mutation
 }
 
-// ClearTestcaseSuite clears all "testcaseSuite" edges to the TestCaseSuite entity.
+// ClearTestcaseSuite clears all "testcase_suite" edges to the TestcaseSuite entity.
 func (tu *TaskUpdate) ClearTestcaseSuite() *TaskUpdate {
 	tu.mutation.ClearTestcaseSuite()
 	return tu
 }
 
-// RemoveTestcaseSuiteIDs removes the "testcaseSuite" edge to TestCaseSuite entities by IDs.
+// RemoveTestcaseSuiteIDs removes the "testcase_suite" edge to TestcaseSuite entities by IDs.
 func (tu *TaskUpdate) RemoveTestcaseSuiteIDs(ids ...int64) *TaskUpdate {
 	tu.mutation.RemoveTestcaseSuiteIDs(ids...)
 	return tu
 }
 
-// RemoveTestcaseSuite removes "testcaseSuite" edges to TestCaseSuite entities.
-func (tu *TaskUpdate) RemoveTestcaseSuite(t ...*TestCaseSuite) *TaskUpdate {
+// RemoveTestcaseSuite removes "testcase_suite" edges to TestcaseSuite entities.
+func (tu *TaskUpdate) RemoveTestcaseSuite(t ...*TestcaseSuite) *TaskUpdate {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -830,14 +830,14 @@ func (tuo *TaskUpdateOne) ClearDescription() *TaskUpdateOne {
 	return tuo
 }
 
-// AddTestcaseSuiteIDs adds the "testcaseSuite" edge to the TestCaseSuite entity by IDs.
+// AddTestcaseSuiteIDs adds the "testcase_suite" edge to the TestcaseSuite entity by IDs.
 func (tuo *TaskUpdateOne) AddTestcaseSuiteIDs(ids ...int64) *TaskUpdateOne {
 	tuo.mutation.AddTestcaseSuiteIDs(ids...)
 	return tuo
 }
 
-// AddTestcaseSuite adds the "testcaseSuite" edges to the TestCaseSuite entity.
-func (tuo *TaskUpdateOne) AddTestcaseSuite(t ...*TestCaseSuite) *TaskUpdateOne {
+// AddTestcaseSuite adds the "testcase_suite" edges to the TestcaseSuite entity.
+func (tuo *TaskUpdateOne) AddTestcaseSuite(t ...*TestcaseSuite) *TaskUpdateOne {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -850,20 +850,20 @@ func (tuo *TaskUpdateOne) Mutation() *TaskMutation {
 	return tuo.mutation
 }
 
-// ClearTestcaseSuite clears all "testcaseSuite" edges to the TestCaseSuite entity.
+// ClearTestcaseSuite clears all "testcase_suite" edges to the TestcaseSuite entity.
 func (tuo *TaskUpdateOne) ClearTestcaseSuite() *TaskUpdateOne {
 	tuo.mutation.ClearTestcaseSuite()
 	return tuo
 }
 
-// RemoveTestcaseSuiteIDs removes the "testcaseSuite" edge to TestCaseSuite entities by IDs.
+// RemoveTestcaseSuiteIDs removes the "testcase_suite" edge to TestcaseSuite entities by IDs.
 func (tuo *TaskUpdateOne) RemoveTestcaseSuiteIDs(ids ...int64) *TaskUpdateOne {
 	tuo.mutation.RemoveTestcaseSuiteIDs(ids...)
 	return tuo
 }
 
-// RemoveTestcaseSuite removes "testcaseSuite" edges to TestCaseSuite entities.
-func (tuo *TaskUpdateOne) RemoveTestcaseSuite(t ...*TestCaseSuite) *TaskUpdateOne {
+// RemoveTestcaseSuite removes "testcase_suite" edges to TestcaseSuite entities.
+func (tuo *TaskUpdateOne) RemoveTestcaseSuite(t ...*TestcaseSuite) *TaskUpdateOne {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID

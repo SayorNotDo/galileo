@@ -49,10 +49,10 @@ type Client struct {
 	Project *ProjectClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
-	// TestCase is the client for interacting with the TestCase builders.
-	TestCase *TestCaseClient
-	// TestCaseSuite is the client for interacting with the TestCaseSuite builders.
-	TestCaseSuite *TestCaseSuiteClient
+	// Testcase is the client for interacting with the Testcase builders.
+	Testcase *TestcaseClient
+	// TestcaseSuite is the client for interacting with the TestcaseSuite builders.
+	TestcaseSuite *TestcaseSuiteClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 }
@@ -76,8 +76,8 @@ func (c *Client) init() {
 	c.Group = NewGroupClient(c.config)
 	c.Project = NewProjectClient(c.config)
 	c.Task = NewTaskClient(c.config)
-	c.TestCase = NewTestCaseClient(c.config)
-	c.TestCaseSuite = NewTestCaseSuiteClient(c.config)
+	c.Testcase = NewTestcaseClient(c.config)
+	c.TestcaseSuite = NewTestcaseSuiteClient(c.config)
 	c.User = NewUserClient(c.config)
 }
 
@@ -169,8 +169,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Group:         NewGroupClient(cfg),
 		Project:       NewProjectClient(cfg),
 		Task:          NewTaskClient(cfg),
-		TestCase:      NewTestCaseClient(cfg),
-		TestCaseSuite: NewTestCaseSuiteClient(cfg),
+		Testcase:      NewTestcaseClient(cfg),
+		TestcaseSuite: NewTestcaseSuiteClient(cfg),
 		User:          NewUserClient(cfg),
 	}, nil
 }
@@ -199,8 +199,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Group:         NewGroupClient(cfg),
 		Project:       NewProjectClient(cfg),
 		Task:          NewTaskClient(cfg),
-		TestCase:      NewTestCaseClient(cfg),
-		TestCaseSuite: NewTestCaseSuiteClient(cfg),
+		Testcase:      NewTestcaseClient(cfg),
+		TestcaseSuite: NewTestcaseSuiteClient(cfg),
 		User:          NewUserClient(cfg),
 	}, nil
 }
@@ -232,7 +232,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Api, c.ApiCategory, c.ApiHistory, c.ApiStatistics, c.ApiTag, c.Group,
-		c.Project, c.Task, c.TestCase, c.TestCaseSuite, c.User,
+		c.Project, c.Task, c.Testcase, c.TestcaseSuite, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -243,7 +243,7 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Api, c.ApiCategory, c.ApiHistory, c.ApiStatistics, c.ApiTag, c.Group,
-		c.Project, c.Task, c.TestCase, c.TestCaseSuite, c.User,
+		c.Project, c.Task, c.Testcase, c.TestcaseSuite, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -268,10 +268,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Project.mutate(ctx, m)
 	case *TaskMutation:
 		return c.Task.mutate(ctx, m)
-	case *TestCaseMutation:
-		return c.TestCase.mutate(ctx, m)
-	case *TestCaseSuiteMutation:
-		return c.TestCaseSuite.mutate(ctx, m)
+	case *TestcaseMutation:
+		return c.Testcase.mutate(ctx, m)
+	case *TestcaseSuiteMutation:
+		return c.TestcaseSuite.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	default:
@@ -1246,9 +1246,9 @@ func (c *TaskClient) GetX(ctx context.Context, id int64) *Task {
 	return obj
 }
 
-// QueryTestcaseSuite queries the testcaseSuite edge of a Task.
-func (c *TaskClient) QueryTestcaseSuite(t *Task) *TestCaseSuiteQuery {
-	query := (&TestCaseSuiteClient{config: c.config}).Query()
+// QueryTestcaseSuite queries the testcase_suite edge of a Task.
+func (c *TaskClient) QueryTestcaseSuite(t *Task) *TestcaseSuiteQuery {
+	query := (&TestcaseSuiteClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := t.ID
 		step := sqlgraph.NewStep(
@@ -1287,92 +1287,92 @@ func (c *TaskClient) mutate(ctx context.Context, m *TaskMutation) (Value, error)
 	}
 }
 
-// TestCaseClient is a client for the TestCase schema.
-type TestCaseClient struct {
+// TestcaseClient is a client for the Testcase schema.
+type TestcaseClient struct {
 	config
 }
 
-// NewTestCaseClient returns a client for the TestCase from the given config.
-func NewTestCaseClient(c config) *TestCaseClient {
-	return &TestCaseClient{config: c}
+// NewTestcaseClient returns a client for the Testcase from the given config.
+func NewTestcaseClient(c config) *TestcaseClient {
+	return &TestcaseClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
 // A call to `Use(f, g, h)` equals to `testcase.Hooks(f(g(h())))`.
-func (c *TestCaseClient) Use(hooks ...Hook) {
-	c.hooks.TestCase = append(c.hooks.TestCase, hooks...)
+func (c *TestcaseClient) Use(hooks ...Hook) {
+	c.hooks.Testcase = append(c.hooks.Testcase, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `testcase.Intercept(f(g(h())))`.
-func (c *TestCaseClient) Intercept(interceptors ...Interceptor) {
-	c.inters.TestCase = append(c.inters.TestCase, interceptors...)
+func (c *TestcaseClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Testcase = append(c.inters.Testcase, interceptors...)
 }
 
-// Create returns a builder for creating a TestCase entity.
-func (c *TestCaseClient) Create() *TestCaseCreate {
-	mutation := newTestCaseMutation(c.config, OpCreate)
-	return &TestCaseCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a Testcase entity.
+func (c *TestcaseClient) Create() *TestcaseCreate {
+	mutation := newTestcaseMutation(c.config, OpCreate)
+	return &TestcaseCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of TestCase entities.
-func (c *TestCaseClient) CreateBulk(builders ...*TestCaseCreate) *TestCaseCreateBulk {
-	return &TestCaseCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of Testcase entities.
+func (c *TestcaseClient) CreateBulk(builders ...*TestcaseCreate) *TestcaseCreateBulk {
+	return &TestcaseCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for TestCase.
-func (c *TestCaseClient) Update() *TestCaseUpdate {
-	mutation := newTestCaseMutation(c.config, OpUpdate)
-	return &TestCaseUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for Testcase.
+func (c *TestcaseClient) Update() *TestcaseUpdate {
+	mutation := newTestcaseMutation(c.config, OpUpdate)
+	return &TestcaseUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *TestCaseClient) UpdateOne(tc *TestCase) *TestCaseUpdateOne {
-	mutation := newTestCaseMutation(c.config, OpUpdateOne, withTestCase(tc))
-	return &TestCaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *TestcaseClient) UpdateOne(t *Testcase) *TestcaseUpdateOne {
+	mutation := newTestcaseMutation(c.config, OpUpdateOne, withTestcase(t))
+	return &TestcaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *TestCaseClient) UpdateOneID(id int64) *TestCaseUpdateOne {
-	mutation := newTestCaseMutation(c.config, OpUpdateOne, withTestCaseID(id))
-	return &TestCaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *TestcaseClient) UpdateOneID(id int64) *TestcaseUpdateOne {
+	mutation := newTestcaseMutation(c.config, OpUpdateOne, withTestcaseID(id))
+	return &TestcaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for TestCase.
-func (c *TestCaseClient) Delete() *TestCaseDelete {
-	mutation := newTestCaseMutation(c.config, OpDelete)
-	return &TestCaseDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for Testcase.
+func (c *TestcaseClient) Delete() *TestcaseDelete {
+	mutation := newTestcaseMutation(c.config, OpDelete)
+	return &TestcaseDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *TestCaseClient) DeleteOne(tc *TestCase) *TestCaseDeleteOne {
-	return c.DeleteOneID(tc.ID)
+func (c *TestcaseClient) DeleteOne(t *Testcase) *TestcaseDeleteOne {
+	return c.DeleteOneID(t.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *TestCaseClient) DeleteOneID(id int64) *TestCaseDeleteOne {
+func (c *TestcaseClient) DeleteOneID(id int64) *TestcaseDeleteOne {
 	builder := c.Delete().Where(testcase.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &TestCaseDeleteOne{builder}
+	return &TestcaseDeleteOne{builder}
 }
 
-// Query returns a query builder for TestCase.
-func (c *TestCaseClient) Query() *TestCaseQuery {
-	return &TestCaseQuery{
+// Query returns a query builder for Testcase.
+func (c *TestcaseClient) Query() *TestcaseQuery {
+	return &TestcaseQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeTestCase},
+		ctx:    &QueryContext{Type: TypeTestcase},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a TestCase entity by its id.
-func (c *TestCaseClient) Get(ctx context.Context, id int64) (*TestCase, error) {
+// Get returns a Testcase entity by its id.
+func (c *TestcaseClient) Get(ctx context.Context, id int64) (*Testcase, error) {
 	return c.Query().Where(testcase.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *TestCaseClient) GetX(ctx context.Context, id int64) *TestCase {
+func (c *TestcaseClient) GetX(ctx context.Context, id int64) *Testcase {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1380,133 +1380,133 @@ func (c *TestCaseClient) GetX(ctx context.Context, id int64) *TestCase {
 	return obj
 }
 
-// QueryTestcaseSuites queries the testcaseSuites edge of a TestCase.
-func (c *TestCaseClient) QueryTestcaseSuites(tc *TestCase) *TestCaseSuiteQuery {
-	query := (&TestCaseSuiteClient{config: c.config}).Query()
+// QueryTestcaseSuite queries the testcase_suite edge of a Testcase.
+func (c *TestcaseClient) QueryTestcaseSuite(t *Testcase) *TestcaseSuiteQuery {
+	query := (&TestcaseSuiteClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := tc.ID
+		id := t.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(testcase.Table, testcase.FieldID, id),
 			sqlgraph.To(testcasesuite.Table, testcasesuite.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, testcase.TestcaseSuitesTable, testcase.TestcaseSuitesPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, testcase.TestcaseSuiteTable, testcase.TestcaseSuitePrimaryKey...),
 		)
-		fromV = sqlgraph.Neighbors(tc.driver.Dialect(), step)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
 	}
 	return query
 }
 
 // Hooks returns the client hooks.
-func (c *TestCaseClient) Hooks() []Hook {
-	return c.hooks.TestCase
+func (c *TestcaseClient) Hooks() []Hook {
+	return c.hooks.Testcase
 }
 
 // Interceptors returns the client interceptors.
-func (c *TestCaseClient) Interceptors() []Interceptor {
-	return c.inters.TestCase
+func (c *TestcaseClient) Interceptors() []Interceptor {
+	return c.inters.Testcase
 }
 
-func (c *TestCaseClient) mutate(ctx context.Context, m *TestCaseMutation) (Value, error) {
+func (c *TestcaseClient) mutate(ctx context.Context, m *TestcaseMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&TestCaseCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&TestcaseCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&TestCaseUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&TestcaseUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&TestCaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&TestcaseUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&TestCaseDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&TestcaseDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("ent: unknown TestCase mutation op: %q", m.Op())
+		return nil, fmt.Errorf("ent: unknown Testcase mutation op: %q", m.Op())
 	}
 }
 
-// TestCaseSuiteClient is a client for the TestCaseSuite schema.
-type TestCaseSuiteClient struct {
+// TestcaseSuiteClient is a client for the TestcaseSuite schema.
+type TestcaseSuiteClient struct {
 	config
 }
 
-// NewTestCaseSuiteClient returns a client for the TestCaseSuite from the given config.
-func NewTestCaseSuiteClient(c config) *TestCaseSuiteClient {
-	return &TestCaseSuiteClient{config: c}
+// NewTestcaseSuiteClient returns a client for the TestcaseSuite from the given config.
+func NewTestcaseSuiteClient(c config) *TestcaseSuiteClient {
+	return &TestcaseSuiteClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
 // A call to `Use(f, g, h)` equals to `testcasesuite.Hooks(f(g(h())))`.
-func (c *TestCaseSuiteClient) Use(hooks ...Hook) {
-	c.hooks.TestCaseSuite = append(c.hooks.TestCaseSuite, hooks...)
+func (c *TestcaseSuiteClient) Use(hooks ...Hook) {
+	c.hooks.TestcaseSuite = append(c.hooks.TestcaseSuite, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
 // A call to `Intercept(f, g, h)` equals to `testcasesuite.Intercept(f(g(h())))`.
-func (c *TestCaseSuiteClient) Intercept(interceptors ...Interceptor) {
-	c.inters.TestCaseSuite = append(c.inters.TestCaseSuite, interceptors...)
+func (c *TestcaseSuiteClient) Intercept(interceptors ...Interceptor) {
+	c.inters.TestcaseSuite = append(c.inters.TestcaseSuite, interceptors...)
 }
 
-// Create returns a builder for creating a TestCaseSuite entity.
-func (c *TestCaseSuiteClient) Create() *TestCaseSuiteCreate {
-	mutation := newTestCaseSuiteMutation(c.config, OpCreate)
-	return &TestCaseSuiteCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a TestcaseSuite entity.
+func (c *TestcaseSuiteClient) Create() *TestcaseSuiteCreate {
+	mutation := newTestcaseSuiteMutation(c.config, OpCreate)
+	return &TestcaseSuiteCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of TestCaseSuite entities.
-func (c *TestCaseSuiteClient) CreateBulk(builders ...*TestCaseSuiteCreate) *TestCaseSuiteCreateBulk {
-	return &TestCaseSuiteCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of TestcaseSuite entities.
+func (c *TestcaseSuiteClient) CreateBulk(builders ...*TestcaseSuiteCreate) *TestcaseSuiteCreateBulk {
+	return &TestcaseSuiteCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for TestCaseSuite.
-func (c *TestCaseSuiteClient) Update() *TestCaseSuiteUpdate {
-	mutation := newTestCaseSuiteMutation(c.config, OpUpdate)
-	return &TestCaseSuiteUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for TestcaseSuite.
+func (c *TestcaseSuiteClient) Update() *TestcaseSuiteUpdate {
+	mutation := newTestcaseSuiteMutation(c.config, OpUpdate)
+	return &TestcaseSuiteUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *TestCaseSuiteClient) UpdateOne(tcs *TestCaseSuite) *TestCaseSuiteUpdateOne {
-	mutation := newTestCaseSuiteMutation(c.config, OpUpdateOne, withTestCaseSuite(tcs))
-	return &TestCaseSuiteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *TestcaseSuiteClient) UpdateOne(ts *TestcaseSuite) *TestcaseSuiteUpdateOne {
+	mutation := newTestcaseSuiteMutation(c.config, OpUpdateOne, withTestcaseSuite(ts))
+	return &TestcaseSuiteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *TestCaseSuiteClient) UpdateOneID(id int64) *TestCaseSuiteUpdateOne {
-	mutation := newTestCaseSuiteMutation(c.config, OpUpdateOne, withTestCaseSuiteID(id))
-	return &TestCaseSuiteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *TestcaseSuiteClient) UpdateOneID(id int64) *TestcaseSuiteUpdateOne {
+	mutation := newTestcaseSuiteMutation(c.config, OpUpdateOne, withTestcaseSuiteID(id))
+	return &TestcaseSuiteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for TestCaseSuite.
-func (c *TestCaseSuiteClient) Delete() *TestCaseSuiteDelete {
-	mutation := newTestCaseSuiteMutation(c.config, OpDelete)
-	return &TestCaseSuiteDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for TestcaseSuite.
+func (c *TestcaseSuiteClient) Delete() *TestcaseSuiteDelete {
+	mutation := newTestcaseSuiteMutation(c.config, OpDelete)
+	return &TestcaseSuiteDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *TestCaseSuiteClient) DeleteOne(tcs *TestCaseSuite) *TestCaseSuiteDeleteOne {
-	return c.DeleteOneID(tcs.ID)
+func (c *TestcaseSuiteClient) DeleteOne(ts *TestcaseSuite) *TestcaseSuiteDeleteOne {
+	return c.DeleteOneID(ts.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *TestCaseSuiteClient) DeleteOneID(id int64) *TestCaseSuiteDeleteOne {
+func (c *TestcaseSuiteClient) DeleteOneID(id int64) *TestcaseSuiteDeleteOne {
 	builder := c.Delete().Where(testcasesuite.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &TestCaseSuiteDeleteOne{builder}
+	return &TestcaseSuiteDeleteOne{builder}
 }
 
-// Query returns a query builder for TestCaseSuite.
-func (c *TestCaseSuiteClient) Query() *TestCaseSuiteQuery {
-	return &TestCaseSuiteQuery{
+// Query returns a query builder for TestcaseSuite.
+func (c *TestcaseSuiteClient) Query() *TestcaseSuiteQuery {
+	return &TestcaseSuiteQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeTestCaseSuite},
+		ctx:    &QueryContext{Type: TypeTestcaseSuite},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a TestCaseSuite entity by its id.
-func (c *TestCaseSuiteClient) Get(ctx context.Context, id int64) (*TestCaseSuite, error) {
+// Get returns a TestcaseSuite entity by its id.
+func (c *TestcaseSuiteClient) Get(ctx context.Context, id int64) (*TestcaseSuite, error) {
 	return c.Query().Where(testcasesuite.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *TestCaseSuiteClient) GetX(ctx context.Context, id int64) *TestCaseSuite {
+func (c *TestcaseSuiteClient) GetX(ctx context.Context, id int64) *TestcaseSuite {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1514,44 +1514,44 @@ func (c *TestCaseSuiteClient) GetX(ctx context.Context, id int64) *TestCaseSuite
 	return obj
 }
 
-// QueryTestcases queries the testcases edge of a TestCaseSuite.
-func (c *TestCaseSuiteClient) QueryTestcases(tcs *TestCaseSuite) *TestCaseQuery {
-	query := (&TestCaseClient{config: c.config}).Query()
+// QueryTestcase queries the testcase edge of a TestcaseSuite.
+func (c *TestcaseSuiteClient) QueryTestcase(ts *TestcaseSuite) *TestcaseQuery {
+	query := (&TestcaseClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := tcs.ID
+		id := ts.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(testcasesuite.Table, testcasesuite.FieldID, id),
 			sqlgraph.To(testcase.Table, testcase.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, testcasesuite.TestcasesTable, testcasesuite.TestcasesPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, false, testcasesuite.TestcaseTable, testcasesuite.TestcasePrimaryKey...),
 		)
-		fromV = sqlgraph.Neighbors(tcs.driver.Dialect(), step)
+		fromV = sqlgraph.Neighbors(ts.driver.Dialect(), step)
 		return fromV, nil
 	}
 	return query
 }
 
 // Hooks returns the client hooks.
-func (c *TestCaseSuiteClient) Hooks() []Hook {
-	return c.hooks.TestCaseSuite
+func (c *TestcaseSuiteClient) Hooks() []Hook {
+	return c.hooks.TestcaseSuite
 }
 
 // Interceptors returns the client interceptors.
-func (c *TestCaseSuiteClient) Interceptors() []Interceptor {
-	return c.inters.TestCaseSuite
+func (c *TestcaseSuiteClient) Interceptors() []Interceptor {
+	return c.inters.TestcaseSuite
 }
 
-func (c *TestCaseSuiteClient) mutate(ctx context.Context, m *TestCaseSuiteMutation) (Value, error) {
+func (c *TestcaseSuiteClient) mutate(ctx context.Context, m *TestcaseSuiteMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&TestCaseSuiteCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&TestcaseSuiteCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&TestCaseSuiteUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&TestcaseSuiteUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&TestCaseSuiteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&TestcaseSuiteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&TestCaseSuiteDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&TestcaseSuiteDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("ent: unknown TestCaseSuite mutation op: %q", m.Op())
+		return nil, fmt.Errorf("ent: unknown TestcaseSuite mutation op: %q", m.Op())
 	}
 }
 
@@ -1677,10 +1677,10 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 type (
 	hooks struct {
 		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Group, Project, Task,
-		TestCase, TestCaseSuite, User []ent.Hook
+		Testcase, TestcaseSuite, User []ent.Hook
 	}
 	inters struct {
 		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Group, Project, Task,
-		TestCase, TestCaseSuite, User []ent.Interceptor
+		Testcase, TestcaseSuite, User []ent.Interceptor
 	}
 )

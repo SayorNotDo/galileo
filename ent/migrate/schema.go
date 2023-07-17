@@ -177,45 +177,46 @@ var (
 		Columns:    TaskColumns,
 		PrimaryKey: []*schema.Column{TaskColumns[0]},
 	}
-	// TestCasesColumns holds the columns for the "test_cases" table.
-	TestCasesColumns = []*schema.Column{
+	// TestcaseColumns holds the columns for the "testcase" table.
+	TestcaseColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "created_by", Type: field.TypeUint32},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "update_by", Type: field.TypeUint32, Nullable: true},
-		{Name: "update_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "status", Type: field.TypeInt8, Default: 0},
 		{Name: "type", Type: field.TypeInt8, Default: 0},
 		{Name: "priority", Type: field.TypeInt8, Default: 0},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
-		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "label", Type: field.TypeString, Nullable: true},
 		{Name: "url", Type: field.TypeString, Nullable: true},
 	}
-	// TestCasesTable holds the schema information for the "test_cases" table.
-	TestCasesTable = &schema.Table{
-		Name:       "test_cases",
-		Columns:    TestCasesColumns,
-		PrimaryKey: []*schema.Column{TestCasesColumns[0]},
+	// TestcaseTable holds the schema information for the "testcase" table.
+	TestcaseTable = &schema.Table{
+		Name:       "testcase",
+		Columns:    TestcaseColumns,
+		PrimaryKey: []*schema.Column{TestcaseColumns[0]},
 	}
-	// TestCaseSuitesColumns holds the columns for the "test_case_suites" table.
-	TestCaseSuitesColumns = []*schema.Column{
+	// TestcaseSuiteColumns holds the columns for the "testcase_suite" table.
+	TestcaseSuiteColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
 		{Name: "task_testcase_suite", Type: field.TypeInt64, Nullable: true},
 	}
-	// TestCaseSuitesTable holds the schema information for the "test_case_suites" table.
-	TestCaseSuitesTable = &schema.Table{
-		Name:       "test_case_suites",
-		Columns:    TestCaseSuitesColumns,
-		PrimaryKey: []*schema.Column{TestCaseSuitesColumns[0]},
+	// TestcaseSuiteTable holds the schema information for the "testcase_suite" table.
+	TestcaseSuiteTable = &schema.Table{
+		Name:       "testcase_suite",
+		Columns:    TestcaseSuiteColumns,
+		PrimaryKey: []*schema.Column{TestcaseSuiteColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "test_case_suites_task_testcaseSuite",
-				Columns:    []*schema.Column{TestCaseSuitesColumns[4]},
+				Symbol:     "testcase_suite_task_testcase_suite",
+				Columns:    []*schema.Column{TestcaseSuiteColumns[4]},
 				RefColumns: []*schema.Column{TaskColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -255,27 +256,27 @@ var (
 			},
 		},
 	}
-	// TestCaseSuiteTestcasesColumns holds the columns for the "test_case_suite_testcases" table.
-	TestCaseSuiteTestcasesColumns = []*schema.Column{
-		{Name: "test_case_suite_id", Type: field.TypeInt64},
-		{Name: "test_case_id", Type: field.TypeInt64},
+	// TestcaseSuiteTestcaseColumns holds the columns for the "testcase_suite_testcase" table.
+	TestcaseSuiteTestcaseColumns = []*schema.Column{
+		{Name: "testcase_suite_id", Type: field.TypeInt64},
+		{Name: "testcase_id", Type: field.TypeInt64},
 	}
-	// TestCaseSuiteTestcasesTable holds the schema information for the "test_case_suite_testcases" table.
-	TestCaseSuiteTestcasesTable = &schema.Table{
-		Name:       "test_case_suite_testcases",
-		Columns:    TestCaseSuiteTestcasesColumns,
-		PrimaryKey: []*schema.Column{TestCaseSuiteTestcasesColumns[0], TestCaseSuiteTestcasesColumns[1]},
+	// TestcaseSuiteTestcaseTable holds the schema information for the "testcase_suite_testcase" table.
+	TestcaseSuiteTestcaseTable = &schema.Table{
+		Name:       "testcase_suite_testcase",
+		Columns:    TestcaseSuiteTestcaseColumns,
+		PrimaryKey: []*schema.Column{TestcaseSuiteTestcaseColumns[0], TestcaseSuiteTestcaseColumns[1]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "test_case_suite_testcases_test_case_suite_id",
-				Columns:    []*schema.Column{TestCaseSuiteTestcasesColumns[0]},
-				RefColumns: []*schema.Column{TestCaseSuitesColumns[0]},
+				Symbol:     "testcase_suite_testcase_testcase_suite_id",
+				Columns:    []*schema.Column{TestcaseSuiteTestcaseColumns[0]},
+				RefColumns: []*schema.Column{TestcaseSuiteColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "test_case_suite_testcases_test_case_id",
-				Columns:    []*schema.Column{TestCaseSuiteTestcasesColumns[1]},
-				RefColumns: []*schema.Column{TestCasesColumns[0]},
+				Symbol:     "testcase_suite_testcase_testcase_id",
+				Columns:    []*schema.Column{TestcaseSuiteTestcaseColumns[1]},
+				RefColumns: []*schema.Column{TestcaseColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -290,10 +291,10 @@ var (
 		GroupsTable,
 		ProjectTable,
 		TaskTable,
-		TestCasesTable,
-		TestCaseSuitesTable,
+		TestcaseTable,
+		TestcaseSuiteTable,
 		UserTable,
-		TestCaseSuiteTestcasesTable,
+		TestcaseSuiteTestcaseTable,
 	}
 )
 
@@ -320,11 +321,17 @@ func init() {
 	TaskTable.Annotation = &entsql.Annotation{
 		Table: "task",
 	}
-	TestCaseSuitesTable.ForeignKeys[0].RefTable = TaskTable
+	TestcaseTable.Annotation = &entsql.Annotation{
+		Table: "testcase",
+	}
+	TestcaseSuiteTable.ForeignKeys[0].RefTable = TaskTable
+	TestcaseSuiteTable.Annotation = &entsql.Annotation{
+		Table: "testcase_suite",
+	}
 	UserTable.ForeignKeys[0].RefTable = GroupsTable
 	UserTable.Annotation = &entsql.Annotation{
 		Table: "user",
 	}
-	TestCaseSuiteTestcasesTable.ForeignKeys[0].RefTable = TestCaseSuitesTable
-	TestCaseSuiteTestcasesTable.ForeignKeys[1].RefTable = TestCasesTable
+	TestcaseSuiteTestcaseTable.ForeignKeys[0].RefTable = TestcaseSuiteTable
+	TestcaseSuiteTestcaseTable.ForeignKeys[1].RefTable = TestcaseTable
 }

@@ -23,7 +23,7 @@ type TaskQuery struct {
 	order             []OrderFunc
 	inters            []Interceptor
 	predicates        []predicate.Task
-	withTestcaseSuite *TestCaseSuiteQuery
+	withTestcaseSuite *TestcaseSuiteQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -60,9 +60,9 @@ func (tq *TaskQuery) Order(o ...OrderFunc) *TaskQuery {
 	return tq
 }
 
-// QueryTestcaseSuite chains the current query on the "testcaseSuite" edge.
-func (tq *TaskQuery) QueryTestcaseSuite() *TestCaseSuiteQuery {
-	query := (&TestCaseSuiteClient{config: tq.config}).Query()
+// QueryTestcaseSuite chains the current query on the "testcase_suite" edge.
+func (tq *TaskQuery) QueryTestcaseSuite() *TestcaseSuiteQuery {
+	query := (&TestcaseSuiteClient{config: tq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -282,9 +282,9 @@ func (tq *TaskQuery) Clone() *TaskQuery {
 }
 
 // WithTestcaseSuite tells the query-builder to eager-load the nodes that are connected to
-// the "testcaseSuite" edge. The optional arguments are used to configure the query builder of the edge.
-func (tq *TaskQuery) WithTestcaseSuite(opts ...func(*TestCaseSuiteQuery)) *TaskQuery {
-	query := (&TestCaseSuiteClient{config: tq.config}).Query()
+// the "testcase_suite" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TaskQuery) WithTestcaseSuite(opts ...func(*TestcaseSuiteQuery)) *TaskQuery {
+	query := (&TestcaseSuiteClient{config: tq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -394,15 +394,15 @@ func (tq *TaskQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Task, e
 	}
 	if query := tq.withTestcaseSuite; query != nil {
 		if err := tq.loadTestcaseSuite(ctx, query, nodes,
-			func(n *Task) { n.Edges.TestcaseSuite = []*TestCaseSuite{} },
-			func(n *Task, e *TestCaseSuite) { n.Edges.TestcaseSuite = append(n.Edges.TestcaseSuite, e) }); err != nil {
+			func(n *Task) { n.Edges.TestcaseSuite = []*TestcaseSuite{} },
+			func(n *Task, e *TestcaseSuite) { n.Edges.TestcaseSuite = append(n.Edges.TestcaseSuite, e) }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (tq *TaskQuery) loadTestcaseSuite(ctx context.Context, query *TestCaseSuiteQuery, nodes []*Task, init func(*Task), assign func(*Task, *TestCaseSuite)) error {
+func (tq *TaskQuery) loadTestcaseSuite(ctx context.Context, query *TestcaseSuiteQuery, nodes []*Task, init func(*Task), assign func(*Task, *TestcaseSuite)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int64]*Task)
 	for i := range nodes {
@@ -413,7 +413,7 @@ func (tq *TaskQuery) loadTestcaseSuite(ctx context.Context, query *TestCaseSuite
 		}
 	}
 	query.withFKs = true
-	query.Where(predicate.TestCaseSuite(func(s *sql.Selector) {
+	query.Where(predicate.TestcaseSuite(func(s *sql.Selector) {
 		s.Where(sql.InValues(task.TestcaseSuiteColumn, fks...))
 	}))
 	neighbors, err := query.All(ctx)

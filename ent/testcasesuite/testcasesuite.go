@@ -8,7 +8,7 @@ import (
 
 const (
 	// Label holds the string label denoting the testcasesuite type in the database.
-	Label = "test_case_suite"
+	Label = "testcase_suite"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
 	// FieldName holds the string denoting the name field in the database.
@@ -17,15 +17,15 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldCreatedBy holds the string denoting the created_by field in the database.
 	FieldCreatedBy = "created_by"
-	// EdgeTestcases holds the string denoting the testcases edge name in mutations.
-	EdgeTestcases = "testcases"
+	// EdgeTestcase holds the string denoting the testcase edge name in mutations.
+	EdgeTestcase = "testcase"
 	// Table holds the table name of the testcasesuite in the database.
-	Table = "test_case_suites"
-	// TestcasesTable is the table that holds the testcases relation/edge. The primary key declared below.
-	TestcasesTable = "test_case_suite_testcases"
-	// TestcasesInverseTable is the table name for the TestCase entity.
+	Table = "testcase_suite"
+	// TestcaseTable is the table that holds the testcase relation/edge. The primary key declared below.
+	TestcaseTable = "testcase_suite_testcase"
+	// TestcaseInverseTable is the table name for the Testcase entity.
 	// It exists in this package in order to avoid circular dependency with the "testcase" package.
-	TestcasesInverseTable = "test_cases"
+	TestcaseInverseTable = "testcase"
 )
 
 // Columns holds all SQL columns for testcasesuite fields.
@@ -36,16 +36,16 @@ var Columns = []string{
 	FieldCreatedBy,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "test_case_suites"
+// ForeignKeys holds the SQL foreign-keys that are owned by the "testcase_suite"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"task_testcase_suite",
 }
 
 var (
-	// TestcasesPrimaryKey and TestcasesColumn2 are the table columns denoting the
-	// primary key for the testcases relation (M2M).
-	TestcasesPrimaryKey = []string{"test_case_suite_id", "test_case_id"}
+	// TestcasePrimaryKey and TestcaseColumn2 are the table columns denoting the
+	// primary key for the testcase relation (M2M).
+	TestcasePrimaryKey = []string{"testcase_suite_id", "testcase_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).

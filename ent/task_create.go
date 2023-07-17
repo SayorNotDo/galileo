@@ -235,14 +235,14 @@ func (tc *TaskCreate) SetID(i int64) *TaskCreate {
 	return tc
 }
 
-// AddTestcaseSuiteIDs adds the "testcaseSuite" edge to the TestCaseSuite entity by IDs.
+// AddTestcaseSuiteIDs adds the "testcase_suite" edge to the TestcaseSuite entity by IDs.
 func (tc *TaskCreate) AddTestcaseSuiteIDs(ids ...int64) *TaskCreate {
 	tc.mutation.AddTestcaseSuiteIDs(ids...)
 	return tc
 }
 
-// AddTestcaseSuite adds the "testcaseSuite" edges to the TestCaseSuite entity.
-func (tc *TaskCreate) AddTestcaseSuite(t ...*TestCaseSuite) *TaskCreate {
+// AddTestcaseSuite adds the "testcase_suite" edges to the TestcaseSuite entity.
+func (tc *TaskCreate) AddTestcaseSuite(t ...*TestcaseSuite) *TaskCreate {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID

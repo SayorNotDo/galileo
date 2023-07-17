@@ -42,8 +42,8 @@ const (
 	TypeGroup         = "Group"
 	TypeProject       = "Project"
 	TypeTask          = "Task"
-	TypeTestCase      = "TestCase"
-	TypeTestCaseSuite = "TestCaseSuite"
+	TypeTestcase      = "Testcase"
+	TypeTestcaseSuite = "TestcaseSuite"
 	TypeUser          = "User"
 )
 
@@ -6383,38 +6383,38 @@ func (m *ProjectMutation) ResetEdge(name string) error {
 // TaskMutation represents an operation that mutates the Task nodes in the graph.
 type TaskMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *int64
-	name                 *string
-	created_at           *time.Time
-	created_by           *uint32
-	addcreated_by        *int32
-	assignee             *uint32
-	addassignee          *int32
-	_type                *int8
-	add_type             *int8
-	_config              *string
-	rank                 *int8
-	addrank              *int8
-	status               *int8
-	addstatus            *int8
-	start_time           *time.Time
-	completed_at         *time.Time
-	updated_at           *time.Time
-	status_updated_at    *time.Time
-	deadline             *time.Time
-	deleted_at           *time.Time
-	deleted_by           *uint32
-	adddeleted_by        *int32
-	description          *string
-	clearedFields        map[string]struct{}
-	testcaseSuite        map[int64]struct{}
-	removedtestcaseSuite map[int64]struct{}
-	clearedtestcaseSuite bool
-	done                 bool
-	oldValue             func(context.Context) (*Task, error)
-	predicates           []predicate.Task
+	op                    Op
+	typ                   string
+	id                    *int64
+	name                  *string
+	created_at            *time.Time
+	created_by            *uint32
+	addcreated_by         *int32
+	assignee              *uint32
+	addassignee           *int32
+	_type                 *int8
+	add_type              *int8
+	_config               *string
+	rank                  *int8
+	addrank               *int8
+	status                *int8
+	addstatus             *int8
+	start_time            *time.Time
+	completed_at          *time.Time
+	updated_at            *time.Time
+	status_updated_at     *time.Time
+	deadline              *time.Time
+	deleted_at            *time.Time
+	deleted_by            *uint32
+	adddeleted_by         *int32
+	description           *string
+	clearedFields         map[string]struct{}
+	testcase_suite        map[int64]struct{}
+	removedtestcase_suite map[int64]struct{}
+	clearedtestcase_suite bool
+	done                  bool
+	oldValue              func(context.Context) (*Task, error)
+	predicates            []predicate.Task
 }
 
 var _ ent.Mutation = (*TaskMutation)(nil)
@@ -7349,58 +7349,58 @@ func (m *TaskMutation) ResetDescription() {
 	delete(m.clearedFields, task.FieldDescription)
 }
 
-// AddTestcaseSuiteIDs adds the "testcaseSuite" edge to the TestCaseSuite entity by ids.
+// AddTestcaseSuiteIDs adds the "testcase_suite" edge to the TestcaseSuite entity by ids.
 func (m *TaskMutation) AddTestcaseSuiteIDs(ids ...int64) {
-	if m.testcaseSuite == nil {
-		m.testcaseSuite = make(map[int64]struct{})
+	if m.testcase_suite == nil {
+		m.testcase_suite = make(map[int64]struct{})
 	}
 	for i := range ids {
-		m.testcaseSuite[ids[i]] = struct{}{}
+		m.testcase_suite[ids[i]] = struct{}{}
 	}
 }
 
-// ClearTestcaseSuite clears the "testcaseSuite" edge to the TestCaseSuite entity.
+// ClearTestcaseSuite clears the "testcase_suite" edge to the TestcaseSuite entity.
 func (m *TaskMutation) ClearTestcaseSuite() {
-	m.clearedtestcaseSuite = true
+	m.clearedtestcase_suite = true
 }
 
-// TestcaseSuiteCleared reports if the "testcaseSuite" edge to the TestCaseSuite entity was cleared.
+// TestcaseSuiteCleared reports if the "testcase_suite" edge to the TestcaseSuite entity was cleared.
 func (m *TaskMutation) TestcaseSuiteCleared() bool {
-	return m.clearedtestcaseSuite
+	return m.clearedtestcase_suite
 }
 
-// RemoveTestcaseSuiteIDs removes the "testcaseSuite" edge to the TestCaseSuite entity by IDs.
+// RemoveTestcaseSuiteIDs removes the "testcase_suite" edge to the TestcaseSuite entity by IDs.
 func (m *TaskMutation) RemoveTestcaseSuiteIDs(ids ...int64) {
-	if m.removedtestcaseSuite == nil {
-		m.removedtestcaseSuite = make(map[int64]struct{})
+	if m.removedtestcase_suite == nil {
+		m.removedtestcase_suite = make(map[int64]struct{})
 	}
 	for i := range ids {
-		delete(m.testcaseSuite, ids[i])
-		m.removedtestcaseSuite[ids[i]] = struct{}{}
+		delete(m.testcase_suite, ids[i])
+		m.removedtestcase_suite[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedTestcaseSuite returns the removed IDs of the "testcaseSuite" edge to the TestCaseSuite entity.
+// RemovedTestcaseSuite returns the removed IDs of the "testcase_suite" edge to the TestcaseSuite entity.
 func (m *TaskMutation) RemovedTestcaseSuiteIDs() (ids []int64) {
-	for id := range m.removedtestcaseSuite {
+	for id := range m.removedtestcase_suite {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// TestcaseSuiteIDs returns the "testcaseSuite" edge IDs in the mutation.
+// TestcaseSuiteIDs returns the "testcase_suite" edge IDs in the mutation.
 func (m *TaskMutation) TestcaseSuiteIDs() (ids []int64) {
-	for id := range m.testcaseSuite {
+	for id := range m.testcase_suite {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetTestcaseSuite resets all changes to the "testcaseSuite" edge.
+// ResetTestcaseSuite resets all changes to the "testcase_suite" edge.
 func (m *TaskMutation) ResetTestcaseSuite() {
-	m.testcaseSuite = nil
-	m.clearedtestcaseSuite = false
-	m.removedtestcaseSuite = nil
+	m.testcase_suite = nil
+	m.clearedtestcase_suite = false
+	m.removedtestcase_suite = nil
 }
 
 // Where appends a list predicates to the TaskMutation builder.
@@ -7930,7 +7930,7 @@ func (m *TaskMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TaskMutation) AddedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.testcaseSuite != nil {
+	if m.testcase_suite != nil {
 		edges = append(edges, task.EdgeTestcaseSuite)
 	}
 	return edges
@@ -7941,8 +7941,8 @@ func (m *TaskMutation) AddedEdges() []string {
 func (m *TaskMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case task.EdgeTestcaseSuite:
-		ids := make([]ent.Value, 0, len(m.testcaseSuite))
-		for id := range m.testcaseSuite {
+		ids := make([]ent.Value, 0, len(m.testcase_suite))
+		for id := range m.testcase_suite {
 			ids = append(ids, id)
 		}
 		return ids
@@ -7953,7 +7953,7 @@ func (m *TaskMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TaskMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.removedtestcaseSuite != nil {
+	if m.removedtestcase_suite != nil {
 		edges = append(edges, task.EdgeTestcaseSuite)
 	}
 	return edges
@@ -7964,8 +7964,8 @@ func (m *TaskMutation) RemovedEdges() []string {
 func (m *TaskMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
 	case task.EdgeTestcaseSuite:
-		ids := make([]ent.Value, 0, len(m.removedtestcaseSuite))
-		for id := range m.removedtestcaseSuite {
+		ids := make([]ent.Value, 0, len(m.removedtestcase_suite))
+		for id := range m.removedtestcase_suite {
 			ids = append(ids, id)
 		}
 		return ids
@@ -7976,7 +7976,7 @@ func (m *TaskMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TaskMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.clearedtestcaseSuite {
+	if m.clearedtestcase_suite {
 		edges = append(edges, task.EdgeTestcaseSuite)
 	}
 	return edges
@@ -7987,7 +7987,7 @@ func (m *TaskMutation) ClearedEdges() []string {
 func (m *TaskMutation) EdgeCleared(name string) bool {
 	switch name {
 	case task.EdgeTestcaseSuite:
-		return m.clearedtestcaseSuite
+		return m.clearedtestcase_suite
 	}
 	return false
 }
@@ -8011,8 +8011,8 @@ func (m *TaskMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Task edge %s", name)
 }
 
-// TestCaseMutation represents an operation that mutates the TestCase nodes in the graph.
-type TestCaseMutation struct {
+// TestcaseMutation represents an operation that mutates the Testcase nodes in the graph.
+type TestcaseMutation struct {
 	config
 	op                    Op
 	typ                   string
@@ -8021,9 +8021,9 @@ type TestCaseMutation struct {
 	created_by            *uint32
 	addcreated_by         *int32
 	created_at            *time.Time
-	update_by             *uint32
-	addupdate_by          *int32
-	update_at             *time.Time
+	updated_by            *uint32
+	addupdated_by         *int32
+	updated_at            *time.Time
 	status                *int8
 	addstatus             *int8
 	_type                 *int8
@@ -8034,27 +8034,28 @@ type TestCaseMutation struct {
 	deleted_by            *uint32
 	adddeleted_by         *int32
 	description           *string
+	label                 *string
 	url                   *string
 	clearedFields         map[string]struct{}
-	testcaseSuites        map[int64]struct{}
-	removedtestcaseSuites map[int64]struct{}
-	clearedtestcaseSuites bool
+	testcase_suite        map[int64]struct{}
+	removedtestcase_suite map[int64]struct{}
+	clearedtestcase_suite bool
 	done                  bool
-	oldValue              func(context.Context) (*TestCase, error)
-	predicates            []predicate.TestCase
+	oldValue              func(context.Context) (*Testcase, error)
+	predicates            []predicate.Testcase
 }
 
-var _ ent.Mutation = (*TestCaseMutation)(nil)
+var _ ent.Mutation = (*TestcaseMutation)(nil)
 
 // testcaseOption allows management of the mutation configuration using functional options.
-type testcaseOption func(*TestCaseMutation)
+type testcaseOption func(*TestcaseMutation)
 
-// newTestCaseMutation creates new mutation for the TestCase entity.
-func newTestCaseMutation(c config, op Op, opts ...testcaseOption) *TestCaseMutation {
-	m := &TestCaseMutation{
+// newTestcaseMutation creates new mutation for the Testcase entity.
+func newTestcaseMutation(c config, op Op, opts ...testcaseOption) *TestcaseMutation {
+	m := &TestcaseMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeTestCase,
+		typ:           TypeTestcase,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -8063,20 +8064,20 @@ func newTestCaseMutation(c config, op Op, opts ...testcaseOption) *TestCaseMutat
 	return m
 }
 
-// withTestCaseID sets the ID field of the mutation.
-func withTestCaseID(id int64) testcaseOption {
-	return func(m *TestCaseMutation) {
+// withTestcaseID sets the ID field of the mutation.
+func withTestcaseID(id int64) testcaseOption {
+	return func(m *TestcaseMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *TestCase
+			value *Testcase
 		)
-		m.oldValue = func(ctx context.Context) (*TestCase, error) {
+		m.oldValue = func(ctx context.Context) (*Testcase, error) {
 			once.Do(func() {
 				if m.done {
 					err = errors.New("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().TestCase.Get(ctx, id)
+					value, err = m.Client().Testcase.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -8085,10 +8086,10 @@ func withTestCaseID(id int64) testcaseOption {
 	}
 }
 
-// withTestCase sets the old TestCase of the mutation.
-func withTestCase(node *TestCase) testcaseOption {
-	return func(m *TestCaseMutation) {
-		m.oldValue = func(context.Context) (*TestCase, error) {
+// withTestcase sets the old Testcase of the mutation.
+func withTestcase(node *Testcase) testcaseOption {
+	return func(m *TestcaseMutation) {
+		m.oldValue = func(context.Context) (*Testcase, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -8097,7 +8098,7 @@ func withTestCase(node *TestCase) testcaseOption {
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m TestCaseMutation) Client() *Client {
+func (m TestcaseMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -8105,7 +8106,7 @@ func (m TestCaseMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m TestCaseMutation) Tx() (*Tx, error) {
+func (m TestcaseMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, errors.New("ent: mutation is not running in a transaction")
 	}
@@ -8115,14 +8116,14 @@ func (m TestCaseMutation) Tx() (*Tx, error) {
 }
 
 // SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of TestCase entities.
-func (m *TestCaseMutation) SetID(id int64) {
+// operation is only accepted on creation of Testcase entities.
+func (m *TestcaseMutation) SetID(id int64) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *TestCaseMutation) ID() (id int64, exists bool) {
+func (m *TestcaseMutation) ID() (id int64, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -8133,7 +8134,7 @@ func (m *TestCaseMutation) ID() (id int64, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *TestCaseMutation) IDs(ctx context.Context) ([]int64, error) {
+func (m *TestcaseMutation) IDs(ctx context.Context) ([]int64, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
@@ -8142,19 +8143,19 @@ func (m *TestCaseMutation) IDs(ctx context.Context) ([]int64, error) {
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().TestCase.Query().Where(m.predicates...).IDs(ctx)
+		return m.Client().Testcase.Query().Where(m.predicates...).IDs(ctx)
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
 }
 
 // SetName sets the "name" field.
-func (m *TestCaseMutation) SetName(s string) {
+func (m *TestcaseMutation) SetName(s string) {
 	m.name = &s
 }
 
 // Name returns the value of the "name" field in the mutation.
-func (m *TestCaseMutation) Name() (r string, exists bool) {
+func (m *TestcaseMutation) Name() (r string, exists bool) {
 	v := m.name
 	if v == nil {
 		return
@@ -8162,10 +8163,10 @@ func (m *TestCaseMutation) Name() (r string, exists bool) {
 	return *v, true
 }
 
-// OldName returns the old "name" field's value of the TestCase entity.
-// If the TestCase object wasn't provided to the builder, the object is fetched from the database.
+// OldName returns the old "name" field's value of the Testcase entity.
+// If the Testcase object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseMutation) OldName(ctx context.Context) (v string, err error) {
+func (m *TestcaseMutation) OldName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldName is only allowed on UpdateOne operations")
 	}
@@ -8180,18 +8181,18 @@ func (m *TestCaseMutation) OldName(ctx context.Context) (v string, err error) {
 }
 
 // ResetName resets all changes to the "name" field.
-func (m *TestCaseMutation) ResetName() {
+func (m *TestcaseMutation) ResetName() {
 	m.name = nil
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (m *TestCaseMutation) SetCreatedBy(u uint32) {
+func (m *TestcaseMutation) SetCreatedBy(u uint32) {
 	m.created_by = &u
 	m.addcreated_by = nil
 }
 
 // CreatedBy returns the value of the "created_by" field in the mutation.
-func (m *TestCaseMutation) CreatedBy() (r uint32, exists bool) {
+func (m *TestcaseMutation) CreatedBy() (r uint32, exists bool) {
 	v := m.created_by
 	if v == nil {
 		return
@@ -8199,10 +8200,10 @@ func (m *TestCaseMutation) CreatedBy() (r uint32, exists bool) {
 	return *v, true
 }
 
-// OldCreatedBy returns the old "created_by" field's value of the TestCase entity.
-// If the TestCase object wasn't provided to the builder, the object is fetched from the database.
+// OldCreatedBy returns the old "created_by" field's value of the Testcase entity.
+// If the Testcase object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseMutation) OldCreatedBy(ctx context.Context) (v uint32, err error) {
+func (m *TestcaseMutation) OldCreatedBy(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -8217,7 +8218,7 @@ func (m *TestCaseMutation) OldCreatedBy(ctx context.Context) (v uint32, err erro
 }
 
 // AddCreatedBy adds u to the "created_by" field.
-func (m *TestCaseMutation) AddCreatedBy(u int32) {
+func (m *TestcaseMutation) AddCreatedBy(u int32) {
 	if m.addcreated_by != nil {
 		*m.addcreated_by += u
 	} else {
@@ -8226,7 +8227,7 @@ func (m *TestCaseMutation) AddCreatedBy(u int32) {
 }
 
 // AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
-func (m *TestCaseMutation) AddedCreatedBy() (r int32, exists bool) {
+func (m *TestcaseMutation) AddedCreatedBy() (r int32, exists bool) {
 	v := m.addcreated_by
 	if v == nil {
 		return
@@ -8235,18 +8236,18 @@ func (m *TestCaseMutation) AddedCreatedBy() (r int32, exists bool) {
 }
 
 // ResetCreatedBy resets all changes to the "created_by" field.
-func (m *TestCaseMutation) ResetCreatedBy() {
+func (m *TestcaseMutation) ResetCreatedBy() {
 	m.created_by = nil
 	m.addcreated_by = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (m *TestCaseMutation) SetCreatedAt(t time.Time) {
+func (m *TestcaseMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
 }
 
 // CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *TestCaseMutation) CreatedAt() (r time.Time, exists bool) {
+func (m *TestcaseMutation) CreatedAt() (r time.Time, exists bool) {
 	v := m.created_at
 	if v == nil {
 		return
@@ -8254,10 +8255,10 @@ func (m *TestCaseMutation) CreatedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldCreatedAt returns the old "created_at" field's value of the TestCase entity.
-// If the TestCase object wasn't provided to the builder, the object is fetched from the database.
+// OldCreatedAt returns the old "created_at" field's value of the Testcase entity.
+// If the Testcase object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+func (m *TestcaseMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
 	}
@@ -8272,137 +8273,137 @@ func (m *TestCaseMutation) OldCreatedAt(ctx context.Context) (v time.Time, err e
 }
 
 // ResetCreatedAt resets all changes to the "created_at" field.
-func (m *TestCaseMutation) ResetCreatedAt() {
+func (m *TestcaseMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// SetUpdateBy sets the "update_by" field.
-func (m *TestCaseMutation) SetUpdateBy(u uint32) {
-	m.update_by = &u
-	m.addupdate_by = nil
+// SetUpdatedBy sets the "updated_by" field.
+func (m *TestcaseMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
 }
 
-// UpdateBy returns the value of the "update_by" field in the mutation.
-func (m *TestCaseMutation) UpdateBy() (r uint32, exists bool) {
-	v := m.update_by
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *TestcaseMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldUpdateBy returns the old "update_by" field's value of the TestCase entity.
-// If the TestCase object wasn't provided to the builder, the object is fetched from the database.
+// OldUpdatedBy returns the old "updated_by" field's value of the Testcase entity.
+// If the Testcase object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseMutation) OldUpdateBy(ctx context.Context) (v uint32, err error) {
+func (m *TestcaseMutation) OldUpdatedBy(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdateBy is only allowed on UpdateOne operations")
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdateBy requires an ID field in the mutation")
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateBy: %w", err)
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
 	}
-	return oldValue.UpdateBy, nil
+	return oldValue.UpdatedBy, nil
 }
 
-// AddUpdateBy adds u to the "update_by" field.
-func (m *TestCaseMutation) AddUpdateBy(u int32) {
-	if m.addupdate_by != nil {
-		*m.addupdate_by += u
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *TestcaseMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
 	} else {
-		m.addupdate_by = &u
+		m.addupdated_by = &u
 	}
 }
 
-// AddedUpdateBy returns the value that was added to the "update_by" field in this mutation.
-func (m *TestCaseMutation) AddedUpdateBy() (r int32, exists bool) {
-	v := m.addupdate_by
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *TestcaseMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ClearUpdateBy clears the value of the "update_by" field.
-func (m *TestCaseMutation) ClearUpdateBy() {
-	m.update_by = nil
-	m.addupdate_by = nil
-	m.clearedFields[testcase.FieldUpdateBy] = struct{}{}
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *TestcaseMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[testcase.FieldUpdatedBy] = struct{}{}
 }
 
-// UpdateByCleared returns if the "update_by" field was cleared in this mutation.
-func (m *TestCaseMutation) UpdateByCleared() bool {
-	_, ok := m.clearedFields[testcase.FieldUpdateBy]
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *TestcaseMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[testcase.FieldUpdatedBy]
 	return ok
 }
 
-// ResetUpdateBy resets all changes to the "update_by" field.
-func (m *TestCaseMutation) ResetUpdateBy() {
-	m.update_by = nil
-	m.addupdate_by = nil
-	delete(m.clearedFields, testcase.FieldUpdateBy)
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *TestcaseMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, testcase.FieldUpdatedBy)
 }
 
-// SetUpdateAt sets the "update_at" field.
-func (m *TestCaseMutation) SetUpdateAt(t time.Time) {
-	m.update_at = &t
+// SetUpdatedAt sets the "updated_at" field.
+func (m *TestcaseMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
 }
 
-// UpdateAt returns the value of the "update_at" field in the mutation.
-func (m *TestCaseMutation) UpdateAt() (r time.Time, exists bool) {
-	v := m.update_at
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *TestcaseMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldUpdateAt returns the old "update_at" field's value of the TestCase entity.
-// If the TestCase object wasn't provided to the builder, the object is fetched from the database.
+// OldUpdatedAt returns the old "updated_at" field's value of the Testcase entity.
+// If the Testcase object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseMutation) OldUpdateAt(ctx context.Context) (v time.Time, err error) {
+func (m *TestcaseMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdateAt is only allowed on UpdateOne operations")
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdateAt requires an ID field in the mutation")
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateAt: %w", err)
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
 	}
-	return oldValue.UpdateAt, nil
+	return oldValue.UpdatedAt, nil
 }
 
-// ClearUpdateAt clears the value of the "update_at" field.
-func (m *TestCaseMutation) ClearUpdateAt() {
-	m.update_at = nil
-	m.clearedFields[testcase.FieldUpdateAt] = struct{}{}
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *TestcaseMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[testcase.FieldUpdatedAt] = struct{}{}
 }
 
-// UpdateAtCleared returns if the "update_at" field was cleared in this mutation.
-func (m *TestCaseMutation) UpdateAtCleared() bool {
-	_, ok := m.clearedFields[testcase.FieldUpdateAt]
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *TestcaseMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[testcase.FieldUpdatedAt]
 	return ok
 }
 
-// ResetUpdateAt resets all changes to the "update_at" field.
-func (m *TestCaseMutation) ResetUpdateAt() {
-	m.update_at = nil
-	delete(m.clearedFields, testcase.FieldUpdateAt)
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *TestcaseMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, testcase.FieldUpdatedAt)
 }
 
 // SetStatus sets the "status" field.
-func (m *TestCaseMutation) SetStatus(i int8) {
+func (m *TestcaseMutation) SetStatus(i int8) {
 	m.status = &i
 	m.addstatus = nil
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *TestCaseMutation) Status() (r int8, exists bool) {
+func (m *TestcaseMutation) Status() (r int8, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -8410,10 +8411,10 @@ func (m *TestCaseMutation) Status() (r int8, exists bool) {
 	return *v, true
 }
 
-// OldStatus returns the old "status" field's value of the TestCase entity.
-// If the TestCase object wasn't provided to the builder, the object is fetched from the database.
+// OldStatus returns the old "status" field's value of the Testcase entity.
+// If the Testcase object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseMutation) OldStatus(ctx context.Context) (v int8, err error) {
+func (m *TestcaseMutation) OldStatus(ctx context.Context) (v int8, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -8428,7 +8429,7 @@ func (m *TestCaseMutation) OldStatus(ctx context.Context) (v int8, err error) {
 }
 
 // AddStatus adds i to the "status" field.
-func (m *TestCaseMutation) AddStatus(i int8) {
+func (m *TestcaseMutation) AddStatus(i int8) {
 	if m.addstatus != nil {
 		*m.addstatus += i
 	} else {
@@ -8437,7 +8438,7 @@ func (m *TestCaseMutation) AddStatus(i int8) {
 }
 
 // AddedStatus returns the value that was added to the "status" field in this mutation.
-func (m *TestCaseMutation) AddedStatus() (r int8, exists bool) {
+func (m *TestcaseMutation) AddedStatus() (r int8, exists bool) {
 	v := m.addstatus
 	if v == nil {
 		return
@@ -8446,19 +8447,19 @@ func (m *TestCaseMutation) AddedStatus() (r int8, exists bool) {
 }
 
 // ResetStatus resets all changes to the "status" field.
-func (m *TestCaseMutation) ResetStatus() {
+func (m *TestcaseMutation) ResetStatus() {
 	m.status = nil
 	m.addstatus = nil
 }
 
 // SetType sets the "type" field.
-func (m *TestCaseMutation) SetType(i int8) {
+func (m *TestcaseMutation) SetType(i int8) {
 	m._type = &i
 	m.add_type = nil
 }
 
 // GetType returns the value of the "type" field in the mutation.
-func (m *TestCaseMutation) GetType() (r int8, exists bool) {
+func (m *TestcaseMutation) GetType() (r int8, exists bool) {
 	v := m._type
 	if v == nil {
 		return
@@ -8466,10 +8467,10 @@ func (m *TestCaseMutation) GetType() (r int8, exists bool) {
 	return *v, true
 }
 
-// OldType returns the old "type" field's value of the TestCase entity.
-// If the TestCase object wasn't provided to the builder, the object is fetched from the database.
+// OldType returns the old "type" field's value of the Testcase entity.
+// If the Testcase object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseMutation) OldType(ctx context.Context) (v int8, err error) {
+func (m *TestcaseMutation) OldType(ctx context.Context) (v int8, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldType is only allowed on UpdateOne operations")
 	}
@@ -8484,7 +8485,7 @@ func (m *TestCaseMutation) OldType(ctx context.Context) (v int8, err error) {
 }
 
 // AddType adds i to the "type" field.
-func (m *TestCaseMutation) AddType(i int8) {
+func (m *TestcaseMutation) AddType(i int8) {
 	if m.add_type != nil {
 		*m.add_type += i
 	} else {
@@ -8493,7 +8494,7 @@ func (m *TestCaseMutation) AddType(i int8) {
 }
 
 // AddedType returns the value that was added to the "type" field in this mutation.
-func (m *TestCaseMutation) AddedType() (r int8, exists bool) {
+func (m *TestcaseMutation) AddedType() (r int8, exists bool) {
 	v := m.add_type
 	if v == nil {
 		return
@@ -8502,19 +8503,19 @@ func (m *TestCaseMutation) AddedType() (r int8, exists bool) {
 }
 
 // ResetType resets all changes to the "type" field.
-func (m *TestCaseMutation) ResetType() {
+func (m *TestcaseMutation) ResetType() {
 	m._type = nil
 	m.add_type = nil
 }
 
 // SetPriority sets the "priority" field.
-func (m *TestCaseMutation) SetPriority(i int8) {
+func (m *TestcaseMutation) SetPriority(i int8) {
 	m.priority = &i
 	m.addpriority = nil
 }
 
 // Priority returns the value of the "priority" field in the mutation.
-func (m *TestCaseMutation) Priority() (r int8, exists bool) {
+func (m *TestcaseMutation) Priority() (r int8, exists bool) {
 	v := m.priority
 	if v == nil {
 		return
@@ -8522,10 +8523,10 @@ func (m *TestCaseMutation) Priority() (r int8, exists bool) {
 	return *v, true
 }
 
-// OldPriority returns the old "priority" field's value of the TestCase entity.
-// If the TestCase object wasn't provided to the builder, the object is fetched from the database.
+// OldPriority returns the old "priority" field's value of the Testcase entity.
+// If the Testcase object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseMutation) OldPriority(ctx context.Context) (v int8, err error) {
+func (m *TestcaseMutation) OldPriority(ctx context.Context) (v int8, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldPriority is only allowed on UpdateOne operations")
 	}
@@ -8540,7 +8541,7 @@ func (m *TestCaseMutation) OldPriority(ctx context.Context) (v int8, err error) 
 }
 
 // AddPriority adds i to the "priority" field.
-func (m *TestCaseMutation) AddPriority(i int8) {
+func (m *TestcaseMutation) AddPriority(i int8) {
 	if m.addpriority != nil {
 		*m.addpriority += i
 	} else {
@@ -8549,7 +8550,7 @@ func (m *TestCaseMutation) AddPriority(i int8) {
 }
 
 // AddedPriority returns the value that was added to the "priority" field in this mutation.
-func (m *TestCaseMutation) AddedPriority() (r int8, exists bool) {
+func (m *TestcaseMutation) AddedPriority() (r int8, exists bool) {
 	v := m.addpriority
 	if v == nil {
 		return
@@ -8558,18 +8559,18 @@ func (m *TestCaseMutation) AddedPriority() (r int8, exists bool) {
 }
 
 // ResetPriority resets all changes to the "priority" field.
-func (m *TestCaseMutation) ResetPriority() {
+func (m *TestcaseMutation) ResetPriority() {
 	m.priority = nil
 	m.addpriority = nil
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (m *TestCaseMutation) SetDeletedAt(t time.Time) {
+func (m *TestcaseMutation) SetDeletedAt(t time.Time) {
 	m.deleted_at = &t
 }
 
 // DeletedAt returns the value of the "deleted_at" field in the mutation.
-func (m *TestCaseMutation) DeletedAt() (r time.Time, exists bool) {
+func (m *TestcaseMutation) DeletedAt() (r time.Time, exists bool) {
 	v := m.deleted_at
 	if v == nil {
 		return
@@ -8577,10 +8578,10 @@ func (m *TestCaseMutation) DeletedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldDeletedAt returns the old "deleted_at" field's value of the TestCase entity.
-// If the TestCase object wasn't provided to the builder, the object is fetched from the database.
+// OldDeletedAt returns the old "deleted_at" field's value of the Testcase entity.
+// If the Testcase object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+func (m *TestcaseMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
 	}
@@ -8595,31 +8596,31 @@ func (m *TestCaseMutation) OldDeletedAt(ctx context.Context) (v time.Time, err e
 }
 
 // ClearDeletedAt clears the value of the "deleted_at" field.
-func (m *TestCaseMutation) ClearDeletedAt() {
+func (m *TestcaseMutation) ClearDeletedAt() {
 	m.deleted_at = nil
 	m.clearedFields[testcase.FieldDeletedAt] = struct{}{}
 }
 
 // DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
-func (m *TestCaseMutation) DeletedAtCleared() bool {
+func (m *TestcaseMutation) DeletedAtCleared() bool {
 	_, ok := m.clearedFields[testcase.FieldDeletedAt]
 	return ok
 }
 
 // ResetDeletedAt resets all changes to the "deleted_at" field.
-func (m *TestCaseMutation) ResetDeletedAt() {
+func (m *TestcaseMutation) ResetDeletedAt() {
 	m.deleted_at = nil
 	delete(m.clearedFields, testcase.FieldDeletedAt)
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (m *TestCaseMutation) SetDeletedBy(u uint32) {
+func (m *TestcaseMutation) SetDeletedBy(u uint32) {
 	m.deleted_by = &u
 	m.adddeleted_by = nil
 }
 
 // DeletedBy returns the value of the "deleted_by" field in the mutation.
-func (m *TestCaseMutation) DeletedBy() (r uint32, exists bool) {
+func (m *TestcaseMutation) DeletedBy() (r uint32, exists bool) {
 	v := m.deleted_by
 	if v == nil {
 		return
@@ -8627,10 +8628,10 @@ func (m *TestCaseMutation) DeletedBy() (r uint32, exists bool) {
 	return *v, true
 }
 
-// OldDeletedBy returns the old "deleted_by" field's value of the TestCase entity.
-// If the TestCase object wasn't provided to the builder, the object is fetched from the database.
+// OldDeletedBy returns the old "deleted_by" field's value of the Testcase entity.
+// If the Testcase object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseMutation) OldDeletedBy(ctx context.Context) (v uint32, err error) {
+func (m *TestcaseMutation) OldDeletedBy(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
 	}
@@ -8645,7 +8646,7 @@ func (m *TestCaseMutation) OldDeletedBy(ctx context.Context) (v uint32, err erro
 }
 
 // AddDeletedBy adds u to the "deleted_by" field.
-func (m *TestCaseMutation) AddDeletedBy(u int32) {
+func (m *TestcaseMutation) AddDeletedBy(u int32) {
 	if m.adddeleted_by != nil {
 		*m.adddeleted_by += u
 	} else {
@@ -8654,7 +8655,7 @@ func (m *TestCaseMutation) AddDeletedBy(u int32) {
 }
 
 // AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
-func (m *TestCaseMutation) AddedDeletedBy() (r int32, exists bool) {
+func (m *TestcaseMutation) AddedDeletedBy() (r int32, exists bool) {
 	v := m.adddeleted_by
 	if v == nil {
 		return
@@ -8663,32 +8664,32 @@ func (m *TestCaseMutation) AddedDeletedBy() (r int32, exists bool) {
 }
 
 // ClearDeletedBy clears the value of the "deleted_by" field.
-func (m *TestCaseMutation) ClearDeletedBy() {
+func (m *TestcaseMutation) ClearDeletedBy() {
 	m.deleted_by = nil
 	m.adddeleted_by = nil
 	m.clearedFields[testcase.FieldDeletedBy] = struct{}{}
 }
 
 // DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
-func (m *TestCaseMutation) DeletedByCleared() bool {
+func (m *TestcaseMutation) DeletedByCleared() bool {
 	_, ok := m.clearedFields[testcase.FieldDeletedBy]
 	return ok
 }
 
 // ResetDeletedBy resets all changes to the "deleted_by" field.
-func (m *TestCaseMutation) ResetDeletedBy() {
+func (m *TestcaseMutation) ResetDeletedBy() {
 	m.deleted_by = nil
 	m.adddeleted_by = nil
 	delete(m.clearedFields, testcase.FieldDeletedBy)
 }
 
 // SetDescription sets the "description" field.
-func (m *TestCaseMutation) SetDescription(s string) {
+func (m *TestcaseMutation) SetDescription(s string) {
 	m.description = &s
 }
 
 // Description returns the value of the "description" field in the mutation.
-func (m *TestCaseMutation) Description() (r string, exists bool) {
+func (m *TestcaseMutation) Description() (r string, exists bool) {
 	v := m.description
 	if v == nil {
 		return
@@ -8696,10 +8697,10 @@ func (m *TestCaseMutation) Description() (r string, exists bool) {
 	return *v, true
 }
 
-// OldDescription returns the old "description" field's value of the TestCase entity.
-// If the TestCase object wasn't provided to the builder, the object is fetched from the database.
+// OldDescription returns the old "description" field's value of the Testcase entity.
+// If the Testcase object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseMutation) OldDescription(ctx context.Context) (v string, err error) {
+func (m *TestcaseMutation) OldDescription(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
 	}
@@ -8714,30 +8715,79 @@ func (m *TestCaseMutation) OldDescription(ctx context.Context) (v string, err er
 }
 
 // ClearDescription clears the value of the "description" field.
-func (m *TestCaseMutation) ClearDescription() {
+func (m *TestcaseMutation) ClearDescription() {
 	m.description = nil
 	m.clearedFields[testcase.FieldDescription] = struct{}{}
 }
 
 // DescriptionCleared returns if the "description" field was cleared in this mutation.
-func (m *TestCaseMutation) DescriptionCleared() bool {
+func (m *TestcaseMutation) DescriptionCleared() bool {
 	_, ok := m.clearedFields[testcase.FieldDescription]
 	return ok
 }
 
 // ResetDescription resets all changes to the "description" field.
-func (m *TestCaseMutation) ResetDescription() {
+func (m *TestcaseMutation) ResetDescription() {
 	m.description = nil
 	delete(m.clearedFields, testcase.FieldDescription)
 }
 
+// SetLabel sets the "label" field.
+func (m *TestcaseMutation) SetLabel(s string) {
+	m.label = &s
+}
+
+// Label returns the value of the "label" field in the mutation.
+func (m *TestcaseMutation) Label() (r string, exists bool) {
+	v := m.label
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLabel returns the old "label" field's value of the Testcase entity.
+// If the Testcase object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TestcaseMutation) OldLabel(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLabel is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLabel requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLabel: %w", err)
+	}
+	return oldValue.Label, nil
+}
+
+// ClearLabel clears the value of the "label" field.
+func (m *TestcaseMutation) ClearLabel() {
+	m.label = nil
+	m.clearedFields[testcase.FieldLabel] = struct{}{}
+}
+
+// LabelCleared returns if the "label" field was cleared in this mutation.
+func (m *TestcaseMutation) LabelCleared() bool {
+	_, ok := m.clearedFields[testcase.FieldLabel]
+	return ok
+}
+
+// ResetLabel resets all changes to the "label" field.
+func (m *TestcaseMutation) ResetLabel() {
+	m.label = nil
+	delete(m.clearedFields, testcase.FieldLabel)
+}
+
 // SetURL sets the "url" field.
-func (m *TestCaseMutation) SetURL(s string) {
+func (m *TestcaseMutation) SetURL(s string) {
 	m.url = &s
 }
 
 // URL returns the value of the "url" field in the mutation.
-func (m *TestCaseMutation) URL() (r string, exists bool) {
+func (m *TestcaseMutation) URL() (r string, exists bool) {
 	v := m.url
 	if v == nil {
 		return
@@ -8745,10 +8795,10 @@ func (m *TestCaseMutation) URL() (r string, exists bool) {
 	return *v, true
 }
 
-// OldURL returns the old "url" field's value of the TestCase entity.
-// If the TestCase object wasn't provided to the builder, the object is fetched from the database.
+// OldURL returns the old "url" field's value of the Testcase entity.
+// If the Testcase object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseMutation) OldURL(ctx context.Context) (v string, err error) {
+func (m *TestcaseMutation) OldURL(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldURL is only allowed on UpdateOne operations")
 	}
@@ -8763,86 +8813,86 @@ func (m *TestCaseMutation) OldURL(ctx context.Context) (v string, err error) {
 }
 
 // ClearURL clears the value of the "url" field.
-func (m *TestCaseMutation) ClearURL() {
+func (m *TestcaseMutation) ClearURL() {
 	m.url = nil
 	m.clearedFields[testcase.FieldURL] = struct{}{}
 }
 
 // URLCleared returns if the "url" field was cleared in this mutation.
-func (m *TestCaseMutation) URLCleared() bool {
+func (m *TestcaseMutation) URLCleared() bool {
 	_, ok := m.clearedFields[testcase.FieldURL]
 	return ok
 }
 
 // ResetURL resets all changes to the "url" field.
-func (m *TestCaseMutation) ResetURL() {
+func (m *TestcaseMutation) ResetURL() {
 	m.url = nil
 	delete(m.clearedFields, testcase.FieldURL)
 }
 
-// AddTestcaseSuiteIDs adds the "testcaseSuites" edge to the TestCaseSuite entity by ids.
-func (m *TestCaseMutation) AddTestcaseSuiteIDs(ids ...int64) {
-	if m.testcaseSuites == nil {
-		m.testcaseSuites = make(map[int64]struct{})
+// AddTestcaseSuiteIDs adds the "testcase_suite" edge to the TestcaseSuite entity by ids.
+func (m *TestcaseMutation) AddTestcaseSuiteIDs(ids ...int64) {
+	if m.testcase_suite == nil {
+		m.testcase_suite = make(map[int64]struct{})
 	}
 	for i := range ids {
-		m.testcaseSuites[ids[i]] = struct{}{}
+		m.testcase_suite[ids[i]] = struct{}{}
 	}
 }
 
-// ClearTestcaseSuites clears the "testcaseSuites" edge to the TestCaseSuite entity.
-func (m *TestCaseMutation) ClearTestcaseSuites() {
-	m.clearedtestcaseSuites = true
+// ClearTestcaseSuite clears the "testcase_suite" edge to the TestcaseSuite entity.
+func (m *TestcaseMutation) ClearTestcaseSuite() {
+	m.clearedtestcase_suite = true
 }
 
-// TestcaseSuitesCleared reports if the "testcaseSuites" edge to the TestCaseSuite entity was cleared.
-func (m *TestCaseMutation) TestcaseSuitesCleared() bool {
-	return m.clearedtestcaseSuites
+// TestcaseSuiteCleared reports if the "testcase_suite" edge to the TestcaseSuite entity was cleared.
+func (m *TestcaseMutation) TestcaseSuiteCleared() bool {
+	return m.clearedtestcase_suite
 }
 
-// RemoveTestcaseSuiteIDs removes the "testcaseSuites" edge to the TestCaseSuite entity by IDs.
-func (m *TestCaseMutation) RemoveTestcaseSuiteIDs(ids ...int64) {
-	if m.removedtestcaseSuites == nil {
-		m.removedtestcaseSuites = make(map[int64]struct{})
+// RemoveTestcaseSuiteIDs removes the "testcase_suite" edge to the TestcaseSuite entity by IDs.
+func (m *TestcaseMutation) RemoveTestcaseSuiteIDs(ids ...int64) {
+	if m.removedtestcase_suite == nil {
+		m.removedtestcase_suite = make(map[int64]struct{})
 	}
 	for i := range ids {
-		delete(m.testcaseSuites, ids[i])
-		m.removedtestcaseSuites[ids[i]] = struct{}{}
+		delete(m.testcase_suite, ids[i])
+		m.removedtestcase_suite[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedTestcaseSuites returns the removed IDs of the "testcaseSuites" edge to the TestCaseSuite entity.
-func (m *TestCaseMutation) RemovedTestcaseSuitesIDs() (ids []int64) {
-	for id := range m.removedtestcaseSuites {
+// RemovedTestcaseSuite returns the removed IDs of the "testcase_suite" edge to the TestcaseSuite entity.
+func (m *TestcaseMutation) RemovedTestcaseSuiteIDs() (ids []int64) {
+	for id := range m.removedtestcase_suite {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// TestcaseSuitesIDs returns the "testcaseSuites" edge IDs in the mutation.
-func (m *TestCaseMutation) TestcaseSuitesIDs() (ids []int64) {
-	for id := range m.testcaseSuites {
+// TestcaseSuiteIDs returns the "testcase_suite" edge IDs in the mutation.
+func (m *TestcaseMutation) TestcaseSuiteIDs() (ids []int64) {
+	for id := range m.testcase_suite {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetTestcaseSuites resets all changes to the "testcaseSuites" edge.
-func (m *TestCaseMutation) ResetTestcaseSuites() {
-	m.testcaseSuites = nil
-	m.clearedtestcaseSuites = false
-	m.removedtestcaseSuites = nil
+// ResetTestcaseSuite resets all changes to the "testcase_suite" edge.
+func (m *TestcaseMutation) ResetTestcaseSuite() {
+	m.testcase_suite = nil
+	m.clearedtestcase_suite = false
+	m.removedtestcase_suite = nil
 }
 
-// Where appends a list predicates to the TestCaseMutation builder.
-func (m *TestCaseMutation) Where(ps ...predicate.TestCase) {
+// Where appends a list predicates to the TestcaseMutation builder.
+func (m *TestcaseMutation) Where(ps ...predicate.Testcase) {
 	m.predicates = append(m.predicates, ps...)
 }
 
-// WhereP appends storage-level predicates to the TestCaseMutation builder. Using this method,
+// WhereP appends storage-level predicates to the TestcaseMutation builder. Using this method,
 // users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *TestCaseMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.TestCase, len(ps))
+func (m *TestcaseMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Testcase, len(ps))
 	for i := range ps {
 		p[i] = ps[i]
 	}
@@ -8850,25 +8900,25 @@ func (m *TestCaseMutation) WhereP(ps ...func(*sql.Selector)) {
 }
 
 // Op returns the operation name.
-func (m *TestCaseMutation) Op() Op {
+func (m *TestcaseMutation) Op() Op {
 	return m.op
 }
 
 // SetOp allows setting the mutation operation.
-func (m *TestCaseMutation) SetOp(op Op) {
+func (m *TestcaseMutation) SetOp(op Op) {
 	m.op = op
 }
 
-// Type returns the node type of this mutation (TestCase).
-func (m *TestCaseMutation) Type() string {
+// Type returns the node type of this mutation (Testcase).
+func (m *TestcaseMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during this mutation. Note that in
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
-func (m *TestCaseMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+func (m *TestcaseMutation) Fields() []string {
+	fields := make([]string, 0, 13)
 	if m.name != nil {
 		fields = append(fields, testcase.FieldName)
 	}
@@ -8878,11 +8928,11 @@ func (m *TestCaseMutation) Fields() []string {
 	if m.created_at != nil {
 		fields = append(fields, testcase.FieldCreatedAt)
 	}
-	if m.update_by != nil {
-		fields = append(fields, testcase.FieldUpdateBy)
+	if m.updated_by != nil {
+		fields = append(fields, testcase.FieldUpdatedBy)
 	}
-	if m.update_at != nil {
-		fields = append(fields, testcase.FieldUpdateAt)
+	if m.updated_at != nil {
+		fields = append(fields, testcase.FieldUpdatedAt)
 	}
 	if m.status != nil {
 		fields = append(fields, testcase.FieldStatus)
@@ -8902,6 +8952,9 @@ func (m *TestCaseMutation) Fields() []string {
 	if m.description != nil {
 		fields = append(fields, testcase.FieldDescription)
 	}
+	if m.label != nil {
+		fields = append(fields, testcase.FieldLabel)
+	}
 	if m.url != nil {
 		fields = append(fields, testcase.FieldURL)
 	}
@@ -8911,7 +8964,7 @@ func (m *TestCaseMutation) Fields() []string {
 // Field returns the value of a field with the given name. The second boolean
 // return value indicates that this field was not set, or was not defined in the
 // schema.
-func (m *TestCaseMutation) Field(name string) (ent.Value, bool) {
+func (m *TestcaseMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case testcase.FieldName:
 		return m.Name()
@@ -8919,10 +8972,10 @@ func (m *TestCaseMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case testcase.FieldCreatedAt:
 		return m.CreatedAt()
-	case testcase.FieldUpdateBy:
-		return m.UpdateBy()
-	case testcase.FieldUpdateAt:
-		return m.UpdateAt()
+	case testcase.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case testcase.FieldUpdatedAt:
+		return m.UpdatedAt()
 	case testcase.FieldStatus:
 		return m.Status()
 	case testcase.FieldType:
@@ -8935,6 +8988,8 @@ func (m *TestCaseMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedBy()
 	case testcase.FieldDescription:
 		return m.Description()
+	case testcase.FieldLabel:
+		return m.Label()
 	case testcase.FieldURL:
 		return m.URL()
 	}
@@ -8944,7 +8999,7 @@ func (m *TestCaseMutation) Field(name string) (ent.Value, bool) {
 // OldField returns the old value of the field from the database. An error is
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
-func (m *TestCaseMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+func (m *TestcaseMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
 	case testcase.FieldName:
 		return m.OldName(ctx)
@@ -8952,10 +9007,10 @@ func (m *TestCaseMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldCreatedBy(ctx)
 	case testcase.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
-	case testcase.FieldUpdateBy:
-		return m.OldUpdateBy(ctx)
-	case testcase.FieldUpdateAt:
-		return m.OldUpdateAt(ctx)
+	case testcase.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case testcase.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
 	case testcase.FieldStatus:
 		return m.OldStatus(ctx)
 	case testcase.FieldType:
@@ -8968,16 +9023,18 @@ func (m *TestCaseMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldDeletedBy(ctx)
 	case testcase.FieldDescription:
 		return m.OldDescription(ctx)
+	case testcase.FieldLabel:
+		return m.OldLabel(ctx)
 	case testcase.FieldURL:
 		return m.OldURL(ctx)
 	}
-	return nil, fmt.Errorf("unknown TestCase field %s", name)
+	return nil, fmt.Errorf("unknown Testcase field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *TestCaseMutation) SetField(name string, value ent.Value) error {
+func (m *TestcaseMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case testcase.FieldName:
 		v, ok := value.(string)
@@ -9000,19 +9057,19 @@ func (m *TestCaseMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCreatedAt(v)
 		return nil
-	case testcase.FieldUpdateBy:
+	case testcase.FieldUpdatedBy:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetUpdateBy(v)
+		m.SetUpdatedBy(v)
 		return nil
-	case testcase.FieldUpdateAt:
+	case testcase.FieldUpdatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetUpdateAt(v)
+		m.SetUpdatedAt(v)
 		return nil
 	case testcase.FieldStatus:
 		v, ok := value.(int8)
@@ -9056,6 +9113,13 @@ func (m *TestCaseMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDescription(v)
 		return nil
+	case testcase.FieldLabel:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLabel(v)
+		return nil
 	case testcase.FieldURL:
 		v, ok := value.(string)
 		if !ok {
@@ -9064,18 +9128,18 @@ func (m *TestCaseMutation) SetField(name string, value ent.Value) error {
 		m.SetURL(v)
 		return nil
 	}
-	return fmt.Errorf("unknown TestCase field %s", name)
+	return fmt.Errorf("unknown Testcase field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
-func (m *TestCaseMutation) AddedFields() []string {
+func (m *TestcaseMutation) AddedFields() []string {
 	var fields []string
 	if m.addcreated_by != nil {
 		fields = append(fields, testcase.FieldCreatedBy)
 	}
-	if m.addupdate_by != nil {
-		fields = append(fields, testcase.FieldUpdateBy)
+	if m.addupdated_by != nil {
+		fields = append(fields, testcase.FieldUpdatedBy)
 	}
 	if m.addstatus != nil {
 		fields = append(fields, testcase.FieldStatus)
@@ -9095,12 +9159,12 @@ func (m *TestCaseMutation) AddedFields() []string {
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
-func (m *TestCaseMutation) AddedField(name string) (ent.Value, bool) {
+func (m *TestcaseMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case testcase.FieldCreatedBy:
 		return m.AddedCreatedBy()
-	case testcase.FieldUpdateBy:
-		return m.AddedUpdateBy()
+	case testcase.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
 	case testcase.FieldStatus:
 		return m.AddedStatus()
 	case testcase.FieldType:
@@ -9116,7 +9180,7 @@ func (m *TestCaseMutation) AddedField(name string) (ent.Value, bool) {
 // AddField adds the value to the field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *TestCaseMutation) AddField(name string, value ent.Value) error {
+func (m *TestcaseMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	case testcase.FieldCreatedBy:
 		v, ok := value.(int32)
@@ -9125,12 +9189,12 @@ func (m *TestCaseMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddCreatedBy(v)
 		return nil
-	case testcase.FieldUpdateBy:
+	case testcase.FieldUpdatedBy:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddUpdateBy(v)
+		m.AddUpdatedBy(v)
 		return nil
 	case testcase.FieldStatus:
 		v, ok := value.(int8)
@@ -9161,18 +9225,18 @@ func (m *TestCaseMutation) AddField(name string, value ent.Value) error {
 		m.AddDeletedBy(v)
 		return nil
 	}
-	return fmt.Errorf("unknown TestCase numeric field %s", name)
+	return fmt.Errorf("unknown Testcase numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
-func (m *TestCaseMutation) ClearedFields() []string {
+func (m *TestcaseMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(testcase.FieldUpdateBy) {
-		fields = append(fields, testcase.FieldUpdateBy)
+	if m.FieldCleared(testcase.FieldUpdatedBy) {
+		fields = append(fields, testcase.FieldUpdatedBy)
 	}
-	if m.FieldCleared(testcase.FieldUpdateAt) {
-		fields = append(fields, testcase.FieldUpdateAt)
+	if m.FieldCleared(testcase.FieldUpdatedAt) {
+		fields = append(fields, testcase.FieldUpdatedAt)
 	}
 	if m.FieldCleared(testcase.FieldDeletedAt) {
 		fields = append(fields, testcase.FieldDeletedAt)
@@ -9183,6 +9247,9 @@ func (m *TestCaseMutation) ClearedFields() []string {
 	if m.FieldCleared(testcase.FieldDescription) {
 		fields = append(fields, testcase.FieldDescription)
 	}
+	if m.FieldCleared(testcase.FieldLabel) {
+		fields = append(fields, testcase.FieldLabel)
+	}
 	if m.FieldCleared(testcase.FieldURL) {
 		fields = append(fields, testcase.FieldURL)
 	}
@@ -9191,20 +9258,20 @@ func (m *TestCaseMutation) ClearedFields() []string {
 
 // FieldCleared returns a boolean indicating if a field with the given name was
 // cleared in this mutation.
-func (m *TestCaseMutation) FieldCleared(name string) bool {
+func (m *TestcaseMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *TestCaseMutation) ClearField(name string) error {
+func (m *TestcaseMutation) ClearField(name string) error {
 	switch name {
-	case testcase.FieldUpdateBy:
-		m.ClearUpdateBy()
+	case testcase.FieldUpdatedBy:
+		m.ClearUpdatedBy()
 		return nil
-	case testcase.FieldUpdateAt:
-		m.ClearUpdateAt()
+	case testcase.FieldUpdatedAt:
+		m.ClearUpdatedAt()
 		return nil
 	case testcase.FieldDeletedAt:
 		m.ClearDeletedAt()
@@ -9215,16 +9282,19 @@ func (m *TestCaseMutation) ClearField(name string) error {
 	case testcase.FieldDescription:
 		m.ClearDescription()
 		return nil
+	case testcase.FieldLabel:
+		m.ClearLabel()
+		return nil
 	case testcase.FieldURL:
 		m.ClearURL()
 		return nil
 	}
-	return fmt.Errorf("unknown TestCase nullable field %s", name)
+	return fmt.Errorf("unknown Testcase nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
-func (m *TestCaseMutation) ResetField(name string) error {
+func (m *TestcaseMutation) ResetField(name string) error {
 	switch name {
 	case testcase.FieldName:
 		m.ResetName()
@@ -9235,11 +9305,11 @@ func (m *TestCaseMutation) ResetField(name string) error {
 	case testcase.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
-	case testcase.FieldUpdateBy:
-		m.ResetUpdateBy()
+	case testcase.FieldUpdatedBy:
+		m.ResetUpdatedBy()
 		return nil
-	case testcase.FieldUpdateAt:
-		m.ResetUpdateAt()
+	case testcase.FieldUpdatedAt:
+		m.ResetUpdatedAt()
 		return nil
 	case testcase.FieldStatus:
 		m.ResetStatus()
@@ -9259,29 +9329,32 @@ func (m *TestCaseMutation) ResetField(name string) error {
 	case testcase.FieldDescription:
 		m.ResetDescription()
 		return nil
+	case testcase.FieldLabel:
+		m.ResetLabel()
+		return nil
 	case testcase.FieldURL:
 		m.ResetURL()
 		return nil
 	}
-	return fmt.Errorf("unknown TestCase field %s", name)
+	return fmt.Errorf("unknown Testcase field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
-func (m *TestCaseMutation) AddedEdges() []string {
+func (m *TestcaseMutation) AddedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.testcaseSuites != nil {
-		edges = append(edges, testcase.EdgeTestcaseSuites)
+	if m.testcase_suite != nil {
+		edges = append(edges, testcase.EdgeTestcaseSuite)
 	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
-func (m *TestCaseMutation) AddedIDs(name string) []ent.Value {
+func (m *TestcaseMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case testcase.EdgeTestcaseSuites:
-		ids := make([]ent.Value, 0, len(m.testcaseSuites))
-		for id := range m.testcaseSuites {
+	case testcase.EdgeTestcaseSuite:
+		ids := make([]ent.Value, 0, len(m.testcase_suite))
+		for id := range m.testcase_suite {
 			ids = append(ids, id)
 		}
 		return ids
@@ -9290,21 +9363,21 @@ func (m *TestCaseMutation) AddedIDs(name string) []ent.Value {
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
-func (m *TestCaseMutation) RemovedEdges() []string {
+func (m *TestcaseMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.removedtestcaseSuites != nil {
-		edges = append(edges, testcase.EdgeTestcaseSuites)
+	if m.removedtestcase_suite != nil {
+		edges = append(edges, testcase.EdgeTestcaseSuite)
 	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
-func (m *TestCaseMutation) RemovedIDs(name string) []ent.Value {
+func (m *TestcaseMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case testcase.EdgeTestcaseSuites:
-		ids := make([]ent.Value, 0, len(m.removedtestcaseSuites))
-		for id := range m.removedtestcaseSuites {
+	case testcase.EdgeTestcaseSuite:
+		ids := make([]ent.Value, 0, len(m.removedtestcase_suite))
+		for id := range m.removedtestcase_suite {
 			ids = append(ids, id)
 		}
 		return ids
@@ -9313,73 +9386,73 @@ func (m *TestCaseMutation) RemovedIDs(name string) []ent.Value {
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *TestCaseMutation) ClearedEdges() []string {
+func (m *TestcaseMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.clearedtestcaseSuites {
-		edges = append(edges, testcase.EdgeTestcaseSuites)
+	if m.clearedtestcase_suite {
+		edges = append(edges, testcase.EdgeTestcaseSuite)
 	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
-func (m *TestCaseMutation) EdgeCleared(name string) bool {
+func (m *TestcaseMutation) EdgeCleared(name string) bool {
 	switch name {
-	case testcase.EdgeTestcaseSuites:
-		return m.clearedtestcaseSuites
+	case testcase.EdgeTestcaseSuite:
+		return m.clearedtestcase_suite
 	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
-func (m *TestCaseMutation) ClearEdge(name string) error {
+func (m *TestcaseMutation) ClearEdge(name string) error {
 	switch name {
 	}
-	return fmt.Errorf("unknown TestCase unique edge %s", name)
+	return fmt.Errorf("unknown Testcase unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
-func (m *TestCaseMutation) ResetEdge(name string) error {
+func (m *TestcaseMutation) ResetEdge(name string) error {
 	switch name {
-	case testcase.EdgeTestcaseSuites:
-		m.ResetTestcaseSuites()
+	case testcase.EdgeTestcaseSuite:
+		m.ResetTestcaseSuite()
 		return nil
 	}
-	return fmt.Errorf("unknown TestCase edge %s", name)
+	return fmt.Errorf("unknown Testcase edge %s", name)
 }
 
-// TestCaseSuiteMutation represents an operation that mutates the TestCaseSuite nodes in the graph.
-type TestCaseSuiteMutation struct {
+// TestcaseSuiteMutation represents an operation that mutates the TestcaseSuite nodes in the graph.
+type TestcaseSuiteMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *int64
-	name             *string
-	created_at       *time.Time
-	created_by       *uint32
-	addcreated_by    *int32
-	clearedFields    map[string]struct{}
-	testcases        map[int64]struct{}
-	removedtestcases map[int64]struct{}
-	clearedtestcases bool
-	done             bool
-	oldValue         func(context.Context) (*TestCaseSuite, error)
-	predicates       []predicate.TestCaseSuite
+	op              Op
+	typ             string
+	id              *int64
+	name            *string
+	created_at      *time.Time
+	created_by      *uint32
+	addcreated_by   *int32
+	clearedFields   map[string]struct{}
+	testcase        map[int64]struct{}
+	removedtestcase map[int64]struct{}
+	clearedtestcase bool
+	done            bool
+	oldValue        func(context.Context) (*TestcaseSuite, error)
+	predicates      []predicate.TestcaseSuite
 }
 
-var _ ent.Mutation = (*TestCaseSuiteMutation)(nil)
+var _ ent.Mutation = (*TestcaseSuiteMutation)(nil)
 
 // testcasesuiteOption allows management of the mutation configuration using functional options.
-type testcasesuiteOption func(*TestCaseSuiteMutation)
+type testcasesuiteOption func(*TestcaseSuiteMutation)
 
-// newTestCaseSuiteMutation creates new mutation for the TestCaseSuite entity.
-func newTestCaseSuiteMutation(c config, op Op, opts ...testcasesuiteOption) *TestCaseSuiteMutation {
-	m := &TestCaseSuiteMutation{
+// newTestcaseSuiteMutation creates new mutation for the TestcaseSuite entity.
+func newTestcaseSuiteMutation(c config, op Op, opts ...testcasesuiteOption) *TestcaseSuiteMutation {
+	m := &TestcaseSuiteMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeTestCaseSuite,
+		typ:           TypeTestcaseSuite,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -9388,20 +9461,20 @@ func newTestCaseSuiteMutation(c config, op Op, opts ...testcasesuiteOption) *Tes
 	return m
 }
 
-// withTestCaseSuiteID sets the ID field of the mutation.
-func withTestCaseSuiteID(id int64) testcasesuiteOption {
-	return func(m *TestCaseSuiteMutation) {
+// withTestcaseSuiteID sets the ID field of the mutation.
+func withTestcaseSuiteID(id int64) testcasesuiteOption {
+	return func(m *TestcaseSuiteMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *TestCaseSuite
+			value *TestcaseSuite
 		)
-		m.oldValue = func(ctx context.Context) (*TestCaseSuite, error) {
+		m.oldValue = func(ctx context.Context) (*TestcaseSuite, error) {
 			once.Do(func() {
 				if m.done {
 					err = errors.New("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().TestCaseSuite.Get(ctx, id)
+					value, err = m.Client().TestcaseSuite.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -9410,10 +9483,10 @@ func withTestCaseSuiteID(id int64) testcasesuiteOption {
 	}
 }
 
-// withTestCaseSuite sets the old TestCaseSuite of the mutation.
-func withTestCaseSuite(node *TestCaseSuite) testcasesuiteOption {
-	return func(m *TestCaseSuiteMutation) {
-		m.oldValue = func(context.Context) (*TestCaseSuite, error) {
+// withTestcaseSuite sets the old TestcaseSuite of the mutation.
+func withTestcaseSuite(node *TestcaseSuite) testcasesuiteOption {
+	return func(m *TestcaseSuiteMutation) {
+		m.oldValue = func(context.Context) (*TestcaseSuite, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -9422,7 +9495,7 @@ func withTestCaseSuite(node *TestCaseSuite) testcasesuiteOption {
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m TestCaseSuiteMutation) Client() *Client {
+func (m TestcaseSuiteMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -9430,7 +9503,7 @@ func (m TestCaseSuiteMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m TestCaseSuiteMutation) Tx() (*Tx, error) {
+func (m TestcaseSuiteMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, errors.New("ent: mutation is not running in a transaction")
 	}
@@ -9440,14 +9513,14 @@ func (m TestCaseSuiteMutation) Tx() (*Tx, error) {
 }
 
 // SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of TestCaseSuite entities.
-func (m *TestCaseSuiteMutation) SetID(id int64) {
+// operation is only accepted on creation of TestcaseSuite entities.
+func (m *TestcaseSuiteMutation) SetID(id int64) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *TestCaseSuiteMutation) ID() (id int64, exists bool) {
+func (m *TestcaseSuiteMutation) ID() (id int64, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -9458,7 +9531,7 @@ func (m *TestCaseSuiteMutation) ID() (id int64, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *TestCaseSuiteMutation) IDs(ctx context.Context) ([]int64, error) {
+func (m *TestcaseSuiteMutation) IDs(ctx context.Context) ([]int64, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
@@ -9467,19 +9540,19 @@ func (m *TestCaseSuiteMutation) IDs(ctx context.Context) ([]int64, error) {
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().TestCaseSuite.Query().Where(m.predicates...).IDs(ctx)
+		return m.Client().TestcaseSuite.Query().Where(m.predicates...).IDs(ctx)
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
 }
 
 // SetName sets the "name" field.
-func (m *TestCaseSuiteMutation) SetName(s string) {
+func (m *TestcaseSuiteMutation) SetName(s string) {
 	m.name = &s
 }
 
 // Name returns the value of the "name" field in the mutation.
-func (m *TestCaseSuiteMutation) Name() (r string, exists bool) {
+func (m *TestcaseSuiteMutation) Name() (r string, exists bool) {
 	v := m.name
 	if v == nil {
 		return
@@ -9487,10 +9560,10 @@ func (m *TestCaseSuiteMutation) Name() (r string, exists bool) {
 	return *v, true
 }
 
-// OldName returns the old "name" field's value of the TestCaseSuite entity.
-// If the TestCaseSuite object wasn't provided to the builder, the object is fetched from the database.
+// OldName returns the old "name" field's value of the TestcaseSuite entity.
+// If the TestcaseSuite object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseSuiteMutation) OldName(ctx context.Context) (v string, err error) {
+func (m *TestcaseSuiteMutation) OldName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldName is only allowed on UpdateOne operations")
 	}
@@ -9505,17 +9578,17 @@ func (m *TestCaseSuiteMutation) OldName(ctx context.Context) (v string, err erro
 }
 
 // ResetName resets all changes to the "name" field.
-func (m *TestCaseSuiteMutation) ResetName() {
+func (m *TestcaseSuiteMutation) ResetName() {
 	m.name = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (m *TestCaseSuiteMutation) SetCreatedAt(t time.Time) {
+func (m *TestcaseSuiteMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
 }
 
 // CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *TestCaseSuiteMutation) CreatedAt() (r time.Time, exists bool) {
+func (m *TestcaseSuiteMutation) CreatedAt() (r time.Time, exists bool) {
 	v := m.created_at
 	if v == nil {
 		return
@@ -9523,10 +9596,10 @@ func (m *TestCaseSuiteMutation) CreatedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldCreatedAt returns the old "created_at" field's value of the TestCaseSuite entity.
-// If the TestCaseSuite object wasn't provided to the builder, the object is fetched from the database.
+// OldCreatedAt returns the old "created_at" field's value of the TestcaseSuite entity.
+// If the TestcaseSuite object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseSuiteMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+func (m *TestcaseSuiteMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
 	}
@@ -9541,18 +9614,18 @@ func (m *TestCaseSuiteMutation) OldCreatedAt(ctx context.Context) (v time.Time, 
 }
 
 // ResetCreatedAt resets all changes to the "created_at" field.
-func (m *TestCaseSuiteMutation) ResetCreatedAt() {
+func (m *TestcaseSuiteMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (m *TestCaseSuiteMutation) SetCreatedBy(u uint32) {
+func (m *TestcaseSuiteMutation) SetCreatedBy(u uint32) {
 	m.created_by = &u
 	m.addcreated_by = nil
 }
 
 // CreatedBy returns the value of the "created_by" field in the mutation.
-func (m *TestCaseSuiteMutation) CreatedBy() (r uint32, exists bool) {
+func (m *TestcaseSuiteMutation) CreatedBy() (r uint32, exists bool) {
 	v := m.created_by
 	if v == nil {
 		return
@@ -9560,10 +9633,10 @@ func (m *TestCaseSuiteMutation) CreatedBy() (r uint32, exists bool) {
 	return *v, true
 }
 
-// OldCreatedBy returns the old "created_by" field's value of the TestCaseSuite entity.
-// If the TestCaseSuite object wasn't provided to the builder, the object is fetched from the database.
+// OldCreatedBy returns the old "created_by" field's value of the TestcaseSuite entity.
+// If the TestcaseSuite object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TestCaseSuiteMutation) OldCreatedBy(ctx context.Context) (v uint32, err error) {
+func (m *TestcaseSuiteMutation) OldCreatedBy(ctx context.Context) (v uint32, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -9578,7 +9651,7 @@ func (m *TestCaseSuiteMutation) OldCreatedBy(ctx context.Context) (v uint32, err
 }
 
 // AddCreatedBy adds u to the "created_by" field.
-func (m *TestCaseSuiteMutation) AddCreatedBy(u int32) {
+func (m *TestcaseSuiteMutation) AddCreatedBy(u int32) {
 	if m.addcreated_by != nil {
 		*m.addcreated_by += u
 	} else {
@@ -9587,7 +9660,7 @@ func (m *TestCaseSuiteMutation) AddCreatedBy(u int32) {
 }
 
 // AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
-func (m *TestCaseSuiteMutation) AddedCreatedBy() (r int32, exists bool) {
+func (m *TestcaseSuiteMutation) AddedCreatedBy() (r int32, exists bool) {
 	v := m.addcreated_by
 	if v == nil {
 		return
@@ -9596,74 +9669,74 @@ func (m *TestCaseSuiteMutation) AddedCreatedBy() (r int32, exists bool) {
 }
 
 // ResetCreatedBy resets all changes to the "created_by" field.
-func (m *TestCaseSuiteMutation) ResetCreatedBy() {
+func (m *TestcaseSuiteMutation) ResetCreatedBy() {
 	m.created_by = nil
 	m.addcreated_by = nil
 }
 
-// AddTestcaseIDs adds the "testcases" edge to the TestCase entity by ids.
-func (m *TestCaseSuiteMutation) AddTestcaseIDs(ids ...int64) {
-	if m.testcases == nil {
-		m.testcases = make(map[int64]struct{})
+// AddTestcaseIDs adds the "testcase" edge to the Testcase entity by ids.
+func (m *TestcaseSuiteMutation) AddTestcaseIDs(ids ...int64) {
+	if m.testcase == nil {
+		m.testcase = make(map[int64]struct{})
 	}
 	for i := range ids {
-		m.testcases[ids[i]] = struct{}{}
+		m.testcase[ids[i]] = struct{}{}
 	}
 }
 
-// ClearTestcases clears the "testcases" edge to the TestCase entity.
-func (m *TestCaseSuiteMutation) ClearTestcases() {
-	m.clearedtestcases = true
+// ClearTestcase clears the "testcase" edge to the Testcase entity.
+func (m *TestcaseSuiteMutation) ClearTestcase() {
+	m.clearedtestcase = true
 }
 
-// TestcasesCleared reports if the "testcases" edge to the TestCase entity was cleared.
-func (m *TestCaseSuiteMutation) TestcasesCleared() bool {
-	return m.clearedtestcases
+// TestcaseCleared reports if the "testcase" edge to the Testcase entity was cleared.
+func (m *TestcaseSuiteMutation) TestcaseCleared() bool {
+	return m.clearedtestcase
 }
 
-// RemoveTestcaseIDs removes the "testcases" edge to the TestCase entity by IDs.
-func (m *TestCaseSuiteMutation) RemoveTestcaseIDs(ids ...int64) {
-	if m.removedtestcases == nil {
-		m.removedtestcases = make(map[int64]struct{})
+// RemoveTestcaseIDs removes the "testcase" edge to the Testcase entity by IDs.
+func (m *TestcaseSuiteMutation) RemoveTestcaseIDs(ids ...int64) {
+	if m.removedtestcase == nil {
+		m.removedtestcase = make(map[int64]struct{})
 	}
 	for i := range ids {
-		delete(m.testcases, ids[i])
-		m.removedtestcases[ids[i]] = struct{}{}
+		delete(m.testcase, ids[i])
+		m.removedtestcase[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedTestcases returns the removed IDs of the "testcases" edge to the TestCase entity.
-func (m *TestCaseSuiteMutation) RemovedTestcasesIDs() (ids []int64) {
-	for id := range m.removedtestcases {
+// RemovedTestcase returns the removed IDs of the "testcase" edge to the Testcase entity.
+func (m *TestcaseSuiteMutation) RemovedTestcaseIDs() (ids []int64) {
+	for id := range m.removedtestcase {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// TestcasesIDs returns the "testcases" edge IDs in the mutation.
-func (m *TestCaseSuiteMutation) TestcasesIDs() (ids []int64) {
-	for id := range m.testcases {
+// TestcaseIDs returns the "testcase" edge IDs in the mutation.
+func (m *TestcaseSuiteMutation) TestcaseIDs() (ids []int64) {
+	for id := range m.testcase {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetTestcases resets all changes to the "testcases" edge.
-func (m *TestCaseSuiteMutation) ResetTestcases() {
-	m.testcases = nil
-	m.clearedtestcases = false
-	m.removedtestcases = nil
+// ResetTestcase resets all changes to the "testcase" edge.
+func (m *TestcaseSuiteMutation) ResetTestcase() {
+	m.testcase = nil
+	m.clearedtestcase = false
+	m.removedtestcase = nil
 }
 
-// Where appends a list predicates to the TestCaseSuiteMutation builder.
-func (m *TestCaseSuiteMutation) Where(ps ...predicate.TestCaseSuite) {
+// Where appends a list predicates to the TestcaseSuiteMutation builder.
+func (m *TestcaseSuiteMutation) Where(ps ...predicate.TestcaseSuite) {
 	m.predicates = append(m.predicates, ps...)
 }
 
-// WhereP appends storage-level predicates to the TestCaseSuiteMutation builder. Using this method,
+// WhereP appends storage-level predicates to the TestcaseSuiteMutation builder. Using this method,
 // users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *TestCaseSuiteMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.TestCaseSuite, len(ps))
+func (m *TestcaseSuiteMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.TestcaseSuite, len(ps))
 	for i := range ps {
 		p[i] = ps[i]
 	}
@@ -9671,24 +9744,24 @@ func (m *TestCaseSuiteMutation) WhereP(ps ...func(*sql.Selector)) {
 }
 
 // Op returns the operation name.
-func (m *TestCaseSuiteMutation) Op() Op {
+func (m *TestcaseSuiteMutation) Op() Op {
 	return m.op
 }
 
 // SetOp allows setting the mutation operation.
-func (m *TestCaseSuiteMutation) SetOp(op Op) {
+func (m *TestcaseSuiteMutation) SetOp(op Op) {
 	m.op = op
 }
 
-// Type returns the node type of this mutation (TestCaseSuite).
-func (m *TestCaseSuiteMutation) Type() string {
+// Type returns the node type of this mutation (TestcaseSuite).
+func (m *TestcaseSuiteMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during this mutation. Note that in
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
-func (m *TestCaseSuiteMutation) Fields() []string {
+func (m *TestcaseSuiteMutation) Fields() []string {
 	fields := make([]string, 0, 3)
 	if m.name != nil {
 		fields = append(fields, testcasesuite.FieldName)
@@ -9705,7 +9778,7 @@ func (m *TestCaseSuiteMutation) Fields() []string {
 // Field returns the value of a field with the given name. The second boolean
 // return value indicates that this field was not set, or was not defined in the
 // schema.
-func (m *TestCaseSuiteMutation) Field(name string) (ent.Value, bool) {
+func (m *TestcaseSuiteMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case testcasesuite.FieldName:
 		return m.Name()
@@ -9720,7 +9793,7 @@ func (m *TestCaseSuiteMutation) Field(name string) (ent.Value, bool) {
 // OldField returns the old value of the field from the database. An error is
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
-func (m *TestCaseSuiteMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+func (m *TestcaseSuiteMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
 	case testcasesuite.FieldName:
 		return m.OldName(ctx)
@@ -9729,13 +9802,13 @@ func (m *TestCaseSuiteMutation) OldField(ctx context.Context, name string) (ent.
 	case testcasesuite.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
 	}
-	return nil, fmt.Errorf("unknown TestCaseSuite field %s", name)
+	return nil, fmt.Errorf("unknown TestcaseSuite field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *TestCaseSuiteMutation) SetField(name string, value ent.Value) error {
+func (m *TestcaseSuiteMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case testcasesuite.FieldName:
 		v, ok := value.(string)
@@ -9759,12 +9832,12 @@ func (m *TestCaseSuiteMutation) SetField(name string, value ent.Value) error {
 		m.SetCreatedBy(v)
 		return nil
 	}
-	return fmt.Errorf("unknown TestCaseSuite field %s", name)
+	return fmt.Errorf("unknown TestcaseSuite field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
-func (m *TestCaseSuiteMutation) AddedFields() []string {
+func (m *TestcaseSuiteMutation) AddedFields() []string {
 	var fields []string
 	if m.addcreated_by != nil {
 		fields = append(fields, testcasesuite.FieldCreatedBy)
@@ -9775,7 +9848,7 @@ func (m *TestCaseSuiteMutation) AddedFields() []string {
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
-func (m *TestCaseSuiteMutation) AddedField(name string) (ent.Value, bool) {
+func (m *TestcaseSuiteMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case testcasesuite.FieldCreatedBy:
 		return m.AddedCreatedBy()
@@ -9786,7 +9859,7 @@ func (m *TestCaseSuiteMutation) AddedField(name string) (ent.Value, bool) {
 // AddField adds the value to the field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *TestCaseSuiteMutation) AddField(name string, value ent.Value) error {
+func (m *TestcaseSuiteMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	case testcasesuite.FieldCreatedBy:
 		v, ok := value.(int32)
@@ -9796,31 +9869,31 @@ func (m *TestCaseSuiteMutation) AddField(name string, value ent.Value) error {
 		m.AddCreatedBy(v)
 		return nil
 	}
-	return fmt.Errorf("unknown TestCaseSuite numeric field %s", name)
+	return fmt.Errorf("unknown TestcaseSuite numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
-func (m *TestCaseSuiteMutation) ClearedFields() []string {
+func (m *TestcaseSuiteMutation) ClearedFields() []string {
 	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
 // cleared in this mutation.
-func (m *TestCaseSuiteMutation) FieldCleared(name string) bool {
+func (m *TestcaseSuiteMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *TestCaseSuiteMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown TestCaseSuite nullable field %s", name)
+func (m *TestcaseSuiteMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown TestcaseSuite nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
-func (m *TestCaseSuiteMutation) ResetField(name string) error {
+func (m *TestcaseSuiteMutation) ResetField(name string) error {
 	switch name {
 	case testcasesuite.FieldName:
 		m.ResetName()
@@ -9832,25 +9905,25 @@ func (m *TestCaseSuiteMutation) ResetField(name string) error {
 		m.ResetCreatedBy()
 		return nil
 	}
-	return fmt.Errorf("unknown TestCaseSuite field %s", name)
+	return fmt.Errorf("unknown TestcaseSuite field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
-func (m *TestCaseSuiteMutation) AddedEdges() []string {
+func (m *TestcaseSuiteMutation) AddedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.testcases != nil {
-		edges = append(edges, testcasesuite.EdgeTestcases)
+	if m.testcase != nil {
+		edges = append(edges, testcasesuite.EdgeTestcase)
 	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
-func (m *TestCaseSuiteMutation) AddedIDs(name string) []ent.Value {
+func (m *TestcaseSuiteMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case testcasesuite.EdgeTestcases:
-		ids := make([]ent.Value, 0, len(m.testcases))
-		for id := range m.testcases {
+	case testcasesuite.EdgeTestcase:
+		ids := make([]ent.Value, 0, len(m.testcase))
+		for id := range m.testcase {
 			ids = append(ids, id)
 		}
 		return ids
@@ -9859,21 +9932,21 @@ func (m *TestCaseSuiteMutation) AddedIDs(name string) []ent.Value {
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
-func (m *TestCaseSuiteMutation) RemovedEdges() []string {
+func (m *TestcaseSuiteMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.removedtestcases != nil {
-		edges = append(edges, testcasesuite.EdgeTestcases)
+	if m.removedtestcase != nil {
+		edges = append(edges, testcasesuite.EdgeTestcase)
 	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
-func (m *TestCaseSuiteMutation) RemovedIDs(name string) []ent.Value {
+func (m *TestcaseSuiteMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case testcasesuite.EdgeTestcases:
-		ids := make([]ent.Value, 0, len(m.removedtestcases))
-		for id := range m.removedtestcases {
+	case testcasesuite.EdgeTestcase:
+		ids := make([]ent.Value, 0, len(m.removedtestcase))
+		for id := range m.removedtestcase {
 			ids = append(ids, id)
 		}
 		return ids
@@ -9882,41 +9955,41 @@ func (m *TestCaseSuiteMutation) RemovedIDs(name string) []ent.Value {
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *TestCaseSuiteMutation) ClearedEdges() []string {
+func (m *TestcaseSuiteMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.clearedtestcases {
-		edges = append(edges, testcasesuite.EdgeTestcases)
+	if m.clearedtestcase {
+		edges = append(edges, testcasesuite.EdgeTestcase)
 	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
-func (m *TestCaseSuiteMutation) EdgeCleared(name string) bool {
+func (m *TestcaseSuiteMutation) EdgeCleared(name string) bool {
 	switch name {
-	case testcasesuite.EdgeTestcases:
-		return m.clearedtestcases
+	case testcasesuite.EdgeTestcase:
+		return m.clearedtestcase
 	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
-func (m *TestCaseSuiteMutation) ClearEdge(name string) error {
+func (m *TestcaseSuiteMutation) ClearEdge(name string) error {
 	switch name {
 	}
-	return fmt.Errorf("unknown TestCaseSuite unique edge %s", name)
+	return fmt.Errorf("unknown TestcaseSuite unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
-func (m *TestCaseSuiteMutation) ResetEdge(name string) error {
+func (m *TestcaseSuiteMutation) ResetEdge(name string) error {
 	switch name {
-	case testcasesuite.EdgeTestcases:
-		m.ResetTestcases()
+	case testcasesuite.EdgeTestcase:
+		m.ResetTestcase()
 		return nil
 	}
-	return fmt.Errorf("unknown TestCaseSuite edge %s", name)
+	return fmt.Errorf("unknown TestcaseSuite edge %s", name)
 }
 
 // UserMutation represents an operation that mutates the User nodes in the graph.

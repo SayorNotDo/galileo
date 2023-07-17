@@ -14,200 +14,214 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// TestCaseCreate is the builder for creating a TestCase entity.
-type TestCaseCreate struct {
+// TestcaseCreate is the builder for creating a Testcase entity.
+type TestcaseCreate struct {
 	config
-	mutation *TestCaseMutation
+	mutation *TestcaseMutation
 	hooks    []Hook
 }
 
 // SetName sets the "name" field.
-func (tcc *TestCaseCreate) SetName(s string) *TestCaseCreate {
-	tcc.mutation.SetName(s)
-	return tcc
+func (tc *TestcaseCreate) SetName(s string) *TestcaseCreate {
+	tc.mutation.SetName(s)
+	return tc
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (tcc *TestCaseCreate) SetCreatedBy(u uint32) *TestCaseCreate {
-	tcc.mutation.SetCreatedBy(u)
-	return tcc
+func (tc *TestcaseCreate) SetCreatedBy(u uint32) *TestcaseCreate {
+	tc.mutation.SetCreatedBy(u)
+	return tc
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (tcc *TestCaseCreate) SetCreatedAt(t time.Time) *TestCaseCreate {
-	tcc.mutation.SetCreatedAt(t)
-	return tcc
+func (tc *TestcaseCreate) SetCreatedAt(t time.Time) *TestcaseCreate {
+	tc.mutation.SetCreatedAt(t)
+	return tc
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (tcc *TestCaseCreate) SetNillableCreatedAt(t *time.Time) *TestCaseCreate {
+func (tc *TestcaseCreate) SetNillableCreatedAt(t *time.Time) *TestcaseCreate {
 	if t != nil {
-		tcc.SetCreatedAt(*t)
+		tc.SetCreatedAt(*t)
 	}
-	return tcc
+	return tc
 }
 
-// SetUpdateBy sets the "update_by" field.
-func (tcc *TestCaseCreate) SetUpdateBy(u uint32) *TestCaseCreate {
-	tcc.mutation.SetUpdateBy(u)
-	return tcc
+// SetUpdatedBy sets the "updated_by" field.
+func (tc *TestcaseCreate) SetUpdatedBy(u uint32) *TestcaseCreate {
+	tc.mutation.SetUpdatedBy(u)
+	return tc
 }
 
-// SetNillableUpdateBy sets the "update_by" field if the given value is not nil.
-func (tcc *TestCaseCreate) SetNillableUpdateBy(u *uint32) *TestCaseCreate {
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (tc *TestcaseCreate) SetNillableUpdatedBy(u *uint32) *TestcaseCreate {
 	if u != nil {
-		tcc.SetUpdateBy(*u)
+		tc.SetUpdatedBy(*u)
 	}
-	return tcc
+	return tc
 }
 
-// SetUpdateAt sets the "update_at" field.
-func (tcc *TestCaseCreate) SetUpdateAt(t time.Time) *TestCaseCreate {
-	tcc.mutation.SetUpdateAt(t)
-	return tcc
+// SetUpdatedAt sets the "updated_at" field.
+func (tc *TestcaseCreate) SetUpdatedAt(t time.Time) *TestcaseCreate {
+	tc.mutation.SetUpdatedAt(t)
+	return tc
 }
 
-// SetNillableUpdateAt sets the "update_at" field if the given value is not nil.
-func (tcc *TestCaseCreate) SetNillableUpdateAt(t *time.Time) *TestCaseCreate {
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (tc *TestcaseCreate) SetNillableUpdatedAt(t *time.Time) *TestcaseCreate {
 	if t != nil {
-		tcc.SetUpdateAt(*t)
+		tc.SetUpdatedAt(*t)
 	}
-	return tcc
+	return tc
 }
 
 // SetStatus sets the "status" field.
-func (tcc *TestCaseCreate) SetStatus(i int8) *TestCaseCreate {
-	tcc.mutation.SetStatus(i)
-	return tcc
+func (tc *TestcaseCreate) SetStatus(i int8) *TestcaseCreate {
+	tc.mutation.SetStatus(i)
+	return tc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (tcc *TestCaseCreate) SetNillableStatus(i *int8) *TestCaseCreate {
+func (tc *TestcaseCreate) SetNillableStatus(i *int8) *TestcaseCreate {
 	if i != nil {
-		tcc.SetStatus(*i)
+		tc.SetStatus(*i)
 	}
-	return tcc
+	return tc
 }
 
 // SetType sets the "type" field.
-func (tcc *TestCaseCreate) SetType(i int8) *TestCaseCreate {
-	tcc.mutation.SetType(i)
-	return tcc
+func (tc *TestcaseCreate) SetType(i int8) *TestcaseCreate {
+	tc.mutation.SetType(i)
+	return tc
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (tcc *TestCaseCreate) SetNillableType(i *int8) *TestCaseCreate {
+func (tc *TestcaseCreate) SetNillableType(i *int8) *TestcaseCreate {
 	if i != nil {
-		tcc.SetType(*i)
+		tc.SetType(*i)
 	}
-	return tcc
+	return tc
 }
 
 // SetPriority sets the "priority" field.
-func (tcc *TestCaseCreate) SetPriority(i int8) *TestCaseCreate {
-	tcc.mutation.SetPriority(i)
-	return tcc
+func (tc *TestcaseCreate) SetPriority(i int8) *TestcaseCreate {
+	tc.mutation.SetPriority(i)
+	return tc
 }
 
 // SetNillablePriority sets the "priority" field if the given value is not nil.
-func (tcc *TestCaseCreate) SetNillablePriority(i *int8) *TestCaseCreate {
+func (tc *TestcaseCreate) SetNillablePriority(i *int8) *TestcaseCreate {
 	if i != nil {
-		tcc.SetPriority(*i)
+		tc.SetPriority(*i)
 	}
-	return tcc
+	return tc
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (tcc *TestCaseCreate) SetDeletedAt(t time.Time) *TestCaseCreate {
-	tcc.mutation.SetDeletedAt(t)
-	return tcc
+func (tc *TestcaseCreate) SetDeletedAt(t time.Time) *TestcaseCreate {
+	tc.mutation.SetDeletedAt(t)
+	return tc
 }
 
 // SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (tcc *TestCaseCreate) SetNillableDeletedAt(t *time.Time) *TestCaseCreate {
+func (tc *TestcaseCreate) SetNillableDeletedAt(t *time.Time) *TestcaseCreate {
 	if t != nil {
-		tcc.SetDeletedAt(*t)
+		tc.SetDeletedAt(*t)
 	}
-	return tcc
+	return tc
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (tcc *TestCaseCreate) SetDeletedBy(u uint32) *TestCaseCreate {
-	tcc.mutation.SetDeletedBy(u)
-	return tcc
+func (tc *TestcaseCreate) SetDeletedBy(u uint32) *TestcaseCreate {
+	tc.mutation.SetDeletedBy(u)
+	return tc
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (tcc *TestCaseCreate) SetNillableDeletedBy(u *uint32) *TestCaseCreate {
+func (tc *TestcaseCreate) SetNillableDeletedBy(u *uint32) *TestcaseCreate {
 	if u != nil {
-		tcc.SetDeletedBy(*u)
+		tc.SetDeletedBy(*u)
 	}
-	return tcc
+	return tc
 }
 
 // SetDescription sets the "description" field.
-func (tcc *TestCaseCreate) SetDescription(s string) *TestCaseCreate {
-	tcc.mutation.SetDescription(s)
-	return tcc
+func (tc *TestcaseCreate) SetDescription(s string) *TestcaseCreate {
+	tc.mutation.SetDescription(s)
+	return tc
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (tcc *TestCaseCreate) SetNillableDescription(s *string) *TestCaseCreate {
+func (tc *TestcaseCreate) SetNillableDescription(s *string) *TestcaseCreate {
 	if s != nil {
-		tcc.SetDescription(*s)
+		tc.SetDescription(*s)
 	}
-	return tcc
+	return tc
+}
+
+// SetLabel sets the "label" field.
+func (tc *TestcaseCreate) SetLabel(s string) *TestcaseCreate {
+	tc.mutation.SetLabel(s)
+	return tc
+}
+
+// SetNillableLabel sets the "label" field if the given value is not nil.
+func (tc *TestcaseCreate) SetNillableLabel(s *string) *TestcaseCreate {
+	if s != nil {
+		tc.SetLabel(*s)
+	}
+	return tc
 }
 
 // SetURL sets the "url" field.
-func (tcc *TestCaseCreate) SetURL(s string) *TestCaseCreate {
-	tcc.mutation.SetURL(s)
-	return tcc
+func (tc *TestcaseCreate) SetURL(s string) *TestcaseCreate {
+	tc.mutation.SetURL(s)
+	return tc
 }
 
 // SetNillableURL sets the "url" field if the given value is not nil.
-func (tcc *TestCaseCreate) SetNillableURL(s *string) *TestCaseCreate {
+func (tc *TestcaseCreate) SetNillableURL(s *string) *TestcaseCreate {
 	if s != nil {
-		tcc.SetURL(*s)
+		tc.SetURL(*s)
 	}
-	return tcc
+	return tc
 }
 
 // SetID sets the "id" field.
-func (tcc *TestCaseCreate) SetID(i int64) *TestCaseCreate {
-	tcc.mutation.SetID(i)
-	return tcc
+func (tc *TestcaseCreate) SetID(i int64) *TestcaseCreate {
+	tc.mutation.SetID(i)
+	return tc
 }
 
-// AddTestcaseSuiteIDs adds the "testcaseSuites" edge to the TestCaseSuite entity by IDs.
-func (tcc *TestCaseCreate) AddTestcaseSuiteIDs(ids ...int64) *TestCaseCreate {
-	tcc.mutation.AddTestcaseSuiteIDs(ids...)
-	return tcc
+// AddTestcaseSuiteIDs adds the "testcase_suite" edge to the TestcaseSuite entity by IDs.
+func (tc *TestcaseCreate) AddTestcaseSuiteIDs(ids ...int64) *TestcaseCreate {
+	tc.mutation.AddTestcaseSuiteIDs(ids...)
+	return tc
 }
 
-// AddTestcaseSuites adds the "testcaseSuites" edges to the TestCaseSuite entity.
-func (tcc *TestCaseCreate) AddTestcaseSuites(t ...*TestCaseSuite) *TestCaseCreate {
+// AddTestcaseSuite adds the "testcase_suite" edges to the TestcaseSuite entity.
+func (tc *TestcaseCreate) AddTestcaseSuite(t ...*TestcaseSuite) *TestcaseCreate {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return tcc.AddTestcaseSuiteIDs(ids...)
+	return tc.AddTestcaseSuiteIDs(ids...)
 }
 
-// Mutation returns the TestCaseMutation object of the builder.
-func (tcc *TestCaseCreate) Mutation() *TestCaseMutation {
-	return tcc.mutation
+// Mutation returns the TestcaseMutation object of the builder.
+func (tc *TestcaseCreate) Mutation() *TestcaseMutation {
+	return tc.mutation
 }
 
-// Save creates the TestCase in the database.
-func (tcc *TestCaseCreate) Save(ctx context.Context) (*TestCase, error) {
-	tcc.defaults()
-	return withHooks[*TestCase, TestCaseMutation](ctx, tcc.sqlSave, tcc.mutation, tcc.hooks)
+// Save creates the Testcase in the database.
+func (tc *TestcaseCreate) Save(ctx context.Context) (*Testcase, error) {
+	tc.defaults()
+	return withHooks[*Testcase, TestcaseMutation](ctx, tc.sqlSave, tc.mutation, tc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (tcc *TestCaseCreate) SaveX(ctx context.Context) *TestCase {
-	v, err := tcc.Save(ctx)
+func (tc *TestcaseCreate) SaveX(ctx context.Context) *Testcase {
+	v, err := tc.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -215,72 +229,72 @@ func (tcc *TestCaseCreate) SaveX(ctx context.Context) *TestCase {
 }
 
 // Exec executes the query.
-func (tcc *TestCaseCreate) Exec(ctx context.Context) error {
-	_, err := tcc.Save(ctx)
+func (tc *TestcaseCreate) Exec(ctx context.Context) error {
+	_, err := tc.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tcc *TestCaseCreate) ExecX(ctx context.Context) {
-	if err := tcc.Exec(ctx); err != nil {
+func (tc *TestcaseCreate) ExecX(ctx context.Context) {
+	if err := tc.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (tcc *TestCaseCreate) defaults() {
-	if _, ok := tcc.mutation.CreatedAt(); !ok {
+func (tc *TestcaseCreate) defaults() {
+	if _, ok := tc.mutation.CreatedAt(); !ok {
 		v := testcase.DefaultCreatedAt()
-		tcc.mutation.SetCreatedAt(v)
+		tc.mutation.SetCreatedAt(v)
 	}
-	if _, ok := tcc.mutation.Status(); !ok {
+	if _, ok := tc.mutation.Status(); !ok {
 		v := testcase.DefaultStatus
-		tcc.mutation.SetStatus(v)
+		tc.mutation.SetStatus(v)
 	}
-	if _, ok := tcc.mutation.GetType(); !ok {
+	if _, ok := tc.mutation.GetType(); !ok {
 		v := testcase.DefaultType
-		tcc.mutation.SetType(v)
+		tc.mutation.SetType(v)
 	}
-	if _, ok := tcc.mutation.Priority(); !ok {
+	if _, ok := tc.mutation.Priority(); !ok {
 		v := testcase.DefaultPriority
-		tcc.mutation.SetPriority(v)
+		tc.mutation.SetPriority(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (tcc *TestCaseCreate) check() error {
-	if _, ok := tcc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "TestCase.name"`)}
+func (tc *TestcaseCreate) check() error {
+	if _, ok := tc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Testcase.name"`)}
 	}
-	if v, ok := tcc.mutation.Name(); ok {
+	if v, ok := tc.mutation.Name(); ok {
 		if err := testcase.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "TestCase.name": %w`, err)}
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Testcase.name": %w`, err)}
 		}
 	}
-	if _, ok := tcc.mutation.CreatedBy(); !ok {
-		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "TestCase.created_by"`)}
+	if _, ok := tc.mutation.CreatedBy(); !ok {
+		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Testcase.created_by"`)}
 	}
-	if _, ok := tcc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "TestCase.created_at"`)}
+	if _, ok := tc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Testcase.created_at"`)}
 	}
-	if _, ok := tcc.mutation.Status(); !ok {
-		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "TestCase.status"`)}
+	if _, ok := tc.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Testcase.status"`)}
 	}
-	if _, ok := tcc.mutation.GetType(); !ok {
-		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "TestCase.type"`)}
+	if _, ok := tc.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "Testcase.type"`)}
 	}
-	if _, ok := tcc.mutation.Priority(); !ok {
-		return &ValidationError{Name: "priority", err: errors.New(`ent: missing required field "TestCase.priority"`)}
+	if _, ok := tc.mutation.Priority(); !ok {
+		return &ValidationError{Name: "priority", err: errors.New(`ent: missing required field "Testcase.priority"`)}
 	}
 	return nil
 }
 
-func (tcc *TestCaseCreate) sqlSave(ctx context.Context) (*TestCase, error) {
-	if err := tcc.check(); err != nil {
+func (tc *TestcaseCreate) sqlSave(ctx context.Context) (*Testcase, error) {
+	if err := tc.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := tcc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, tcc.driver, _spec); err != nil {
+	_node, _spec := tc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, tc.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -290,74 +304,78 @@ func (tcc *TestCaseCreate) sqlSave(ctx context.Context) (*TestCase, error) {
 		id := _spec.ID.Value.(int64)
 		_node.ID = int64(id)
 	}
-	tcc.mutation.id = &_node.ID
-	tcc.mutation.done = true
+	tc.mutation.id = &_node.ID
+	tc.mutation.done = true
 	return _node, nil
 }
 
-func (tcc *TestCaseCreate) createSpec() (*TestCase, *sqlgraph.CreateSpec) {
+func (tc *TestcaseCreate) createSpec() (*Testcase, *sqlgraph.CreateSpec) {
 	var (
-		_node = &TestCase{config: tcc.config}
+		_node = &Testcase{config: tc.config}
 		_spec = sqlgraph.NewCreateSpec(testcase.Table, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64))
 	)
-	if id, ok := tcc.mutation.ID(); ok {
+	if id, ok := tc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := tcc.mutation.Name(); ok {
+	if value, ok := tc.mutation.Name(); ok {
 		_spec.SetField(testcase.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := tcc.mutation.CreatedBy(); ok {
+	if value, ok := tc.mutation.CreatedBy(); ok {
 		_spec.SetField(testcase.FieldCreatedBy, field.TypeUint32, value)
 		_node.CreatedBy = value
 	}
-	if value, ok := tcc.mutation.CreatedAt(); ok {
+	if value, ok := tc.mutation.CreatedAt(); ok {
 		_spec.SetField(testcase.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
-	if value, ok := tcc.mutation.UpdateBy(); ok {
-		_spec.SetField(testcase.FieldUpdateBy, field.TypeUint32, value)
-		_node.UpdateBy = value
+	if value, ok := tc.mutation.UpdatedBy(); ok {
+		_spec.SetField(testcase.FieldUpdatedBy, field.TypeUint32, value)
+		_node.UpdatedBy = value
 	}
-	if value, ok := tcc.mutation.UpdateAt(); ok {
-		_spec.SetField(testcase.FieldUpdateAt, field.TypeTime, value)
-		_node.UpdateAt = value
+	if value, ok := tc.mutation.UpdatedAt(); ok {
+		_spec.SetField(testcase.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
 	}
-	if value, ok := tcc.mutation.Status(); ok {
+	if value, ok := tc.mutation.Status(); ok {
 		_spec.SetField(testcase.FieldStatus, field.TypeInt8, value)
 		_node.Status = value
 	}
-	if value, ok := tcc.mutation.GetType(); ok {
+	if value, ok := tc.mutation.GetType(); ok {
 		_spec.SetField(testcase.FieldType, field.TypeInt8, value)
 		_node.Type = value
 	}
-	if value, ok := tcc.mutation.Priority(); ok {
+	if value, ok := tc.mutation.Priority(); ok {
 		_spec.SetField(testcase.FieldPriority, field.TypeInt8, value)
 		_node.Priority = value
 	}
-	if value, ok := tcc.mutation.DeletedAt(); ok {
+	if value, ok := tc.mutation.DeletedAt(); ok {
 		_spec.SetField(testcase.FieldDeletedAt, field.TypeTime, value)
 		_node.DeletedAt = value
 	}
-	if value, ok := tcc.mutation.DeletedBy(); ok {
+	if value, ok := tc.mutation.DeletedBy(); ok {
 		_spec.SetField(testcase.FieldDeletedBy, field.TypeUint32, value)
 		_node.DeletedBy = value
 	}
-	if value, ok := tcc.mutation.Description(); ok {
+	if value, ok := tc.mutation.Description(); ok {
 		_spec.SetField(testcase.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
-	if value, ok := tcc.mutation.URL(); ok {
+	if value, ok := tc.mutation.Label(); ok {
+		_spec.SetField(testcase.FieldLabel, field.TypeString, value)
+		_node.Label = value
+	}
+	if value, ok := tc.mutation.URL(); ok {
 		_spec.SetField(testcase.FieldURL, field.TypeString, value)
 		_node.URL = value
 	}
-	if nodes := tcc.mutation.TestcaseSuitesIDs(); len(nodes) > 0 {
+	if nodes := tc.mutation.TestcaseSuiteIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   testcase.TestcaseSuitesTable,
-			Columns: testcase.TestcaseSuitesPrimaryKey,
+			Table:   testcase.TestcaseSuiteTable,
+			Columns: testcase.TestcaseSuitePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
@@ -371,23 +389,23 @@ func (tcc *TestCaseCreate) createSpec() (*TestCase, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
-// TestCaseCreateBulk is the builder for creating many TestCase entities in bulk.
-type TestCaseCreateBulk struct {
+// TestcaseCreateBulk is the builder for creating many Testcase entities in bulk.
+type TestcaseCreateBulk struct {
 	config
-	builders []*TestCaseCreate
+	builders []*TestcaseCreate
 }
 
-// Save creates the TestCase entities in the database.
-func (tccb *TestCaseCreateBulk) Save(ctx context.Context) ([]*TestCase, error) {
-	specs := make([]*sqlgraph.CreateSpec, len(tccb.builders))
-	nodes := make([]*TestCase, len(tccb.builders))
-	mutators := make([]Mutator, len(tccb.builders))
-	for i := range tccb.builders {
+// Save creates the Testcase entities in the database.
+func (tcb *TestcaseCreateBulk) Save(ctx context.Context) ([]*Testcase, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(tcb.builders))
+	nodes := make([]*Testcase, len(tcb.builders))
+	mutators := make([]Mutator, len(tcb.builders))
+	for i := range tcb.builders {
 		func(i int, root context.Context) {
-			builder := tccb.builders[i]
+			builder := tcb.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				mutation, ok := m.(*TestCaseMutation)
+				mutation, ok := m.(*TestcaseMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
 				}
@@ -398,11 +416,11 @@ func (tccb *TestCaseCreateBulk) Save(ctx context.Context) ([]*TestCase, error) {
 				nodes[i], specs[i] = builder.createSpec()
 				var err error
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, tccb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, tcb.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, tccb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, tcb.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -426,7 +444,7 @@ func (tccb *TestCaseCreateBulk) Save(ctx context.Context) ([]*TestCase, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, tccb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, tcb.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -434,8 +452,8 @@ func (tccb *TestCaseCreateBulk) Save(ctx context.Context) ([]*TestCase, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tccb *TestCaseCreateBulk) SaveX(ctx context.Context) []*TestCase {
-	v, err := tccb.Save(ctx)
+func (tcb *TestcaseCreateBulk) SaveX(ctx context.Context) []*Testcase {
+	v, err := tcb.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -443,14 +461,14 @@ func (tccb *TestCaseCreateBulk) SaveX(ctx context.Context) []*TestCase {
 }
 
 // Exec executes the query.
-func (tccb *TestCaseCreateBulk) Exec(ctx context.Context) error {
-	_, err := tccb.Save(ctx)
+func (tcb *TestcaseCreateBulk) Exec(ctx context.Context) error {
+	_, err := tcb.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tccb *TestCaseCreateBulk) ExecX(ctx context.Context) {
-	if err := tccb.Exec(ctx); err != nil {
+func (tcb *TestcaseCreateBulk) ExecX(ctx context.Context) {
+	if err := tcb.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

@@ -2,18 +2,26 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"time"
 )
 
-// TestCaseSuite holds the schema definition for the TestCaseSuite entity.
-type TestCaseSuite struct {
+// TestcaseSuite holds the schema definition for the TestcaseSuite entity.
+type TestcaseSuite struct {
 	ent.Schema
 }
 
+func (TestcaseSuite) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entsql.Annotation{Table: "testcase_suite"},
+	}
+}
+
 // Fields of the TestCaseSuite.
-func (TestCaseSuite) Fields() []ent.Field {
+func (TestcaseSuite) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int64("id"),
 		field.String("name").Unique().NotEmpty(),
@@ -23,8 +31,8 @@ func (TestCaseSuite) Fields() []ent.Field {
 }
 
 // Edges of the TestCaseSuite.
-func (TestCaseSuite) Edges() []ent.Edge {
+func (TestcaseSuite) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("testcases", TestCase.Type),
+		edge.To("testcase", Testcase.Type),
 	}
 }

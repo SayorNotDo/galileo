@@ -30,11 +30,11 @@ type Project func(*sql.Selector)
 // Task is the predicate function for task builders.
 type Task func(*sql.Selector)
 
-// TestCase is the predicate function for testcase builders.
-type TestCase func(*sql.Selector)
+// Testcase is the predicate function for testcase builders.
+type Testcase func(*sql.Selector)
 
-// TestCaseSuite is the predicate function for testcasesuite builders.
-type TestCaseSuite func(*sql.Selector)
+// TestcaseSuite is the predicate function for testcasesuite builders.
+type TestcaseSuite func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

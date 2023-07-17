@@ -12,64 +12,64 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// TestCaseSuiteDelete is the builder for deleting a TestCaseSuite entity.
-type TestCaseSuiteDelete struct {
+// TestcaseSuiteDelete is the builder for deleting a TestcaseSuite entity.
+type TestcaseSuiteDelete struct {
 	config
 	hooks    []Hook
-	mutation *TestCaseSuiteMutation
+	mutation *TestcaseSuiteMutation
 }
 
-// Where appends a list predicates to the TestCaseSuiteDelete builder.
-func (tcsd *TestCaseSuiteDelete) Where(ps ...predicate.TestCaseSuite) *TestCaseSuiteDelete {
-	tcsd.mutation.Where(ps...)
-	return tcsd
+// Where appends a list predicates to the TestcaseSuiteDelete builder.
+func (tsd *TestcaseSuiteDelete) Where(ps ...predicate.TestcaseSuite) *TestcaseSuiteDelete {
+	tsd.mutation.Where(ps...)
+	return tsd
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (tcsd *TestCaseSuiteDelete) Exec(ctx context.Context) (int, error) {
-	return withHooks[int, TestCaseSuiteMutation](ctx, tcsd.sqlExec, tcsd.mutation, tcsd.hooks)
+func (tsd *TestcaseSuiteDelete) Exec(ctx context.Context) (int, error) {
+	return withHooks[int, TestcaseSuiteMutation](ctx, tsd.sqlExec, tsd.mutation, tsd.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tcsd *TestCaseSuiteDelete) ExecX(ctx context.Context) int {
-	n, err := tcsd.Exec(ctx)
+func (tsd *TestcaseSuiteDelete) ExecX(ctx context.Context) int {
+	n, err := tsd.Exec(ctx)
 	if err != nil {
 		panic(err)
 	}
 	return n
 }
 
-func (tcsd *TestCaseSuiteDelete) sqlExec(ctx context.Context) (int, error) {
+func (tsd *TestcaseSuiteDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := sqlgraph.NewDeleteSpec(testcasesuite.Table, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64))
-	if ps := tcsd.mutation.predicates; len(ps) > 0 {
+	if ps := tsd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	affected, err := sqlgraph.DeleteNodes(ctx, tcsd.driver, _spec)
+	affected, err := sqlgraph.DeleteNodes(ctx, tsd.driver, _spec)
 	if err != nil && sqlgraph.IsConstraintError(err) {
 		err = &ConstraintError{msg: err.Error(), wrap: err}
 	}
-	tcsd.mutation.done = true
+	tsd.mutation.done = true
 	return affected, err
 }
 
-// TestCaseSuiteDeleteOne is the builder for deleting a single TestCaseSuite entity.
-type TestCaseSuiteDeleteOne struct {
-	tcsd *TestCaseSuiteDelete
+// TestcaseSuiteDeleteOne is the builder for deleting a single TestcaseSuite entity.
+type TestcaseSuiteDeleteOne struct {
+	tsd *TestcaseSuiteDelete
 }
 
-// Where appends a list predicates to the TestCaseSuiteDelete builder.
-func (tcsdo *TestCaseSuiteDeleteOne) Where(ps ...predicate.TestCaseSuite) *TestCaseSuiteDeleteOne {
-	tcsdo.tcsd.mutation.Where(ps...)
-	return tcsdo
+// Where appends a list predicates to the TestcaseSuiteDelete builder.
+func (tsdo *TestcaseSuiteDeleteOne) Where(ps ...predicate.TestcaseSuite) *TestcaseSuiteDeleteOne {
+	tsdo.tsd.mutation.Where(ps...)
+	return tsdo
 }
 
 // Exec executes the deletion query.
-func (tcsdo *TestCaseSuiteDeleteOne) Exec(ctx context.Context) error {
-	n, err := tcsdo.tcsd.Exec(ctx)
+func (tsdo *TestcaseSuiteDeleteOne) Exec(ctx context.Context) error {
+	n, err := tsdo.tsd.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
@@ -81,8 +81,8 @@ func (tcsdo *TestCaseSuiteDeleteOne) Exec(ctx context.Context) error {
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tcsdo *TestCaseSuiteDeleteOne) ExecX(ctx context.Context) {
-	if err := tcsdo.Exec(ctx); err != nil {
+func (tsdo *TestcaseSuiteDeleteOne) ExecX(ctx context.Context) {
+	if err := tsdo.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

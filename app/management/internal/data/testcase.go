@@ -21,7 +21,7 @@ func NewTestCaseRepo(data *Data, logger log.Logger) biz.TestcaseRepo {
 }
 
 func (r *testcaseRepo) CreateTestcase(ctx context.Context, testCase *biz.Testcase) (*biz.Testcase, error) {
-	createTestcase, err := r.data.entDB.TestCase.Create().
+	createTestcase, err := r.data.entDB.Testcase.Create().
 		SetName(testCase.Name).
 		SetCreatedBy(testCase.CreatedBy).
 		SetPriority(testCase.Priority).
@@ -39,11 +39,11 @@ func (r *testcaseRepo) CreateTestcase(ctx context.Context, testCase *biz.Testcas
 }
 
 func (r *testcaseRepo) UpdateTestcase(ctx context.Context, testcase *biz.Testcase) (bool, error) {
-	err := r.data.entDB.TestCase.UpdateOneID(testcase.Id).
+	err := r.data.entDB.Testcase.UpdateOneID(testcase.Id).
 		SetName(testcase.Name).
 		SetPriority(testcase.Priority).
 		SetDescription(testcase.Description).
-		SetUpdateBy(testcase.UpdatedBy).
+		SetUpdatedBy(testcase.UpdatedBy).
 		SetType(testcase.Type).
 		SetURL(testcase.Url).
 		Exec(ctx)
@@ -54,7 +54,7 @@ func (r *testcaseRepo) UpdateTestcase(ctx context.Context, testcase *biz.Testcas
 }
 
 func (r *testcaseRepo) TestcaseById(ctx context.Context, id int64) (*biz.Testcase, error) {
-	queryTestcase, err := r.data.entDB.TestCase.Query().Where(testcase.ID(id)).Only(ctx)
+	queryTestcase, err := r.data.entDB.Testcase.Query().Where(testcase.ID(id)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -62,8 +62,8 @@ func (r *testcaseRepo) TestcaseById(ctx context.Context, id int64) (*biz.Testcas
 		Name:      queryTestcase.Name,
 		CreatedAt: queryTestcase.CreatedAt,
 		CreatedBy: queryTestcase.CreatedBy,
-		UpdatedBy: *queryTestcase.UpdateBy,
-		UpdateAt:  *queryTestcase.UpdateAt,
+		UpdatedBy: queryTestcase.UpdatedBy,
+		UpdateAt:  queryTestcase.UpdatedAt,
 		Status:    queryTestcase.Status,
 		Type:      queryTestcase.Type,
 		Priority:  queryTestcase.Priority,
@@ -72,7 +72,7 @@ func (r *testcaseRepo) TestcaseById(ctx context.Context, id int64) (*biz.Testcas
 }
 
 func (r *testcaseRepo) TestcaseByName(ctx context.Context, name string) (*biz.Testcase, error) {
-	queryTestcase, err := r.data.entDB.TestCase.Query().Where(testcase.Name(name)).Only(ctx)
+	queryTestcase, err := r.data.entDB.Testcase.Query().Where(testcase.Name(name)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -81,8 +81,8 @@ func (r *testcaseRepo) TestcaseByName(ctx context.Context, name string) (*biz.Te
 		Name:      queryTestcase.Name,
 		CreatedAt: queryTestcase.CreatedAt,
 		CreatedBy: queryTestcase.CreatedBy,
-		UpdatedBy: *queryTestcase.UpdateBy,
-		UpdateAt:  *queryTestcase.UpdateAt,
+		UpdatedBy: queryTestcase.UpdatedBy,
+		UpdateAt:  queryTestcase.UpdatedAt,
 		Status:    queryTestcase.Status,
 		Type:      queryTestcase.Type,
 		Priority:  queryTestcase.Priority,

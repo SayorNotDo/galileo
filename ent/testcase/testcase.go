@@ -8,7 +8,7 @@ import (
 
 const (
 	// Label holds the string label denoting the testcase type in the database.
-	Label = "test_case"
+	Label = "testcase"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
 	// FieldName holds the string denoting the name field in the database.
@@ -17,10 +17,10 @@ const (
 	FieldCreatedBy = "created_by"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
-	// FieldUpdateBy holds the string denoting the update_by field in the database.
-	FieldUpdateBy = "update_by"
-	// FieldUpdateAt holds the string denoting the update_at field in the database.
-	FieldUpdateAt = "update_at"
+	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
+	FieldUpdatedBy = "updated_by"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldType holds the string denoting the type field in the database.
@@ -33,17 +33,19 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldLabel holds the string denoting the label field in the database.
+	FieldLabel = "label"
 	// FieldURL holds the string denoting the url field in the database.
 	FieldURL = "url"
-	// EdgeTestcaseSuites holds the string denoting the testcasesuites edge name in mutations.
-	EdgeTestcaseSuites = "testcaseSuites"
+	// EdgeTestcaseSuite holds the string denoting the testcase_suite edge name in mutations.
+	EdgeTestcaseSuite = "testcase_suite"
 	// Table holds the table name of the testcase in the database.
-	Table = "test_cases"
-	// TestcaseSuitesTable is the table that holds the testcaseSuites relation/edge. The primary key declared below.
-	TestcaseSuitesTable = "test_case_suite_testcases"
-	// TestcaseSuitesInverseTable is the table name for the TestCaseSuite entity.
+	Table = "testcase"
+	// TestcaseSuiteTable is the table that holds the testcase_suite relation/edge. The primary key declared below.
+	TestcaseSuiteTable = "testcase_suite_testcase"
+	// TestcaseSuiteInverseTable is the table name for the TestcaseSuite entity.
 	// It exists in this package in order to avoid circular dependency with the "testcasesuite" package.
-	TestcaseSuitesInverseTable = "test_case_suites"
+	TestcaseSuiteInverseTable = "testcase_suite"
 )
 
 // Columns holds all SQL columns for testcase fields.
@@ -52,21 +54,22 @@ var Columns = []string{
 	FieldName,
 	FieldCreatedBy,
 	FieldCreatedAt,
-	FieldUpdateBy,
-	FieldUpdateAt,
+	FieldUpdatedBy,
+	FieldUpdatedAt,
 	FieldStatus,
 	FieldType,
 	FieldPriority,
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldDescription,
+	FieldLabel,
 	FieldURL,
 }
 
 var (
-	// TestcaseSuitesPrimaryKey and TestcaseSuitesColumn2 are the table columns denoting the
-	// primary key for the testcaseSuites relation (M2M).
-	TestcaseSuitesPrimaryKey = []string{"test_case_suite_id", "test_case_id"}
+	// TestcaseSuitePrimaryKey and TestcaseSuiteColumn2 are the table columns denoting the
+	// primary key for the testcase_suite relation (M2M).
+	TestcaseSuitePrimaryKey = []string{"testcase_suite_id", "testcase_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -84,8 +87,8 @@ var (
 	NameValidator func(string) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
-	// UpdateDefaultUpdateAt holds the default value on update for the "update_at" field.
-	UpdateDefaultUpdateAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus int8
 	// DefaultType holds the default value on creation for the "type" field.

@@ -104,28 +104,28 @@ func (f TaskFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TaskMutation", m)
 }
 
-// The TestCaseFunc type is an adapter to allow the use of ordinary
-// function as TestCase mutator.
-type TestCaseFunc func(context.Context, *ent.TestCaseMutation) (ent.Value, error)
+// The TestcaseFunc type is an adapter to allow the use of ordinary
+// function as Testcase mutator.
+type TestcaseFunc func(context.Context, *ent.TestcaseMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f TestCaseFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.TestCaseMutation); ok {
+func (f TestcaseFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TestcaseMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TestCaseMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TestcaseMutation", m)
 }
 
-// The TestCaseSuiteFunc type is an adapter to allow the use of ordinary
-// function as TestCaseSuite mutator.
-type TestCaseSuiteFunc func(context.Context, *ent.TestCaseSuiteMutation) (ent.Value, error)
+// The TestcaseSuiteFunc type is an adapter to allow the use of ordinary
+// function as TestcaseSuite mutator.
+type TestcaseSuiteFunc func(context.Context, *ent.TestcaseSuiteMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f TestCaseSuiteFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.TestCaseSuiteMutation); ok {
+func (f TestcaseSuiteFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TestcaseSuiteMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TestCaseSuiteMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TestcaseSuiteMutation", m)
 }
 
 // The UserFunc type is an adapter to allow the use of ordinary

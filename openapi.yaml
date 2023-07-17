@@ -3,24 +3,27 @@
 
 openapi: 3.0.3
 info:
-    title: Task API
+    title: Testcase API
     version: 0.0.1
 paths:
-    v1/api/management/task:
+    v1/api/testcase:
         put:
             tags:
-                - Task
-            operationId: Task_UpdateTask
+                - Testcase
+            operationId: Testcase_UpdateTestcase
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateTaskRequest'
+                            $ref: '#/components/schemas/UpdateTestcaseRequest'
                 required: true
             responses:
                 "200":
                     description: OK
-                    content: {}
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateTestcaseReply'
                 default:
                     description: Default error response
                     content:
@@ -29,13 +32,13 @@ paths:
                                 $ref: '#/components/schemas/Status'
         post:
             tags:
-                - Task
-            operationId: Task_CreateTask
+                - Testcase
+            operationId: Testcase_CreateTestcase
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CreateTaskRequest'
+                            $ref: '#/components/schemas/CreateTestcaseRequest'
                 required: true
             responses:
                 "200":
@@ -43,18 +46,66 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/CreateTaskReply'
+                                $ref: '#/components/schemas/CreateTestcaseReply'
                 default:
                     description: Default error response
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/management/task/{id}:
+    v1/api/testcase/debug:
+        post:
+            tags:
+                - Testcase
+            operationId: Testcase_DebugTestcase
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/DebugTestcaseRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DebugTestcaseReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/testcase/loadFramework:
+        post:
+            tags:
+                - Testcase
+            operationId: Testcase_LoadFramework
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoadFrameworkRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LoadFrameworkReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/testcase/{id}:
         get:
             tags:
-                - Task
-            operationId: Task_TaskByID
+                - Testcase
+            operationId: Testcase_GetTestcaseById
             parameters:
                 - name: id
                   in: path
@@ -68,7 +119,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/GetTaskReply'
+                                $ref: '#/components/schemas/GetTestcaseReply'
                 default:
                     description: Default error response
                     content:
@@ -77,54 +128,76 @@ paths:
                                 $ref: '#/components/schemas/Status'
 components:
     schemas:
-        CreateTaskReply:
+        CreateTestcaseReply:
             type: object
             properties:
                 id:
                     type: integer
                     format: int64
-                status:
-                    type: integer
-                    format: enum
                 createdAt:
                     type: string
                     format: date-time
-        CreateTaskRequest:
+        CreateTestcaseRequest:
             type: object
             properties:
                 name:
                     type: string
-                rank:
+                status:
                     type: integer
                     format: int32
                 type:
                     type: integer
                     format: int32
+                priority:
+                    type: integer
+                    format: int32
+                url:
+                    type: string
                 description:
                     type: string
-                testcaseSuiteId:
-                    type: array
-                    items:
-                        type: integer
-                        format: int64
-        GetTaskReply:
+        DebugTestcaseReply:
+            type: object
+            properties: {}
+        DebugTestcaseRequest:
             type: object
             properties:
                 name:
                     type: string
-                rank:
+                type:
+                    type: string
+                content:
+                    type: string
+                    format: bytes
+        GetTestcaseReply:
+            type: object
+            properties:
+                name:
+                    type: string
+                createdAt:
                     type: integer
-                    format: int32
+                    format: int64
+                createdBy:
+                    type: integer
+                    format: uint32
+                updateAt:
+                    type: integer
+                    format: int64
+                updateBy:
+                    type: integer
+                    format: uint32
                 type:
                     type: integer
                     format: int32
+                priority:
+                    type: integer
+                    format: int32
+                status:
+                    type: integer
+                    format: int32
+                url:
+                    type: string
                 description:
                     type: string
-                testcaseSuiteId:
-                    type: array
-                    items:
-                        type: integer
-                        format: int64
         GoogleProtobufAny:
             type: object
             properties:
@@ -133,6 +206,24 @@ components:
                     description: The type of the serialized message.
             additionalProperties: true
             description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        LoadFrameworkReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+                worker:
+                    type: string
+        LoadFrameworkRequest:
+            type: object
+            properties:
+                path:
+                    type: string
+                lang:
+                    type: integer
+                    format: enum
+                config:
+                    type: string
+                    format: bytes
         Status:
             type: object
             properties:
@@ -149,7 +240,12 @@ components:
                         $ref: '#/components/schemas/GoogleProtobufAny'
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
-        UpdateTaskRequest:
+        UpdateTestcaseReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+        UpdateTestcaseRequest:
             type: object
             properties:
                 id:
@@ -157,29 +253,15 @@ components:
                     format: int64
                 name:
                     type: string
-                assignee:
-                    type: integer
-                    format: uint32
                 type:
                     type: integer
                     format: int32
-                rank:
+                priority:
                     type: integer
                     format: int32
-                config:
+                url:
                     type: string
-                startTime:
-                    type: string
-                    format: date-time
-                deadline:
-                    type: string
-                    format: date-time
                 description:
                     type: string
-                testcaseSuiteId:
-                    type: array
-                    items:
-                        type: integer
-                        format: int64
 tags:
-    - name: Task
+    - name: Testcase

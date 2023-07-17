@@ -46,6 +46,6 @@ func (Task) Fields() []ent.Field {
 // Edges of the Task.
 func (Task) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("testcaseSuite", TestCaseSuite.Type),
+		edge.To("testcase_suite", TestcaseSuite.Type),
 	}
 }

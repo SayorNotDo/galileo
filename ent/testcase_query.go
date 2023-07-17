@@ -16,76 +16,76 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// TestCaseQuery is the builder for querying TestCase entities.
-type TestCaseQuery struct {
+// TestcaseQuery is the builder for querying Testcase entities.
+type TestcaseQuery struct {
 	config
-	ctx                *QueryContext
-	order              []OrderFunc
-	inters             []Interceptor
-	predicates         []predicate.TestCase
-	withTestcaseSuites *TestCaseSuiteQuery
+	ctx               *QueryContext
+	order             []OrderFunc
+	inters            []Interceptor
+	predicates        []predicate.Testcase
+	withTestcaseSuite *TestcaseSuiteQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the TestCaseQuery builder.
-func (tcq *TestCaseQuery) Where(ps ...predicate.TestCase) *TestCaseQuery {
-	tcq.predicates = append(tcq.predicates, ps...)
-	return tcq
+// Where adds a new predicate for the TestcaseQuery builder.
+func (tq *TestcaseQuery) Where(ps ...predicate.Testcase) *TestcaseQuery {
+	tq.predicates = append(tq.predicates, ps...)
+	return tq
 }
 
 // Limit the number of records to be returned by this query.
-func (tcq *TestCaseQuery) Limit(limit int) *TestCaseQuery {
-	tcq.ctx.Limit = &limit
-	return tcq
+func (tq *TestcaseQuery) Limit(limit int) *TestcaseQuery {
+	tq.ctx.Limit = &limit
+	return tq
 }
 
 // Offset to start from.
-func (tcq *TestCaseQuery) Offset(offset int) *TestCaseQuery {
-	tcq.ctx.Offset = &offset
-	return tcq
+func (tq *TestcaseQuery) Offset(offset int) *TestcaseQuery {
+	tq.ctx.Offset = &offset
+	return tq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (tcq *TestCaseQuery) Unique(unique bool) *TestCaseQuery {
-	tcq.ctx.Unique = &unique
-	return tcq
+func (tq *TestcaseQuery) Unique(unique bool) *TestcaseQuery {
+	tq.ctx.Unique = &unique
+	return tq
 }
 
 // Order specifies how the records should be ordered.
-func (tcq *TestCaseQuery) Order(o ...OrderFunc) *TestCaseQuery {
-	tcq.order = append(tcq.order, o...)
-	return tcq
+func (tq *TestcaseQuery) Order(o ...OrderFunc) *TestcaseQuery {
+	tq.order = append(tq.order, o...)
+	return tq
 }
 
-// QueryTestcaseSuites chains the current query on the "testcaseSuites" edge.
-func (tcq *TestCaseQuery) QueryTestcaseSuites() *TestCaseSuiteQuery {
-	query := (&TestCaseSuiteClient{config: tcq.config}).Query()
+// QueryTestcaseSuite chains the current query on the "testcase_suite" edge.
+func (tq *TestcaseQuery) QueryTestcaseSuite() *TestcaseSuiteQuery {
+	query := (&TestcaseSuiteClient{config: tq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := tcq.prepareQuery(ctx); err != nil {
+		if err := tq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
-		selector := tcq.sqlQuery(ctx)
+		selector := tq.sqlQuery(ctx)
 		if err := selector.Err(); err != nil {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(testcase.Table, testcase.FieldID, selector),
 			sqlgraph.To(testcasesuite.Table, testcasesuite.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, testcase.TestcaseSuitesTable, testcase.TestcaseSuitesPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, testcase.TestcaseSuiteTable, testcase.TestcaseSuitePrimaryKey...),
 		)
-		fromU = sqlgraph.SetNeighbors(tcq.driver.Dialect(), step)
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
 	}
 	return query
 }
 
-// First returns the first TestCase entity from the query.
-// Returns a *NotFoundError when no TestCase was found.
-func (tcq *TestCaseQuery) First(ctx context.Context) (*TestCase, error) {
-	nodes, err := tcq.Limit(1).All(setContextOp(ctx, tcq.ctx, "First"))
+// First returns the first Testcase entity from the query.
+// Returns a *NotFoundError when no Testcase was found.
+func (tq *TestcaseQuery) First(ctx context.Context) (*Testcase, error) {
+	nodes, err := tq.Limit(1).All(setContextOp(ctx, tq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
@@ -96,19 +96,19 @@ func (tcq *TestCaseQuery) First(ctx context.Context) (*TestCase, error) {
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (tcq *TestCaseQuery) FirstX(ctx context.Context) *TestCase {
-	node, err := tcq.First(ctx)
+func (tq *TestcaseQuery) FirstX(ctx context.Context) *Testcase {
+	node, err := tq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
 	return node
 }
 
-// FirstID returns the first TestCase ID from the query.
-// Returns a *NotFoundError when no TestCase ID was found.
-func (tcq *TestCaseQuery) FirstID(ctx context.Context) (id int64, err error) {
+// FirstID returns the first Testcase ID from the query.
+// Returns a *NotFoundError when no Testcase ID was found.
+func (tq *TestcaseQuery) FirstID(ctx context.Context) (id int64, err error) {
 	var ids []int64
-	if ids, err = tcq.Limit(1).IDs(setContextOp(ctx, tcq.ctx, "FirstID")); err != nil {
+	if ids, err = tq.Limit(1).IDs(setContextOp(ctx, tq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -119,19 +119,19 @@ func (tcq *TestCaseQuery) FirstID(ctx context.Context) (id int64, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (tcq *TestCaseQuery) FirstIDX(ctx context.Context) int64 {
-	id, err := tcq.FirstID(ctx)
+func (tq *TestcaseQuery) FirstIDX(ctx context.Context) int64 {
+	id, err := tq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
 	return id
 }
 
-// Only returns a single TestCase entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one TestCase entity is found.
-// Returns a *NotFoundError when no TestCase entities are found.
-func (tcq *TestCaseQuery) Only(ctx context.Context) (*TestCase, error) {
-	nodes, err := tcq.Limit(2).All(setContextOp(ctx, tcq.ctx, "Only"))
+// Only returns a single Testcase entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one Testcase entity is found.
+// Returns a *NotFoundError when no Testcase entities are found.
+func (tq *TestcaseQuery) Only(ctx context.Context) (*Testcase, error) {
+	nodes, err := tq.Limit(2).All(setContextOp(ctx, tq.ctx, "Only"))
 	if err != nil {
 		return nil, err
 	}
@@ -146,20 +146,20 @@ func (tcq *TestCaseQuery) Only(ctx context.Context) (*TestCase, error) {
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (tcq *TestCaseQuery) OnlyX(ctx context.Context) *TestCase {
-	node, err := tcq.Only(ctx)
+func (tq *TestcaseQuery) OnlyX(ctx context.Context) *Testcase {
+	node, err := tq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
 	return node
 }
 
-// OnlyID is like Only, but returns the only TestCase ID in the query.
-// Returns a *NotSingularError when more than one TestCase ID is found.
+// OnlyID is like Only, but returns the only Testcase ID in the query.
+// Returns a *NotSingularError when more than one Testcase ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (tcq *TestCaseQuery) OnlyID(ctx context.Context) (id int64, err error) {
+func (tq *TestcaseQuery) OnlyID(ctx context.Context) (id int64, err error) {
 	var ids []int64
-	if ids, err = tcq.Limit(2).IDs(setContextOp(ctx, tcq.ctx, "OnlyID")); err != nil {
+	if ids, err = tq.Limit(2).IDs(setContextOp(ctx, tq.ctx, "OnlyID")); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -174,48 +174,48 @@ func (tcq *TestCaseQuery) OnlyID(ctx context.Context) (id int64, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (tcq *TestCaseQuery) OnlyIDX(ctx context.Context) int64 {
-	id, err := tcq.OnlyID(ctx)
+func (tq *TestcaseQuery) OnlyIDX(ctx context.Context) int64 {
+	id, err := tq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
 	}
 	return id
 }
 
-// All executes the query and returns a list of TestCases.
-func (tcq *TestCaseQuery) All(ctx context.Context) ([]*TestCase, error) {
-	ctx = setContextOp(ctx, tcq.ctx, "All")
-	if err := tcq.prepareQuery(ctx); err != nil {
+// All executes the query and returns a list of Testcases.
+func (tq *TestcaseQuery) All(ctx context.Context) ([]*Testcase, error) {
+	ctx = setContextOp(ctx, tq.ctx, "All")
+	if err := tq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*TestCase, *TestCaseQuery]()
-	return withInterceptors[[]*TestCase](ctx, tcq, qr, tcq.inters)
+	qr := querierAll[[]*Testcase, *TestcaseQuery]()
+	return withInterceptors[[]*Testcase](ctx, tq, qr, tq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (tcq *TestCaseQuery) AllX(ctx context.Context) []*TestCase {
-	nodes, err := tcq.All(ctx)
+func (tq *TestcaseQuery) AllX(ctx context.Context) []*Testcase {
+	nodes, err := tq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
 	return nodes
 }
 
-// IDs executes the query and returns a list of TestCase IDs.
-func (tcq *TestCaseQuery) IDs(ctx context.Context) (ids []int64, err error) {
-	if tcq.ctx.Unique == nil && tcq.path != nil {
-		tcq.Unique(true)
+// IDs executes the query and returns a list of Testcase IDs.
+func (tq *TestcaseQuery) IDs(ctx context.Context) (ids []int64, err error) {
+	if tq.ctx.Unique == nil && tq.path != nil {
+		tq.Unique(true)
 	}
-	ctx = setContextOp(ctx, tcq.ctx, "IDs")
-	if err = tcq.Select(testcase.FieldID).Scan(ctx, &ids); err != nil {
+	ctx = setContextOp(ctx, tq.ctx, "IDs")
+	if err = tq.Select(testcase.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (tcq *TestCaseQuery) IDsX(ctx context.Context) []int64 {
-	ids, err := tcq.IDs(ctx)
+func (tq *TestcaseQuery) IDsX(ctx context.Context) []int64 {
+	ids, err := tq.IDs(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -223,17 +223,17 @@ func (tcq *TestCaseQuery) IDsX(ctx context.Context) []int64 {
 }
 
 // Count returns the count of the given query.
-func (tcq *TestCaseQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, tcq.ctx, "Count")
-	if err := tcq.prepareQuery(ctx); err != nil {
+func (tq *TestcaseQuery) Count(ctx context.Context) (int, error) {
+	ctx = setContextOp(ctx, tq.ctx, "Count")
+	if err := tq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, tcq, querierCount[*TestCaseQuery](), tcq.inters)
+	return withInterceptors[int](ctx, tq, querierCount[*TestcaseQuery](), tq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (tcq *TestCaseQuery) CountX(ctx context.Context) int {
-	count, err := tcq.Count(ctx)
+func (tq *TestcaseQuery) CountX(ctx context.Context) int {
+	count, err := tq.Count(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -241,9 +241,9 @@ func (tcq *TestCaseQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (tcq *TestCaseQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, tcq.ctx, "Exist")
-	switch _, err := tcq.FirstID(ctx); {
+func (tq *TestcaseQuery) Exist(ctx context.Context) (bool, error) {
+	ctx = setContextOp(ctx, tq.ctx, "Exist")
+	switch _, err := tq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
 	case err != nil:
@@ -254,42 +254,42 @@ func (tcq *TestCaseQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (tcq *TestCaseQuery) ExistX(ctx context.Context) bool {
-	exist, err := tcq.Exist(ctx)
+func (tq *TestcaseQuery) ExistX(ctx context.Context) bool {
+	exist, err := tq.Exist(ctx)
 	if err != nil {
 		panic(err)
 	}
 	return exist
 }
 
-// Clone returns a duplicate of the TestCaseQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the TestcaseQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (tcq *TestCaseQuery) Clone() *TestCaseQuery {
-	if tcq == nil {
+func (tq *TestcaseQuery) Clone() *TestcaseQuery {
+	if tq == nil {
 		return nil
 	}
-	return &TestCaseQuery{
-		config:             tcq.config,
-		ctx:                tcq.ctx.Clone(),
-		order:              append([]OrderFunc{}, tcq.order...),
-		inters:             append([]Interceptor{}, tcq.inters...),
-		predicates:         append([]predicate.TestCase{}, tcq.predicates...),
-		withTestcaseSuites: tcq.withTestcaseSuites.Clone(),
+	return &TestcaseQuery{
+		config:            tq.config,
+		ctx:               tq.ctx.Clone(),
+		order:             append([]OrderFunc{}, tq.order...),
+		inters:            append([]Interceptor{}, tq.inters...),
+		predicates:        append([]predicate.Testcase{}, tq.predicates...),
+		withTestcaseSuite: tq.withTestcaseSuite.Clone(),
 		// clone intermediate query.
-		sql:  tcq.sql.Clone(),
-		path: tcq.path,
+		sql:  tq.sql.Clone(),
+		path: tq.path,
 	}
 }
 
-// WithTestcaseSuites tells the query-builder to eager-load the nodes that are connected to
-// the "testcaseSuites" edge. The optional arguments are used to configure the query builder of the edge.
-func (tcq *TestCaseQuery) WithTestcaseSuites(opts ...func(*TestCaseSuiteQuery)) *TestCaseQuery {
-	query := (&TestCaseSuiteClient{config: tcq.config}).Query()
+// WithTestcaseSuite tells the query-builder to eager-load the nodes that are connected to
+// the "testcase_suite" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TestcaseQuery) WithTestcaseSuite(opts ...func(*TestcaseSuiteQuery)) *TestcaseQuery {
+	query := (&TestcaseSuiteClient{config: tq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	tcq.withTestcaseSuites = query
-	return tcq
+	tq.withTestcaseSuite = query
+	return tq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -302,14 +302,14 @@ func (tcq *TestCaseQuery) WithTestcaseSuites(opts ...func(*TestCaseSuiteQuery)) 
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.TestCase.Query().
+//	client.Testcase.Query().
 //		GroupBy(testcase.FieldName).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (tcq *TestCaseQuery) GroupBy(field string, fields ...string) *TestCaseGroupBy {
-	tcq.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &TestCaseGroupBy{build: tcq}
-	grbuild.flds = &tcq.ctx.Fields
+func (tq *TestcaseQuery) GroupBy(field string, fields ...string) *TestcaseGroupBy {
+	tq.ctx.Fields = append([]string{field}, fields...)
+	grbuild := &TestcaseGroupBy{build: tq}
+	grbuild.flds = &tq.ctx.Fields
 	grbuild.label = testcase.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
@@ -324,61 +324,61 @@ func (tcq *TestCaseQuery) GroupBy(field string, fields ...string) *TestCaseGroup
 //		Name string `json:"name,omitempty"`
 //	}
 //
-//	client.TestCase.Query().
+//	client.Testcase.Query().
 //		Select(testcase.FieldName).
 //		Scan(ctx, &v)
-func (tcq *TestCaseQuery) Select(fields ...string) *TestCaseSelect {
-	tcq.ctx.Fields = append(tcq.ctx.Fields, fields...)
-	sbuild := &TestCaseSelect{TestCaseQuery: tcq}
+func (tq *TestcaseQuery) Select(fields ...string) *TestcaseSelect {
+	tq.ctx.Fields = append(tq.ctx.Fields, fields...)
+	sbuild := &TestcaseSelect{TestcaseQuery: tq}
 	sbuild.label = testcase.Label
-	sbuild.flds, sbuild.scan = &tcq.ctx.Fields, sbuild.Scan
+	sbuild.flds, sbuild.scan = &tq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
-// Aggregate returns a TestCaseSelect configured with the given aggregations.
-func (tcq *TestCaseQuery) Aggregate(fns ...AggregateFunc) *TestCaseSelect {
-	return tcq.Select().Aggregate(fns...)
+// Aggregate returns a TestcaseSelect configured with the given aggregations.
+func (tq *TestcaseQuery) Aggregate(fns ...AggregateFunc) *TestcaseSelect {
+	return tq.Select().Aggregate(fns...)
 }
 
-func (tcq *TestCaseQuery) prepareQuery(ctx context.Context) error {
-	for _, inter := range tcq.inters {
+func (tq *TestcaseQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range tq.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
 		}
 		if trv, ok := inter.(Traverser); ok {
-			if err := trv.Traverse(ctx, tcq); err != nil {
+			if err := trv.Traverse(ctx, tq); err != nil {
 				return err
 			}
 		}
 	}
-	for _, f := range tcq.ctx.Fields {
+	for _, f := range tq.ctx.Fields {
 		if !testcase.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
-	if tcq.path != nil {
-		prev, err := tcq.path(ctx)
+	if tq.path != nil {
+		prev, err := tq.path(ctx)
 		if err != nil {
 			return err
 		}
-		tcq.sql = prev
+		tq.sql = prev
 	}
 	return nil
 }
 
-func (tcq *TestCaseQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*TestCase, error) {
+func (tq *TestcaseQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Testcase, error) {
 	var (
-		nodes       = []*TestCase{}
-		_spec       = tcq.querySpec()
+		nodes       = []*Testcase{}
+		_spec       = tq.querySpec()
 		loadedTypes = [1]bool{
-			tcq.withTestcaseSuites != nil,
+			tq.withTestcaseSuite != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*TestCase).scanValues(nil, columns)
+		return (*Testcase).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &TestCase{config: tcq.config}
+		node := &Testcase{config: tq.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
@@ -386,26 +386,26 @@ func (tcq *TestCaseQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Te
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
-	if err := sqlgraph.QueryNodes(ctx, tcq.driver, _spec); err != nil {
+	if err := sqlgraph.QueryNodes(ctx, tq.driver, _spec); err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := tcq.withTestcaseSuites; query != nil {
-		if err := tcq.loadTestcaseSuites(ctx, query, nodes,
-			func(n *TestCase) { n.Edges.TestcaseSuites = []*TestCaseSuite{} },
-			func(n *TestCase, e *TestCaseSuite) { n.Edges.TestcaseSuites = append(n.Edges.TestcaseSuites, e) }); err != nil {
+	if query := tq.withTestcaseSuite; query != nil {
+		if err := tq.loadTestcaseSuite(ctx, query, nodes,
+			func(n *Testcase) { n.Edges.TestcaseSuite = []*TestcaseSuite{} },
+			func(n *Testcase, e *TestcaseSuite) { n.Edges.TestcaseSuite = append(n.Edges.TestcaseSuite, e) }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (tcq *TestCaseQuery) loadTestcaseSuites(ctx context.Context, query *TestCaseSuiteQuery, nodes []*TestCase, init func(*TestCase), assign func(*TestCase, *TestCaseSuite)) error {
+func (tq *TestcaseQuery) loadTestcaseSuite(ctx context.Context, query *TestcaseSuiteQuery, nodes []*Testcase, init func(*Testcase), assign func(*Testcase, *TestcaseSuite)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int64]*TestCase)
-	nids := make(map[int64]map[*TestCase]struct{})
+	byID := make(map[int64]*Testcase)
+	nids := make(map[int64]map[*Testcase]struct{})
 	for i, node := range nodes {
 		edgeIDs[i] = node.ID
 		byID[node.ID] = node
@@ -414,11 +414,11 @@ func (tcq *TestCaseQuery) loadTestcaseSuites(ctx context.Context, query *TestCas
 		}
 	}
 	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(testcase.TestcaseSuitesTable)
-		s.Join(joinT).On(s.C(testcasesuite.FieldID), joinT.C(testcase.TestcaseSuitesPrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(testcase.TestcaseSuitesPrimaryKey[1]), edgeIDs...))
+		joinT := sql.Table(testcase.TestcaseSuiteTable)
+		s.Join(joinT).On(s.C(testcasesuite.FieldID), joinT.C(testcase.TestcaseSuitePrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(testcase.TestcaseSuitePrimaryKey[1]), edgeIDs...))
 		columns := s.SelectedColumns()
-		s.Select(joinT.C(testcase.TestcaseSuitesPrimaryKey[1]))
+		s.Select(joinT.C(testcase.TestcaseSuitePrimaryKey[1]))
 		s.AppendSelect(columns...)
 		s.SetDistinct(false)
 	})
@@ -440,7 +440,7 @@ func (tcq *TestCaseQuery) loadTestcaseSuites(ctx context.Context, query *TestCas
 				outValue := values[0].(*sql.NullInt64).Int64
 				inValue := values[1].(*sql.NullInt64).Int64
 				if nids[inValue] == nil {
-					nids[inValue] = map[*TestCase]struct{}{byID[outValue]: {}}
+					nids[inValue] = map[*Testcase]struct{}{byID[outValue]: {}}
 					return assign(columns[1:], values[1:])
 				}
 				nids[inValue][byID[outValue]] = struct{}{}
@@ -448,14 +448,14 @@ func (tcq *TestCaseQuery) loadTestcaseSuites(ctx context.Context, query *TestCas
 			}
 		})
 	})
-	neighbors, err := withInterceptors[[]*TestCaseSuite](ctx, query, qr, query.inters)
+	neighbors, err := withInterceptors[[]*TestcaseSuite](ctx, query, qr, query.inters)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
 		nodes, ok := nids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected "testcaseSuites" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected "testcase_suite" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)
@@ -464,24 +464,24 @@ func (tcq *TestCaseQuery) loadTestcaseSuites(ctx context.Context, query *TestCas
 	return nil
 }
 
-func (tcq *TestCaseQuery) sqlCount(ctx context.Context) (int, error) {
-	_spec := tcq.querySpec()
-	_spec.Node.Columns = tcq.ctx.Fields
-	if len(tcq.ctx.Fields) > 0 {
-		_spec.Unique = tcq.ctx.Unique != nil && *tcq.ctx.Unique
+func (tq *TestcaseQuery) sqlCount(ctx context.Context) (int, error) {
+	_spec := tq.querySpec()
+	_spec.Node.Columns = tq.ctx.Fields
+	if len(tq.ctx.Fields) > 0 {
+		_spec.Unique = tq.ctx.Unique != nil && *tq.ctx.Unique
 	}
-	return sqlgraph.CountNodes(ctx, tcq.driver, _spec)
+	return sqlgraph.CountNodes(ctx, tq.driver, _spec)
 }
 
-func (tcq *TestCaseQuery) querySpec() *sqlgraph.QuerySpec {
+func (tq *TestcaseQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := sqlgraph.NewQuerySpec(testcase.Table, testcase.Columns, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64))
-	_spec.From = tcq.sql
-	if unique := tcq.ctx.Unique; unique != nil {
+	_spec.From = tq.sql
+	if unique := tq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
-	} else if tcq.path != nil {
+	} else if tq.path != nil {
 		_spec.Unique = true
 	}
-	if fields := tcq.ctx.Fields; len(fields) > 0 {
+	if fields := tq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, testcase.FieldID)
 		for i := range fields {
@@ -490,20 +490,20 @@ func (tcq *TestCaseQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if ps := tcq.predicates; len(ps) > 0 {
+	if ps := tq.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if limit := tcq.ctx.Limit; limit != nil {
+	if limit := tq.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := tcq.ctx.Offset; offset != nil {
+	if offset := tq.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
-	if ps := tcq.order; len(ps) > 0 {
+	if ps := tq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
@@ -513,114 +513,114 @@ func (tcq *TestCaseQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (tcq *TestCaseQuery) sqlQuery(ctx context.Context) *sql.Selector {
-	builder := sql.Dialect(tcq.driver.Dialect())
+func (tq *TestcaseQuery) sqlQuery(ctx context.Context) *sql.Selector {
+	builder := sql.Dialect(tq.driver.Dialect())
 	t1 := builder.Table(testcase.Table)
-	columns := tcq.ctx.Fields
+	columns := tq.ctx.Fields
 	if len(columns) == 0 {
 		columns = testcase.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
-	if tcq.sql != nil {
-		selector = tcq.sql
+	if tq.sql != nil {
+		selector = tq.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if tcq.ctx.Unique != nil && *tcq.ctx.Unique {
+	if tq.ctx.Unique != nil && *tq.ctx.Unique {
 		selector.Distinct()
 	}
-	for _, p := range tcq.predicates {
+	for _, p := range tq.predicates {
 		p(selector)
 	}
-	for _, p := range tcq.order {
+	for _, p := range tq.order {
 		p(selector)
 	}
-	if offset := tcq.ctx.Offset; offset != nil {
+	if offset := tq.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := tcq.ctx.Limit; limit != nil {
+	if limit := tq.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
 }
 
-// TestCaseGroupBy is the group-by builder for TestCase entities.
-type TestCaseGroupBy struct {
+// TestcaseGroupBy is the group-by builder for Testcase entities.
+type TestcaseGroupBy struct {
 	selector
-	build *TestCaseQuery
+	build *TestcaseQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (tcgb *TestCaseGroupBy) Aggregate(fns ...AggregateFunc) *TestCaseGroupBy {
-	tcgb.fns = append(tcgb.fns, fns...)
-	return tcgb
+func (tgb *TestcaseGroupBy) Aggregate(fns ...AggregateFunc) *TestcaseGroupBy {
+	tgb.fns = append(tgb.fns, fns...)
+	return tgb
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (tcgb *TestCaseGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, tcgb.build.ctx, "GroupBy")
-	if err := tcgb.build.prepareQuery(ctx); err != nil {
+func (tgb *TestcaseGroupBy) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, tgb.build.ctx, "GroupBy")
+	if err := tgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*TestCaseQuery, *TestCaseGroupBy](ctx, tcgb.build, tcgb, tcgb.build.inters, v)
+	return scanWithInterceptors[*TestcaseQuery, *TestcaseGroupBy](ctx, tgb.build, tgb, tgb.build.inters, v)
 }
 
-func (tcgb *TestCaseGroupBy) sqlScan(ctx context.Context, root *TestCaseQuery, v any) error {
+func (tgb *TestcaseGroupBy) sqlScan(ctx context.Context, root *TestcaseQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
-	aggregation := make([]string, 0, len(tcgb.fns))
-	for _, fn := range tcgb.fns {
+	aggregation := make([]string, 0, len(tgb.fns))
+	for _, fn := range tgb.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
 	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(*tcgb.flds)+len(tcgb.fns))
-		for _, f := range *tcgb.flds {
+		columns := make([]string, 0, len(*tgb.flds)+len(tgb.fns))
+		for _, f := range *tgb.flds {
 			columns = append(columns, selector.C(f))
 		}
 		columns = append(columns, aggregation...)
 		selector.Select(columns...)
 	}
-	selector.GroupBy(selector.Columns(*tcgb.flds...)...)
+	selector.GroupBy(selector.Columns(*tgb.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := tcgb.build.driver.Query(ctx, query, args, rows); err != nil {
+	if err := tgb.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
 }
 
-// TestCaseSelect is the builder for selecting fields of TestCase entities.
-type TestCaseSelect struct {
-	*TestCaseQuery
+// TestcaseSelect is the builder for selecting fields of Testcase entities.
+type TestcaseSelect struct {
+	*TestcaseQuery
 	selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (tcs *TestCaseSelect) Aggregate(fns ...AggregateFunc) *TestCaseSelect {
-	tcs.fns = append(tcs.fns, fns...)
-	return tcs
+func (ts *TestcaseSelect) Aggregate(fns ...AggregateFunc) *TestcaseSelect {
+	ts.fns = append(ts.fns, fns...)
+	return ts
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (tcs *TestCaseSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, tcs.ctx, "Select")
-	if err := tcs.prepareQuery(ctx); err != nil {
+func (ts *TestcaseSelect) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, ts.ctx, "Select")
+	if err := ts.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*TestCaseQuery, *TestCaseSelect](ctx, tcs.TestCaseQuery, tcs, tcs.inters, v)
+	return scanWithInterceptors[*TestcaseQuery, *TestcaseSelect](ctx, ts.TestcaseQuery, ts, ts.inters, v)
 }
 
-func (tcs *TestCaseSelect) sqlScan(ctx context.Context, root *TestCaseQuery, v any) error {
+func (ts *TestcaseSelect) sqlScan(ctx context.Context, root *TestcaseQuery, v any) error {
 	selector := root.sqlQuery(ctx)
-	aggregation := make([]string, 0, len(tcs.fns))
-	for _, fn := range tcs.fns {
+	aggregation := make([]string, 0, len(ts.fns))
+	for _, fn := range ts.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
-	switch n := len(*tcs.selector.flds); {
+	switch n := len(*ts.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
 		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
@@ -628,7 +628,7 @@ func (tcs *TestCaseSelect) sqlScan(ctx context.Context, root *TestCaseQuery, v a
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := tcs.driver.Query(ctx, query, args, rows); err != nil {
+	if err := ts.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()

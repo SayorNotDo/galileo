@@ -15,74 +15,74 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// TestCaseSuiteUpdate is the builder for updating TestCaseSuite entities.
-type TestCaseSuiteUpdate struct {
+// TestcaseSuiteUpdate is the builder for updating TestcaseSuite entities.
+type TestcaseSuiteUpdate struct {
 	config
 	hooks    []Hook
-	mutation *TestCaseSuiteMutation
+	mutation *TestcaseSuiteMutation
 }
 
-// Where appends a list predicates to the TestCaseSuiteUpdate builder.
-func (tcsu *TestCaseSuiteUpdate) Where(ps ...predicate.TestCaseSuite) *TestCaseSuiteUpdate {
-	tcsu.mutation.Where(ps...)
-	return tcsu
+// Where appends a list predicates to the TestcaseSuiteUpdate builder.
+func (tsu *TestcaseSuiteUpdate) Where(ps ...predicate.TestcaseSuite) *TestcaseSuiteUpdate {
+	tsu.mutation.Where(ps...)
+	return tsu
 }
 
 // SetName sets the "name" field.
-func (tcsu *TestCaseSuiteUpdate) SetName(s string) *TestCaseSuiteUpdate {
-	tcsu.mutation.SetName(s)
-	return tcsu
+func (tsu *TestcaseSuiteUpdate) SetName(s string) *TestcaseSuiteUpdate {
+	tsu.mutation.SetName(s)
+	return tsu
 }
 
-// AddTestcaseIDs adds the "testcases" edge to the TestCase entity by IDs.
-func (tcsu *TestCaseSuiteUpdate) AddTestcaseIDs(ids ...int64) *TestCaseSuiteUpdate {
-	tcsu.mutation.AddTestcaseIDs(ids...)
-	return tcsu
+// AddTestcaseIDs adds the "testcase" edge to the Testcase entity by IDs.
+func (tsu *TestcaseSuiteUpdate) AddTestcaseIDs(ids ...int64) *TestcaseSuiteUpdate {
+	tsu.mutation.AddTestcaseIDs(ids...)
+	return tsu
 }
 
-// AddTestcases adds the "testcases" edges to the TestCase entity.
-func (tcsu *TestCaseSuiteUpdate) AddTestcases(t ...*TestCase) *TestCaseSuiteUpdate {
+// AddTestcase adds the "testcase" edges to the Testcase entity.
+func (tsu *TestcaseSuiteUpdate) AddTestcase(t ...*Testcase) *TestcaseSuiteUpdate {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return tcsu.AddTestcaseIDs(ids...)
+	return tsu.AddTestcaseIDs(ids...)
 }
 
-// Mutation returns the TestCaseSuiteMutation object of the builder.
-func (tcsu *TestCaseSuiteUpdate) Mutation() *TestCaseSuiteMutation {
-	return tcsu.mutation
+// Mutation returns the TestcaseSuiteMutation object of the builder.
+func (tsu *TestcaseSuiteUpdate) Mutation() *TestcaseSuiteMutation {
+	return tsu.mutation
 }
 
-// ClearTestcases clears all "testcases" edges to the TestCase entity.
-func (tcsu *TestCaseSuiteUpdate) ClearTestcases() *TestCaseSuiteUpdate {
-	tcsu.mutation.ClearTestcases()
-	return tcsu
+// ClearTestcase clears all "testcase" edges to the Testcase entity.
+func (tsu *TestcaseSuiteUpdate) ClearTestcase() *TestcaseSuiteUpdate {
+	tsu.mutation.ClearTestcase()
+	return tsu
 }
 
-// RemoveTestcaseIDs removes the "testcases" edge to TestCase entities by IDs.
-func (tcsu *TestCaseSuiteUpdate) RemoveTestcaseIDs(ids ...int64) *TestCaseSuiteUpdate {
-	tcsu.mutation.RemoveTestcaseIDs(ids...)
-	return tcsu
+// RemoveTestcaseIDs removes the "testcase" edge to Testcase entities by IDs.
+func (tsu *TestcaseSuiteUpdate) RemoveTestcaseIDs(ids ...int64) *TestcaseSuiteUpdate {
+	tsu.mutation.RemoveTestcaseIDs(ids...)
+	return tsu
 }
 
-// RemoveTestcases removes "testcases" edges to TestCase entities.
-func (tcsu *TestCaseSuiteUpdate) RemoveTestcases(t ...*TestCase) *TestCaseSuiteUpdate {
+// RemoveTestcase removes "testcase" edges to Testcase entities.
+func (tsu *TestcaseSuiteUpdate) RemoveTestcase(t ...*Testcase) *TestcaseSuiteUpdate {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return tcsu.RemoveTestcaseIDs(ids...)
+	return tsu.RemoveTestcaseIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (tcsu *TestCaseSuiteUpdate) Save(ctx context.Context) (int, error) {
-	return withHooks[int, TestCaseSuiteMutation](ctx, tcsu.sqlSave, tcsu.mutation, tcsu.hooks)
+func (tsu *TestcaseSuiteUpdate) Save(ctx context.Context) (int, error) {
+	return withHooks[int, TestcaseSuiteMutation](ctx, tsu.sqlSave, tsu.mutation, tsu.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tcsu *TestCaseSuiteUpdate) SaveX(ctx context.Context) int {
-	affected, err := tcsu.Save(ctx)
+func (tsu *TestcaseSuiteUpdate) SaveX(ctx context.Context) int {
+	affected, err := tsu.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -90,49 +90,49 @@ func (tcsu *TestCaseSuiteUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (tcsu *TestCaseSuiteUpdate) Exec(ctx context.Context) error {
-	_, err := tcsu.Save(ctx)
+func (tsu *TestcaseSuiteUpdate) Exec(ctx context.Context) error {
+	_, err := tsu.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tcsu *TestCaseSuiteUpdate) ExecX(ctx context.Context) {
-	if err := tcsu.Exec(ctx); err != nil {
+func (tsu *TestcaseSuiteUpdate) ExecX(ctx context.Context) {
+	if err := tsu.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (tcsu *TestCaseSuiteUpdate) check() error {
-	if v, ok := tcsu.mutation.Name(); ok {
+func (tsu *TestcaseSuiteUpdate) check() error {
+	if v, ok := tsu.mutation.Name(); ok {
 		if err := testcasesuite.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "TestCaseSuite.name": %w`, err)}
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "TestcaseSuite.name": %w`, err)}
 		}
 	}
 	return nil
 }
 
-func (tcsu *TestCaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := tcsu.check(); err != nil {
+func (tsu *TestcaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := tsu.check(); err != nil {
 		return n, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(testcasesuite.Table, testcasesuite.Columns, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64))
-	if ps := tcsu.mutation.predicates; len(ps) > 0 {
+	if ps := tsu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := tcsu.mutation.Name(); ok {
+	if value, ok := tsu.mutation.Name(); ok {
 		_spec.SetField(testcasesuite.FieldName, field.TypeString, value)
 	}
-	if tcsu.mutation.TestcasesCleared() {
+	if tsu.mutation.TestcaseCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   testcasesuite.TestcasesTable,
-			Columns: testcasesuite.TestcasesPrimaryKey,
+			Table:   testcasesuite.TestcaseTable,
+			Columns: testcasesuite.TestcasePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
@@ -140,12 +140,12 @@ func (tcsu *TestCaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tcsu.mutation.RemovedTestcasesIDs(); len(nodes) > 0 && !tcsu.mutation.TestcasesCleared() {
+	if nodes := tsu.mutation.RemovedTestcaseIDs(); len(nodes) > 0 && !tsu.mutation.TestcaseCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   testcasesuite.TestcasesTable,
-			Columns: testcasesuite.TestcasesPrimaryKey,
+			Table:   testcasesuite.TestcaseTable,
+			Columns: testcasesuite.TestcasePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
@@ -156,12 +156,12 @@ func (tcsu *TestCaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tcsu.mutation.TestcasesIDs(); len(nodes) > 0 {
+	if nodes := tsu.mutation.TestcaseIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   testcasesuite.TestcasesTable,
-			Columns: testcasesuite.TestcasesPrimaryKey,
+			Table:   testcasesuite.TestcaseTable,
+			Columns: testcasesuite.TestcasePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
@@ -172,7 +172,7 @@ func (tcsu *TestCaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, tcsu.driver, _spec); err != nil {
+	if n, err = sqlgraph.UpdateNodes(ctx, tsu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{testcasesuite.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -180,86 +180,86 @@ func (tcsu *TestCaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error)
 		}
 		return 0, err
 	}
-	tcsu.mutation.done = true
+	tsu.mutation.done = true
 	return n, nil
 }
 
-// TestCaseSuiteUpdateOne is the builder for updating a single TestCaseSuite entity.
-type TestCaseSuiteUpdateOne struct {
+// TestcaseSuiteUpdateOne is the builder for updating a single TestcaseSuite entity.
+type TestcaseSuiteUpdateOne struct {
 	config
 	fields   []string
 	hooks    []Hook
-	mutation *TestCaseSuiteMutation
+	mutation *TestcaseSuiteMutation
 }
 
 // SetName sets the "name" field.
-func (tcsuo *TestCaseSuiteUpdateOne) SetName(s string) *TestCaseSuiteUpdateOne {
-	tcsuo.mutation.SetName(s)
-	return tcsuo
+func (tsuo *TestcaseSuiteUpdateOne) SetName(s string) *TestcaseSuiteUpdateOne {
+	tsuo.mutation.SetName(s)
+	return tsuo
 }
 
-// AddTestcaseIDs adds the "testcases" edge to the TestCase entity by IDs.
-func (tcsuo *TestCaseSuiteUpdateOne) AddTestcaseIDs(ids ...int64) *TestCaseSuiteUpdateOne {
-	tcsuo.mutation.AddTestcaseIDs(ids...)
-	return tcsuo
+// AddTestcaseIDs adds the "testcase" edge to the Testcase entity by IDs.
+func (tsuo *TestcaseSuiteUpdateOne) AddTestcaseIDs(ids ...int64) *TestcaseSuiteUpdateOne {
+	tsuo.mutation.AddTestcaseIDs(ids...)
+	return tsuo
 }
 
-// AddTestcases adds the "testcases" edges to the TestCase entity.
-func (tcsuo *TestCaseSuiteUpdateOne) AddTestcases(t ...*TestCase) *TestCaseSuiteUpdateOne {
+// AddTestcase adds the "testcase" edges to the Testcase entity.
+func (tsuo *TestcaseSuiteUpdateOne) AddTestcase(t ...*Testcase) *TestcaseSuiteUpdateOne {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return tcsuo.AddTestcaseIDs(ids...)
+	return tsuo.AddTestcaseIDs(ids...)
 }
 
-// Mutation returns the TestCaseSuiteMutation object of the builder.
-func (tcsuo *TestCaseSuiteUpdateOne) Mutation() *TestCaseSuiteMutation {
-	return tcsuo.mutation
+// Mutation returns the TestcaseSuiteMutation object of the builder.
+func (tsuo *TestcaseSuiteUpdateOne) Mutation() *TestcaseSuiteMutation {
+	return tsuo.mutation
 }
 
-// ClearTestcases clears all "testcases" edges to the TestCase entity.
-func (tcsuo *TestCaseSuiteUpdateOne) ClearTestcases() *TestCaseSuiteUpdateOne {
-	tcsuo.mutation.ClearTestcases()
-	return tcsuo
+// ClearTestcase clears all "testcase" edges to the Testcase entity.
+func (tsuo *TestcaseSuiteUpdateOne) ClearTestcase() *TestcaseSuiteUpdateOne {
+	tsuo.mutation.ClearTestcase()
+	return tsuo
 }
 
-// RemoveTestcaseIDs removes the "testcases" edge to TestCase entities by IDs.
-func (tcsuo *TestCaseSuiteUpdateOne) RemoveTestcaseIDs(ids ...int64) *TestCaseSuiteUpdateOne {
-	tcsuo.mutation.RemoveTestcaseIDs(ids...)
-	return tcsuo
+// RemoveTestcaseIDs removes the "testcase" edge to Testcase entities by IDs.
+func (tsuo *TestcaseSuiteUpdateOne) RemoveTestcaseIDs(ids ...int64) *TestcaseSuiteUpdateOne {
+	tsuo.mutation.RemoveTestcaseIDs(ids...)
+	return tsuo
 }
 
-// RemoveTestcases removes "testcases" edges to TestCase entities.
-func (tcsuo *TestCaseSuiteUpdateOne) RemoveTestcases(t ...*TestCase) *TestCaseSuiteUpdateOne {
+// RemoveTestcase removes "testcase" edges to Testcase entities.
+func (tsuo *TestcaseSuiteUpdateOne) RemoveTestcase(t ...*Testcase) *TestcaseSuiteUpdateOne {
 	ids := make([]int64, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return tcsuo.RemoveTestcaseIDs(ids...)
+	return tsuo.RemoveTestcaseIDs(ids...)
 }
 
-// Where appends a list predicates to the TestCaseSuiteUpdate builder.
-func (tcsuo *TestCaseSuiteUpdateOne) Where(ps ...predicate.TestCaseSuite) *TestCaseSuiteUpdateOne {
-	tcsuo.mutation.Where(ps...)
-	return tcsuo
+// Where appends a list predicates to the TestcaseSuiteUpdate builder.
+func (tsuo *TestcaseSuiteUpdateOne) Where(ps ...predicate.TestcaseSuite) *TestcaseSuiteUpdateOne {
+	tsuo.mutation.Where(ps...)
+	return tsuo
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (tcsuo *TestCaseSuiteUpdateOne) Select(field string, fields ...string) *TestCaseSuiteUpdateOne {
-	tcsuo.fields = append([]string{field}, fields...)
-	return tcsuo
+func (tsuo *TestcaseSuiteUpdateOne) Select(field string, fields ...string) *TestcaseSuiteUpdateOne {
+	tsuo.fields = append([]string{field}, fields...)
+	return tsuo
 }
 
-// Save executes the query and returns the updated TestCaseSuite entity.
-func (tcsuo *TestCaseSuiteUpdateOne) Save(ctx context.Context) (*TestCaseSuite, error) {
-	return withHooks[*TestCaseSuite, TestCaseSuiteMutation](ctx, tcsuo.sqlSave, tcsuo.mutation, tcsuo.hooks)
+// Save executes the query and returns the updated TestcaseSuite entity.
+func (tsuo *TestcaseSuiteUpdateOne) Save(ctx context.Context) (*TestcaseSuite, error) {
+	return withHooks[*TestcaseSuite, TestcaseSuiteMutation](ctx, tsuo.sqlSave, tsuo.mutation, tsuo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tcsuo *TestCaseSuiteUpdateOne) SaveX(ctx context.Context) *TestCaseSuite {
-	node, err := tcsuo.Save(ctx)
+func (tsuo *TestcaseSuiteUpdateOne) SaveX(ctx context.Context) *TestcaseSuite {
+	node, err := tsuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -267,39 +267,39 @@ func (tcsuo *TestCaseSuiteUpdateOne) SaveX(ctx context.Context) *TestCaseSuite {
 }
 
 // Exec executes the query on the entity.
-func (tcsuo *TestCaseSuiteUpdateOne) Exec(ctx context.Context) error {
-	_, err := tcsuo.Save(ctx)
+func (tsuo *TestcaseSuiteUpdateOne) Exec(ctx context.Context) error {
+	_, err := tsuo.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tcsuo *TestCaseSuiteUpdateOne) ExecX(ctx context.Context) {
-	if err := tcsuo.Exec(ctx); err != nil {
+func (tsuo *TestcaseSuiteUpdateOne) ExecX(ctx context.Context) {
+	if err := tsuo.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (tcsuo *TestCaseSuiteUpdateOne) check() error {
-	if v, ok := tcsuo.mutation.Name(); ok {
+func (tsuo *TestcaseSuiteUpdateOne) check() error {
+	if v, ok := tsuo.mutation.Name(); ok {
 		if err := testcasesuite.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "TestCaseSuite.name": %w`, err)}
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "TestcaseSuite.name": %w`, err)}
 		}
 	}
 	return nil
 }
 
-func (tcsuo *TestCaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *TestCaseSuite, err error) {
-	if err := tcsuo.check(); err != nil {
+func (tsuo *TestcaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *TestcaseSuite, err error) {
+	if err := tsuo.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(testcasesuite.Table, testcasesuite.Columns, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64))
-	id, ok := tcsuo.mutation.ID()
+	id, ok := tsuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TestCaseSuite.id" for update`)}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TestcaseSuite.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := tcsuo.fields; len(fields) > 0 {
+	if fields := tsuo.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, testcasesuite.FieldID)
 		for _, f := range fields {
@@ -311,22 +311,22 @@ func (tcsuo *TestCaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *TestCa
 			}
 		}
 	}
-	if ps := tcsuo.mutation.predicates; len(ps) > 0 {
+	if ps := tsuo.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := tcsuo.mutation.Name(); ok {
+	if value, ok := tsuo.mutation.Name(); ok {
 		_spec.SetField(testcasesuite.FieldName, field.TypeString, value)
 	}
-	if tcsuo.mutation.TestcasesCleared() {
+	if tsuo.mutation.TestcaseCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   testcasesuite.TestcasesTable,
-			Columns: testcasesuite.TestcasesPrimaryKey,
+			Table:   testcasesuite.TestcaseTable,
+			Columns: testcasesuite.TestcasePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
@@ -334,12 +334,12 @@ func (tcsuo *TestCaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *TestCa
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tcsuo.mutation.RemovedTestcasesIDs(); len(nodes) > 0 && !tcsuo.mutation.TestcasesCleared() {
+	if nodes := tsuo.mutation.RemovedTestcaseIDs(); len(nodes) > 0 && !tsuo.mutation.TestcaseCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   testcasesuite.TestcasesTable,
-			Columns: testcasesuite.TestcasesPrimaryKey,
+			Table:   testcasesuite.TestcaseTable,
+			Columns: testcasesuite.TestcasePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
@@ -350,12 +350,12 @@ func (tcsuo *TestCaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *TestCa
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tcsuo.mutation.TestcasesIDs(); len(nodes) > 0 {
+	if nodes := tsuo.mutation.TestcaseIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   testcasesuite.TestcasesTable,
-			Columns: testcasesuite.TestcasesPrimaryKey,
+			Table:   testcasesuite.TestcaseTable,
+			Columns: testcasesuite.TestcasePrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
@@ -366,10 +366,10 @@ func (tcsuo *TestCaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *TestCa
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &TestCaseSuite{config: tcsuo.config}
+	_node = &TestcaseSuite{config: tsuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, tcsuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, tsuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{testcasesuite.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -377,6 +377,6 @@ func (tcsuo *TestCaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *TestCa
 		}
 		return nil, err
 	}
-	tcsuo.mutation.done = true
+	tsuo.mutation.done = true
 	return _node, nil
 }

@@ -55,8 +55,8 @@ type Task struct {
 
 // TaskEdges holds the relations/edges for other nodes in the graph.
 type TaskEdges struct {
-	// TestcaseSuite holds the value of the testcaseSuite edge.
-	TestcaseSuite []*TestCaseSuite `json:"testcaseSuite,omitempty"`
+	// TestcaseSuite holds the value of the testcase_suite edge.
+	TestcaseSuite []*TestcaseSuite `json:"testcase_suite,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
@@ -64,11 +64,11 @@ type TaskEdges struct {
 
 // TestcaseSuiteOrErr returns the TestcaseSuite value or an error if the edge
 // was not loaded in eager-loading.
-func (e TaskEdges) TestcaseSuiteOrErr() ([]*TestCaseSuite, error) {
+func (e TaskEdges) TestcaseSuiteOrErr() ([]*TestcaseSuite, error) {
 	if e.loadedTypes[0] {
 		return e.TestcaseSuite, nil
 	}
-	return nil, &NotLoadedError{edge: "testcaseSuite"}
+	return nil, &NotLoadedError{edge: "testcase_suite"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -204,8 +204,8 @@ func (t *Task) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// QueryTestcaseSuite queries the "testcaseSuite" edge of the Task entity.
-func (t *Task) QueryTestcaseSuite() *TestCaseSuiteQuery {
+// QueryTestcaseSuite queries the "testcase_suite" edge of the Task entity.
+func (t *Task) QueryTestcaseSuite() *TestcaseSuiteQuery {
 	return NewTaskClient(t.config).QueryTestcaseSuite(t)
 }
 

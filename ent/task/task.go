@@ -43,16 +43,16 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
-	// EdgeTestcaseSuite holds the string denoting the testcasesuite edge name in mutations.
-	EdgeTestcaseSuite = "testcaseSuite"
+	// EdgeTestcaseSuite holds the string denoting the testcase_suite edge name in mutations.
+	EdgeTestcaseSuite = "testcase_suite"
 	// Table holds the table name of the task in the database.
 	Table = "task"
-	// TestcaseSuiteTable is the table that holds the testcaseSuite relation/edge.
-	TestcaseSuiteTable = "test_case_suites"
-	// TestcaseSuiteInverseTable is the table name for the TestCaseSuite entity.
+	// TestcaseSuiteTable is the table that holds the testcase_suite relation/edge.
+	TestcaseSuiteTable = "testcase_suite"
+	// TestcaseSuiteInverseTable is the table name for the TestcaseSuite entity.
 	// It exists in this package in order to avoid circular dependency with the "testcasesuite" package.
-	TestcaseSuiteInverseTable = "test_case_suites"
-	// TestcaseSuiteColumn is the table column denoting the testcaseSuite relation/edge.
+	TestcaseSuiteInverseTable = "testcase_suite"
+	// TestcaseSuiteColumn is the table column denoting the testcase_suite relation/edge.
 	TestcaseSuiteColumn = "task_testcase_suite"
 )
 

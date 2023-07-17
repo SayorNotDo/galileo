@@ -104,7 +104,7 @@ func init() {
 	taskDescUpdatedAt := taskFields[11].Descriptor()
 	// task.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	task.UpdateDefaultUpdatedAt = taskDescUpdatedAt.UpdateDefault.(func() time.Time)
-	testcaseFields := schema.TestCase{}.Fields()
+	testcaseFields := schema.Testcase{}.Fields()
 	_ = testcaseFields
 	// testcaseDescName is the schema descriptor for name field.
 	testcaseDescName := testcaseFields[1].Descriptor()
@@ -114,10 +114,10 @@ func init() {
 	testcaseDescCreatedAt := testcaseFields[3].Descriptor()
 	// testcase.DefaultCreatedAt holds the default value on creation for the created_at field.
 	testcase.DefaultCreatedAt = testcaseDescCreatedAt.Default.(func() time.Time)
-	// testcaseDescUpdateAt is the schema descriptor for update_at field.
-	testcaseDescUpdateAt := testcaseFields[5].Descriptor()
-	// testcase.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
-	testcase.UpdateDefaultUpdateAt = testcaseDescUpdateAt.UpdateDefault.(func() time.Time)
+	// testcaseDescUpdatedAt is the schema descriptor for updated_at field.
+	testcaseDescUpdatedAt := testcaseFields[5].Descriptor()
+	// testcase.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	testcase.UpdateDefaultUpdatedAt = testcaseDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// testcaseDescStatus is the schema descriptor for status field.
 	testcaseDescStatus := testcaseFields[6].Descriptor()
 	// testcase.DefaultStatus holds the default value on creation for the status field.
@@ -130,7 +130,7 @@ func init() {
 	testcaseDescPriority := testcaseFields[8].Descriptor()
 	// testcase.DefaultPriority holds the default value on creation for the priority field.
 	testcase.DefaultPriority = testcaseDescPriority.Default.(int8)
-	testcasesuiteFields := schema.TestCaseSuite{}.Fields()
+	testcasesuiteFields := schema.TestcaseSuite{}.Fields()
 	_ = testcasesuiteFields
 	// testcasesuiteDescName is the schema descriptor for name field.
 	testcasesuiteDescName := testcasesuiteFields[1].Descriptor()
