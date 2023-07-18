@@ -10,6 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"time"
 )
 
 type TaskService struct {
@@ -98,4 +99,26 @@ func (s *TaskService) TaskByID(ctx context.Context, req *v1.TaskByIDRequest) (*v
 }
 func (s *TaskService) ListTask(ctx context.Context, req *v1.ListTaskRequest) (*v1.ListTaskReply, error) {
 	return &v1.ListTaskReply{}, nil
+}
+
+func (s *TaskService) UpdateTaskStatus(ctx context.Context, req *v1.UpdateTaskStatusRequest) (*v1.UpdateTaskStatusReply, error) {
+	queryTask, err := s.uc.TaskByID(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	if queryTask.Status == v1.TaskStatus_NEW {
+		queryTask.StartTime = time.Now()
+		if req.Status == v1.TaskStatus_NEW {
+			return nil, SetCustomizeErrMsg(ReasonParamsError, "started task's status cannot be convert to NEW")
+		}
+	}
+	queryTask.Status = req.Status
+	ret, err := s.uc.UpdateTaskStatus(ctx, queryTask)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.UpdateTaskStatusReply{
+		StatusUpdatedAt: timestamppb.New(ret.StatusUpdatedAt),
+		Status:          ret.Status,
+	}, nil
 }

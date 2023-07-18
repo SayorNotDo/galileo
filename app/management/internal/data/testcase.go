@@ -63,7 +63,7 @@ func (r *testcaseRepo) TestcaseById(ctx context.Context, id int64) (*biz.Testcas
 		CreatedAt: queryTestcase.CreatedAt,
 		CreatedBy: queryTestcase.CreatedBy,
 		UpdatedBy: queryTestcase.UpdatedBy,
-		UpdateAt:  queryTestcase.UpdatedAt,
+		UpdatedAt: queryTestcase.UpdatedAt,
 		Status:    queryTestcase.Status,
 		Type:      queryTestcase.Type,
 		Priority:  queryTestcase.Priority,
@@ -82,7 +82,7 @@ func (r *testcaseRepo) TestcaseByName(ctx context.Context, name string) (*biz.Te
 		CreatedAt: queryTestcase.CreatedAt,
 		CreatedBy: queryTestcase.CreatedBy,
 		UpdatedBy: queryTestcase.UpdatedBy,
-		UpdateAt:  queryTestcase.UpdatedAt,
+		UpdatedAt: queryTestcase.UpdatedAt,
 		Status:    queryTestcase.Status,
 		Type:      queryTestcase.Type,
 		Priority:  queryTestcase.Priority,
@@ -91,12 +91,26 @@ func (r *testcaseRepo) TestcaseByName(ctx context.Context, name string) (*biz.Te
 }
 
 func (r *testcaseRepo) UploadTestcaseFile(ctx context.Context, fileName, fileType string, content []byte) (string, error) {
-	res, err := r.data.fileCli.UploadFile(ctx, &fileService.UploadFileRequest{
+	ret, err := r.data.fileCli.UploadFile(ctx, &fileService.UploadFileRequest{
 		Name:    fileName,
 		Type:    fileType,
 		Content: content})
 	if err != nil {
 		return "", err
 	}
-	return res.Url, nil
+	return ret.Url, nil
+}
+
+func (r *testcaseRepo) CreateTestcaseSuite(ctx context.Context, suiteName string, testcaseList []int64) (*biz.TestcaseSuite, error) {
+	ret, err := r.data.entDB.TestcaseSuite.Create().
+		SetName(suiteName).
+		AddTestcaseIDs(testcaseList...).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &biz.TestcaseSuite{
+		Id:        ret.ID,
+		CreatedAt: ret.CreatedAt,
+	}, nil
 }

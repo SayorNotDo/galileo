@@ -30,7 +30,24 @@ service Task {
     };
   };
   rpc ListTask (ListTaskRequest) returns (ListTaskReply);
+  rpc UpdateTaskStatus (UpdateTaskStatusRequest) returns (UpdateTaskStatusReply){
+    option(google.api.http) = {
+      put: "v1/api/management/task/status"
+      body: "*"
+    };
+  };
 }
+
+message UpdateTaskStatusRequest {
+  int64 id = 1;
+  taskStatus status = 2;
+}
+
+message UpdateTaskStatusReply {
+  taskStatus status = 1;
+  google.protobuf.Timestamp statusUpdatedAt = 2;
+}
+
 
 message CreateTaskRequest {
   string name = 1;
@@ -63,7 +80,6 @@ message UpdateTaskRequest {
   int32 type = 4;
   int32 rank = 5;
   string config = 6;
-  google.protobuf.Timestamp startTime = 7;
   google.protobuf.Timestamp deadline = 8;
   string description = 9;
   repeated int64 testcaseSuiteId = 10;

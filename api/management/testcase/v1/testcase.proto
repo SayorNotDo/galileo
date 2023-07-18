@@ -44,6 +44,22 @@ service Testcase {
       body: "*"
     };
   };
+  rpc CreateTestcaseSuite (CreateTestcaseSuiteRequest) returns (CreateTestcaseSuiteReply) {
+    option(google.api.http) = {
+      post: "v1/api/management/case-suite",
+      body: "*"
+    };
+  }
+}
+
+message CreateTestcaseSuiteRequest {
+  string name = 1;
+  repeated int64 testcaseList = 2;
+}
+
+message CreateTestcaseSuiteReply {
+  int64 id = 1;
+  google.protobuf.Timestamp createdAt = 2;
 }
 
 message GenerateTestcaseFileRequest {
@@ -115,10 +131,10 @@ message GetTestcaseRequest {
 }
 message GetTestcaseReply {
   string name = 1;
-  int64 createdAt = 2;
+  google.protobuf.Timestamp createdAt = 2;
   uint32 createdBy = 3;
-  int64 updateAt = 4;
-  uint32 updateBy = 5;
+  google.protobuf.Timestamp updatedAt = 4;
+  uint32 updatedBy = 5;
   int32 type = 6;
   int32 priority = 7;
   int32 status = 8;

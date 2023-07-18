@@ -31,7 +31,7 @@ func NewTestcaseService(uc *biz.TestcaseUseCase, logger log.Logger) *TestcaseSer
 
 func NewTestcase(name string, caseType int8, priority int8, description string, url string) (biz.Testcase, error) {
 	if len(name) <= 0 {
-		return biz.Testcase{}, SetCustomizeErrMsg(ReasonParamsError, "testcase name must not be empty")
+		return biz.Testcase{}, SetCustomizeErrMsg(ReasonParamsError, "testcase name cannot be empty")
 	} else if caseType < 0 {
 		return biz.Testcase{}, SetCustomizeErrMsg(ReasonParamsError, "illegal testcase type")
 	} else if priority < 0 {
@@ -69,14 +69,16 @@ func (s *TestcaseService) UploadTestcaseFile(ctx http.Context) (err error) {
 	if _, err := io.Copy(buf, file); err != nil {
 		return err
 	}
-	if err := s.uc.TestcaseValidator(ctx, path.Ext(fileHeader.Filename), buf.String()); err != nil {
+	if err := s.uc.TestcaseValidator(path.Ext(fileHeader.Filename), buf.String()); err != nil {
 		return err
 	}
 	url, err := s.uc.UploadTestcaseFile(ctx, fileName, path.Ext(fileHeader.Filename), buf.Bytes())
 	if err != nil {
 		return SetCustomizeErrMsg(ReasonSystemError, err.Error())
 	}
-	return ctx.Result(20000, url)
+	return ctx.Result(20000, map[string]string{
+		"url": url,
+	})
 }
 
 // CreateTestcase creates a new Testcase, returns id, create time
@@ -132,9 +134,9 @@ func (s *TestcaseService) GetTestcaseById(ctx context.Context, req *pb.GetTestca
 	return &pb.GetTestcaseReply{
 		Name:        queryTestcase.Name,
 		CreatedBy:   queryTestcase.CreatedBy,
-		CreatedAt:   queryTestcase.CreatedAt.Unix(),
-		UpdateAt:    queryTestcase.UpdateAt.Unix(),
-		UpdateBy:    queryTestcase.UpdatedBy,
+		CreatedAt:   timestamppb.New(queryTestcase.CreatedAt),
+		UpdatedAt:   timestamppb.New(queryTestcase.UpdatedAt),
+		UpdatedBy:   queryTestcase.UpdatedBy,
 		Type:        int32(queryTestcase.Type),
 		Priority:    int32(queryTestcase.Priority),
 		Status:      int32(queryTestcase.Status),
@@ -153,4 +155,18 @@ func (s *TestcaseService) LoadFramework(ctx context.Context, req *pb.LoadFramewo
 	// run docker return container-id
 	// initialize container based on request param: config & language
 	return &pb.LoadFrameworkReply{Success: true, Worker: "docker-container-id"}, nil
+}
+
+func (s *TestcaseService) CreateTestcaseSuite(ctx context.Context, req *pb.CreateTestcaseSuiteRequest) (*pb.CreateTestcaseSuiteReply, error) {
+	if len(req.Name) <= 0 {
+		return nil, SetCustomizeErrMsg(ReasonParamsError, "suite name cannot be empty")
+	}
+	res, err := s.uc.CreateTestcaseSuite(ctx, req.Name, req.TestcaseList)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.CreateTestcaseSuiteReply{
+		Id:        res.Id,
+		CreatedAt: timestamppb.New(res.CreatedAt),
+	}, nil
 }

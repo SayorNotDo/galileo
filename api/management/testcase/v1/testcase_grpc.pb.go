@@ -20,15 +20,16 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Testcase_CreateTestcase_FullMethodName     = "/api.management.testcase.Testcase/CreateTestcase"
-	Testcase_GenerateTestcase_FullMethodName   = "/api.management.testcase.Testcase/GenerateTestcase"
-	Testcase_UpdateTestcase_FullMethodName     = "/api.management.testcase.Testcase/UpdateTestcase"
-	Testcase_DeleteTestcase_FullMethodName     = "/api.management.testcase.Testcase/DeleteTestcase"
-	Testcase_GetTestcaseById_FullMethodName    = "/api.management.testcase.Testcase/GetTestcaseById"
-	Testcase_ListTestcase_FullMethodName       = "/api.management.testcase.Testcase/ListTestcase"
-	Testcase_UploadTestcaseFile_FullMethodName = "/api.management.testcase.Testcase/UploadTestcaseFile"
-	Testcase_DebugTestcase_FullMethodName      = "/api.management.testcase.Testcase/DebugTestcase"
-	Testcase_LoadFramework_FullMethodName      = "/api.management.testcase.Testcase/LoadFramework"
+	Testcase_CreateTestcase_FullMethodName      = "/api.management.testcase.Testcase/CreateTestcase"
+	Testcase_GenerateTestcase_FullMethodName    = "/api.management.testcase.Testcase/GenerateTestcase"
+	Testcase_UpdateTestcase_FullMethodName      = "/api.management.testcase.Testcase/UpdateTestcase"
+	Testcase_DeleteTestcase_FullMethodName      = "/api.management.testcase.Testcase/DeleteTestcase"
+	Testcase_GetTestcaseById_FullMethodName     = "/api.management.testcase.Testcase/GetTestcaseById"
+	Testcase_ListTestcase_FullMethodName        = "/api.management.testcase.Testcase/ListTestcase"
+	Testcase_UploadTestcaseFile_FullMethodName  = "/api.management.testcase.Testcase/UploadTestcaseFile"
+	Testcase_DebugTestcase_FullMethodName       = "/api.management.testcase.Testcase/DebugTestcase"
+	Testcase_LoadFramework_FullMethodName       = "/api.management.testcase.Testcase/LoadFramework"
+	Testcase_CreateTestcaseSuite_FullMethodName = "/api.management.testcase.Testcase/CreateTestcaseSuite"
 )
 
 // TestcaseClient is the client API for Testcase service.
@@ -44,6 +45,7 @@ type TestcaseClient interface {
 	UploadTestcaseFile(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UploadTestcaseReply, error)
 	DebugTestcase(ctx context.Context, in *DebugTestcaseRequest, opts ...grpc.CallOption) (*DebugTestcaseReply, error)
 	LoadFramework(ctx context.Context, in *LoadFrameworkRequest, opts ...grpc.CallOption) (*LoadFrameworkReply, error)
+	CreateTestcaseSuite(ctx context.Context, in *CreateTestcaseSuiteRequest, opts ...grpc.CallOption) (*CreateTestcaseSuiteReply, error)
 }
 
 type testcaseClient struct {
@@ -135,6 +137,15 @@ func (c *testcaseClient) LoadFramework(ctx context.Context, in *LoadFrameworkReq
 	return out, nil
 }
 
+func (c *testcaseClient) CreateTestcaseSuite(ctx context.Context, in *CreateTestcaseSuiteRequest, opts ...grpc.CallOption) (*CreateTestcaseSuiteReply, error) {
+	out := new(CreateTestcaseSuiteReply)
+	err := c.cc.Invoke(ctx, Testcase_CreateTestcaseSuite_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TestcaseServer is the server API for Testcase service.
 // All implementations must embed UnimplementedTestcaseServer
 // for forward compatibility
@@ -148,6 +159,7 @@ type TestcaseServer interface {
 	UploadTestcaseFile(context.Context, *emptypb.Empty) (*UploadTestcaseReply, error)
 	DebugTestcase(context.Context, *DebugTestcaseRequest) (*DebugTestcaseReply, error)
 	LoadFramework(context.Context, *LoadFrameworkRequest) (*LoadFrameworkReply, error)
+	CreateTestcaseSuite(context.Context, *CreateTestcaseSuiteRequest) (*CreateTestcaseSuiteReply, error)
 	mustEmbedUnimplementedTestcaseServer()
 }
 
@@ -181,6 +193,9 @@ func (UnimplementedTestcaseServer) DebugTestcase(context.Context, *DebugTestcase
 }
 func (UnimplementedTestcaseServer) LoadFramework(context.Context, *LoadFrameworkRequest) (*LoadFrameworkReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadFramework not implemented")
+}
+func (UnimplementedTestcaseServer) CreateTestcaseSuite(context.Context, *CreateTestcaseSuiteRequest) (*CreateTestcaseSuiteReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTestcaseSuite not implemented")
 }
 func (UnimplementedTestcaseServer) mustEmbedUnimplementedTestcaseServer() {}
 
@@ -357,6 +372,24 @@ func _Testcase_LoadFramework_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Testcase_CreateTestcaseSuite_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTestcaseSuiteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TestcaseServer).CreateTestcaseSuite(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Testcase_CreateTestcaseSuite_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TestcaseServer).CreateTestcaseSuite(ctx, req.(*CreateTestcaseSuiteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Testcase_ServiceDesc is the grpc.ServiceDesc for Testcase service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -399,6 +432,10 @@ var Testcase_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LoadFramework",
 			Handler:    _Testcase_LoadFramework_Handler,
+		},
+		{
+			MethodName: "CreateTestcaseSuite",
+			Handler:    _Testcase_CreateTestcaseSuite_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

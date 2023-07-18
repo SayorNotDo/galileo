@@ -3,7 +3,7 @@ package biz
 import (
 	"context"
 	engineV1 "galileo/api/engine/v1"
-	"github.com/golang/protobuf/ptypes/empty"
+	v1 "galileo/api/management/task/v1"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -11,23 +11,24 @@ import (
 
 // Task is a Task model.
 type Task struct {
-	Id             int64
-	Name           string
-	Rank           int8
-	Type           int8
-	Status         int8
-	CreatedAt      time.Time
-	CreatedBy      uint32
-	Assignee       uint32
-	Config         string
-	UpdatedAt      time.Time
-	CompletedAt    time.Time
-	DeletedAt      time.Time
-	StartTime      time.Time
-	Deadline       time.Time
-	DeletedBy      uint32
-	Description    string
-	TestcaseSuites []int64
+	Id              int64
+	Name            string
+	Rank            int8
+	Type            int8
+	Status          v1.TaskStatus
+	CreatedAt       time.Time
+	CreatedBy       uint32
+	Assignee        uint32
+	Config          string
+	UpdatedAt       time.Time
+	StatusUpdatedAt time.Time
+	CompletedAt     time.Time
+	DeletedAt       time.Time
+	StartTime       time.Time
+	Deadline        time.Time
+	DeletedBy       uint32
+	Description     string
+	TestcaseSuites  []int64
 }
 
 // TaskRepo is a Task repo.
@@ -37,6 +38,7 @@ type TaskRepo interface {
 	TaskByName(ctx context.Context, name string) (*Task, error)
 	TaskByID(ctx context.Context, id int64) (*Task, error)
 	UpdateTask(ctx context.Context, task *Task) (bool, error)
+	UpdateTaskStatus(ctx context.Context, updateTask *Task) (*Task, error)
 }
 
 // TaskUseCase is a Task useCase.
@@ -71,10 +73,6 @@ func (uc *TaskUseCase) UpdateTask(ctx context.Context, task *Task) (bool, error)
 	return uc.repo.UpdateTask(ctx, task)
 }
 
-func (uc *TaskUseCase) TestEngine(ctx context.Context) (string, error) {
-	resp, err := uc.engine.TestEngine(ctx, &empty.Empty{})
-	if err != nil {
-		return "", err
-	}
-	return resp.Hello, nil
+func (uc *TaskUseCase) UpdateTaskStatus(ctx context.Context, updateTask *Task) (*Task, error) {
+	return uc.repo.UpdateTaskStatus(ctx, updateTask)
 }

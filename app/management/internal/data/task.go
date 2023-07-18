@@ -2,7 +2,11 @@ package data
 
 import (
 	"context"
+	taskV1 "galileo/api/management/task/v1"
+	"galileo/ent"
 	"galileo/ent/task"
+	"galileo/pkg/errResponse"
+	"github.com/go-kratos/kratos/v2/errors"
 	"time"
 
 	"galileo/app/management/internal/biz"
@@ -30,7 +34,6 @@ func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (bool, error)
 		SetRank(task.Rank).
 		SetAssignee(task.Assignee).
 		SetConfig(task.Config).
-		SetStartTime(task.StartTime).
 		SetDeadline(task.Deadline).
 		SetDescription(task.Description).
 		ClearTestcaseSuite().
@@ -50,7 +53,7 @@ func (r *taskRepo) TaskByName(ctx context.Context, name string) (*biz.Task, erro
 		Id:        queryTask.ID,
 		Name:      queryTask.Name,
 		Rank:      queryTask.Rank,
-		Status:    queryTask.Status,
+		Status:    taskV1.TaskStatus(queryTask.Status),
 		Type:      queryTask.Type,
 		CreatedAt: queryTask.CreatedAt,
 		CreatedBy: queryTask.CreatedBy,
@@ -71,7 +74,7 @@ func (r *taskRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) {
 		Id:             queryTask.ID,
 		Name:           queryTask.Name,
 		Rank:           queryTask.Rank,
-		Status:         queryTask.Status,
+		Status:         taskV1.TaskStatus(queryTask.Status),
 		Type:           queryTask.Type,
 		CreatedAt:      queryTask.CreatedAt,
 		CreatedBy:      queryTask.CreatedBy,
@@ -120,7 +123,7 @@ func (r *taskRepo) TaskDetailById(ctx context.Context, id int64) (*biz.Task, err
 		CreatedBy:   queryTask.CreatedBy,
 		UpdatedAt:   queryTask.UpdatedAt,
 		CompletedAt: queryTask.CompletedAt,
-		Status:      queryTask.Status,
+		Status:      taskV1.TaskStatus(queryTask.Status),
 		Type:        queryTask.Type,
 		Rank:        queryTask.Rank,
 		Description: queryTask.Description,
@@ -154,4 +157,23 @@ func (r *taskRepo) CountAllTask(ctx context.Context) (int, error) {
 		return 0, err
 	}
 	return count, nil
+}
+
+func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (*biz.Task, error) {
+	ret, err := r.data.entDB.Task.UpdateOneID(updateTask.Id).
+		SetStatus(int8(updateTask.Status.Number())).
+		SetStartTime(updateTask.StartTime).
+		SetStatusUpdatedAt(time.Now()).
+		Save(ctx)
+	switch {
+	case ent.IsNotFound(err):
+		return nil, errors.NotFound(errResponse.ReasonRecordNotFound, err.Error())
+	case err != nil:
+		return nil, err
+	}
+	return &biz.Task{
+		Status:          taskV1.TaskStatus(ret.Status),
+		StatusUpdatedAt: ret.StatusUpdatedAt,
+	}, nil
+
 }

@@ -20,11 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Task_CreateTask_FullMethodName = "/api.task.v1.Task/CreateTask"
-	Task_UpdateTask_FullMethodName = "/api.task.v1.Task/UpdateTask"
-	Task_DeleteTask_FullMethodName = "/api.task.v1.Task/DeleteTask"
-	Task_TaskByID_FullMethodName   = "/api.task.v1.Task/TaskByID"
-	Task_ListTask_FullMethodName   = "/api.task.v1.Task/ListTask"
+	Task_CreateTask_FullMethodName       = "/api.task.v1.Task/CreateTask"
+	Task_UpdateTask_FullMethodName       = "/api.task.v1.Task/UpdateTask"
+	Task_DeleteTask_FullMethodName       = "/api.task.v1.Task/DeleteTask"
+	Task_TaskByID_FullMethodName         = "/api.task.v1.Task/TaskByID"
+	Task_ListTask_FullMethodName         = "/api.task.v1.Task/ListTask"
+	Task_UpdateTaskStatus_FullMethodName = "/api.task.v1.Task/UpdateTaskStatus"
 )
 
 // TaskClient is the client API for Task service.
@@ -36,6 +37,7 @@ type TaskClient interface {
 	DeleteTask(ctx context.Context, in *DeleteTaskRequest, opts ...grpc.CallOption) (*DeleteTaskReply, error)
 	TaskByID(ctx context.Context, in *TaskByIDRequest, opts ...grpc.CallOption) (*GetTaskReply, error)
 	ListTask(ctx context.Context, in *ListTaskRequest, opts ...grpc.CallOption) (*ListTaskReply, error)
+	UpdateTaskStatus(ctx context.Context, in *UpdateTaskStatusRequest, opts ...grpc.CallOption) (*UpdateTaskStatusReply, error)
 }
 
 type taskClient struct {
@@ -91,6 +93,15 @@ func (c *taskClient) ListTask(ctx context.Context, in *ListTaskRequest, opts ...
 	return out, nil
 }
 
+func (c *taskClient) UpdateTaskStatus(ctx context.Context, in *UpdateTaskStatusRequest, opts ...grpc.CallOption) (*UpdateTaskStatusReply, error) {
+	out := new(UpdateTaskStatusReply)
+	err := c.cc.Invoke(ctx, Task_UpdateTaskStatus_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskServer is the server API for Task service.
 // All implementations must embed UnimplementedTaskServer
 // for forward compatibility
@@ -100,6 +111,7 @@ type TaskServer interface {
 	DeleteTask(context.Context, *DeleteTaskRequest) (*DeleteTaskReply, error)
 	TaskByID(context.Context, *TaskByIDRequest) (*GetTaskReply, error)
 	ListTask(context.Context, *ListTaskRequest) (*ListTaskReply, error)
+	UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error)
 	mustEmbedUnimplementedTaskServer()
 }
 
@@ -121,6 +133,9 @@ func (UnimplementedTaskServer) TaskByID(context.Context, *TaskByIDRequest) (*Get
 }
 func (UnimplementedTaskServer) ListTask(context.Context, *ListTaskRequest) (*ListTaskReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTask not implemented")
+}
+func (UnimplementedTaskServer) UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTaskStatus not implemented")
 }
 func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
 
@@ -225,6 +240,24 @@ func _Task_ListTask_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Task_UpdateTaskStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTaskStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServer).UpdateTaskStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Task_UpdateTaskStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServer).UpdateTaskStatus(ctx, req.(*UpdateTaskStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Task_ServiceDesc is the grpc.ServiceDesc for Task service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -251,6 +284,10 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListTask",
 			Handler:    _Task_ListTask_Handler,
+		},
+		{
+			MethodName: "UpdateTaskStatus",
+			Handler:    _Task_UpdateTaskStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

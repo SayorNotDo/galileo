@@ -5,6 +5,7 @@ import (
 	"galileo/app/management/internal/biz"
 	"galileo/ent"
 	"galileo/ent/project"
+	"galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -67,7 +68,7 @@ func (repo *projectRepo) UpdateProject(ctx context.Context, p *biz.Project) (boo
 		Exec(ctx)
 	switch {
 	case ent.IsNotFound(err):
-		return false, errors.NotFound("Project Not Found", err.Error())
+		return false, errors.NotFound(errResponse.ReasonRecordNotFound, err.Error())
 	case err != nil:
 		return false, err
 	}

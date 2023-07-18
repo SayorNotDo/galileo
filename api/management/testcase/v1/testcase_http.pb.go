@@ -20,6 +20,7 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationTestcaseCreateTestcase = "/api.management.testcase.Testcase/CreateTestcase"
+const OperationTestcaseCreateTestcaseSuite = "/api.management.testcase.Testcase/CreateTestcaseSuite"
 const OperationTestcaseDebugTestcase = "/api.management.testcase.Testcase/DebugTestcase"
 const OperationTestcaseGetTestcaseById = "/api.management.testcase.Testcase/GetTestcaseById"
 const OperationTestcaseLoadFramework = "/api.management.testcase.Testcase/LoadFramework"
@@ -27,6 +28,7 @@ const OperationTestcaseUpdateTestcase = "/api.management.testcase.Testcase/Updat
 
 type TestcaseHTTPServer interface {
 	CreateTestcase(context.Context, *CreateTestcaseRequest) (*CreateTestcaseReply, error)
+	CreateTestcaseSuite(context.Context, *CreateTestcaseSuiteRequest) (*CreateTestcaseSuiteReply, error)
 	DebugTestcase(context.Context, *DebugTestcaseRequest) (*DebugTestcaseReply, error)
 	GetTestcaseById(context.Context, *GetTestcaseRequest) (*GetTestcaseReply, error)
 	LoadFramework(context.Context, *LoadFrameworkRequest) (*LoadFrameworkReply, error)
@@ -40,6 +42,7 @@ func RegisterTestcaseHTTPServer(s *http.Server, srv TestcaseHTTPServer) {
 	r.GET("v1/api/management/testcase/{id}", _Testcase_GetTestcaseById0_HTTP_Handler(srv))
 	r.POST("v1/api/management/testcase/debug", _Testcase_DebugTestcase0_HTTP_Handler(srv))
 	r.POST("v1/api/management/testcase/loadFramework", _Testcase_LoadFramework0_HTTP_Handler(srv))
+	r.POST("v1/api/management/case-suite", _Testcase_CreateTestcaseSuite0_HTTP_Handler(srv))
 }
 
 func _Testcase_CreateTestcase0_HTTP_Handler(srv TestcaseHTTPServer) func(ctx http.Context) error {
@@ -140,8 +143,28 @@ func _Testcase_LoadFramework0_HTTP_Handler(srv TestcaseHTTPServer) func(ctx http
 	}
 }
 
+func _Testcase_CreateTestcaseSuite0_HTTP_Handler(srv TestcaseHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in CreateTestcaseSuiteRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTestcaseCreateTestcaseSuite)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.CreateTestcaseSuite(ctx, req.(*CreateTestcaseSuiteRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*CreateTestcaseSuiteReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type TestcaseHTTPClient interface {
 	CreateTestcase(ctx context.Context, req *CreateTestcaseRequest, opts ...http.CallOption) (rsp *CreateTestcaseReply, err error)
+	CreateTestcaseSuite(ctx context.Context, req *CreateTestcaseSuiteRequest, opts ...http.CallOption) (rsp *CreateTestcaseSuiteReply, err error)
 	DebugTestcase(ctx context.Context, req *DebugTestcaseRequest, opts ...http.CallOption) (rsp *DebugTestcaseReply, err error)
 	GetTestcaseById(ctx context.Context, req *GetTestcaseRequest, opts ...http.CallOption) (rsp *GetTestcaseReply, err error)
 	LoadFramework(ctx context.Context, req *LoadFrameworkRequest, opts ...http.CallOption) (rsp *LoadFrameworkReply, err error)
@@ -161,6 +184,19 @@ func (c *TestcaseHTTPClientImpl) CreateTestcase(ctx context.Context, in *CreateT
 	pattern := "v1/api/management/testcase"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationTestcaseCreateTestcase))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *TestcaseHTTPClientImpl) CreateTestcaseSuite(ctx context.Context, in *CreateTestcaseSuiteRequest, opts ...http.CallOption) (*CreateTestcaseSuiteReply, error) {
+	var out CreateTestcaseSuiteReply
+	pattern := "v1/api/management/case-suite"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationTestcaseCreateTestcaseSuite))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
