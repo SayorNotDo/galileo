@@ -102,16 +102,22 @@ func (s *TaskService) ListTask(ctx context.Context, req *v1.ListTaskRequest) (*v
 }
 
 func (s *TaskService) UpdateTaskStatus(ctx context.Context, req *v1.UpdateTaskStatusRequest) (*v1.UpdateTaskStatusReply, error) {
+	// 获取需要更新状态的测试任务
 	queryTask, err := s.uc.TaskByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
+	// 校验接口请求的状态变更值：不可变更状态为NEW，不可重复请求相同的状态
+	if req.Status == v1.TaskStatus_NEW {
+		return nil, SetCustomizeErrMsg(ReasonParamsError, "task's status cannot be convert to NEW")
+	} else if req.Status == queryTask.Status {
+		return nil, SetCustomizeErrMsg(ReasonParamsError, "task's status already changed")
+	}
+	// 当获取的任务状态为NEW时，记录当前时间作为任务开始时间
 	if queryTask.Status == v1.TaskStatus_NEW {
 		queryTask.StartTime = time.Now()
-		if req.Status == v1.TaskStatus_NEW {
-			return nil, SetCustomizeErrMsg(ReasonParamsError, "started task's status cannot be convert to NEW")
-		}
 	}
+	// 更新状态
 	queryTask.Status = req.Status
 	ret, err := s.uc.UpdateTaskStatus(ctx, queryTask)
 	if err != nil {

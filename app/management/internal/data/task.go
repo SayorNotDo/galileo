@@ -62,7 +62,10 @@ func (r *taskRepo) TaskByName(ctx context.Context, name string) (*biz.Task, erro
 
 func (r *taskRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) {
 	queryTask, err := r.data.entDB.Task.Query().Where(task.ID(id)).Only(ctx)
-	if err != nil {
+	switch {
+	case ent.IsNotFound(err):
+		return nil, errors.NotFound(errResponse.ReasonRecordNotFound, err.Error())
+	case err != nil:
 		return nil, err
 	}
 	testcaseSuites := queryTask.Edges.TestcaseSuite

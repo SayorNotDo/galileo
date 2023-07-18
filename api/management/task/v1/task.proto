@@ -62,6 +62,7 @@ enum taskStatus {
   PENDING = 1;
   RUNNING = 2;
   PAUSED = 3;
+  CLOSED = 4;
   EXCEPTION = 5;
   CANCELLED = 6;
   FINISHED = 7;
