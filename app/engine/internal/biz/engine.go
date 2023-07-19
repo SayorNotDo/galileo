@@ -36,6 +36,7 @@ type Container struct {
 type EngineRepo interface {
 	UpdateTaskStatus(ctx context.Context, id int64, status taskV1.TaskStatus) (bool, error)
 	TaskByID(ctx context.Context, id int64) (*Task, error)
+	AddCronJob(ctx context.Context)
 }
 
 type EngineUseCase struct {
@@ -54,6 +55,10 @@ func (c *EngineUseCase) UpdateTaskStatus(ctx context.Context, id int64, status t
 
 func (c *EngineUseCase) TaskByID(ctx context.Context, id int64) (*Task, error) {
 	return c.Repo.TaskByID(ctx, id)
+}
+
+func (c *EngineUseCase) AddCronJob(ctx context.Context) {
+	c.Repo.AddCronJob(ctx)
 }
 
 func (c *EngineUseCase) BuildContainer(context.Context) (*Container, error) {

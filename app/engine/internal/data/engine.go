@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"fmt"
 	taskV1 "galileo/api/management/task/v1"
 	"galileo/app/engine/internal/biz"
 	"github.com/go-kratos/kratos/v2/log"
@@ -44,4 +45,13 @@ func (r *engineRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) 
 		ScheduleTime:   res.ScheduleTime.AsTime(),
 		TestcaseSuites: res.TestcaseSuiteId,
 	}, nil
+}
+
+func (r *engineRepo) AddCronJob(ctx context.Context) {
+	if _, err := r.data.cron.AddFunc("@every 10s", func() {
+		fmt.Println("================================================================")
+	}); err != nil {
+		return
+	}
+	r.data.cron.Start()
 }

@@ -25,23 +25,21 @@ func NewEngineService(uc *biz.EngineUseCase, logger log.Logger) *EngineService {
 }
 
 func (s *EngineService) RunJob(ctx context.Context, req *v1.RunJobRequest) (*v1.RunJobReply, error) {
-	// TODO: query task from db
+	// TODO: 获取任务配置等信息
 	task, err := s.uc.TaskByID(ctx, req.TaskId)
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonRecordNotFound, err.Error())
 	}
-	// TODO: validate job configuration
+	// TODO: 验证配置文件
 	testcaseSuites := task.TestcaseSuites
 	println("testcaseSuites: ", testcaseSuites)
-	// TODO: Run testcase
-	// TODO: validate worker environment
-	// TODO: send job command
-	// TODO: get callback
-	// TODO: update task status
+	// TODO: 运行用例
+	// TODO: 验证用例环境
+	// TODO: 下发执行命令
+	// TODO: 回调
 	if ok, err := s.uc.UpdateTaskStatus(ctx, req.TaskId, taskV1.TaskStatus_RUNNING); !ok {
 		return nil, SetCustomizeErrMsg(ReasonRecordNotFound, err.Error())
 	}
-	// TODO: return response
 	return &v1.RunJobReply{}, nil
 }
 
@@ -62,7 +60,10 @@ func (s *EngineService) TestEngine(ctx context.Context, req *empty.Empty) (*v1.T
 }
 
 func (s *EngineService) CronJobScheduler(ctx context.Context) {
-	// TODO: Scheduler get all cron jobs
+	// 循环检测与调度作业 频率: 30min
+	// TODO: 获取数据库中类型为定时任务、延时任务的列表记录
+	// TODO: 检查当前定时任务的调度列表
+	// TODO: 遍历定时任务、延时任务的列表记录，若记录不在定时任务中，则重新调度，若调度列表存在过期任务，则移除
 }
 
 func (s *EngineService) AddCronJob(ctx context.Context, req *v1.AddCronJobRequest) (*v1.AddCronJobReply, error) {
@@ -72,5 +73,6 @@ func (s *EngineService) AddCronJob(ctx context.Context, req *v1.AddCronJobReques
 	//}
 	//scheduleTime := res.ScheduleTime
 	//fmt.Println(scheduleTime)
+	s.uc.AddCronJob(ctx)
 	return &v1.AddCronJobReply{}, nil
 }

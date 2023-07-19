@@ -7,7 +7,7 @@ import (
 	"galileo/app/management/internal/biz"
 	"galileo/ent"
 	"galileo/ent/task"
-	"galileo/pkg/errResponse"
+	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/errors"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
@@ -29,7 +29,7 @@ func NewTaskRepo(data *Data, logger log.Logger) biz.TaskRepo {
 }
 
 func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (bool, error) {
-	if _, err := r.data.entDB.Task.UpdateOneID(task.Id).
+	ret, err := r.data.entDB.Task.UpdateOneID(task.Id).
 		SetName(task.Name).
 		SetType(task.Type).
 		SetRank(task.Rank).
@@ -39,8 +39,12 @@ func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (bool, error)
 		SetDescription(task.Description).
 		ClearTestcaseSuite().
 		AddTestcaseSuiteIDs(task.TestcaseSuites...).
-		Save(ctx); err != nil {
+		Save(ctx)
+	if err != nil {
 		return false, err
+	}
+	if ret.Type == 1 || ret.Type == 2 {
+		// TODO: 更新定时任务调度列表
 	}
 	return true, nil
 }
@@ -65,7 +69,7 @@ func (r *taskRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) {
 	queryTask, err := r.data.entDB.Task.Query().Where(task.ID(id)).Only(ctx)
 	switch {
 	case ent.IsNotFound(err):
-		return nil, errors.NotFound(errResponse.ReasonRecordNotFound, err.Error())
+		return nil, errors.NotFound(ReasonRecordNotFound, err.Error())
 	case err != nil:
 		return nil, err
 	}
@@ -89,7 +93,7 @@ func (r *taskRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) {
 func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, error) {
 	tx, err := r.data.entDB.Tx(ctx)
 	if err != nil {
-		return nil, errResponse.SetCustomizeErrMsg(errResponse.ReasonSystemError, err.Error())
+		return nil, SetCustomizeErrMsg(ReasonSystemError, err.Error())
 	}
 	createTask, err := tx.Task.Create().
 		SetName(task.Name).
@@ -100,6 +104,7 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, e
 		SetWorker(task.Worker).
 		SetScheduleTime(task.ScheduleTime).
 		SetFrequency(task.Frequency).
+		SetStartTime(task.StartTime).
 		SetDeadline(task.Deadline).
 		SetCreatedBy(task.CreatedBy).
 		SetDescription(task.Description).
@@ -119,7 +124,10 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, e
 		if err != nil {
 			return nil, rollback(tx, err)
 		}
-		if _, err := tx.Task.UpdateOneID(createTask.ID).SetExecuteID(res.ExecuteId).Save(ctx); err != nil {
+		if _, err := tx.Task.UpdateOneID(createTask.ID).
+			SetExecuteID(res.ExecuteId).
+			SetUpdatedBy(createTask.CreatedBy).
+			Save(ctx); err != nil {
 			return nil, rollback(tx, err)
 		}
 	}
@@ -129,6 +137,7 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, e
 	return &biz.Task{
 		Id:        createTask.ID,
 		CreatedAt: createTask.CreatedAt,
+		Status:    taskV1.TaskStatus(createTask.Status),
 	}, nil
 }
 
@@ -203,7 +212,7 @@ func (r *taskRepo) CountAllTask(ctx context.Context) (int, error) {
 func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (*biz.Task, error) {
 	tx, err := r.data.entDB.Tx(ctx)
 	if err != nil {
-		return nil, errResponse.SetCustomizeErrMsg(errResponse.ReasonSystemError, err.Error())
+		return nil, SetCustomizeErrMsg(ReasonSystemError, err.Error())
 	}
 	ret, err := tx.Task.UpdateOneID(updateTask.Id).
 		SetStatus(int8(updateTask.Status.Number())).
@@ -212,7 +221,7 @@ func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (
 		Save(ctx)
 	switch {
 	case ent.IsNotFound(err):
-		return nil, rollback(tx, errors.NotFound(errResponse.ReasonRecordNotFound, err.Error()))
+		return nil, rollback(tx, errors.NotFound(ReasonRecordNotFound, err.Error()))
 	case err != nil:
 		return nil, rollback(tx, err)
 	}

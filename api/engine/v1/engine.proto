@@ -18,8 +18,20 @@ service Engine {
   rpc PauseJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   rpc ResumeJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   rpc DeleteJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
-  rpc AddCronJob(AddCronJobRequest) returns (AddCronJobReply) {}
+  rpc AddCronJob(AddCronJobRequest) returns (AddCronJobReply);
+  rpc UpdateCronJob(UpdateCronJobRequest) returns (UpdateCronJobReply);
   rpc BuildContainer(google.protobuf.Empty) returns (BuildContainerReply){}
+}
+
+message UpdateCronJobRequest {
+  int64 taskId = 1;
+  int32 type = 2;
+  google.protobuf.Timestamp scheduleTime = 3;
+  frequency frequency = 4;
+}
+
+message UpdateCronJobReply {
+  int64 executeId = 1;
 }
 
 message AddCronJobRequest {

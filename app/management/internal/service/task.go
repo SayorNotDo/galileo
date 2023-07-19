@@ -27,7 +27,7 @@ func NewTaskService(uc *biz.TaskUseCase, logger log.Logger) *TaskService {
 	}
 }
 
-func NewTask(name string, rank, taskType int32, description string, testcaseSuites []int64, scheduleTime time.Time, worker string, assignee uint32, frequency v1.Frequency, deadline time.Time) (biz.Task, error) {
+func NewTask(name string, rank, taskType int32, description string, testcaseSuites []int64, scheduleTime time.Time, worker string, assignee uint32, frequency v1.Frequency, startTime time.Time, deadline time.Time, config string) (biz.Task, error) {
 	if len(name) <= 0 {
 		return biz.Task{}, errors.New("task name must not be empty")
 	} else if rank < 0 || taskType < 0 {
@@ -47,7 +47,9 @@ func NewTask(name string, rank, taskType int32, description string, testcaseSuit
 		Assignee:       assignee,
 		ScheduleTime:   scheduleTime,
 		Frequency:      frequency.String(),
+		StartTime:      startTime,
 		Deadline:       deadline,
+		Config:         config,
 	}, nil
 }
 
@@ -63,7 +65,9 @@ func (s *TaskService) CreateTask(ctx context.Context, req *v1.CreateTaskRequest)
 		req.Worker,
 		req.Assignee,
 		req.Frequency,
+		req.StartTime.AsTime(),
 		req.Deadline.AsTime(),
+		req.Config,
 	)
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonParamsError, err.Error())
@@ -99,7 +103,9 @@ func (s *TaskService) UpdateTask(ctx context.Context, req *v1.UpdateTaskRequest)
 		req.Worker,
 		req.Assignee,
 		req.Frequency,
+		req.StartTime.AsTime(),
 		req.Deadline.AsTime(),
+		req.Config,
 	)
 	if err != nil {
 		return nil, err

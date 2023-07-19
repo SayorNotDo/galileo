@@ -15,6 +15,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	consulAPI "github.com/hashicorp/consul/api"
+	"github.com/robfig/cron/v3"
 	grpcx "google.golang.org/grpc"
 	"time"
 )
@@ -36,15 +37,17 @@ type Data struct {
 	log      *log.Helper
 	redisCli redis.Cmdable
 	taskCli  taskV1.TaskClient
+	cron     *cron.Cron
 }
 
 // NewData .
 func NewData(c *conf.Data, logger log.Logger, redisCli redis.Cmdable, taskCli taskV1.TaskClient) (*Data, func(), error) {
 	l := log.NewHelper(log.With(logger, "module", "engine.DataService"))
+	cronJob := cron.New()
 	cleanup := func() {
 		l.Info("closing the data resources")
 	}
-	return &Data{log: l, redisCli: redisCli, taskCli: taskCli}, cleanup, nil
+	return &Data{log: l, redisCli: redisCli, taskCli: taskCli, cron: cronJob}, cleanup, nil
 }
 
 func NewTaskServiceClient(sr *conf.Service, rr registry.Discovery) taskV1.TaskClient {
