@@ -21,6 +21,12 @@ const (
 	FieldAssignee = "assignee"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
+	// FieldFrequency holds the string denoting the frequency field in the database.
+	FieldFrequency = "frequency"
+	// FieldScheduleTime holds the string denoting the schedule_time field in the database.
+	FieldScheduleTime = "schedule_time"
+	// FieldWorker holds the string denoting the worker field in the database.
+	FieldWorker = "worker"
 	// FieldConfig holds the string denoting the config field in the database.
 	FieldConfig = "config"
 	// FieldRank holds the string denoting the rank field in the database.
@@ -33,6 +39,8 @@ const (
 	FieldCompletedAt = "completed_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
+	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
+	FieldUpdatedBy = "updated_by"
 	// FieldStatusUpdatedAt holds the string denoting the status_updated_at field in the database.
 	FieldStatusUpdatedAt = "status_updated_at"
 	// FieldDeadline holds the string denoting the deadline field in the database.
@@ -43,6 +51,8 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldExecuteID holds the string denoting the execute_id field in the database.
+	FieldExecuteID = "execute_id"
 	// EdgeTestcaseSuite holds the string denoting the testcase_suite edge name in mutations.
 	EdgeTestcaseSuite = "testcase_suite"
 	// Table holds the table name of the task in the database.
@@ -64,17 +74,22 @@ var Columns = []string{
 	FieldCreatedBy,
 	FieldAssignee,
 	FieldType,
+	FieldFrequency,
+	FieldScheduleTime,
+	FieldWorker,
 	FieldConfig,
 	FieldRank,
 	FieldStatus,
 	FieldStartTime,
 	FieldCompletedAt,
 	FieldUpdatedAt,
+	FieldUpdatedBy,
 	FieldStatusUpdatedAt,
 	FieldDeadline,
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldDescription,
+	FieldExecuteID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

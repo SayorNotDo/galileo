@@ -159,17 +159,22 @@ var (
 		{Name: "created_by", Type: field.TypeUint32},
 		{Name: "assignee", Type: field.TypeUint32, Nullable: true},
 		{Name: "type", Type: field.TypeInt8, Default: 0},
+		{Name: "frequency", Type: field.TypeString, Nullable: true},
+		{Name: "schedule_time", Type: field.TypeTime, Nullable: true},
+		{Name: "worker", Type: field.TypeString, Nullable: true},
 		{Name: "config", Type: field.TypeString, Nullable: true},
 		{Name: "rank", Type: field.TypeInt8, Default: 0},
 		{Name: "status", Type: field.TypeInt8, Default: 0},
 		{Name: "start_time", Type: field.TypeTime, Nullable: true},
 		{Name: "completed_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "status_updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deadline", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "execute_id", Type: field.TypeInt64, Nullable: true},
 	}
 	// TaskTable holds the schema information for the "task" table.
 	TaskTable = &schema.Table{

@@ -31,7 +31,8 @@ func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, conf
 	cmdable := data.NewRedis(confData, logger)
 	discovery := data.NewDiscovery(registry)
 	fileClient := data.NewFileServiceClient(confService, discovery)
-	dataData, cleanup, err := data.NewData(confData, client, logger, cmdable, fileClient)
+	engineClient := data.NewEngineServiceClient(confService, discovery)
+	dataData, cleanup, err := data.NewData(confData, client, logger, cmdable, fileClient, engineClient)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -39,7 +40,6 @@ func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, conf
 	projectUseCase := biz.NewProjectUseCase(projectRepo, logger)
 	projectService := service.NewProjectService(projectUseCase, logger)
 	taskRepo := data.NewTaskRepo(dataData, logger)
-	engineClient := data.NewEngineServiceClient(confService, discovery)
 	taskUseCase := biz.NewTaskUseCase(taskRepo, engineClient, logger)
 	taskService := service.NewTaskService(taskUseCase, logger)
 	grpcServer := server.NewGRPCServer(confServer, projectService, taskService, logger)

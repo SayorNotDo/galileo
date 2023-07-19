@@ -27,12 +27,15 @@ func NewTaskService(uc *biz.TaskUseCase, logger log.Logger) *TaskService {
 	}
 }
 
-func NewTask(name string, rank, taskType int32, description string, testcaseSuites []int64) (biz.Task, error) {
+func NewTask(name string, rank, taskType int32, description string, testcaseSuites []int64, scheduleTime time.Time, worker string, assignee uint32, frequency v1.Frequency, deadline time.Time) (biz.Task, error) {
 	if len(name) <= 0 {
 		return biz.Task{}, errors.New("task name must not be empty")
-	}
-	if rank < 0 || taskType < 0 {
+	} else if rank < 0 || taskType < 0 {
 		return biz.Task{}, errors.New("invalid parameter")
+	} else if taskType == 1 || taskType == 2 {
+		if scheduleTime.Unix() == 0 {
+			return biz.Task{}, errors.New("schedule time can not be empty")
+		}
 	}
 	return biz.Task{
 		Name:           name,
@@ -40,14 +43,32 @@ func NewTask(name string, rank, taskType int32, description string, testcaseSuit
 		Type:           int8(taskType),
 		Description:    description,
 		TestcaseSuites: testcaseSuites,
+		Worker:         worker,
+		Assignee:       assignee,
+		ScheduleTime:   scheduleTime,
+		Frequency:      frequency.String(),
+		Deadline:       deadline,
 	}, nil
 }
 
 func (s *TaskService) CreateTask(ctx context.Context, req *v1.CreateTaskRequest) (*v1.CreateTaskReply, error) {
-	createTask, err := NewTask(req.Name, req.Rank, req.Type, req.Description, req.TestcaseSuiteId)
+	// 工厂模式新建 Task 校验传入参数的合法性
+	createTask, err := NewTask(
+		req.Name,
+		req.Rank,
+		req.Type,
+		req.Description,
+		req.TestcaseSuiteId,
+		req.ScheduleTime.AsTime(),
+		req.Worker,
+		req.Assignee,
+		req.Frequency,
+		req.Deadline.AsTime(),
+	)
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonParamsError, err.Error())
 	}
+	// 查询数据库中是否存在同名的 Task
 	if queryTask, _ := s.uc.TaskByName(ctx, createTask.Name); queryTask != nil {
 		return nil, SetCustomizeErrMsg(ReasonParamsError, "duplicated task name")
 	}
@@ -59,7 +80,7 @@ func (s *TaskService) CreateTask(ctx context.Context, req *v1.CreateTaskRequest)
 	}
 	return &v1.CreateTaskReply{
 		Id:        ret.Id,
-		Status:    v1.TaskStatus(ret.Status),
+		Status:    ret.Status,
 		CreatedAt: timestamppb.New(ret.CreatedAt),
 	}, nil
 }
@@ -69,7 +90,17 @@ func (s *TaskService) UpdateTask(ctx context.Context, req *v1.UpdateTaskRequest)
 	if err != nil {
 		return nil, err
 	}
-	updateTask, err := NewTask(req.Name, req.Rank, req.Type, req.Description, req.TestcaseSuiteId)
+	updateTask, err := NewTask(req.Name,
+		req.Rank,
+		req.Type,
+		req.Description,
+		req.TestcaseSuiteId,
+		req.ScheduleTime.AsTime(),
+		req.Worker,
+		req.Assignee,
+		req.Frequency,
+		req.Deadline.AsTime(),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -95,6 +126,13 @@ func (s *TaskService) TaskByID(ctx context.Context, req *v1.TaskByIDRequest) (*v
 		Rank:            int32(task.Rank),
 		Description:     task.Description,
 		TestcaseSuiteId: task.TestcaseSuites,
+		Status:          task.Status,
+		Config:          task.Config,
+		Worker:          task.Worker,
+		ScheduleTime:    timestamppb.New(task.ScheduleTime),
+		Deadline:        timestamppb.New(task.Deadline),
+		StartTime:       timestamppb.New(task.StartTime),
+		Assignee:        task.Assignee,
 	}, nil
 }
 func (s *TaskService) ListTask(ctx context.Context, req *v1.ListTaskRequest) (*v1.ListTaskReply, error) {
@@ -116,6 +154,9 @@ func (s *TaskService) UpdateTaskStatus(ctx context.Context, req *v1.UpdateTaskSt
 	// 当获取的任务状态为NEW时，记录当前时间作为任务开始时间
 	if queryTask.Status == v1.TaskStatus_NEW {
 		queryTask.StartTime = time.Now()
+	}
+	if req.Status == v1.TaskStatus_RUNNING {
+		queryTask.Worker = req.Worker
 	}
 	// 更新状态
 	queryTask.Status = req.Status

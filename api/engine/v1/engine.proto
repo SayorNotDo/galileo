@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 
 
@@ -12,13 +13,30 @@ option java_package = "api.engine.v1";
 
 service Engine {
   rpc TestEngine (google.protobuf.Empty) returns (TestEngineReply) {};
-  rpc RunJob(RunJobRequest) returns (RunJobReply) {}
+  rpc RunJob(RunJobRequest) returns (RunJobReply);
   rpc CancelJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   rpc PauseJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   rpc ResumeJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   rpc DeleteJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
-  rpc CronJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc AddCronJob(AddCronJobRequest) returns (AddCronJobReply) {}
   rpc BuildContainer(google.protobuf.Empty) returns (BuildContainerReply){}
+}
+
+message AddCronJobRequest {
+  int64 taskId = 1;
+  int32  type = 2;
+  google.protobuf.Timestamp scheduleTime = 3;
+  frequency frequency = 4;
+}
+
+enum frequency {
+  DAILY = 0;
+  WEEKLY = 1;
+  MONTHLY = 2;
+}
+
+message AddCronJobReply {
+  int64 executeId = 1;
 }
 
 message TestEngineReply {
@@ -38,6 +56,6 @@ message RunJobRequest {
 }
 
 message RunJobReply {
-  bool success = 1;
+  int64 executeId = 1;
 }
 

@@ -75,6 +75,48 @@ func (tc *TaskCreate) SetNillableType(i *int8) *TaskCreate {
 	return tc
 }
 
+// SetFrequency sets the "frequency" field.
+func (tc *TaskCreate) SetFrequency(s string) *TaskCreate {
+	tc.mutation.SetFrequency(s)
+	return tc
+}
+
+// SetNillableFrequency sets the "frequency" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableFrequency(s *string) *TaskCreate {
+	if s != nil {
+		tc.SetFrequency(*s)
+	}
+	return tc
+}
+
+// SetScheduleTime sets the "schedule_time" field.
+func (tc *TaskCreate) SetScheduleTime(t time.Time) *TaskCreate {
+	tc.mutation.SetScheduleTime(t)
+	return tc
+}
+
+// SetNillableScheduleTime sets the "schedule_time" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableScheduleTime(t *time.Time) *TaskCreate {
+	if t != nil {
+		tc.SetScheduleTime(*t)
+	}
+	return tc
+}
+
+// SetWorker sets the "worker" field.
+func (tc *TaskCreate) SetWorker(s string) *TaskCreate {
+	tc.mutation.SetWorker(s)
+	return tc
+}
+
+// SetNillableWorker sets the "worker" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableWorker(s *string) *TaskCreate {
+	if s != nil {
+		tc.SetWorker(*s)
+	}
+	return tc
+}
+
 // SetConfig sets the "config" field.
 func (tc *TaskCreate) SetConfig(s string) *TaskCreate {
 	tc.mutation.SetConfig(s)
@@ -159,6 +201,20 @@ func (tc *TaskCreate) SetNillableUpdatedAt(t *time.Time) *TaskCreate {
 	return tc
 }
 
+// SetUpdatedBy sets the "updated_by" field.
+func (tc *TaskCreate) SetUpdatedBy(u uint32) *TaskCreate {
+	tc.mutation.SetUpdatedBy(u)
+	return tc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableUpdatedBy(u *uint32) *TaskCreate {
+	if u != nil {
+		tc.SetUpdatedBy(*u)
+	}
+	return tc
+}
+
 // SetStatusUpdatedAt sets the "status_updated_at" field.
 func (tc *TaskCreate) SetStatusUpdatedAt(t time.Time) *TaskCreate {
 	tc.mutation.SetStatusUpdatedAt(t)
@@ -225,6 +281,20 @@ func (tc *TaskCreate) SetDescription(s string) *TaskCreate {
 func (tc *TaskCreate) SetNillableDescription(s *string) *TaskCreate {
 	if s != nil {
 		tc.SetDescription(*s)
+	}
+	return tc
+}
+
+// SetExecuteID sets the "execute_id" field.
+func (tc *TaskCreate) SetExecuteID(i int64) *TaskCreate {
+	tc.mutation.SetExecuteID(i)
+	return tc
+}
+
+// SetNillableExecuteID sets the "execute_id" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableExecuteID(i *int64) *TaskCreate {
+	if i != nil {
+		tc.SetExecuteID(*i)
 	}
 	return tc
 }
@@ -380,6 +450,18 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_spec.SetField(task.FieldType, field.TypeInt8, value)
 		_node.Type = value
 	}
+	if value, ok := tc.mutation.Frequency(); ok {
+		_spec.SetField(task.FieldFrequency, field.TypeString, value)
+		_node.Frequency = value
+	}
+	if value, ok := tc.mutation.ScheduleTime(); ok {
+		_spec.SetField(task.FieldScheduleTime, field.TypeTime, value)
+		_node.ScheduleTime = value
+	}
+	if value, ok := tc.mutation.Worker(); ok {
+		_spec.SetField(task.FieldWorker, field.TypeString, value)
+		_node.Worker = value
+	}
 	if value, ok := tc.mutation.Config(); ok {
 		_spec.SetField(task.FieldConfig, field.TypeString, value)
 		_node.Config = value
@@ -404,6 +486,10 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_spec.SetField(task.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := tc.mutation.UpdatedBy(); ok {
+		_spec.SetField(task.FieldUpdatedBy, field.TypeUint32, value)
+		_node.UpdatedBy = value
+	}
 	if value, ok := tc.mutation.StatusUpdatedAt(); ok {
 		_spec.SetField(task.FieldStatusUpdatedAt, field.TypeTime, value)
 		_node.StatusUpdatedAt = value
@@ -423,6 +509,10 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Description(); ok {
 		_spec.SetField(task.FieldDescription, field.TypeString, value)
 		_node.Description = value
+	}
+	if value, ok := tc.mutation.ExecuteID(); ok {
+		_spec.SetField(task.FieldExecuteID, field.TypeInt64, value)
+		_node.ExecuteID = value
 	}
 	if nodes := tc.mutation.TestcaseSuiteIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

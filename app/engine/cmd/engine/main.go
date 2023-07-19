@@ -18,7 +18,7 @@ import (
 var (
 	Service = bootstrap.NewServiceInfo(
 		"galileo.engine.scheduler",
-		"engine,v1",
+		"engine.v1",
 		"")
 
 	// Flags is the config flag.
@@ -84,7 +84,7 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := wireApp(bc.Server, bc.Data, rc, logger)
+	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Service, rc, logger)
 	if err != nil {
 		panic(err)
 	}

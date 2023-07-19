@@ -29,15 +29,19 @@ func (r *engineRepo) UpdateTaskStatus(ctx context.Context, id int64, status task
 }
 
 func (r *engineRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) {
-	//ret, err := r.data.tc.TaskByID(ctx, &taskV1.TaskByIDRequest{Id: id})
-	//if err != nil {
-	//	return nil, err
-	//}
-	//return &biz.Task{
-	//	Name:        ret.Name,
-	//	Type:        int8(ret.Type),
-	//	Rank:        int8(ret.Rank),
-	//	Description: ret.Description,
-	//}, nil
-	return nil, nil
+	res, err := r.data.taskCli.TaskByID(ctx, &taskV1.TaskByIDRequest{Id: id})
+	if err != nil {
+		return nil, err
+	}
+	return &biz.Task{
+		Name:           res.Name,
+		Type:           int8(res.Type),
+		Rank:           int8(res.Rank),
+		Status:         res.Status,
+		Worker:         res.Worker,
+		Config:         res.Config,
+		Frequency:      res.Frequency,
+		ScheduleTime:   res.ScheduleTime.AsTime(),
+		TestcaseSuites: res.TestcaseSuiteId,
+	}, nil
 }

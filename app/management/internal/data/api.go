@@ -7,6 +7,7 @@ import (
 	"galileo/app/management/internal/biz"
 	"galileo/ent"
 	"galileo/ent/api"
+	"galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -54,7 +55,7 @@ func rollback(tx *ent.Tx, err error) error {
 func (repo *ApiRepo) CreateApi(ctx context.Context, api *biz.Api) (*biz.Api, error) {
 	tx, err := repo.data.entDB.Tx(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("starting a transaction: %w", err)
+		return nil, errResponse.SetCustomizeErrMsg(errResponse.ReasonSystemError, err.Error())
 	}
 	createApi, err := tx.Api.Create().
 		SetName(api.Name).

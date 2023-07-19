@@ -26,6 +26,12 @@ type Task struct {
 	Assignee uint32 `json:"assignee,omitempty"`
 	// Type holds the value of the "type" field.
 	Type int8 `json:"type,omitempty"`
+	// Frequency holds the value of the "frequency" field.
+	Frequency string `json:"frequency,omitempty"`
+	// ScheduleTime holds the value of the "schedule_time" field.
+	ScheduleTime time.Time `json:"schedule_time,omitempty"`
+	// Worker holds the value of the "worker" field.
+	Worker string `json:"worker,omitempty"`
 	// Config holds the value of the "config" field.
 	Config string `json:"config,omitempty"`
 	// Rank holds the value of the "rank" field.
@@ -38,6 +44,8 @@ type Task struct {
 	CompletedAt time.Time `json:"completed_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// UpdatedBy holds the value of the "updated_by" field.
+	UpdatedBy uint32 `json:"updated_by,omitempty"`
 	// StatusUpdatedAt holds the value of the "status_updated_at" field.
 	StatusUpdatedAt time.Time `json:"status_updated_at,omitempty"`
 	// Deadline holds the value of the "deadline" field.
@@ -48,6 +56,8 @@ type Task struct {
 	DeletedBy uint32 `json:"deleted_by,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
+	// ExecuteID holds the value of the "execute_id" field.
+	ExecuteID int64 `json:"execute_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TaskQuery when eager-loading is set.
 	Edges TaskEdges `json:"edges"`
@@ -76,11 +86,11 @@ func (*Task) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case task.FieldID, task.FieldCreatedBy, task.FieldAssignee, task.FieldType, task.FieldRank, task.FieldStatus, task.FieldDeletedBy:
+		case task.FieldID, task.FieldCreatedBy, task.FieldAssignee, task.FieldType, task.FieldRank, task.FieldStatus, task.FieldUpdatedBy, task.FieldDeletedBy, task.FieldExecuteID:
 			values[i] = new(sql.NullInt64)
-		case task.FieldName, task.FieldConfig, task.FieldDescription:
+		case task.FieldName, task.FieldFrequency, task.FieldWorker, task.FieldConfig, task.FieldDescription:
 			values[i] = new(sql.NullString)
-		case task.FieldCreatedAt, task.FieldStartTime, task.FieldCompletedAt, task.FieldUpdatedAt, task.FieldStatusUpdatedAt, task.FieldDeadline, task.FieldDeletedAt:
+		case task.FieldCreatedAt, task.FieldScheduleTime, task.FieldStartTime, task.FieldCompletedAt, task.FieldUpdatedAt, task.FieldStatusUpdatedAt, task.FieldDeadline, task.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Task", columns[i])
@@ -133,6 +143,24 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Type = int8(value.Int64)
 			}
+		case task.FieldFrequency:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field frequency", values[i])
+			} else if value.Valid {
+				t.Frequency = value.String
+			}
+		case task.FieldScheduleTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field schedule_time", values[i])
+			} else if value.Valid {
+				t.ScheduleTime = value.Time
+			}
+		case task.FieldWorker:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field worker", values[i])
+			} else if value.Valid {
+				t.Worker = value.String
+			}
 		case task.FieldConfig:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field config", values[i])
@@ -169,6 +197,12 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.UpdatedAt = value.Time
 			}
+		case task.FieldUpdatedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+			} else if value.Valid {
+				t.UpdatedBy = uint32(value.Int64)
+			}
 		case task.FieldStatusUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field status_updated_at", values[i])
@@ -198,6 +232,12 @@ func (t *Task) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
 				t.Description = value.String
+			}
+		case task.FieldExecuteID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field execute_id", values[i])
+			} else if value.Valid {
+				t.ExecuteID = value.Int64
 			}
 		}
 	}
@@ -247,6 +287,15 @@ func (t *Task) String() string {
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", t.Type))
 	builder.WriteString(", ")
+	builder.WriteString("frequency=")
+	builder.WriteString(t.Frequency)
+	builder.WriteString(", ")
+	builder.WriteString("schedule_time=")
+	builder.WriteString(t.ScheduleTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("worker=")
+	builder.WriteString(t.Worker)
+	builder.WriteString(", ")
 	builder.WriteString("config=")
 	builder.WriteString(t.Config)
 	builder.WriteString(", ")
@@ -265,6 +314,9 @@ func (t *Task) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(t.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("updated_by=")
+	builder.WriteString(fmt.Sprintf("%v", t.UpdatedBy))
+	builder.WriteString(", ")
 	builder.WriteString("status_updated_at=")
 	builder.WriteString(t.StatusUpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
@@ -279,6 +331,9 @@ func (t *Task) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(t.Description)
+	builder.WriteString(", ")
+	builder.WriteString("execute_id=")
+	builder.WriteString(fmt.Sprintf("%v", t.ExecuteID))
 	builder.WriteByte(')')
 	return builder.String()
 }

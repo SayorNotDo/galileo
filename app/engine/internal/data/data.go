@@ -2,14 +2,20 @@ package data
 
 import (
 	"context"
+	taskV1 "galileo/api/management/task/v1"
 	"galileo/app/engine/internal/conf"
 	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/metadata"
+	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-redis/redis/extra/redisotel"
 	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	consulAPI "github.com/hashicorp/consul/api"
+	grpcx "google.golang.org/grpc"
 	"time"
 )
 
@@ -20,6 +26,7 @@ var ProviderSet = wire.NewSet(
 	NewRedis,
 	NewRegistrar,
 	NewDiscovery,
+	NewTaskServiceClient,
 )
 
 var RedisCli redis.Cmdable
@@ -28,36 +35,37 @@ var RedisCli redis.Cmdable
 type Data struct {
 	log      *log.Helper
 	redisCli redis.Cmdable
+	taskCli  taskV1.TaskClient
 }
 
 // NewData .
-func NewData(c *conf.Data, logger log.Logger, redisCli redis.Cmdable) (*Data, func(), error) {
+func NewData(c *conf.Data, logger log.Logger, redisCli redis.Cmdable, taskCli taskV1.TaskClient) (*Data, func(), error) {
 	l := log.NewHelper(log.With(logger, "module", "engine.DataService"))
 	cleanup := func() {
 		l.Info("closing the data resources")
 	}
-	return &Data{log: l, redisCli: redisCli}, cleanup, nil
+	return &Data{log: l, redisCli: redisCli, taskCli: taskCli}, cleanup, nil
 }
 
-//func NewTaskServiceClient(sr *conf.Service, rr registry.Discovery) taskV1.TaskClient {
-//	conn, err := grpc.DialInsecure(
-//		context.Background(),
-//		grpc.WithEndpoint(sr.Task.Endpoint),
-//		grpc.WithDiscovery(rr),
-//		grpc.WithMiddleware(
-//			tracing.Client(),
-//			recovery.Recovery(),
-//			metadata.Client(),
-//		),
-//		grpc.WithTimeout(2*time.Second),
-//		grpc.WithOptions(grpcx.WithStatsHandler(&tracing.ClientHandler{})),
-//	)
-//	if err != nil {
-//		panic(err)
-//	}
-//	c := taskV1.NewTaskClient(conn)
-//	return c
-//}
+func NewTaskServiceClient(sr *conf.Service, rr registry.Discovery) taskV1.TaskClient {
+	conn, err := grpc.DialInsecure(
+		context.Background(),
+		grpc.WithEndpoint(sr.Management.Endpoint),
+		grpc.WithDiscovery(rr),
+		grpc.WithMiddleware(
+			tracing.Client(),
+			recovery.Recovery(),
+			metadata.Client(),
+		),
+		grpc.WithTimeout(2*time.Second),
+		grpc.WithOptions(grpcx.WithStatsHandler(&tracing.ClientHandler{})),
+	)
+	if err != nil {
+		panic(err)
+	}
+	c := taskV1.NewTaskClient(conn)
+	return c
+}
 
 func NewRedis(conf *conf.Data, logger log.Logger) redis.Cmdable {
 	logs := log.NewHelper(log.With(logger, "module", "engineService/data/redis"))
@@ -85,6 +93,7 @@ func NewRegistrar(conf *conf.Registry) registry.Registrar {
 	c := consulAPI.DefaultConfig()
 	c.Address = conf.Consul.Address
 	c.Scheme = conf.Consul.Scheme
+
 	cli, err := consulAPI.NewClient(c)
 	if err != nil {
 		panic(err)

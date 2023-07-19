@@ -83,6 +83,66 @@ func (tu *TaskUpdate) AddType(i int8) *TaskUpdate {
 	return tu
 }
 
+// SetFrequency sets the "frequency" field.
+func (tu *TaskUpdate) SetFrequency(s string) *TaskUpdate {
+	tu.mutation.SetFrequency(s)
+	return tu
+}
+
+// SetNillableFrequency sets the "frequency" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableFrequency(s *string) *TaskUpdate {
+	if s != nil {
+		tu.SetFrequency(*s)
+	}
+	return tu
+}
+
+// ClearFrequency clears the value of the "frequency" field.
+func (tu *TaskUpdate) ClearFrequency() *TaskUpdate {
+	tu.mutation.ClearFrequency()
+	return tu
+}
+
+// SetScheduleTime sets the "schedule_time" field.
+func (tu *TaskUpdate) SetScheduleTime(t time.Time) *TaskUpdate {
+	tu.mutation.SetScheduleTime(t)
+	return tu
+}
+
+// SetNillableScheduleTime sets the "schedule_time" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableScheduleTime(t *time.Time) *TaskUpdate {
+	if t != nil {
+		tu.SetScheduleTime(*t)
+	}
+	return tu
+}
+
+// ClearScheduleTime clears the value of the "schedule_time" field.
+func (tu *TaskUpdate) ClearScheduleTime() *TaskUpdate {
+	tu.mutation.ClearScheduleTime()
+	return tu
+}
+
+// SetWorker sets the "worker" field.
+func (tu *TaskUpdate) SetWorker(s string) *TaskUpdate {
+	tu.mutation.SetWorker(s)
+	return tu
+}
+
+// SetNillableWorker sets the "worker" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableWorker(s *string) *TaskUpdate {
+	if s != nil {
+		tu.SetWorker(*s)
+	}
+	return tu
+}
+
+// ClearWorker clears the value of the "worker" field.
+func (tu *TaskUpdate) ClearWorker() *TaskUpdate {
+	tu.mutation.ClearWorker()
+	return tu
+}
+
 // SetConfig sets the "config" field.
 func (tu *TaskUpdate) SetConfig(s string) *TaskUpdate {
 	tu.mutation.SetConfig(s)
@@ -197,6 +257,33 @@ func (tu *TaskUpdate) ClearUpdatedAt() *TaskUpdate {
 	return tu
 }
 
+// SetUpdatedBy sets the "updated_by" field.
+func (tu *TaskUpdate) SetUpdatedBy(u uint32) *TaskUpdate {
+	tu.mutation.ResetUpdatedBy()
+	tu.mutation.SetUpdatedBy(u)
+	return tu
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableUpdatedBy(u *uint32) *TaskUpdate {
+	if u != nil {
+		tu.SetUpdatedBy(*u)
+	}
+	return tu
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (tu *TaskUpdate) AddUpdatedBy(u int32) *TaskUpdate {
+	tu.mutation.AddUpdatedBy(u)
+	return tu
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (tu *TaskUpdate) ClearUpdatedBy() *TaskUpdate {
+	tu.mutation.ClearUpdatedBy()
+	return tu
+}
+
 // SetStatusUpdatedAt sets the "status_updated_at" field.
 func (tu *TaskUpdate) SetStatusUpdatedAt(t time.Time) *TaskUpdate {
 	tu.mutation.SetStatusUpdatedAt(t)
@@ -301,6 +388,33 @@ func (tu *TaskUpdate) SetNillableDescription(s *string) *TaskUpdate {
 // ClearDescription clears the value of the "description" field.
 func (tu *TaskUpdate) ClearDescription() *TaskUpdate {
 	tu.mutation.ClearDescription()
+	return tu
+}
+
+// SetExecuteID sets the "execute_id" field.
+func (tu *TaskUpdate) SetExecuteID(i int64) *TaskUpdate {
+	tu.mutation.ResetExecuteID()
+	tu.mutation.SetExecuteID(i)
+	return tu
+}
+
+// SetNillableExecuteID sets the "execute_id" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableExecuteID(i *int64) *TaskUpdate {
+	if i != nil {
+		tu.SetExecuteID(*i)
+	}
+	return tu
+}
+
+// AddExecuteID adds i to the "execute_id" field.
+func (tu *TaskUpdate) AddExecuteID(i int64) *TaskUpdate {
+	tu.mutation.AddExecuteID(i)
+	return tu
+}
+
+// ClearExecuteID clears the value of the "execute_id" field.
+func (tu *TaskUpdate) ClearExecuteID() *TaskUpdate {
+	tu.mutation.ClearExecuteID()
 	return tu
 }
 
@@ -421,6 +535,24 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.AddedType(); ok {
 		_spec.AddField(task.FieldType, field.TypeInt8, value)
 	}
+	if value, ok := tu.mutation.Frequency(); ok {
+		_spec.SetField(task.FieldFrequency, field.TypeString, value)
+	}
+	if tu.mutation.FrequencyCleared() {
+		_spec.ClearField(task.FieldFrequency, field.TypeString)
+	}
+	if value, ok := tu.mutation.ScheduleTime(); ok {
+		_spec.SetField(task.FieldScheduleTime, field.TypeTime, value)
+	}
+	if tu.mutation.ScheduleTimeCleared() {
+		_spec.ClearField(task.FieldScheduleTime, field.TypeTime)
+	}
+	if value, ok := tu.mutation.Worker(); ok {
+		_spec.SetField(task.FieldWorker, field.TypeString, value)
+	}
+	if tu.mutation.WorkerCleared() {
+		_spec.ClearField(task.FieldWorker, field.TypeString)
+	}
 	if value, ok := tu.mutation.Config(); ok {
 		_spec.SetField(task.FieldConfig, field.TypeString, value)
 	}
@@ -457,6 +589,15 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if tu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(task.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := tu.mutation.UpdatedBy(); ok {
+		_spec.SetField(task.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if value, ok := tu.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(task.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if tu.mutation.UpdatedByCleared() {
+		_spec.ClearField(task.FieldUpdatedBy, field.TypeUint32)
+	}
 	if value, ok := tu.mutation.StatusUpdatedAt(); ok {
 		_spec.SetField(task.FieldStatusUpdatedAt, field.TypeTime, value)
 	}
@@ -489,6 +630,15 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.DescriptionCleared() {
 		_spec.ClearField(task.FieldDescription, field.TypeString)
+	}
+	if value, ok := tu.mutation.ExecuteID(); ok {
+		_spec.SetField(task.FieldExecuteID, field.TypeInt64, value)
+	}
+	if value, ok := tu.mutation.AddedExecuteID(); ok {
+		_spec.AddField(task.FieldExecuteID, field.TypeInt64, value)
+	}
+	if tu.mutation.ExecuteIDCleared() {
+		_spec.ClearField(task.FieldExecuteID, field.TypeInt64)
 	}
 	if tu.mutation.TestcaseSuiteCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -609,6 +759,66 @@ func (tuo *TaskUpdateOne) AddType(i int8) *TaskUpdateOne {
 	return tuo
 }
 
+// SetFrequency sets the "frequency" field.
+func (tuo *TaskUpdateOne) SetFrequency(s string) *TaskUpdateOne {
+	tuo.mutation.SetFrequency(s)
+	return tuo
+}
+
+// SetNillableFrequency sets the "frequency" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableFrequency(s *string) *TaskUpdateOne {
+	if s != nil {
+		tuo.SetFrequency(*s)
+	}
+	return tuo
+}
+
+// ClearFrequency clears the value of the "frequency" field.
+func (tuo *TaskUpdateOne) ClearFrequency() *TaskUpdateOne {
+	tuo.mutation.ClearFrequency()
+	return tuo
+}
+
+// SetScheduleTime sets the "schedule_time" field.
+func (tuo *TaskUpdateOne) SetScheduleTime(t time.Time) *TaskUpdateOne {
+	tuo.mutation.SetScheduleTime(t)
+	return tuo
+}
+
+// SetNillableScheduleTime sets the "schedule_time" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableScheduleTime(t *time.Time) *TaskUpdateOne {
+	if t != nil {
+		tuo.SetScheduleTime(*t)
+	}
+	return tuo
+}
+
+// ClearScheduleTime clears the value of the "schedule_time" field.
+func (tuo *TaskUpdateOne) ClearScheduleTime() *TaskUpdateOne {
+	tuo.mutation.ClearScheduleTime()
+	return tuo
+}
+
+// SetWorker sets the "worker" field.
+func (tuo *TaskUpdateOne) SetWorker(s string) *TaskUpdateOne {
+	tuo.mutation.SetWorker(s)
+	return tuo
+}
+
+// SetNillableWorker sets the "worker" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableWorker(s *string) *TaskUpdateOne {
+	if s != nil {
+		tuo.SetWorker(*s)
+	}
+	return tuo
+}
+
+// ClearWorker clears the value of the "worker" field.
+func (tuo *TaskUpdateOne) ClearWorker() *TaskUpdateOne {
+	tuo.mutation.ClearWorker()
+	return tuo
+}
+
 // SetConfig sets the "config" field.
 func (tuo *TaskUpdateOne) SetConfig(s string) *TaskUpdateOne {
 	tuo.mutation.SetConfig(s)
@@ -723,6 +933,33 @@ func (tuo *TaskUpdateOne) ClearUpdatedAt() *TaskUpdateOne {
 	return tuo
 }
 
+// SetUpdatedBy sets the "updated_by" field.
+func (tuo *TaskUpdateOne) SetUpdatedBy(u uint32) *TaskUpdateOne {
+	tuo.mutation.ResetUpdatedBy()
+	tuo.mutation.SetUpdatedBy(u)
+	return tuo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableUpdatedBy(u *uint32) *TaskUpdateOne {
+	if u != nil {
+		tuo.SetUpdatedBy(*u)
+	}
+	return tuo
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (tuo *TaskUpdateOne) AddUpdatedBy(u int32) *TaskUpdateOne {
+	tuo.mutation.AddUpdatedBy(u)
+	return tuo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (tuo *TaskUpdateOne) ClearUpdatedBy() *TaskUpdateOne {
+	tuo.mutation.ClearUpdatedBy()
+	return tuo
+}
+
 // SetStatusUpdatedAt sets the "status_updated_at" field.
 func (tuo *TaskUpdateOne) SetStatusUpdatedAt(t time.Time) *TaskUpdateOne {
 	tuo.mutation.SetStatusUpdatedAt(t)
@@ -827,6 +1064,33 @@ func (tuo *TaskUpdateOne) SetNillableDescription(s *string) *TaskUpdateOne {
 // ClearDescription clears the value of the "description" field.
 func (tuo *TaskUpdateOne) ClearDescription() *TaskUpdateOne {
 	tuo.mutation.ClearDescription()
+	return tuo
+}
+
+// SetExecuteID sets the "execute_id" field.
+func (tuo *TaskUpdateOne) SetExecuteID(i int64) *TaskUpdateOne {
+	tuo.mutation.ResetExecuteID()
+	tuo.mutation.SetExecuteID(i)
+	return tuo
+}
+
+// SetNillableExecuteID sets the "execute_id" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableExecuteID(i *int64) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetExecuteID(*i)
+	}
+	return tuo
+}
+
+// AddExecuteID adds i to the "execute_id" field.
+func (tuo *TaskUpdateOne) AddExecuteID(i int64) *TaskUpdateOne {
+	tuo.mutation.AddExecuteID(i)
+	return tuo
+}
+
+// ClearExecuteID clears the value of the "execute_id" field.
+func (tuo *TaskUpdateOne) ClearExecuteID() *TaskUpdateOne {
+	tuo.mutation.ClearExecuteID()
 	return tuo
 }
 
@@ -977,6 +1241,24 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if value, ok := tuo.mutation.AddedType(); ok {
 		_spec.AddField(task.FieldType, field.TypeInt8, value)
 	}
+	if value, ok := tuo.mutation.Frequency(); ok {
+		_spec.SetField(task.FieldFrequency, field.TypeString, value)
+	}
+	if tuo.mutation.FrequencyCleared() {
+		_spec.ClearField(task.FieldFrequency, field.TypeString)
+	}
+	if value, ok := tuo.mutation.ScheduleTime(); ok {
+		_spec.SetField(task.FieldScheduleTime, field.TypeTime, value)
+	}
+	if tuo.mutation.ScheduleTimeCleared() {
+		_spec.ClearField(task.FieldScheduleTime, field.TypeTime)
+	}
+	if value, ok := tuo.mutation.Worker(); ok {
+		_spec.SetField(task.FieldWorker, field.TypeString, value)
+	}
+	if tuo.mutation.WorkerCleared() {
+		_spec.ClearField(task.FieldWorker, field.TypeString)
+	}
 	if value, ok := tuo.mutation.Config(); ok {
 		_spec.SetField(task.FieldConfig, field.TypeString, value)
 	}
@@ -1013,6 +1295,15 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if tuo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(task.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := tuo.mutation.UpdatedBy(); ok {
+		_spec.SetField(task.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if value, ok := tuo.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(task.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if tuo.mutation.UpdatedByCleared() {
+		_spec.ClearField(task.FieldUpdatedBy, field.TypeUint32)
+	}
 	if value, ok := tuo.mutation.StatusUpdatedAt(); ok {
 		_spec.SetField(task.FieldStatusUpdatedAt, field.TypeTime, value)
 	}
@@ -1045,6 +1336,15 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if tuo.mutation.DescriptionCleared() {
 		_spec.ClearField(task.FieldDescription, field.TypeString)
+	}
+	if value, ok := tuo.mutation.ExecuteID(); ok {
+		_spec.SetField(task.FieldExecuteID, field.TypeInt64, value)
+	}
+	if value, ok := tuo.mutation.AddedExecuteID(); ok {
+		_spec.AddField(task.FieldExecuteID, field.TypeInt64, value)
+	}
+	if tuo.mutation.ExecuteIDCleared() {
+		_spec.ClearField(task.FieldExecuteID, field.TypeInt64)
 	}
 	if tuo.mutation.TestcaseSuiteCleared() {
 		edge := &sqlgraph.EdgeSpec{

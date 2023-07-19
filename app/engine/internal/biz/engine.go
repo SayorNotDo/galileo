@@ -18,15 +18,13 @@ type Task struct {
 	Name           string
 	Rank           int8
 	Type           int8
-	Status         int8
-	CreatedAt      time.Time
-	CreatedBy      uint32
-	UpdateAt       time.Time
-	CompleteAt     time.Time
-	DeletedAt      time.Time
-	DeletedBy      uint32
-	Description    string
+	Status         taskV1.TaskStatus
+	Worker         string
+	Config         string
+	Frequency      taskV1.Frequency
+	ScheduleTime   time.Time
 	TestcaseSuites []int64
+	ExecuteId      int64
 }
 
 type Container struct {

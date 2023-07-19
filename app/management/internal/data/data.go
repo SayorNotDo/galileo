@@ -40,28 +40,49 @@ var ProviderSet = wire.NewSet(
 	NewApiRepo,
 	NewRegistrar,
 	NewDiscovery,
+	NewManagementRepo,
 	NewFileServiceClient,
 	NewEngineServiceClient,
-	NewManagementRepo,
 )
 
 var RedisCli redis.Cmdable
 
 // Data .
 type Data struct {
-	fileCli  fileV1.FileClient
-	entDB    *ent.Client
-	log      *log.Helper
-	redisCli redis.Cmdable
+	engineCli engineV1.EngineClient
+	fileCli   fileV1.FileClient
+	entDB     *ent.Client
+	log       *log.Helper
+	redisCli  redis.Cmdable
 }
 
 // NewData .
-func NewData(c *conf.Data, db *ent.Client, logger log.Logger, redisCli redis.Cmdable, fc fileV1.FileClient) (*Data, func(), error) {
+func NewData(c *conf.Data, db *ent.Client, logger log.Logger, redisCli redis.Cmdable, fc fileV1.FileClient, eg engineV1.EngineClient) (*Data, func(), error) {
 	l := log.NewHelper(log.With(logger, "module", "management.DataService"))
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
 	}
-	return &Data{entDB: db, log: l, redisCli: redisCli, fileCli: fc}, cleanup, nil
+	return &Data{entDB: db, log: l, redisCli: redisCli, fileCli: fc, engineCli: eg}, cleanup, nil
+}
+
+func NewEngineServiceClient(sr *conf.Service, rr registry.Discovery) engineV1.EngineClient {
+	conn, err := grpc.DialInsecure(
+		context.Background(),
+		grpc.WithEndpoint(sr.Engine.Endpoint),
+		grpc.WithDiscovery(rr),
+		grpc.WithMiddleware(
+			tracing.Client(), // 链路追踪
+			recovery.Recovery(),
+			metadata.Client(),
+		),
+		grpc.WithTimeout(2*time.Second),
+		grpc.WithOptions(grpcx.WithStatsHandler(&tracing.ClientHandler{})),
+	)
+	if err != nil {
+		panic(err)
+	}
+	c := engineV1.NewEngineClient(conn)
+	return c
 }
 
 func NewRegistrar(conf *conf.Registry) registry.Registrar {
@@ -157,25 +178,5 @@ func NewFileServiceClient(sr *conf.Service, rr registry.Discovery) fileV1.FileCl
 		panic(err)
 	}
 	c := fileV1.NewFileClient(conn)
-	return c
-}
-
-func NewEngineServiceClient(sr *conf.Service, rr registry.Discovery) engineV1.EngineClient {
-	conn, err := grpc.DialInsecure(
-		context.Background(),
-		grpc.WithEndpoint(sr.Engine.Endpoint),
-		grpc.WithDiscovery(rr),
-		grpc.WithMiddleware(
-			tracing.Client(),
-			recovery.Recovery(),
-			metadata.Client(),
-		),
-		grpc.WithTimeout(2*time.Second),
-		grpc.WithOptions(grpcx.WithStatsHandler(&tracing.ClientHandler{})),
-	)
-	if err != nil {
-		panic(err)
-	}
-	c := engineV1.NewEngineClient(conn)
 	return c
 }

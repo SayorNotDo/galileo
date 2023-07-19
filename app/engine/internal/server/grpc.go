@@ -4,6 +4,9 @@ import (
 	v1 "galileo/api/engine/v1"
 	"galileo/app/engine/internal/conf"
 	"galileo/app/engine/internal/service"
+	"github.com/go-kratos/kratos/v2/middleware/logging"
+	"github.com/go-kratos/kratos/v2/middleware/metadata"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -15,6 +18,9 @@ func NewGRPCServer(c *conf.Server, engine *service.EngineService, logger log.Log
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
+			logging.Server(logger),
+			tracing.Server(),
+			metadata.Server(),
 		),
 	}
 	if c.Grpc.Network != "" {
@@ -28,5 +34,6 @@ func NewGRPCServer(c *conf.Server, engine *service.EngineService, logger log.Log
 	}
 	srv := grpc.NewServer(opts...)
 	v1.RegisterEngineServer(srv, engine)
+	//go engine.CronJobScheduler(context.Background())
 	return srv
 }

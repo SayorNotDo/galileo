@@ -42,9 +42,7 @@ func (s *EngineService) RunJob(ctx context.Context, req *v1.RunJobRequest) (*v1.
 		return nil, SetCustomizeErrMsg(ReasonRecordNotFound, err.Error())
 	}
 	// TODO: return response
-	return &v1.RunJobReply{
-		Success: true,
-	}, nil
+	return &v1.RunJobReply{}, nil
 }
 
 func (s *EngineService) BuildContainer(ctx context.Context, req *empty.Empty) (*v1.BuildContainerReply, error) {
@@ -61,4 +59,18 @@ func (s *EngineService) BuildContainer(ctx context.Context, req *empty.Empty) (*
 
 func (s *EngineService) TestEngine(ctx context.Context, req *empty.Empty) (*v1.TestEngineReply, error) {
 	return &v1.TestEngineReply{Hello: "Galileo"}, nil
+}
+
+func (s *EngineService) CronJobScheduler(ctx context.Context) {
+	// TODO: Scheduler get all cron jobs
+}
+
+func (s *EngineService) AddCronJob(ctx context.Context, req *v1.AddCronJobRequest) (*v1.AddCronJobReply, error) {
+	//res, err := s.uc.TaskByID(ctx, req.TaskId)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//scheduleTime := res.ScheduleTime
+	//fmt.Println(scheduleTime)
+	return &v1.AddCronJobReply{}, nil
 }

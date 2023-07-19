@@ -41,6 +41,7 @@ service Task {
 message UpdateTaskStatusRequest {
   int64 id = 1;
   taskStatus status = 2;
+  string worker = 3;
 }
 
 message UpdateTaskStatusReply {
@@ -53,8 +54,20 @@ message CreateTaskRequest {
   string name = 1;
   int32 rank = 2;
   int32 type = 3;
-  string description = 4;
-  repeated int64 testcaseSuiteId = 5;
+  frequency frequency = 4;
+  google.protobuf.Timestamp scheduleTime = 5;
+  string worker = 6;
+  string config = 7;
+  string description = 8;
+  uint32 assignee = 9;
+  google.protobuf.Timestamp deadline = 10;
+  repeated int64 testcaseSuiteId = 11;
+}
+
+enum frequency {
+  DAILY = 0;
+  WEEKLY = 1;
+  MONTHLY = 2;
 }
 
 enum taskStatus {
@@ -81,9 +94,12 @@ message UpdateTaskRequest {
   int32 type = 4;
   int32 rank = 5;
   string config = 6;
-  google.protobuf.Timestamp deadline = 8;
-  string description = 9;
-  repeated int64 testcaseSuiteId = 10;
+  frequency frequency = 7;
+  google.protobuf.Timestamp scheduleTime = 8;
+  google.protobuf.Timestamp deadline = 9;
+  string description = 10;
+  repeated int64 testcaseSuiteId = 11;
+  string worker = 12;
 }
 
 message UpdateTaskReply {
@@ -102,6 +118,14 @@ message GetTaskReply {
   int32 type = 3;
   string description = 4;
   repeated int64 testcaseSuiteId = 5;
+  taskStatus status = 6;
+  string config = 7;
+  frequency frequency = 8;
+  google.protobuf.Timestamp scheduleTime = 9;
+  google.protobuf.Timestamp deadline = 10;
+  google.protobuf.Timestamp startTime = 11;
+  uint32 assignee = 12;
+  string worker = 13;
 }
 
 message ListTaskRequest {}

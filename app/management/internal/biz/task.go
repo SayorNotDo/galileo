@@ -19,8 +19,12 @@ type Task struct {
 	CreatedAt       time.Time
 	CreatedBy       uint32
 	Assignee        uint32
+	Worker          string
 	Config          string
+	Frequency       string
+	ScheduleTime    time.Time
 	UpdatedAt       time.Time
+	UpdatedBy       uint32
 	StatusUpdatedAt time.Time
 	CompletedAt     time.Time
 	DeletedAt       time.Time
@@ -39,6 +43,7 @@ type TaskRepo interface {
 	TaskByID(ctx context.Context, id int64) (*Task, error)
 	UpdateTask(ctx context.Context, task *Task) (bool, error)
 	UpdateTaskStatus(ctx context.Context, updateTask *Task) (*Task, error)
+	TaskDetailById(ctx context.Context, id int64) (*Task, error)
 }
 
 // TaskUseCase is a Task useCase.
@@ -66,7 +71,7 @@ func (uc *TaskUseCase) TaskByName(ctx context.Context, name string) (*Task, erro
 }
 
 func (uc *TaskUseCase) TaskByID(ctx context.Context, id int64) (*Task, error) {
-	return uc.repo.TaskByID(ctx, id)
+	return uc.repo.TaskDetailById(ctx, id)
 }
 
 func (uc *TaskUseCase) UpdateTask(ctx context.Context, task *Task) (bool, error) {

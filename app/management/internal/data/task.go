@@ -2,14 +2,15 @@ package data
 
 import (
 	"context"
+	engineV1 "galileo/api/engine/v1"
 	taskV1 "galileo/api/management/task/v1"
+	"galileo/app/management/internal/biz"
 	"galileo/ent"
 	"galileo/ent/task"
 	"galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/errors"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
-
-	"galileo/app/management/internal/biz"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -86,16 +87,44 @@ func (r *taskRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) {
 }
 
 func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, error) {
-	createTask, err := r.data.entDB.Task.Create().
+	tx, err := r.data.entDB.Tx(ctx)
+	if err != nil {
+		return nil, errResponse.SetCustomizeErrMsg(errResponse.ReasonSystemError, err.Error())
+	}
+	createTask, err := tx.Task.Create().
 		SetName(task.Name).
 		SetType(task.Type).
 		SetRank(task.Rank).
+		SetAssignee(task.Assignee).
+		SetConfig(task.Config).
+		SetWorker(task.Worker).
+		SetScheduleTime(task.ScheduleTime).
+		SetFrequency(task.Frequency).
+		SetDeadline(task.Deadline).
 		SetCreatedBy(task.CreatedBy).
 		SetDescription(task.Description).
 		AddTestcaseSuiteIDs(task.TestcaseSuites...).
 		Save(ctx)
 	if err != nil {
-		return nil, err
+		return nil, rollback(tx, err)
+	}
+	// 当创建的任务为延时任务、定时任务时，调用Engine服务添加到定时任务列表
+	if createTask.Type == 1 || createTask.Type == 2 {
+		res, err := r.data.engineCli.AddCronJob(ctx, &engineV1.AddCronJobRequest{
+			TaskId:       createTask.ID,
+			Type:         int32(createTask.Type),
+			ScheduleTime: timestamppb.New(createTask.ScheduleTime),
+			Frequency:    engineV1.Frequency(taskV1.Frequency_value[createTask.Frequency]),
+		})
+		if err != nil {
+			return nil, rollback(tx, err)
+		}
+		if _, err := tx.Task.UpdateOneID(createTask.ID).SetExecuteID(res.ExecuteId).Save(ctx); err != nil {
+			return nil, rollback(tx, err)
+		}
+	}
+	if err := tx.Commit(); err != nil {
+		return nil, rollback(tx, err)
 	}
 	return &biz.Task{
 		Id:        createTask.ID,
@@ -120,18 +149,27 @@ func (r *taskRepo) TaskDetailById(ctx context.Context, id int64) (*biz.Task, err
 		return nil, err
 	}
 	return &biz.Task{
-		Id:          queryTask.ID,
-		Name:        queryTask.Name,
-		CreatedAt:   queryTask.CreatedAt,
-		CreatedBy:   queryTask.CreatedBy,
-		UpdatedAt:   queryTask.UpdatedAt,
-		CompletedAt: queryTask.CompletedAt,
-		Status:      taskV1.TaskStatus(queryTask.Status),
-		Type:        queryTask.Type,
-		Rank:        queryTask.Rank,
-		Description: queryTask.Description,
-		DeletedAt:   queryTask.DeletedAt,
-		DeletedBy:   queryTask.DeletedBy,
+		Id:              queryTask.ID,
+		Name:            queryTask.Name,
+		Type:            queryTask.Type,
+		Rank:            queryTask.Rank,
+		Status:          taskV1.TaskStatus(queryTask.Status),
+		CreatedAt:       queryTask.CreatedAt,
+		CreatedBy:       queryTask.CreatedBy,
+		Assignee:        queryTask.Assignee,
+		Worker:          queryTask.Worker,
+		Config:          queryTask.Config,
+		Frequency:       queryTask.Frequency,
+		ScheduleTime:    queryTask.ScheduleTime,
+		UpdatedAt:       queryTask.UpdatedAt,
+		UpdatedBy:       queryTask.UpdatedBy,
+		StatusUpdatedAt: queryTask.StatusUpdatedAt,
+		CompletedAt:     queryTask.CompletedAt,
+		StartTime:       queryTask.StartTime,
+		Deadline:        queryTask.Deadline,
+		DeletedAt:       queryTask.DeletedAt,
+		DeletedBy:       queryTask.DeletedBy,
+		Description:     queryTask.Description,
 	}, nil
 }
 
@@ -163,16 +201,42 @@ func (r *taskRepo) CountAllTask(ctx context.Context) (int, error) {
 }
 
 func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (*biz.Task, error) {
-	ret, err := r.data.entDB.Task.UpdateOneID(updateTask.Id).
+	tx, err := r.data.entDB.Tx(ctx)
+	if err != nil {
+		return nil, errResponse.SetCustomizeErrMsg(errResponse.ReasonSystemError, err.Error())
+	}
+	ret, err := tx.Task.UpdateOneID(updateTask.Id).
 		SetStatus(int8(updateTask.Status.Number())).
 		SetStartTime(updateTask.StartTime).
 		SetStatusUpdatedAt(time.Now()).
 		Save(ctx)
 	switch {
 	case ent.IsNotFound(err):
-		return nil, errors.NotFound(errResponse.ReasonRecordNotFound, err.Error())
+		return nil, rollback(tx, errors.NotFound(errResponse.ReasonRecordNotFound, err.Error()))
 	case err != nil:
-		return nil, err
+		return nil, rollback(tx, err)
+	}
+	if updateTask.Status == taskV1.TaskStatus_RUNNING {
+		// 当设置状态为RUNNING时，调用Engine服务进行测试任务的下发，参数：taskId，Config，Worker
+		reply, err := r.data.engineCli.RunJob(ctx,
+			&engineV1.RunJobRequest{
+				TaskId: updateTask.Id,
+				Conf:   updateTask.Config,
+				Worker: updateTask.Worker,
+			})
+		if err != nil {
+			return nil, rollback(tx, err)
+		}
+		_, err = tx.Task.UpdateOneID(updateTask.Id).
+			SetExecuteID(reply.ExecuteId).
+			SetWorker(updateTask.Worker).
+			Save(ctx)
+		if err != nil {
+			return nil, rollback(tx, err)
+		}
+	}
+	if err := tx.Commit(); err != nil {
+		return nil, rollback(tx, err)
 	}
 	return &biz.Task{
 		Status:          taskV1.TaskStatus(ret.Status),
