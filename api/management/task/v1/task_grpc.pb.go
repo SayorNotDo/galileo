@@ -24,7 +24,7 @@ const (
 	Task_UpdateTask_FullMethodName       = "/api.task.v1.Task/UpdateTask"
 	Task_DeleteTask_FullMethodName       = "/api.task.v1.Task/DeleteTask"
 	Task_TaskByID_FullMethodName         = "/api.task.v1.Task/TaskByID"
-	Task_ListTask_FullMethodName         = "/api.task.v1.Task/ListTask"
+	Task_ListTimingTask_FullMethodName   = "/api.task.v1.Task/ListTimingTask"
 	Task_UpdateTaskStatus_FullMethodName = "/api.task.v1.Task/UpdateTaskStatus"
 )
 
@@ -36,7 +36,7 @@ type TaskClient interface {
 	UpdateTask(ctx context.Context, in *UpdateTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteTask(ctx context.Context, in *DeleteTaskRequest, opts ...grpc.CallOption) (*DeleteTaskReply, error)
 	TaskByID(ctx context.Context, in *TaskByIDRequest, opts ...grpc.CallOption) (*GetTaskReply, error)
-	ListTask(ctx context.Context, in *ListTaskRequest, opts ...grpc.CallOption) (*ListTaskReply, error)
+	ListTimingTask(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListTimingTaskReply, error)
 	UpdateTaskStatus(ctx context.Context, in *UpdateTaskStatusRequest, opts ...grpc.CallOption) (*UpdateTaskStatusReply, error)
 }
 
@@ -84,9 +84,9 @@ func (c *taskClient) TaskByID(ctx context.Context, in *TaskByIDRequest, opts ...
 	return out, nil
 }
 
-func (c *taskClient) ListTask(ctx context.Context, in *ListTaskRequest, opts ...grpc.CallOption) (*ListTaskReply, error) {
-	out := new(ListTaskReply)
-	err := c.cc.Invoke(ctx, Task_ListTask_FullMethodName, in, out, opts...)
+func (c *taskClient) ListTimingTask(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListTimingTaskReply, error) {
+	out := new(ListTimingTaskReply)
+	err := c.cc.Invoke(ctx, Task_ListTimingTask_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +110,7 @@ type TaskServer interface {
 	UpdateTask(context.Context, *UpdateTaskRequest) (*emptypb.Empty, error)
 	DeleteTask(context.Context, *DeleteTaskRequest) (*DeleteTaskReply, error)
 	TaskByID(context.Context, *TaskByIDRequest) (*GetTaskReply, error)
-	ListTask(context.Context, *ListTaskRequest) (*ListTaskReply, error)
+	ListTimingTask(context.Context, *emptypb.Empty) (*ListTimingTaskReply, error)
 	UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error)
 	mustEmbedUnimplementedTaskServer()
 }
@@ -131,8 +131,8 @@ func (UnimplementedTaskServer) DeleteTask(context.Context, *DeleteTaskRequest) (
 func (UnimplementedTaskServer) TaskByID(context.Context, *TaskByIDRequest) (*GetTaskReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TaskByID not implemented")
 }
-func (UnimplementedTaskServer) ListTask(context.Context, *ListTaskRequest) (*ListTaskReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListTask not implemented")
+func (UnimplementedTaskServer) ListTimingTask(context.Context, *emptypb.Empty) (*ListTimingTaskReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTimingTask not implemented")
 }
 func (UnimplementedTaskServer) UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTaskStatus not implemented")
@@ -222,20 +222,20 @@ func _Task_TaskByID_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Task_ListTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListTaskRequest)
+func _Task_ListTimingTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TaskServer).ListTask(ctx, in)
+		return srv.(TaskServer).ListTimingTask(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Task_ListTask_FullMethodName,
+		FullMethod: Task_ListTimingTask_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TaskServer).ListTask(ctx, req.(*ListTaskRequest))
+		return srv.(TaskServer).ListTimingTask(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -282,8 +282,8 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Task_TaskByID_Handler,
 		},
 		{
-			MethodName: "ListTask",
-			Handler:    _Task_ListTask_Handler,
+			MethodName: "ListTimingTask",
+			Handler:    _Task_ListTimingTask_Handler,
 		},
 		{
 			MethodName: "UpdateTaskStatus",

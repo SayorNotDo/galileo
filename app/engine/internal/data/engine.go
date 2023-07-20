@@ -6,6 +6,7 @@ import (
 	taskV1 "galileo/api/management/task/v1"
 	"galileo/app/engine/internal/biz"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/golang/protobuf/ptypes/empty"
 )
 
 type engineRepo struct {
@@ -48,10 +49,46 @@ func (r *engineRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) 
 }
 
 func (r *engineRepo) AddCronJob(ctx context.Context) {
-	if _, err := r.data.cron.AddFunc("@every 10s", func() {
-		fmt.Println("================================================================")
-	}); err != nil {
+	if _, err := r.data.cron.AddJob("@every 10s", &biz.CronJob{TaskId: 17}); err != nil {
 		return
 	}
 	r.data.cron.Start()
+}
+
+func (r *engineRepo) TimingTaskList(ctx context.Context) ([]*biz.Task, error) {
+	res, err := r.data.taskCli.ListTimingTask(ctx, &empty.Empty{})
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	rv := make([]*biz.Task, 0)
+	for _, v := range res.TaskList {
+		rv = append(rv, &biz.Task{
+			Id:           v.Id,
+			Name:         v.Name,
+			Rank:         int8(v.Rank),
+			Type:         int8(v.Type),
+			Status:       v.Status,
+			Worker:       v.Worker,
+			Config:       v.Config,
+			Frequency:    v.Frequency,
+			ScheduleTime: v.ScheduleTime.AsTime(),
+		})
+	}
+	return rv, nil
+}
+
+func (r *engineRepo) GetCronJobList(ctx context.Context) []*biz.CronJob {
+	entries := r.data.cron.Entries()
+	rv := make([]*biz.CronJob, 0)
+	r.log.Debug("GetCronEntries================================>>")
+	for _, entry := range entries {
+		if cronJob, ok := entry.Job.(*biz.CronJob); ok {
+			fmt.Printf("Job related task id: %v\n", cronJob.TaskId)
+			rv = append(rv, &biz.CronJob{
+				TaskId: cronJob.TaskId,
+			})
+		}
+	}
+	return rv
 }

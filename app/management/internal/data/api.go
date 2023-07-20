@@ -74,7 +74,7 @@ func (repo *ApiRepo) CreateApi(ctx context.Context, api *biz.Api) (*biz.Api, err
 		return nil, rollback(tx, err)
 	}
 	if createApi.Label != "" {
-		// TODO: add label name to tag table
+		// TODO: 添加标签到标签表
 		println("do not implement")
 	}
 	return &biz.Api{

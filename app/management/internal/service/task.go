@@ -141,8 +141,16 @@ func (s *TaskService) TaskByID(ctx context.Context, req *v1.TaskByIDRequest) (*v
 		Assignee:        task.Assignee,
 	}, nil
 }
-func (s *TaskService) ListTask(ctx context.Context, req *v1.ListTaskRequest) (*v1.ListTaskReply, error) {
-	return &v1.ListTaskReply{}, nil
+
+// ListTimingTask 获取数据库中所有的延时/定时任务
+func (s *TaskService) ListTimingTask(ctx context.Context, req *empty.Empty) (*v1.ListTimingTaskReply, error) {
+	ret, err := s.uc.ListTimingTask(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.ListTimingTaskReply{
+		TaskList: ret,
+	}, nil
 }
 
 func (s *TaskService) UpdateTaskStatus(ctx context.Context, req *v1.UpdateTaskStatusRequest) (*v1.UpdateTaskStatusReply, error) {

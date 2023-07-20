@@ -37,6 +37,8 @@ type EngineRepo interface {
 	UpdateTaskStatus(ctx context.Context, id int64, status taskV1.TaskStatus) (bool, error)
 	TaskByID(ctx context.Context, id int64) (*Task, error)
 	AddCronJob(ctx context.Context)
+	TimingTaskList(ctx context.Context) ([]*Task, error)
+	GetCronJobList(ctx context.Context) []*CronJob
 }
 
 type EngineUseCase struct {
@@ -62,7 +64,7 @@ func (c *EngineUseCase) AddCronJob(ctx context.Context) {
 }
 
 func (c *EngineUseCase) BuildContainer(context.Context) (*Container, error) {
-	// TODO: container building process
+	// TODO: 容器构建过程
 	ctx := context.Background()
 	log.Debug("Building container------------------------")
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
@@ -73,7 +75,7 @@ func (c *EngineUseCase) BuildContainer(context.Context) (*Container, error) {
 	if err != nil {
 		return nil, err
 	}
-	io.Copy(os.Stdout, reader)
+	_, _ = io.Copy(os.Stdout, reader)
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: "alpine",
 		Cmd:   []string{"echo", "hello world"},
@@ -98,4 +100,12 @@ func (c *EngineUseCase) BuildContainer(context.Context) (*Container, error) {
 	}
 	stdcopy.StdCopy(os.Stdout, os.Stderr, out)
 	return &Container{Id: resp.ID}, nil
+}
+
+func (c *EngineUseCase) TimingTaskList(ctx context.Context) ([]*Task, error) {
+	return c.Repo.TimingTaskList(ctx)
+}
+
+func (c *EngineUseCase) GetCronJobList(ctx context.Context) []*CronJob {
+	return c.Repo.GetCronJobList(ctx)
 }

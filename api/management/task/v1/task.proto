@@ -29,7 +29,7 @@ service Task {
       get: "v1/api/management/task/{id}"
     };
   };
-  rpc ListTask (ListTaskRequest) returns (ListTaskReply);
+  rpc ListTimingTask (google.protobuf.Empty) returns (ListTimingTaskReply);
   rpc UpdateTaskStatus (UpdateTaskStatusRequest) returns (UpdateTaskStatusReply){
     option(google.api.http) = {
       put: "v1/api/management/task/status"
@@ -130,5 +130,24 @@ message GetTaskReply {
   string worker = 13;
 }
 
-message ListTaskRequest {}
-message ListTaskReply {}
+message ListTimingTaskRequest {}
+
+message TaskInfo {
+  int64 id = 1;
+  string name = 2;
+  int32 rank = 3;
+  int32 type = 4;
+  taskStatus status = 5;
+  string worker = 6;
+  google.protobuf.Timestamp scheduleTime = 7;
+  google.protobuf.Timestamp deadline = 10;
+  google.protobuf.Timestamp startTime = 11;
+  uint32 assignee = 12;
+  frequency frequency = 13;
+  string config = 14;
+  repeated int64 testcaseSuiteId = 15;
+}
+
+message ListTimingTaskReply {
+  repeated TaskInfo taskList = 1;
+}

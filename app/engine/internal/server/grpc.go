@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	v1 "galileo/api/engine/v1"
 	"galileo/app/engine/internal/conf"
 	"galileo/app/engine/internal/service"
@@ -34,6 +35,7 @@ func NewGRPCServer(c *conf.Server, engine *service.EngineService, logger log.Log
 	}
 	srv := grpc.NewServer(opts...)
 	v1.RegisterEngineServer(srv, engine)
-	//go engine.CronJobScheduler(context.Background())
+	//开启定时任务调度器
+	go engine.CronJobScheduler(context.Background())
 	return srv
 }

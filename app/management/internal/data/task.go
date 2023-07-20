@@ -193,8 +193,28 @@ func (r *taskRepo) IsTaskDeleted(ctx context.Context, id int64) (bool, error) {
 	return false, err
 }
 
-func (r *taskRepo) ListTask(ctx context.Context, pageNum, pageSize int) ([]*biz.Task, error) {
-	return nil, nil
+func (r *taskRepo) ListTimingTask(ctx context.Context) ([]*taskV1.TaskInfo, error) {
+	ret, err := r.data.entDB.Task.Query().Where(task.TypeIn(1, 2)).All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	rv := make([]*taskV1.TaskInfo, 0)
+	for _, v := range ret {
+		rv = append(rv, &taskV1.TaskInfo{
+			Id:           v.ID,
+			Name:         v.Name,
+			Rank:         int32(v.Rank),
+			Type:         int32(v.Type),
+			Assignee:     v.Assignee,
+			Status:       taskV1.TaskStatus(v.Status),
+			Worker:       v.Worker,
+			ScheduleTime: timestamppb.New(v.ScheduleTime),
+			Frequency:    taskV1.Frequency(taskV1.Frequency_value[v.Frequency]),
+			Deadline:     timestamppb.New(v.Deadline),
+			StartTime:    timestamppb.New(v.StartTime),
+		})
+	}
+	return rv, nil
 }
 
 func (r *taskRepo) ListAll(context.Context) ([]*biz.Task, error) {

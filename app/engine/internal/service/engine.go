@@ -8,6 +8,7 @@ import (
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/golang/protobuf/ptypes/empty"
+	"time"
 )
 
 type EngineService struct {
@@ -60,10 +61,28 @@ func (s *EngineService) TestEngine(ctx context.Context, req *empty.Empty) (*v1.T
 }
 
 func (s *EngineService) CronJobScheduler(ctx context.Context) {
-	// 循环检测与调度作业 频率: 30min
-	// TODO: 获取数据库中类型为定时任务、延时任务的列表记录
-	// TODO: 检查当前定时任务的调度列表
-	// TODO: 遍历定时任务、延时任务的列表记录，若记录不在定时任务中，则重新调度，若调度列表存在过期任务，则移除
+	// 设置循环频率为 5 min
+	interval := 30 * time.Second
+	// 循环逻辑
+	for {
+		select {
+		case <-ctx.Done():
+			s.log.Info("*--------------------------------*CronJobScheduler Stopped*--------------------------------*")
+			return
+		default:
+			s.log.Info("*--------------------------------*Running loop routine*--------------------------------*")
+			// TODO: 获取数据库中类型为定时任务、延时任务的列表记录
+			taskList, err := s.uc.TimingTaskList(ctx)
+			if err != nil {
+				s.log.Error("Error getting timing task list")
+			}
+			s.log.Debug("Getting Timing TaskList: ", taskList)
+			// TODO: 检查当前定时任务的调度列表
+			s.uc.GetCronEntries(ctx)
+			// TODO: 遍历定时任务、延时任务的列表记录，若记录不在定时任务中，则重新调度，若调度列表存在过期任务，则移除
+		}
+		time.Sleep(interval)
+	}
 }
 
 func (s *EngineService) AddCronJob(ctx context.Context, req *v1.AddCronJobRequest) (*v1.AddCronJobReply, error) {
