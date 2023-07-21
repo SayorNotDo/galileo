@@ -27,6 +27,7 @@ const (
 	Engine_ResumeJob_FullMethodName      = "/api.engine.v1.Engine/ResumeJob"
 	Engine_DeleteJob_FullMethodName      = "/api.engine.v1.Engine/DeleteJob"
 	Engine_AddCronJob_FullMethodName     = "/api.engine.v1.Engine/AddCronJob"
+	Engine_UpdateCronJob_FullMethodName  = "/api.engine.v1.Engine/UpdateCronJob"
 	Engine_BuildContainer_FullMethodName = "/api.engine.v1.Engine/BuildContainer"
 )
 
@@ -41,6 +42,7 @@ type EngineClient interface {
 	ResumeJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	AddCronJob(ctx context.Context, in *AddCronJobRequest, opts ...grpc.CallOption) (*AddCronJobReply, error)
+	UpdateCronJob(ctx context.Context, in *UpdateCronJobRequest, opts ...grpc.CallOption) (*UpdateCronJobReply, error)
 	BuildContainer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BuildContainerReply, error)
 }
 
@@ -115,6 +117,15 @@ func (c *engineClient) AddCronJob(ctx context.Context, in *AddCronJobRequest, op
 	return out, nil
 }
 
+func (c *engineClient) UpdateCronJob(ctx context.Context, in *UpdateCronJobRequest, opts ...grpc.CallOption) (*UpdateCronJobReply, error) {
+	out := new(UpdateCronJobReply)
+	err := c.cc.Invoke(ctx, Engine_UpdateCronJob_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *engineClient) BuildContainer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BuildContainerReply, error) {
 	out := new(BuildContainerReply)
 	err := c.cc.Invoke(ctx, Engine_BuildContainer_FullMethodName, in, out, opts...)
@@ -135,6 +146,7 @@ type EngineServer interface {
 	ResumeJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	DeleteJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	AddCronJob(context.Context, *AddCronJobRequest) (*AddCronJobReply, error)
+	UpdateCronJob(context.Context, *UpdateCronJobRequest) (*UpdateCronJobReply, error)
 	BuildContainer(context.Context, *emptypb.Empty) (*BuildContainerReply, error)
 	mustEmbedUnimplementedEngineServer()
 }
@@ -163,6 +175,9 @@ func (UnimplementedEngineServer) DeleteJob(context.Context, *emptypb.Empty) (*em
 }
 func (UnimplementedEngineServer) AddCronJob(context.Context, *AddCronJobRequest) (*AddCronJobReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddCronJob not implemented")
+}
+func (UnimplementedEngineServer) UpdateCronJob(context.Context, *UpdateCronJobRequest) (*UpdateCronJobReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCronJob not implemented")
 }
 func (UnimplementedEngineServer) BuildContainer(context.Context, *emptypb.Empty) (*BuildContainerReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildContainer not implemented")
@@ -306,6 +321,24 @@ func _Engine_AddCronJob_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Engine_UpdateCronJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCronJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServer).UpdateCronJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Engine_UpdateCronJob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServer).UpdateCronJob(ctx, req.(*UpdateCronJobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Engine_BuildContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -358,6 +391,10 @@ var Engine_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddCronJob",
 			Handler:    _Engine_AddCronJob_Handler,
+		},
+		{
+			MethodName: "UpdateCronJob",
+			Handler:    _Engine_UpdateCronJob_Handler,
 		},
 		{
 			MethodName: "BuildContainer",

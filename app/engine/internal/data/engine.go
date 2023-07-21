@@ -5,8 +5,11 @@ import (
 	"fmt"
 	taskV1 "galileo/api/management/task/v1"
 	"galileo/app/engine/internal/biz"
+	"galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/robfig/cron/v3"
+	"time"
 )
 
 type engineRepo struct {
@@ -48,11 +51,17 @@ func (r *engineRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) 
 	}, nil
 }
 
-func (r *engineRepo) AddCronJob(ctx context.Context) {
-	if _, err := r.data.cron.AddJob("@every 10s", &biz.CronJob{TaskId: 17}); err != nil {
-		return
+func (r *engineRepo) AddCronJob(ctx context.Context, task *biz.Task) (cron.EntryID, error) {
+	t := task.ScheduleTime
+	if delay := t.Sub(time.Now()); delay < 0 {
+		return 0, errResponse.SetCustomizeErrMsg(errResponse.ReasonParamsError, "Invalid schedule time")
 	}
-	r.data.cron.Start()
+	cronExpression := fmt.Sprintf("%d %d %d %d %d *", t.Second(), t.Minute(), t.Hour(), t.Day(), t.Month())
+	entryId, err := r.data.cron.AddJob(cronExpression, &biz.CronJob{TaskId: task.Id})
+	if err != nil {
+		return 0, err
+	}
+	return entryId, nil
 }
 
 func (r *engineRepo) TimingTaskList(ctx context.Context) ([]*biz.Task, error) {
@@ -81,7 +90,6 @@ func (r *engineRepo) TimingTaskList(ctx context.Context) ([]*biz.Task, error) {
 func (r *engineRepo) GetCronJobList(ctx context.Context) []*biz.CronJob {
 	entries := r.data.cron.Entries()
 	rv := make([]*biz.CronJob, 0)
-	r.log.Debug("GetCronEntries================================>>")
 	for _, entry := range entries {
 		if cronJob, ok := entry.Job.(*biz.CronJob); ok {
 			fmt.Printf("Job related task id: %v\n", cronJob.TaskId)
@@ -91,4 +99,15 @@ func (r *engineRepo) GetCronJobList(ctx context.Context) []*biz.CronJob {
 		}
 	}
 	return rv
+}
+
+func (r *engineRepo) RemoveCronJob(ctx context.Context, taskId int64) error {
+	entries := r.data.cron.Entries()
+	for _, entry := range entries {
+		if entry.Job.(*biz.CronJob).TaskId == taskId {
+			r.data.cron.Remove(entry.ID)
+			return nil
+		}
+	}
+	return errResponse.SetCustomizeErrMsg(errResponse.ReasonRecordNotFound, "entry not found")
 }

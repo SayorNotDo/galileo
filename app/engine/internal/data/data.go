@@ -43,7 +43,8 @@ type Data struct {
 // NewData .
 func NewData(c *conf.Data, logger log.Logger, redisCli redis.Cmdable, taskCli taskV1.TaskClient) (*Data, func(), error) {
 	l := log.NewHelper(log.With(logger, "module", "engine.DataService"))
-	cronJob := cron.New()
+	cronJob := cron.New(cron.WithSeconds())
+	cronJob.Start()
 	cleanup := func() {
 		l.Info("closing the data resources")
 	}

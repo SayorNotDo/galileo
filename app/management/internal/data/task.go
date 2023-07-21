@@ -31,20 +31,28 @@ func NewTaskRepo(data *Data, logger log.Logger) biz.TaskRepo {
 func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (bool, error) {
 	ret, err := r.data.entDB.Task.UpdateOneID(task.Id).
 		SetName(task.Name).
-		SetType(task.Type).
 		SetRank(task.Rank).
-		SetAssignee(task.Assignee).
-		SetConfig(task.Config).
-		SetDeadline(task.Deadline).
+		SetType(task.Type).
 		SetDescription(task.Description).
+		SetAssignee(task.Assignee).
 		ClearTestcaseSuite().
 		AddTestcaseSuiteIDs(task.TestcaseSuites...).
+		SetDeadline(task.Deadline).
+		SetConfig(task.Config).
 		Save(ctx)
 	if err != nil {
 		return false, err
 	}
 	if ret.Type == 1 || ret.Type == 2 {
-		// TODO: 更新定时任务调度列表
+		_, err := r.data.engineCli.UpdateCronJob(ctx, &engineV1.UpdateCronJobRequest{
+			TaskId:       ret.ID,
+			Type:         int32(ret.Type),
+			ScheduleTime: timestamppb.New(ret.ScheduleTime),
+			Frequency:    engineV1.Frequency(engineV1.Frequency_value[ret.Frequency]),
+		})
+		if err != nil {
+			return false, err
+		}
 	}
 	return true, nil
 }
@@ -91,10 +99,12 @@ func (r *taskRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) {
 }
 
 func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, error) {
+	/* 创建事务 */
 	tx, err := r.data.entDB.Tx(ctx)
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonSystemError, err.Error())
 	}
+	/* 写入任务 */
 	createTask, err := tx.Task.Create().
 		SetName(task.Name).
 		SetType(task.Type).
@@ -113,8 +123,9 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, e
 	if err != nil {
 		return nil, rollback(tx, err)
 	}
-	// 当创建的任务为延时任务、定时任务时，调用Engine服务添加到定时任务列表
+	/* 当创建的任务为延时任务、定时任务时，调用Engine服务添加到定时任务列表 */
 	if createTask.Type == 1 || createTask.Type == 2 {
+		/* 添加定时任务 */
 		res, err := r.data.engineCli.AddCronJob(ctx, &engineV1.AddCronJobRequest{
 			TaskId:       createTask.ID,
 			Type:         int32(createTask.Type),
@@ -124,6 +135,7 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, e
 		if err != nil {
 			return nil, rollback(tx, err)
 		}
+		/* 添加成功后基于返回更新对应任务的ExecuteId */
 		if _, err := tx.Task.UpdateOneID(createTask.ID).
 			SetExecuteID(res.ExecuteId).
 			SetUpdatedBy(createTask.CreatedBy).
@@ -131,6 +143,7 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, e
 			return nil, rollback(tx, err)
 		}
 	}
+	/* 提交事务，失败则回滚 */
 	if err := tx.Commit(); err != nil {
 		return nil, rollback(tx, err)
 	}

@@ -8,6 +8,7 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/stdcopy"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/robfig/cron/v3"
 	"io"
 	"os"
 	"time"
@@ -36,9 +37,10 @@ type Container struct {
 type EngineRepo interface {
 	UpdateTaskStatus(ctx context.Context, id int64, status taskV1.TaskStatus) (bool, error)
 	TaskByID(ctx context.Context, id int64) (*Task, error)
-	AddCronJob(ctx context.Context)
+	AddCronJob(ctx context.Context, task *Task) (cron.EntryID, error)
 	TimingTaskList(ctx context.Context) ([]*Task, error)
 	GetCronJobList(ctx context.Context) []*CronJob
+	RemoveCronJob(ctx context.Context, taskId int64) error
 }
 
 type EngineUseCase struct {
@@ -59,8 +61,8 @@ func (c *EngineUseCase) TaskByID(ctx context.Context, id int64) (*Task, error) {
 	return c.Repo.TaskByID(ctx, id)
 }
 
-func (c *EngineUseCase) AddCronJob(ctx context.Context) {
-	c.Repo.AddCronJob(ctx)
+func (c *EngineUseCase) AddCronJob(ctx context.Context, task *Task) (cron.EntryID, error) {
+	return c.Repo.AddCronJob(ctx, task)
 }
 
 func (c *EngineUseCase) BuildContainer(context.Context) (*Container, error) {
@@ -108,4 +110,8 @@ func (c *EngineUseCase) TimingTaskList(ctx context.Context) ([]*Task, error) {
 
 func (c *EngineUseCase) GetCronJobList(ctx context.Context) []*CronJob {
 	return c.Repo.GetCronJobList(ctx)
+}
+
+func (c *EngineUseCase) RemoveCronJob(ctx context.Context, taskId int64) error {
+	return c.Repo.RemoveCronJob(ctx, taskId)
 }

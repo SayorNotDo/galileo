@@ -60,7 +60,6 @@ message CreateTaskRequest {
   string config = 7;
   string description = 8;
   uint32 assignee = 9;
-  google.protobuf.Timestamp startTime = 10;
   google.protobuf.Timestamp deadline = 11;
   repeated int64 testcaseSuiteId = 12;
 }
@@ -97,7 +96,6 @@ message UpdateTaskRequest {
   string config = 6;
   frequency frequency = 7;
   google.protobuf.Timestamp scheduleTime = 8;
-  google.protobuf.Timestamp startTime = 9;
   google.protobuf.Timestamp deadline = 10;
   string description = 11;
   repeated int64 testcaseSuiteId = 12;
@@ -123,9 +121,9 @@ message GetTaskReply {
   taskStatus status = 6;
   string config = 7;
   frequency frequency = 8;
+  google.protobuf.Timestamp startTime = 11;
   google.protobuf.Timestamp scheduleTime = 9;
   google.protobuf.Timestamp deadline = 10;
-  google.protobuf.Timestamp startTime = 11;
   uint32 assignee = 12;
   string worker = 13;
 }
@@ -140,8 +138,8 @@ message TaskInfo {
   taskStatus status = 5;
   string worker = 6;
   google.protobuf.Timestamp scheduleTime = 7;
+  google.protobuf.Timestamp startTime = 8;
   google.protobuf.Timestamp deadline = 10;
-  google.protobuf.Timestamp startTime = 11;
   uint32 assignee = 12;
   frequency frequency = 13;
   string config = 14;
