@@ -1,7 +1,9 @@
 package biz
 
 import (
+	"context"
 	"fmt"
+	taskV1 "galileo/api/management/task/v1"
 	"io"
 	"net/http"
 	"strconv"
@@ -9,18 +11,21 @@ import (
 )
 
 type CronJob struct {
-	TaskId int64  `json:"task_id,omitempty"`
-	Worker string `json:"worker,omitempty"`
-	Schema string `json:"schema,omitempty"`
+	TaskId  int64 `json:"task_id,omitempty"`
+	TaskCli taskV1.TaskClient
+	Worker  string `json:"worker,omitempty"`
 }
 
 func (c *CronJob) Run() {
-	// TODO: 测试任务触发（下发命令）
+	// TODO: 测试任务触发（更新任务状态）
 	fmt.Println("下发测试任务: ", c.TaskId)
-	err := JobCommand(c.Schema, c.Worker, c.TaskId)
+	_, err := c.TaskCli.UpdateTaskStatus(context.Background(), &taskV1.UpdateTaskStatusRequest{
+		Id:     c.TaskId,
+		Status: taskV1.TaskStatus_RUNNING,
+		Worker: c.Worker,
+	})
 	if err != nil {
-		fmt.Println("Send Job Command Error: ", err)
-		return
+		fmt.Println("Error updating task status: ", err)
 	}
 }
 

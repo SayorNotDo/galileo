@@ -45,7 +45,7 @@ func (s *EngineService) BuildContainer(ctx context.Context, req *empty.Empty) (*
 
 func (s *EngineService) CronJobScheduler(ctx context.Context) {
 	// 设置循环频率为 5 min
-	interval := 30 * time.Second
+	interval := 5 * time.Minute
 	// 循环逻辑
 	for {
 		select {
@@ -129,21 +129,23 @@ func (s *EngineService) UpdateCronJob(ctx context.Context, req *v1.UpdateCronJob
 	return &v1.UpdateCronJobReply{}, nil
 }
 func (s *EngineService) RunJob(ctx context.Context, req *v1.RunJobRequest) (*v1.RunJobReply, error) {
-	_, err := s.uc.TaskByID(ctx, req.TaskId)
+	s.log.Info("*--------------------------------*Run Job*--------------------------------*")
+	res, err := s.uc.TaskByID(ctx, req.TaskId)
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonRecordNotFound, err.Error())
 	}
-	if err := biz.JobCommand("http://", req.Worker, req.TaskId); err != nil {
-		return nil, err
-	}
-	// TODO: 方案一：等待回调；方案二：服务端主动获取执行机状态(WebSocket，KIM：心跳保持) 该逻辑不应存在于Engine，放到Management
-	/* 方案二具体步骤：
-	1. 服务端向执行机发送WS协议升级信息
-	2. 客户端发起WS连接
-	3. 服务端获取执行机当前处理信息
-	*/
-	//if ok, err := s.uc.UpdateTaskStatus(ctx, req.TaskId, taskV1.TaskStatus_RUNNING); !ok {
-	//	return nil, SetCustomizeErrMsg(ReasonRecordNotFound, err.Error())
+	//if err := biz.JobCommand(req.Schema, req.Worker, req.TaskId); err != nil {
+	//	return nil, err
 	//}
-	return &v1.RunJobReply{}, nil
+	/* 雪花算法生成执行ID */
+	if req.Type == 0 {
+		sn, err := snowflake.NewSnowflake(int64(0), int64(0))
+		if err != nil {
+			return nil, err
+		}
+		res.ExecuteId = sn.NextVal()
+	}
+	return &v1.RunJobReply{
+		ExecuteId: res.ExecuteId,
+	}, nil
 }

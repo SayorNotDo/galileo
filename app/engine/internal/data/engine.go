@@ -24,15 +24,6 @@ func NewEngineRepo(data *Data, logger log.Logger) biz.EngineRepo {
 	}
 }
 
-func (r *engineRepo) UpdateTaskStatus(ctx context.Context, id int64, status taskV1.TaskStatus) (bool, error) {
-	//ret, err := r.data.tc.UpdateTask(ctx, &taskV1.UpdateTaskRequest{Id: id, Status: status})
-	//if err != nil {
-	//	return false, err
-	//}
-	//return ret.Success, nil
-	return false, nil
-}
-
 func (r *engineRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) {
 	res, err := r.data.taskCli.TaskByID(ctx, &taskV1.TaskByIDRequest{Id: id})
 	if err != nil {
@@ -57,7 +48,11 @@ func (r *engineRepo) AddCronJob(ctx context.Context, task *biz.Task) (cron.Entry
 		return 0, errResponse.SetCustomizeErrMsg(errResponse.ReasonParamsError, "Invalid schedule time")
 	}
 	cronExpression := fmt.Sprintf("%d %d %d %d %d *", t.Second(), t.Minute(), t.Hour(), t.Day(), t.Month())
-	entryId, err := r.data.cron.AddJob(cronExpression, &biz.CronJob{TaskId: task.Id})
+	entryId, err := r.data.cron.AddJob(cronExpression, &biz.CronJob{
+		TaskId:  task.Id,
+		TaskCli: r.data.taskCli,
+		Worker:  task.Worker,
+	})
 	if err != nil {
 		return 0, err
 	}

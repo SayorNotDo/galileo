@@ -263,8 +263,9 @@ func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (
 		reply, err := r.data.engineCli.RunJob(ctx,
 			&engineV1.RunJobRequest{
 				TaskId: updateTask.Id,
-				Conf:   updateTask.Config,
 				Worker: updateTask.Worker,
+				Schema: "http://",
+				Type:   int32(updateTask.Type),
 			})
 		if err != nil {
 			return nil, rollback(tx, err)
@@ -286,3 +287,10 @@ func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (
 	}, nil
 
 }
+
+// TODO: 服务端主动获取执行机状态(WebSocket，KIM：心跳保持)
+/* 方案二具体步骤：
+1. 服务端向执行机发送WS协议升级信息
+2. 客户端发起WS连接
+3. 服务端获取执行机当前处理信息
+*/

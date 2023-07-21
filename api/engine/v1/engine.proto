@@ -64,7 +64,8 @@ message BuildContainerReply {
 message RunJobRequest {
   int64 taskId = 1;
   string worker = 2;
-  string conf = 3;
+  string schema = 3;
+  int32 type = 4;
 }
 
 message RunJobReply {
