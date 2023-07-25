@@ -157,8 +157,9 @@ func (s *TaskService) ListTimingTask(ctx context.Context, req *empty.Empty) (*v1
 	}, nil
 }
 
+// UpdateTaskStatus 更新数据库中指定任务的状态
 func (s *TaskService) UpdateTaskStatus(ctx context.Context, req *v1.UpdateTaskStatusRequest) (*v1.UpdateTaskStatusReply, error) {
-	/* 获取需要更新状态的测试任务 */
+	/* 获取需要更新状态的任务 */
 	queryTask, err := s.uc.TaskByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
@@ -169,12 +170,16 @@ func (s *TaskService) UpdateTaskStatus(ctx context.Context, req *v1.UpdateTaskSt
 	} else if req.Status == queryTask.Status {
 		return nil, SetCustomizeErrMsg(ReasonParamsError, "task's status already changed")
 	}
-	/* 当获取的任务状态为NEW时，记录当前时间作为任务开始时间 */
-	if queryTask.Status == v1.TaskStatus_NEW {
-		queryTask.StartTime = time.Now()
-	}
+	/* 当状态为RUNNING时，需要指定Worker执行任务 */
 	if req.Status == v1.TaskStatus_RUNNING {
+		if req.Worker == "" {
+			return nil, SetCustomizeErrMsg(ReasonParamsError, "worker should be designated")
+		}
 		queryTask.Worker = req.Worker
+		/* 同时当获取的任务状态为NEW时，记录当前时间作为任务开始时间 */
+		if queryTask.Status == v1.TaskStatus_NEW {
+			queryTask.StartTime = time.Now()
+		}
 	}
 	/* 更新状态 */
 	queryTask.Status = req.Status

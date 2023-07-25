@@ -18,7 +18,6 @@
 │   ├── engine
 │   ├── file
 │   ├── management
-│   ├── runner
 │   └── user
 ├── database
 ├── deploy
@@ -43,8 +42,6 @@
     ├── responseEncoder
     ├── transport
     └── utils
-
-36 directories
 ```
 
     

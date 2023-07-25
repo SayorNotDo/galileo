@@ -56,6 +56,10 @@ func NewTestcaseUseCase(repo TestcaseRepo, logger log.Logger) *TestcaseUseCase {
 	}
 }
 
+func (uc *TestcaseUseCase) DebugTestcase(ctx context.Context) error {
+	return nil
+}
+
 func (uc *TestcaseUseCase) CreateTestcase(ctx context.Context, testcase *Testcase) (*Testcase, error) {
 	return uc.repo.CreateTestcase(ctx, testcase)
 }
@@ -85,11 +89,14 @@ func (uc *TestcaseUseCase) CreateTestcaseSuite(ctx context.Context, name string,
 }
 
 func (uc *TestcaseUseCase) TestcaseValidator(fileType, content string) error {
+	/* 用例需要校验的必需字段 */
+	fieldList := []string{"framework", "expected_result", "data", "steps"}
+	/* 当前仅支持上传json格式的用例文件 */
 	if fileType != ".json" {
 		return SetCustomizeErrMsg(ReasonParamsError, "only type:json are allowed")
 	}
-	fieldList := []string{"framework", "expected_result", "data", "steps"}
 	var contentJson map[string]interface{}
+	/* 反序列化json */
 	if err := json.Unmarshal([]byte(content), &contentJson); err != nil {
 		return SetCustomizeErrMsg(ReasonParamsError, err.Error())
 	}
@@ -98,15 +105,16 @@ func (uc *TestcaseUseCase) TestcaseValidator(fileType, content string) error {
 			return SetCustomizeErrMsg(ReasonParamsError, "field: "+v+" missing")
 		}
 	}
+	/* 校验字段的值类型是否正确 */
 	for i, v := range contentJson {
 		switch i {
 		case "framework", "expected_result", "data":
 			if _, ok := v.(string); !ok {
-				return SetCustomizeErrMsg(ReasonParamsError, "field type error")
+				return SetCustomizeErrMsg(ReasonParamsError, "field: "+i+"type error")
 			}
 		case "steps":
 			if _, ok := v.([]interface{}); !ok {
-				return SetCustomizeErrMsg(ReasonParamsError, "field type error")
+				return SetCustomizeErrMsg(ReasonParamsError, "field: steps type error")
 			}
 		}
 	}

@@ -102,7 +102,7 @@ func (s *EngineService) AddCronJob(ctx context.Context, req *v1.AddCronJobReques
 	}, nil
 }
 
-func (s *EngineService) UpdateCronJob(ctx context.Context, req *v1.UpdateCronJobRequest) (*v1.UpdateCronJobReply, error) {
+func (s *EngineService) UpdateCronJob(ctx context.Context, req *v1.UpdateCronJobRequest) (*empty.Empty, error) {
 	/* 构建更新 Task */
 	task := &biz.Task{
 		Id:           req.TaskId,
@@ -124,9 +124,8 @@ func (s *EngineService) UpdateCronJob(ctx context.Context, req *v1.UpdateCronJob
 				return nil, err
 			}
 		}
-		s.log.Debug("Getting Cron Job: ", v.TaskId)
 	}
-	return &v1.UpdateCronJobReply{}, nil
+	return nil, nil
 }
 func (s *EngineService) RunJob(ctx context.Context, req *v1.RunJobRequest) (*v1.RunJobReply, error) {
 	s.log.Info("*--------------------------------*Run Job*--------------------------------*")

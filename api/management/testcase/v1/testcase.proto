@@ -89,7 +89,7 @@ message LoadFrameworkReply {
 message DebugTestcaseRequest {
   string name = 1;
   string type = 2;
-  bytes content = 3;
+  string content = 3;
 };
 
 message DebugTestcaseReply {};

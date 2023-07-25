@@ -19,7 +19,7 @@ service Engine {
   rpc ResumeJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   rpc DeleteJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   rpc AddCronJob(AddCronJobRequest) returns (AddCronJobReply);
-  rpc UpdateCronJob(UpdateCronJobRequest) returns (UpdateCronJobReply);
+  rpc UpdateCronJob(UpdateCronJobRequest) returns (google.protobuf.Empty);
   rpc BuildContainer(google.protobuf.Empty) returns (BuildContainerReply){}
 }
 

@@ -170,3 +170,16 @@ func (s *TestcaseService) CreateTestcaseSuite(ctx context.Context, req *pb.Creat
 		CreatedAt: timestamppb.New(res.CreatedAt),
 	}, nil
 }
+
+func (s *TestcaseService) DebugTestcase(ctx context.Context, req *pb.DebugTestcaseRequest) (*pb.DebugTestcaseReply, error) {
+	/* 1.调用TestcaseValidator */
+	if err := s.uc.TestcaseValidator(".json", req.Content); err != nil {
+		return nil, err
+	}
+	/* 2.MOCK环境运行测试用例 */
+	if err := s.uc.DebugTestcase(ctx); err != nil {
+		return nil, err
+	}
+	/* 3.返回调试结果 */
+	return &pb.DebugTestcaseReply{}, nil
+}

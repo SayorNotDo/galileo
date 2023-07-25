@@ -3,7 +3,7 @@
 ## 测试用例数据格式（json）
     {
         "framework": "测试框架选择",
-        "steps": "用例步骤",
+        "steps": [], // 用例步骤
         "expected_result": "预期结果",
         "data": "用例数据",
     }

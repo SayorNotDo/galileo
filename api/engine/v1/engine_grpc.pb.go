@@ -42,7 +42,7 @@ type EngineClient interface {
 	ResumeJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	AddCronJob(ctx context.Context, in *AddCronJobRequest, opts ...grpc.CallOption) (*AddCronJobReply, error)
-	UpdateCronJob(ctx context.Context, in *UpdateCronJobRequest, opts ...grpc.CallOption) (*UpdateCronJobReply, error)
+	UpdateCronJob(ctx context.Context, in *UpdateCronJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	BuildContainer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BuildContainerReply, error)
 }
 
@@ -117,8 +117,8 @@ func (c *engineClient) AddCronJob(ctx context.Context, in *AddCronJobRequest, op
 	return out, nil
 }
 
-func (c *engineClient) UpdateCronJob(ctx context.Context, in *UpdateCronJobRequest, opts ...grpc.CallOption) (*UpdateCronJobReply, error) {
-	out := new(UpdateCronJobReply)
+func (c *engineClient) UpdateCronJob(ctx context.Context, in *UpdateCronJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, Engine_UpdateCronJob_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -146,7 +146,7 @@ type EngineServer interface {
 	ResumeJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	DeleteJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	AddCronJob(context.Context, *AddCronJobRequest) (*AddCronJobReply, error)
-	UpdateCronJob(context.Context, *UpdateCronJobRequest) (*UpdateCronJobReply, error)
+	UpdateCronJob(context.Context, *UpdateCronJobRequest) (*emptypb.Empty, error)
 	BuildContainer(context.Context, *emptypb.Empty) (*BuildContainerReply, error)
 	mustEmbedUnimplementedEngineServer()
 }
@@ -176,7 +176,7 @@ func (UnimplementedEngineServer) DeleteJob(context.Context, *emptypb.Empty) (*em
 func (UnimplementedEngineServer) AddCronJob(context.Context, *AddCronJobRequest) (*AddCronJobReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddCronJob not implemented")
 }
-func (UnimplementedEngineServer) UpdateCronJob(context.Context, *UpdateCronJobRequest) (*UpdateCronJobReply, error) {
+func (UnimplementedEngineServer) UpdateCronJob(context.Context, *UpdateCronJobRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCronJob not implemented")
 }
 func (UnimplementedEngineServer) BuildContainer(context.Context, *emptypb.Empty) (*BuildContainerReply, error) {

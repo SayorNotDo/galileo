@@ -243,10 +243,12 @@ func (r *taskRepo) CountAllTask(ctx context.Context) (int, error) {
 }
 
 func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (*biz.Task, error) {
+	/* 创建事务 */
 	tx, err := r.data.entDB.Tx(ctx)
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonSystemError, err.Error())
 	}
+	/* 更新任务的状态、开始时间、状态更新时间 */
 	ret, err := tx.Task.UpdateOneID(updateTask.Id).
 		SetStatus(int8(updateTask.Status.Number())).
 		SetStartTime(updateTask.StartTime).
@@ -258,8 +260,8 @@ func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (
 	case err != nil:
 		return nil, rollback(tx, err)
 	}
+	// 当设置状态为RUNNING时，调用Engine服务进行测试任务的下发，参数：taskId，Worker
 	if updateTask.Status == taskV1.TaskStatus_RUNNING {
-		// 当设置状态为RUNNING时，调用Engine服务进行测试任务的下发，参数：taskId，Config，Worker
 		reply, err := r.data.engineCli.RunJob(ctx,
 			&engineV1.RunJobRequest{
 				TaskId: updateTask.Id,
@@ -270,6 +272,7 @@ func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (
 		if err != nil {
 			return nil, rollback(tx, err)
 		}
+		/* 下发测试任务成功后更新execute_id、worker */
 		_, err = tx.Task.UpdateOneID(updateTask.Id).
 			SetExecuteID(reply.ExecuteId).
 			SetWorker(updateTask.Worker).
@@ -278,6 +281,7 @@ func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (
 			return nil, rollback(tx, err)
 		}
 	}
+	/* 提交事务 */
 	if err := tx.Commit(); err != nil {
 		return nil, rollback(tx, err)
 	}
