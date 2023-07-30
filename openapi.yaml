@@ -3,147 +3,322 @@
 
 openapi: 3.0.3
 info:
-    title: Testcase API
+    title: Core API
     version: 0.0.1
 paths:
-    v1/api/management/case-suite:
+    data/report:
         post:
             tags:
-                - Testcase
-            operationId: Testcase_CreateTestcaseSuite
+                - Core
+            operationId: Core_DataReportTrack
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CreateTestcaseSuiteRequest'
+                            $ref: '#/components/schemas/DataReportTrackRequest'
                 required: true
             responses:
                 "200":
                     description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/CreateTestcaseSuiteReply'
+                    content: {}
                 default:
                     description: Default error response
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/management/testcase:
-        put:
+    v1/api/user/delete/{id}:
+        delete:
             tags:
-                - Testcase
-            operationId: Testcase_UpdateTestcase
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/UpdateTestcaseRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/UpdateTestcaseReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-        post:
-            tags:
-                - Testcase
-            operationId: Testcase_CreateTestcase
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/CreateTestcaseRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/CreateTestcaseReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    v1/api/management/testcase/debug:
-        post:
-            tags:
-                - Testcase
-            operationId: Testcase_DebugTestcase
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/DebugTestcaseRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/DebugTestcaseReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    v1/api/management/testcase/loadFramework:
-        post:
-            tags:
-                - Testcase
-            operationId: Testcase_LoadFramework
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/LoadFrameworkRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/LoadFrameworkReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    v1/api/management/testcase/{id}:
-        get:
-            tags:
-                - Testcase
-            operationId: Testcase_GetTestcaseById
+                - Core
+            operationId: Core_DeleteUser
             parameters:
                 - name: id
                   in: path
                   required: true
                   schema:
                     type: integer
-                    format: int64
+                    format: uint32
             responses:
                 "200":
                     description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/GetTestcaseReply'
+                                $ref: '#/components/schemas/DeleteReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/email:
+        put:
+            tags:
+                - Core
+            operationId: Core_UpdateEmail
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateEmailRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateEmailReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/group:
+        put:
+            tags:
+                - Core
+            operationId: Core_UpdateGroup
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateGroupRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - Core
+            operationId: Core_CreateGroup
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateGroupRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateGroupReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/info:
+        get:
+            tags:
+                - Core
+            operationId: Core_UserDetail
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserDetailReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/list/{pageNum}/{pageSize}:
+        get:
+            tags:
+                - Core
+            operationId: Core_ListUser
+            parameters:
+                - name: pageNum
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageSize
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListUserReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/login:
+        post:
+            tags:
+                - Core
+            operationId: Core_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LoginReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/logout:
+        post:
+            tags:
+                - Core
+            operationId: Core_Logout
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LogoutRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/password:
+        put:
+            tags:
+                - Core
+            operationId: Core_UpdatePassword
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdatePasswordRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/phone:
+        put:
+            tags:
+                - Core
+            operationId: Core_UpdatePhone
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdatePhoneRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdatePhoneReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/register:
+        post:
+            tags:
+                - Core
+            operationId: Core_Register
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RegisterRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RegisterReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/unregister:
+        delete:
+            tags:
+                - Core
+            operationId: Core_Unregister
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UnregisterReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/update:
+        put:
+            tags:
+                - Core
+            operationId: Core_UpdateUserInfo
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UserInfoUpdateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserInfoUpdateReply'
                 default:
                     description: Default error response
                     content:
@@ -152,96 +327,42 @@ paths:
                                 $ref: '#/components/schemas/Status'
 components:
     schemas:
-        CreateTestcaseReply:
+        CreateGroupReply:
             type: object
             properties:
                 id:
                     type: integer
                     format: int64
-                createdAt:
-                    type: string
-                    format: date-time
-        CreateTestcaseRequest:
+                success:
+                    type: boolean
+        CreateGroupRequest:
             type: object
             properties:
                 name:
                     type: string
-                status:
-                    type: integer
-                    format: int32
-                type:
-                    type: integer
-                    format: int32
-                priority:
-                    type: integer
-                    format: int32
-                url:
+        DataReportTrackRequest:
+            type: object
+            properties:
+                data:
                     type: string
-                description:
-                    type: string
-        CreateTestcaseSuiteReply:
+                    format: bytes
+        DeleteReply:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/DeleteReply_DeleteInfo'
+        DeleteReply_DeleteInfo:
             type: object
             properties:
                 id:
                     type: integer
-                    format: int64
-                createdAt:
+                    format: uint32
+                deleteAt:
                     type: string
                     format: date-time
-        CreateTestcaseSuiteRequest:
-            type: object
-            properties:
-                name:
-                    type: string
-                testcaseList:
-                    type: array
-                    items:
-                        type: integer
-                        format: int64
-        DebugTestcaseReply:
-            type: object
-            properties:
-                result:
-                    type: string
-        DebugTestcaseRequest:
-            type: object
-            properties:
-                name:
-                    type: string
-                type:
-                    type: string
-                content:
-                    type: string
-        GetTestcaseReply:
-            type: object
-            properties:
-                name:
-                    type: string
-                createdAt:
-                    type: string
-                    format: date-time
-                createdBy:
+                deletedBy:
                     type: integer
                     format: uint32
-                updatedAt:
-                    type: string
-                    format: date-time
-                updatedBy:
-                    type: integer
-                    format: uint32
-                type:
-                    type: integer
-                    format: int32
-                priority:
-                    type: integer
-                    format: int32
-                status:
-                    type: integer
-                    format: int32
-                url:
-                    type: string
-                description:
-                    type: string
         GoogleProtobufAny:
             type: object
             properties:
@@ -250,24 +371,58 @@ components:
                     description: The type of the serialized message.
             additionalProperties: true
             description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
-        LoadFrameworkReply:
+        ListUserReply:
             type: object
             properties:
-                success:
-                    type: boolean
-                worker:
-                    type: string
-        LoadFrameworkRequest:
-            type: object
-            properties:
-                path:
-                    type: string
-                lang:
+                total:
                     type: integer
-                    format: enum
-                config:
+                    format: int32
+                userList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserDetail'
+        LoginReply:
+            type: object
+            properties:
+                type:
                     type: string
-                    format: bytes
+                token:
+                    type: string
+                expiresAt:
+                    type: string
+                    format: date-time
+        LoginRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+        LogoutRequest:
+            type: object
+            properties: {}
+        RegisterReply:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                username:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+        RegisterRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+                phone:
+                    type: string
+                email:
+                    type: string
         Status:
             type: object
             properties:
@@ -284,28 +439,76 @@ components:
                         $ref: '#/components/schemas/GoogleProtobufAny'
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
-        UpdateTestcaseReply:
+        UnregisterReply:
+            type: object
+            properties: {}
+        UpdateEmailReply:
+            type: object
+            properties: {}
+        UpdateEmailRequest:
+            type: object
+            properties: {}
+        UpdateGroupRequest:
+            type: object
+            properties: {}
+        UpdatePasswordRequest:
             type: object
             properties:
-                success:
-                    type: boolean
-        UpdateTestcaseRequest:
+                password:
+                    type: string
+        UpdatePhoneReply:
+            type: object
+            properties: {}
+        UpdatePhoneRequest:
+            type: object
+            properties: {}
+        UserDetail:
             type: object
             properties:
                 id:
                     type: integer
-                    format: int64
-                name:
+                    format: uint32
+                nickname:
                     type: string
-                type:
+                chineseName:
+                    type: string
+                phone:
+                    type: string
+                email:
+                    type: string
+                role:
                     type: integer
                     format: int32
-                priority:
+        UserDetailReply:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                nickname:
+                    type: string
+                chineseName:
+                    type: string
+                phone:
+                    type: string
+                email:
+                    type: string
+                role:
                     type: integer
                     format: int32
-                url:
+        UserInfoUpdateReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+        UserInfoUpdateRequest:
+            type: object
+            properties:
+                nickname:
                     type: string
-                description:
+                email:
+                    type: string
+                phone:
                     type: string
 tags:
-    - name: Testcase
+    - name: Core

@@ -20,22 +20,23 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Core_Register_FullMethodName       = "/api.core.v1.Core/Register"
-	Core_Login_FullMethodName          = "/api.core.v1.Core/Login"
-	Core_Unregister_FullMethodName     = "/api.core.v1.Core/Unregister"
-	Core_Logout_FullMethodName         = "/api.core.v1.Core/Logout"
-	Core_DeleteUser_FullMethodName     = "/api.core.v1.Core/DeleteUser"
-	Core_UserDetail_FullMethodName     = "/api.core.v1.Core/UserDetail"
-	Core_UpdateUserInfo_FullMethodName = "/api.core.v1.Core/UpdateUserInfo"
-	Core_UpdatePassword_FullMethodName = "/api.core.v1.Core/UpdatePassword"
-	Core_UpdateEmail_FullMethodName    = "/api.core.v1.Core/UpdateEmail"
-	Core_UpdatePhone_FullMethodName    = "/api.core.v1.Core/UpdatePhone"
-	Core_ListUser_FullMethodName       = "/api.core.v1.Core/ListUser"
-	Core_CreateGroup_FullMethodName    = "/api.core.v1.Core/CreateGroup"
-	Core_UpdateGroup_FullMethodName    = "/api.core.v1.Core/UpdateGroup"
+	Core_Register_FullMethodName        = "/api.core.v1.Core/Register"
+	Core_Login_FullMethodName           = "/api.core.v1.Core/Login"
+	Core_Unregister_FullMethodName      = "/api.core.v1.Core/Unregister"
+	Core_Logout_FullMethodName          = "/api.core.v1.Core/Logout"
+	Core_DeleteUser_FullMethodName      = "/api.core.v1.Core/DeleteUser"
+	Core_UserDetail_FullMethodName      = "/api.core.v1.Core/UserDetail"
+	Core_UpdateUserInfo_FullMethodName  = "/api.core.v1.Core/UpdateUserInfo"
+	Core_UpdatePassword_FullMethodName  = "/api.core.v1.Core/UpdatePassword"
+	Core_UpdateEmail_FullMethodName     = "/api.core.v1.Core/UpdateEmail"
+	Core_UpdatePhone_FullMethodName     = "/api.core.v1.Core/UpdatePhone"
+	Core_ListUser_FullMethodName        = "/api.core.v1.Core/ListUser"
+	Core_CreateGroup_FullMethodName     = "/api.core.v1.Core/CreateGroup"
+	Core_UpdateGroup_FullMethodName     = "/api.core.v1.Core/UpdateGroup"
+	Core_DataReportTrack_FullMethodName = "/api.core.v1.Core/DataReportTrack"
 )
 
-// CoreClient is the client API for Core scheduler.
+// CoreClient is the client API for Core service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CoreClient interface {
@@ -52,6 +53,7 @@ type CoreClient interface {
 	ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
 	CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupReply, error)
 	UpdateGroup(ctx context.Context, in *UpdateGroupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DataReportTrack(ctx context.Context, in *DataReportTrackRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type coreClient struct {
@@ -179,7 +181,16 @@ func (c *coreClient) UpdateGroup(ctx context.Context, in *UpdateGroupRequest, op
 	return out, nil
 }
 
-// CoreServer is the server API for Core scheduler.
+func (c *coreClient) DataReportTrack(ctx context.Context, in *DataReportTrackRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Core_DataReportTrack_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// CoreServer is the server API for Core service.
 // All implementations must embed UnimplementedCoreServer
 // for forward compatibility
 type CoreServer interface {
@@ -196,6 +207,7 @@ type CoreServer interface {
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupReply, error)
 	UpdateGroup(context.Context, *UpdateGroupRequest) (*emptypb.Empty, error)
+	DataReportTrack(context.Context, *DataReportTrackRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedCoreServer()
 }
 
@@ -242,9 +254,12 @@ func (UnimplementedCoreServer) CreateGroup(context.Context, *CreateGroupRequest)
 func (UnimplementedCoreServer) UpdateGroup(context.Context, *UpdateGroupRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateGroup not implemented")
 }
+func (UnimplementedCoreServer) DataReportTrack(context.Context, *DataReportTrackRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DataReportTrack not implemented")
+}
 func (UnimplementedCoreServer) mustEmbedUnimplementedCoreServer() {}
 
-// UnsafeCoreServer may be embedded to opt out of forward compatibility for this scheduler.
+// UnsafeCoreServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to CoreServer will
 // result in compilation errors.
 type UnsafeCoreServer interface {
@@ -489,7 +504,25 @@ func _Core_UpdateGroup_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-// Core_ServiceDesc is the grpc.ServiceDesc for Core scheduler.
+func _Core_DataReportTrack_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DataReportTrackRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).DataReportTrack(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_DataReportTrack_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).DataReportTrack(ctx, req.(*DataReportTrackRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Core_ServiceDesc is the grpc.ServiceDesc for Core service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Core_ServiceDesc = grpc.ServiceDesc{
@@ -547,6 +580,10 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateGroup",
 			Handler:    _Core_UpdateGroup_Handler,
+		},
+		{
+			MethodName: "DataReportTrack",
+			Handler:    _Core_DataReportTrack_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

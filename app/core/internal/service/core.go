@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	v1 "galileo/api/core/v1"
 	"go.opentelemetry.io/otel"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -52,4 +53,18 @@ func (c *CoreService) UpdateUserInfo(ctx context.Context, req *v1.UserInfoUpdate
 
 func (c *CoreService) DeleteUser(ctx context.Context, req *v1.DeleteRequest) (*v1.DeleteReply, error) {
 	return c.uc.DeleteUser(ctx, req.Id)
+}
+
+func (c *CoreService) DataReportTrack(ctx context.Context, req *v1.DataReportTrackRequest) (*emptypb.Empty, error) {
+	originData := req.Data
+	var data map[string]interface{}
+	/* 解析接口上报的数据 */
+	if err := json.Unmarshal(originData, &data); err != nil {
+		return nil, err
+	}
+	/* 调用业务函数 */
+	if err := c.uc.DataReportTrack(ctx, data); err != nil {
+		return nil, err
+	}
+	return nil, nil
 }

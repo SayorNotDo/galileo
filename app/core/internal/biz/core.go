@@ -28,6 +28,7 @@ type CoreRepo interface {
 	SetToken(ctx context.Context, token string) (string, error)
 	DestroyToken(ctx context.Context) error
 	UpdatePassword(ctx context.Context, password string) (bool, error)
+	DataReportTrack(ctx context.Context, data map[string]interface{}) error
 }
 type User struct {
 	Id          uint32
@@ -46,21 +47,21 @@ type User struct {
 }
 
 type CoreUseCase struct {
-	cRepo      CoreRepo
+	repo       CoreRepo
 	log        *log.Helper
 	signingKey string
 }
 
 func NewCoreUseCase(repo CoreRepo, logger log.Logger, conf *conf.Auth) *CoreUseCase {
 	helper := log.NewHelper(log.With(logger, "module", "core.useCase"))
-	return &CoreUseCase{cRepo: repo, log: helper, signingKey: conf.JwtKey}
+	return &CoreUseCase{repo: repo, log: helper, signingKey: conf.JwtKey}
 }
 func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterReply, error) {
 	newUser, err := NewUser(req.Phone, req.Username, req.Password, req.Email)
 	if err != nil {
 		return nil, err
 	}
-	createUser, err := c.cRepo.CreateUser(ctx, &newUser)
+	createUser, err := c.repo.CreateUser(ctx, &newUser)
 	if err != nil {
 		return nil, err
 	}
@@ -74,10 +75,10 @@ func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (
 func (c *CoreUseCase) Logout(ctx context.Context) (*emptypb.Empty, error) {
 	claims, _ := jwt.FromContext(ctx)
 	id := uint32(claims.(jwt2.MapClaims)["ID"].(float64))
-	if _, err := c.cRepo.UserById(ctx, id); err != nil {
+	if _, err := c.repo.UserById(ctx, id); err != nil {
 		return nil, err
 	}
-	_ = c.cRepo.DestroyToken(ctx)
+	_ = c.repo.DestroyToken(ctx)
 	return nil, nil
 }
 
@@ -101,11 +102,11 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	if len(req.Password) <= 0 {
 		return nil, SetErrByReason(ReasonParamsError)
 	}
-	user, err := c.cRepo.UserByUsername(ctx, req.Username)
+	user, err := c.repo.UserByUsername(ctx, req.Username)
 	if err != nil {
 		return nil, err
 	}
-	if _, passErr := c.cRepo.VerifyPassword(ctx, req.Password, user.Password); passErr != nil {
+	if _, passErr := c.repo.VerifyPassword(ctx, req.Password, user.Password); passErr != nil {
 		return nil, passErr
 	}
 	claims := userClaim(user)
@@ -113,7 +114,7 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	if err != nil {
 		return nil, SetErrByReason(ReasonParamsError)
 	}
-	encryptionToken, _ := c.cRepo.SetToken(ctx, token)
+	encryptionToken, _ := c.repo.SetToken(ctx, token)
 	return &v1.LoginReply{
 		Type:      "Bearer",
 		Token:     encryptionToken,
@@ -127,7 +128,7 @@ func (c *CoreUseCase) UserDetail(ctx context.Context, empty *emptypb.Empty) (*v1
 		return nil, SetErrByReason(ReasonUnknownError)
 	}
 	uid := uint32(userClaim.(jwt2.MapClaims)["ID"].(float64))
-	user, err := c.cRepo.UserById(ctx, uid)
+	user, err := c.repo.UserById(ctx, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +143,7 @@ func (c *CoreUseCase) UserDetail(ctx context.Context, empty *emptypb.Empty) (*v1
 }
 
 func (c *CoreUseCase) ListUser(ctx context.Context, pageNum, pageSize int32) (*v1.ListUserReply, error) {
-	user, total, err := c.cRepo.ListUser(ctx, pageNum, pageSize)
+	user, total, err := c.repo.ListUser(ctx, pageNum, pageSize)
 	if err != nil {
 		return nil, err
 	}
@@ -165,11 +166,11 @@ func (c *CoreUseCase) DeleteUser(ctx context.Context, deleteId uint32) (*v1.Dele
 		return nil, errors.Forbidden(http.StatusText(403), "Permission denied")
 	}
 	ctx = metadata.AppendToClientContext(ctx, "x-md-local-uid", uid)
-	_, err := c.cRepo.UserById(ctx, deleteId)
+	_, err := c.repo.UserById(ctx, deleteId)
 	if err != nil {
 		return nil, err
 	}
-	ok, err = c.cRepo.SoftDeleteUser(ctx, deleteId)
+	ok, err = c.repo.SoftDeleteUser(ctx, deleteId)
 	if err != nil {
 		return nil, err
 	}
@@ -185,10 +186,10 @@ func (c *CoreUseCase) UpdatePassword(ctx context.Context, req *v1.UpdatePassword
 	}
 	uid := fmt.Sprintf("%v", userClaim.(jwt2.MapClaims)["ID"])
 	ctx = metadata.AppendToClientContext(ctx, "x-md-local-uid", uid)
-	if ok, _ := c.cRepo.UpdatePassword(ctx, req.Password); !ok {
+	if ok, _ := c.repo.UpdatePassword(ctx, req.Password); !ok {
 		return nil, SetErrByReason(ReasonUnknownError)
 	}
-	err := c.cRepo.DestroyToken(ctx)
+	err := c.repo.DestroyToken(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -224,4 +225,8 @@ func NewUser(phone, username, password, email string) (User, error) {
 		Password: password,
 		Email:    email,
 	}, nil
+}
+
+func (c *CoreUseCase) DataReportTrack(ctx context.Context, data map[string]interface{}) error {
+	return c.repo.DataReportTrack(ctx, data)
 }

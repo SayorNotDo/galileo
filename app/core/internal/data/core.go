@@ -2,14 +2,23 @@ package data
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
 	v1 "galileo/api/core/v1"
 	userService "galileo/api/user/v1"
 	"galileo/app/core/internal/biz"
 	"galileo/app/core/internal/pkg/middleware/auth"
 	"galileo/pkg/encryption"
+	"github.com/IBM/sarama"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
 	"strings"
+)
+
+var (
+	kafkaBrokers = []string{"localhost:9092"}
+	kafkaTopic   = "my_topic"
 )
 
 type coreRepo struct {
@@ -131,5 +140,53 @@ func (r *coreRepo) DestroyToken(ctx context.Context) error {
 	jwtToken := strings.SplitN(tr.RequestHeader().Get("Authorization"), " ", 2)[1]
 	key := encryption.EncodeMD5(jwtToken)
 	r.data.redisCli.Del(ctx, "token:"+key)
+	return nil
+}
+
+func (r *coreRepo) DataReportTrack(ctx context.Context, data map[string]interface{}) error {
+	/* 校验数据完整性 */
+	/* 数据清洗与处理
+	1. 数据是否已经入库（已入库判断值是否合法、未入库断言类型）
+	*/
+	/* 写入Kafka队列 */
+	/* 设置Kafka配置 */
+	config := sarama.NewConfig()
+	config.Producer.Return.Successes = true
+	config.Producer.Return.Errors = true
+
+	/* 创建Kafka生产者 */
+	producer, err := sarama.NewSyncProducer(kafkaBrokers, config)
+	if err != nil {
+		return errors.New("Failed to start Kafka producer: " + err.Error())
+	}
+	defer func(producer sarama.SyncProducer) {
+		err := producer.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(producer)
+	if err := sendToKafka(producer, kafkaTopic, data); err != nil {
+		return err
+	}
+	return nil
+}
+
+func sendToKafka(producer sarama.SyncProducer, topic string, data map[string]interface{}) error {
+	/* 数据转换为JSON字节 */
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return errors.New("Failed to marshal data to JSON: " + err.Error())
+	}
+	/* 发送消息至Kafka */
+	msg := &sarama.ProducerMessage{
+		Topic: topic,
+		Value: sarama.ByteEncoder(jsonData),
+	}
+
+	partition, offset, err := producer.SendMessage(msg)
+	if err != nil {
+		return errors.New("Failed to send message to Kafka: " + err.Error())
+	}
+	fmt.Printf("Message sent to partition %d, offset %d\n", partition, offset)
 	return nil
 }

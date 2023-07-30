@@ -86,6 +86,17 @@ service Core {
       body: "*"
     };
   }
+
+  rpc DataReportTrack(DataReportTrackRequest) returns (google.protobuf.Empty) {
+    option(google.api.http) = {
+      post: "data/report"
+      body: "*"
+    };
+  }
+}
+
+message DataReportTrackRequest{
+  bytes data = 1;
 }
 
 message UpdateGroupRequest {}

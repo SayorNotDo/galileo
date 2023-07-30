@@ -21,6 +21,7 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationCoreCreateGroup = "/api.core.v1.Core/CreateGroup"
+const OperationCoreDataReportTrack = "/api.core.v1.Core/DataReportTrack"
 const OperationCoreDeleteUser = "/api.core.v1.Core/DeleteUser"
 const OperationCoreListUser = "/api.core.v1.Core/ListUser"
 const OperationCoreLogin = "/api.core.v1.Core/Login"
@@ -36,6 +37,7 @@ const OperationCoreUserDetail = "/api.core.v1.Core/UserDetail"
 
 type CoreHTTPServer interface {
 	CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupReply, error)
+	DataReportTrack(context.Context, *DataReportTrackRequest) (*emptypb.Empty, error)
 	DeleteUser(context.Context, *DeleteRequest) (*DeleteReply, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
@@ -65,6 +67,7 @@ func RegisterCoreHTTPServer(s *http.Server, srv CoreHTTPServer) {
 	r.GET("v1/api/user/list/{pageNum}/{pageSize}", _Core_ListUser0_HTTP_Handler(srv))
 	r.POST("v1/api/user/group", _Core_CreateGroup0_HTTP_Handler(srv))
 	r.PUT("v1/api/user/group", _Core_UpdateGroup0_HTTP_Handler(srv))
+	r.POST("data/report", _Core_DataReportTrack0_HTTP_Handler(srv))
 }
 
 func _Core_Register0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
@@ -320,8 +323,28 @@ func _Core_UpdateGroup0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) 
 	}
 }
 
+func _Core_DataReportTrack0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DataReportTrackRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCoreDataReportTrack)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DataReportTrack(ctx, req.(*DataReportTrackRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type CoreHTTPClient interface {
 	CreateGroup(ctx context.Context, req *CreateGroupRequest, opts ...http.CallOption) (rsp *CreateGroupReply, err error)
+	DataReportTrack(ctx context.Context, req *DataReportTrackRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	DeleteUser(ctx context.Context, req *DeleteRequest, opts ...http.CallOption) (rsp *DeleteReply, err error)
 	ListUser(ctx context.Context, req *ListUserRequest, opts ...http.CallOption) (rsp *ListUserReply, err error)
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *LoginReply, err error)
@@ -349,6 +372,19 @@ func (c *CoreHTTPClientImpl) CreateGroup(ctx context.Context, in *CreateGroupReq
 	pattern := "v1/api/user/group"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationCoreCreateGroup))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *CoreHTTPClientImpl) DataReportTrack(ctx context.Context, in *DataReportTrackRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "data/report"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationCoreDataReportTrack))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
