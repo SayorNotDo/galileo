@@ -114,3 +114,7 @@ func (r *testcaseRepo) CreateTestcaseSuite(ctx context.Context, suiteName string
 		CreatedAt: ret.CreatedAt,
 	}, nil
 }
+
+func (r *testcaseRepo) DebugTestcase(ctx context.Context, content string) (error, string) {
+	return nil, ""
+}

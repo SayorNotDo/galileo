@@ -42,6 +42,7 @@ type TestcaseRepo interface {
 	TestcaseByName(ctx context.Context, name string) (*Testcase, error)
 	UploadTestcaseFile(ctx context.Context, fileName string, fileType string, content []byte) (string, error)
 	CreateTestcaseSuite(ctx context.Context, suiteName string, caseIdList []int64) (*TestcaseSuite, error)
+	DebugTestcase(ctx context.Context, content string) (err error, result string)
 }
 
 type TestcaseUseCase struct {
@@ -56,8 +57,8 @@ func NewTestcaseUseCase(repo TestcaseRepo, logger log.Logger) *TestcaseUseCase {
 	}
 }
 
-func (uc *TestcaseUseCase) DebugTestcase(ctx context.Context) error {
-	return nil
+func (uc *TestcaseUseCase) DebugTestcase(ctx context.Context, content string) (err error, result string) {
+	return uc.repo.DebugTestcase(ctx, content)
 }
 
 func (uc *TestcaseUseCase) CreateTestcase(ctx context.Context, testcase *Testcase) (*Testcase, error) {

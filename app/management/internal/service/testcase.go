@@ -177,9 +177,12 @@ func (s *TestcaseService) DebugTestcase(ctx context.Context, req *pb.DebugTestca
 		return nil, err
 	}
 	/* 2.MOCK环境运行测试用例 */
-	if err := s.uc.DebugTestcase(ctx); err != nil {
+	err, ret := s.uc.DebugTestcase(ctx, req.Content)
+	if err != nil {
 		return nil, err
 	}
 	/* 3.返回调试结果 */
-	return &pb.DebugTestcaseReply{}, nil
+	return &pb.DebugTestcaseReply{
+		Result: ret,
+	}, nil
 }

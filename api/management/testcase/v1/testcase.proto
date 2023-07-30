@@ -92,7 +92,9 @@ message DebugTestcaseRequest {
   string content = 3;
 };
 
-message DebugTestcaseReply {};
+message DebugTestcaseReply {
+  string result = 1;
+};
 
 message UploadTestcaseReply {
   string url = 1;
