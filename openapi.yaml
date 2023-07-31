@@ -345,7 +345,6 @@ components:
             properties:
                 data:
                     type: string
-                    format: bytes
         DeleteReply:
             type: object
             properties:

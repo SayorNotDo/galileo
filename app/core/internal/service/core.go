@@ -57,13 +57,15 @@ func (c *CoreService) DeleteUser(ctx context.Context, req *v1.DeleteRequest) (*v
 
 func (c *CoreService) DataReportTrack(ctx context.Context, req *v1.DataReportTrackRequest) (*emptypb.Empty, error) {
 	originData := req.Data
-	var data map[string]interface{}
+	c.log.Info("DataReportTrack: ", originData)
+	var dataList []map[string]interface{}
 	/* 解析接口上报的数据 */
-	if err := json.Unmarshal(originData, &data); err != nil {
+	if err := json.Unmarshal([]byte(originData), &dataList); err != nil {
 		return nil, err
 	}
+	c.log.Info("DataReportTrack dataList: ", dataList)
 	/* 调用业务函数 */
-	if err := c.uc.DataReportTrack(ctx, data); err != nil {
+	if err := c.uc.DataReportTrack(ctx, dataList); err != nil {
 		return nil, err
 	}
 	return nil, nil

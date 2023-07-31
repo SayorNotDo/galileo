@@ -8,17 +8,15 @@ import (
 	v1 "galileo/api/core/v1"
 	userService "galileo/api/user/v1"
 	"galileo/app/core/internal/biz"
+	. "galileo/app/core/internal/pkg/constant"
 	"galileo/app/core/internal/pkg/middleware/auth"
 	"galileo/pkg/encryption"
 	"github.com/IBM/sarama"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
+	"strconv"
 	"strings"
-)
-
-var (
-	kafkaBrokers = []string{"localhost:9092"}
-	kafkaTopic   = "my_topic"
+	"time"
 )
 
 type coreRepo struct {
@@ -143,19 +141,16 @@ func (r *coreRepo) DestroyToken(ctx context.Context) error {
 	return nil
 }
 
-func (r *coreRepo) DataReportTrack(ctx context.Context, data map[string]interface{}) error {
-	/* 校验数据完整性 */
-	/* 数据清洗与处理
-	1. 数据是否已经入库（已入库判断值是否合法、未入库断言类型）
-	*/
-	/* 写入Kafka队列 */
+func (r *coreRepo) DataReportTrack(ctx context.Context, data []map[string]interface{}) error {
 	/* 设置Kafka配置 */
 	config := sarama.NewConfig()
 	config.Producer.Return.Successes = true
-	config.Producer.Return.Errors = true
-
+	//config.Producer.Return.Errors = true
+	config.Producer.Timeout = 5 * time.Second
 	/* 创建Kafka生产者 */
-	producer, err := sarama.NewSyncProducer(kafkaBrokers, config)
+	producer, err := sarama.NewSyncProducer(KafkaBrokers, config)
+	fmt.Println("----------------------------------------------------Producer")
+	fmt.Printf("%v", producer)
 	if err != nil {
 		return errors.New("Failed to start Kafka producer: " + err.Error())
 	}
@@ -165,13 +160,77 @@ func (r *coreRepo) DataReportTrack(ctx context.Context, data map[string]interfac
 			panic(err)
 		}
 	}(producer)
-	if err := sendToKafka(producer, kafkaTopic, data); err != nil {
+	/* 数据清洗 */
+	var cleanDataList []map[string]interface{}
+	for _, v := range data {
+		cleanData, err := dataCleaner(v)
+		if err != nil {
+			return err
+		}
+		cleanDataList = append(cleanDataList, cleanData)
+	}
+	/* 写入Kafka队列 */
+	if err := sendToKafka(producer, KafkaTopic, cleanDataList); err != nil {
 		return err
 	}
 	return nil
 }
 
-func sendToKafka(producer sarama.SyncProducer, topic string, data map[string]interface{}) error {
+func dataCleaner(data map[string]interface{}) (map[string]interface{}, error) {
+	/* 检查必需字段是否存在缺失情况 */
+	for _, v := range FieldList {
+		value, ok := data[v]
+		if !ok {
+			return nil, errors.New("missing required field: " + v)
+		}
+		/* 数据预处理噪音、错误、缺失值和异常值 */
+		switch v {
+		/* 时间戳格式是否合法 */
+		case "#timestamp":
+			tNum, err := strconv.ParseInt(value.(string), 10, 64)
+			if err != nil {
+				return nil, errors.New("#timestamp's value convert from interface{} to int64 failed")
+			}
+			if t := time.Unix(tNum, 0); t.IsZero() {
+				return nil, errors.New("#timestamp's value illegal")
+			}
+			/* 是否存在时间穿越 */
+			currentTime := time.Now().UnixNano() / 1e6
+			if tNum > currentTime {
+				fmt.Println(tNum)
+				fmt.Println(currentTime)
+				return nil, errors.New("#timestamp's value cannot be greater than current time")
+			}
+		/* 上报类型是否合法 */
+		case "#report_type":
+			reportType, ok := value.(string)
+			if !ok {
+				return nil, errors.New("#report_type' value convert from interface{} to string failed")
+			}
+			for _, v := range ReportType {
+				if reportType == v {
+					break
+				}
+				return nil, errors.New("#report_type' value illegal")
+			}
+		/* 其余字段校验是否为空 */
+		case "#sync", "#execute_id":
+			field, ok := value.(string)
+			if !ok {
+				return nil, errors.New(v + "'s value convert from interface{} to string failed")
+			}
+			if field == "" {
+				return nil, errors.New(v + "'s value cannot be empty")
+			}
+		}
+	}
+	/* 数据去重 */
+	/* 数据转换 */
+	/* 数据过滤 */
+	return data, nil
+}
+
+func sendToKafka(producer sarama.SyncProducer, topic string, data []map[string]interface{}) error {
 	/* 数据转换为JSON字节 */
 	jsonData, err := json.Marshal(data)
 	if err != nil {
@@ -182,7 +241,6 @@ func sendToKafka(producer sarama.SyncProducer, topic string, data map[string]int
 		Topic: topic,
 		Value: sarama.ByteEncoder(jsonData),
 	}
-
 	partition, offset, err := producer.SendMessage(msg)
 	if err != nil {
 		return errors.New("Failed to send message to Kafka: " + err.Error())

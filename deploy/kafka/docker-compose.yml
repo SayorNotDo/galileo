@@ -1,0 +1,11 @@
+version: "2"
+
+services:
+  kafka:
+    image: docker.io/bitnami/kafka:latest
+    ports:
+      - "9092:9092"
+    volumes:
+      - /Users/chenwentao/Desktop/deploy/kafka:/bitnami/kafka
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes

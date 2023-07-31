@@ -121,6 +121,7 @@ func NewWhiteListMatcher() selector.MatchFunc {
 	whiteList := make(map[string]struct{})
 	whiteList["/api.core.v1.Core/Register"] = struct{}{}
 	whiteList["/api.core.v1.Core/Login"] = struct{}{}
+	whiteList["/api.core.v1.Core/DataReportTrack"] = struct{}{}
 	return func(ctx context.Context, operation string) bool {
 		if _, ok := whiteList[operation]; ok {
 			return false

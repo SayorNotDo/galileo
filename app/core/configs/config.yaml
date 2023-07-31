@@ -3,9 +3,6 @@ server:
   http:
     addr: 0.0.0.0:8097
     timeout: 1s
-  grpc:
-    addr: 0.0.0.0:9001
-    timeout: 1s
 data:
   database:
     driver: mysql

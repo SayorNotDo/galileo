@@ -28,7 +28,7 @@ type CoreRepo interface {
 	SetToken(ctx context.Context, token string) (string, error)
 	DestroyToken(ctx context.Context) error
 	UpdatePassword(ctx context.Context, password string) (bool, error)
-	DataReportTrack(ctx context.Context, data map[string]interface{}) error
+	DataReportTrack(ctx context.Context, data []map[string]interface{}) error
 }
 type User struct {
 	Id          uint32
@@ -227,6 +227,6 @@ func NewUser(phone, username, password, email string) (User, error) {
 	}, nil
 }
 
-func (c *CoreUseCase) DataReportTrack(ctx context.Context, data map[string]interface{}) error {
+func (c *CoreUseCase) DataReportTrack(ctx context.Context, data []map[string]interface{}) error {
 	return c.repo.DataReportTrack(ctx, data)
 }

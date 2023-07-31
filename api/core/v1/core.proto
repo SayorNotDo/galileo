@@ -96,7 +96,7 @@ service Core {
 }
 
 message DataReportTrackRequest{
-  bytes data = 1;
+  string data = 1;
 }
 
 message UpdateGroupRequest {}
