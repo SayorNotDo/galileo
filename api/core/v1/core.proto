@@ -93,6 +93,20 @@ service Core {
       body: "*"
     };
   }
+  rpc ExecuteToken(ExecuteTokenRequest) returns (ExecuteTokenReply) {
+    option(google.api.http) = {
+      post: "v1/api/execute-token"
+      body: "*"
+    };
+  }
+}
+
+message ExecuteTokenRequest {
+  string machine = 1;
+}
+
+message ExecuteTokenReply {
+  string executeToken = 1;
 }
 
 message DataReportTrackRequest{

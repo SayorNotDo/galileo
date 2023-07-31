@@ -4,6 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	v1 "galileo/api/core/v1"
+	"galileo/app/core/internal/pkg/constant"
+	"galileo/pkg/errResponse"
+	"github.com/go-kratos/kratos/v2/transport"
+	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/golang-jwt/jwt/v4"
 	"go.opentelemetry.io/otel"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -57,16 +62,33 @@ func (c *CoreService) DeleteUser(ctx context.Context, req *v1.DeleteRequest) (*v
 
 /*DataReportTrack 数据上报后台接口 */
 func (c *CoreService) DataReportTrack(ctx context.Context, req *v1.DataReportTrackRequest) (*emptypb.Empty, error) {
+	/* 数据上报接口单独鉴权逻辑 */
+	var claims *constant.ReportClaims
+	if tr, ok := transport.FromServerContext(ctx); ok {
+		if ht, ok := tr.(*http.Transport); ok {
+			ctx = context.WithValue(ctx, "RemoteAddr", ht.Request().RemoteAddr)
+		}
+		auth := tr.RequestHeader().Get("x-execute-token")
+		/* 解析x-execute-token 获取相关信息进行校验 */
+		token, err := jwt.ParseWithClaims(auth, &constant.ReportClaims{}, func(token *jwt.Token) (interface{}, error) {
+			return constant.ReportKey, nil
+		})
+		if err != nil {
+			return nil, err
+		}
+		claims, ok = token.Claims.(*constant.ReportClaims)
+		if !ok || !token.Valid {
+			return nil, errResponse.SetErrByReason(errResponse.ReasonUserUnauthorized)
+		}
+	}
 	originData := req.Data
-	c.log.Info("DataReportTrack: ", originData)
 	var dataList []map[string]interface{}
 	/* 解析接口上报的数据 */
 	if err := json.Unmarshal([]byte(originData), &dataList); err != nil {
 		return nil, err
 	}
-	c.log.Info("DataReportTrack dataList: ", dataList)
 	/* 调用业务函数 */
-	if err := c.uc.DataReportTrack(ctx, dataList); err != nil {
+	if err := c.uc.DataReportTrack(ctx, dataList, claims); err != nil {
 		return nil, err
 	}
 	return nil, nil

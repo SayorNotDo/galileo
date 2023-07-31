@@ -141,11 +141,13 @@ func (r *coreRepo) DestroyToken(ctx context.Context) error {
 	return nil
 }
 
-func (r *coreRepo) DataReportTrack(ctx context.Context, data []map[string]interface{}) error {
+func (r *coreRepo) DataReportTrack(ctx context.Context, data []map[string]interface{}, claims *ReportClaims) error {
 	/* 数据清洗 */
+	fmt.Println("--------------------------------")
+	fmt.Println(ctx.Value("RemoteAddr"))
 	var cleanDataList []map[string]interface{}
 	for _, v := range data {
-		cleanData, err := dataCleaner(v)
+		cleanData, err := dataCleaner(v, claims)
 		if err != nil {
 			return err
 		}
@@ -158,7 +160,7 @@ func (r *coreRepo) DataReportTrack(ctx context.Context, data []map[string]interf
 	return nil
 }
 
-func dataCleaner(data map[string]interface{}) (map[string]interface{}, error) {
+func dataCleaner(data map[string]interface{}, claim *ReportClaims) (map[string]interface{}, error) {
 	/* 检查必需字段是否存在缺失情况 */
 	for _, v := range FieldList {
 		value, ok := data[v]
@@ -206,6 +208,8 @@ func dataCleaner(data map[string]interface{}) (map[string]interface{}, error) {
 			}
 		}
 	}
+	/* 服务端属性添加 */
+	data["$machine"] = claim.Machine
 	/* 数据去重 */
 	/* 数据转换 */
 	/* 数据过滤 */
