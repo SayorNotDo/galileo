@@ -55,6 +55,7 @@ func (c *CoreService) DeleteUser(ctx context.Context, req *v1.DeleteRequest) (*v
 	return c.uc.DeleteUser(ctx, req.Id)
 }
 
+/*DataReportTrack 数据上报后台接口 */
 func (c *CoreService) DataReportTrack(ctx context.Context, req *v1.DataReportTrackRequest) (*emptypb.Empty, error) {
 	originData := req.Data
 	c.log.Info("DataReportTrack: ", originData)

@@ -42,8 +42,14 @@ message Data {
     google.protobuf.Duration write_timeout = 6;
     google.protobuf.Duration dial_timeout = 7;
   }
+  message Kafka {
+    bool producer_return_successes = 1;
+    bool producer_return_errors = 2;
+    google.protobuf.Duration producer_timeout = 3;
+  }
   Database database = 1;
   Redis redis = 2;
+  Kafka kafka = 3;
 }
 
 message Service {

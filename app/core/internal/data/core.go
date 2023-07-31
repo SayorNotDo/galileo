@@ -142,24 +142,6 @@ func (r *coreRepo) DestroyToken(ctx context.Context) error {
 }
 
 func (r *coreRepo) DataReportTrack(ctx context.Context, data []map[string]interface{}) error {
-	/* 设置Kafka配置 */
-	config := sarama.NewConfig()
-	config.Producer.Return.Successes = true
-	//config.Producer.Return.Errors = true
-	config.Producer.Timeout = 5 * time.Second
-	/* 创建Kafka生产者 */
-	producer, err := sarama.NewSyncProducer(KafkaBrokers, config)
-	fmt.Println("----------------------------------------------------Producer")
-	fmt.Printf("%v", producer)
-	if err != nil {
-		return errors.New("Failed to start Kafka producer: " + err.Error())
-	}
-	defer func(producer sarama.SyncProducer) {
-		err := producer.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(producer)
 	/* 数据清洗 */
 	var cleanDataList []map[string]interface{}
 	for _, v := range data {
@@ -170,7 +152,7 @@ func (r *coreRepo) DataReportTrack(ctx context.Context, data []map[string]interf
 		cleanDataList = append(cleanDataList, cleanData)
 	}
 	/* 写入Kafka队列 */
-	if err := sendToKafka(producer, KafkaTopic, cleanDataList); err != nil {
+	if err := sendToKafka(r.data.kafkaProducer, KafkaTopic, cleanDataList); err != nil {
 		return err
 	}
 	return nil

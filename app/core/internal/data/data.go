@@ -4,6 +4,8 @@ import (
 	"context"
 	userV1 "galileo/api/user/v1"
 	"galileo/app/core/internal/conf"
+	. "galileo/app/core/internal/pkg/constant"
+	"github.com/IBM/sarama"
 	consul "github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/metadata"
@@ -20,21 +22,22 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewCoreRepo, NewUserServiceClient, NewRegistrar, NewDiscovery, NewRedis)
+var ProviderSet = wire.NewSet(NewData, NewCoreRepo, NewUserServiceClient, NewRegistrar, NewDiscovery, NewRedis, NewKafkaProducer)
 
 var RedisCli redis.Cmdable
 
 // Data .
 type Data struct {
-	log      *log.Helper
-	uc       userV1.UserClient
-	redisCli redis.Cmdable
+	log           *log.Helper
+	uc            userV1.UserClient
+	redisCli      redis.Cmdable
+	kafkaProducer sarama.SyncProducer
 }
 
 // NewData .
-func NewData(c *conf.Data, uc userV1.UserClient, logger log.Logger, redisCli redis.Cmdable) (*Data, error) {
+func NewData(c *conf.Data, uc userV1.UserClient, logger log.Logger, redisCli redis.Cmdable, kafkaProducer sarama.SyncProducer) (*Data, error) {
 	l := log.NewHelper(log.With(logger, "module", "core.DataService"))
-	return &Data{log: l, uc: uc, redisCli: redisCli}, nil
+	return &Data{log: l, uc: uc, redisCli: redisCli, kafkaProducer: kafkaProducer}, nil
 }
 
 func NewUserServiceClient(ac *conf.Auth, sr *conf.Service, rr registry.Discovery) userV1.UserClient {
@@ -101,4 +104,20 @@ func NewRedis(conf *conf.Data, logger log.Logger) redis.Cmdable {
 	}
 	RedisCli = rdb
 	return rdb
+}
+
+func NewKafkaProducer(conf *conf.Data, logger log.Logger) sarama.SyncProducer {
+	logs := log.NewHelper(log.With(logger, "module", "coreService/data/kafka"))
+	/* 设置Kafka配置 */
+	config := sarama.NewConfig()
+	config.Producer.Return.Successes = conf.Kafka.ProducerReturnSuccesses
+	config.Producer.Return.Errors = conf.Kafka.ProducerReturnErrors
+	config.Producer.Timeout = conf.Kafka.ProducerTimeout.AsDuration()
+
+	/* 创建Kafka生产者 */
+	producer, err := sarama.NewSyncProducer(KafkaBrokers, config)
+	if err != nil {
+		logs.Fatalf("kafka dial error: %v", err)
+	}
+	return producer
 }
