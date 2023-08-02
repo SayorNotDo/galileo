@@ -8,10 +8,8 @@ import (
 	"galileo/app/management/internal/biz"
 	"galileo/ent"
 	"galileo/ent/task"
-	"galileo/pkg/errResponse"
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/redis/go-redis/v9"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 
@@ -62,17 +60,26 @@ func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (bool, error)
 
 func (r *taskRepo) TaskByName(ctx context.Context, name string) (*biz.Task, error) {
 	queryTask, err := r.data.entDB.Task.Query().Where(task.Name(name)).Only(ctx)
-	if err != nil {
+	switch {
+	case ent.IsNotFound(err):
+		return nil, errors.NotFound(ReasonRecordNotFound, err.Error())
+	case err != nil:
 		return nil, err
 	}
+	testcaseSuites := queryTask.Edges.TestcaseSuite
+	suites := make([]int64, 0)
+	for _, o := range testcaseSuites {
+		suites = append(suites, o.ID)
+	}
 	return &biz.Task{
-		Id:        queryTask.ID,
-		Name:      queryTask.Name,
-		Rank:      queryTask.Rank,
-		Status:    taskV1.TaskStatus(queryTask.Status),
-		Type:      queryTask.Type,
-		CreatedAt: queryTask.CreatedAt,
-		CreatedBy: queryTask.CreatedBy,
+		Id:             queryTask.ID,
+		Name:           queryTask.Name,
+		Rank:           queryTask.Rank,
+		Status:         taskV1.TaskStatus(queryTask.Status),
+		Type:           queryTask.Type,
+		CreatedAt:      queryTask.CreatedAt,
+		CreatedBy:      queryTask.CreatedBy,
+		TestcaseSuites: suites,
 	}, nil
 }
 
@@ -253,35 +260,6 @@ func (r *taskRepo) RedisLRangeTask(ctx context.Context, key string) (*taskV1.Tas
 	fmt.Println("----------------------------------------------------------------LRange")
 	fmt.Println(valList)
 	return nil, nil
-}
-
-func (r *taskRepo) RedisLPushTask(ctx context.Context, key, val string) (int64, error) {
-	/* 事务函数: 通过乐观锁实现任务数据写入Redis */
-	maxRetries := 10
-	var cmdList []redis.Cmder
-	txf := func(tx *redis.Tx) error {
-		err := r.data.redisCli.LPush(ctx, key, val).Err()
-		if err != nil {
-			return err
-		}
-
-		cmdList, err = tx.TxPipelined(ctx, func(pipe redis.Pipeliner) error {
-			pipe.LLen(ctx, key)
-			return nil
-		})
-		return err
-	}
-	for i := 0; i < maxRetries; i++ {
-		err := r.data.redisCli.Watch(ctx, txf, key)
-		if err != nil {
-			return cmdList[0].(*redis.IntCmd).Val(), nil
-		}
-		if err == redis.TxFailedErr {
-			continue
-		}
-		return 0, err
-	}
-	return 0, errResponse.SetCustomizeErrMsg(ReasonSystemError, "max retries exceeded")
 }
 
 func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (*biz.Task, error) {

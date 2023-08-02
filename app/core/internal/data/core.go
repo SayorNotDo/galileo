@@ -6,14 +6,18 @@ import (
 	"errors"
 	"fmt"
 	v1 "galileo/api/core/v1"
+	taskV1 "galileo/api/management/task/v1"
 	userService "galileo/api/user/v1"
 	"galileo/app/core/internal/biz"
 	. "galileo/app/core/internal/pkg/constant"
 	. "galileo/app/core/internal/pkg/middleware/auth"
+	mg "galileo/app/management/pkg/constant"
 	"galileo/pkg/encryption"
+	. "galileo/pkg/errResponse"
 	"github.com/IBM/sarama"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
+	"github.com/redis/go-redis/v9"
 	"strconv"
 	"strings"
 	"time"
@@ -155,11 +159,10 @@ func (r *coreRepo) DataReportTrack(ctx context.Context, data []map[string]interf
 	if err := sendToKafka(r.data.kafkaProducer, KafkaTopic, cleanDataList); err != nil {
 		return err
 	}
-	return nil
-}
-
-func (r *coreRepo) sendToRedis(ctx context.Context, data []map[string]interface{}) error {
-	/* 事务函数 */
+	/* 写入Redis缓存 */
+	if err := r.sendToRedis(ctx, cleanDataList); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -238,4 +241,55 @@ func sendToKafka(producer sarama.SyncProducer, topic string, data []map[string]i
 	}
 	fmt.Printf("Message sent to partition %d, offset %d\n", partition, offset)
 	return nil
+}
+
+func (r *coreRepo) sendToRedis(ctx context.Context, data []map[string]interface{}) error {
+	for _, item := range data {
+		if item["#report_type"] == "track" {
+			properties, ok := item["properties"].(map[string]interface{})
+			if !ok {
+				return errors.New("invalid properties structure")
+			}
+			taskName := properties["task_name"].(string)
+			task, err := r.data.taskCli.TaskByName(ctx, &taskV1.TaskByNameRequest{Name: taskName})
+			if err != nil {
+				return err
+			}
+			/* 构建Redis Key */
+			taskKey := mg.TaskProgressKey + ":" + task.Name + ":" + strconv.FormatInt(task.StartTime.AsTime().Unix(), 10)
+			/* map[string]interface{} To string */
+			jsonData, err := json.Marshal(data)
+			if err != nil {
+				return SetCustomizeErrMsg(ReasonSystemError, "convert map[string]interface{} to string error: "+err.Error())
+			}
+			if err := r.RedisLPushTask(ctx, taskKey, string(jsonData)); err != nil {
+				return err
+			}
+		}
+
+	}
+	return nil
+}
+
+func (r *coreRepo) RedisLPushTask(ctx context.Context, key, val string) error {
+	/* 事务函数: 通过乐观锁实现任务数据写入Redis */
+	maxRetries := 10
+	txf := func(tx *redis.Tx) error {
+		err := r.data.redisCli.LPush(ctx, key, val).Err()
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	for i := 0; i < maxRetries; i++ {
+		err := r.data.redisCli.Watch(ctx, txf, key)
+		if err == nil {
+			return nil
+		}
+		if err == redis.TxFailedErr {
+			continue
+		}
+		return nil
+	}
+	return SetCustomizeErrMsg(ReasonSystemError, "max retries exceeded")
 }

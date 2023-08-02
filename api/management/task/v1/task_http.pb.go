@@ -22,6 +22,7 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationTaskCreateTask = "/api.task.v1.Task/CreateTask"
 const OperationTaskTaskByID = "/api.task.v1.Task/TaskByID"
+const OperationTaskTaskByName = "/api.task.v1.Task/TaskByName"
 const OperationTaskTaskProgress = "/api.task.v1.Task/TaskProgress"
 const OperationTaskUpdateTask = "/api.task.v1.Task/UpdateTask"
 const OperationTaskUpdateTaskStatus = "/api.task.v1.Task/UpdateTaskStatus"
@@ -29,6 +30,7 @@ const OperationTaskUpdateTaskStatus = "/api.task.v1.Task/UpdateTaskStatus"
 type TaskHTTPServer interface {
 	CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskReply, error)
 	TaskByID(context.Context, *TaskByIDRequest) (*GetTaskReply, error)
+	TaskByName(context.Context, *TaskByNameRequest) (*GetTaskReply, error)
 	TaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error)
 	UpdateTask(context.Context, *UpdateTaskRequest) (*emptypb.Empty, error)
 	UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error)
@@ -39,6 +41,7 @@ func RegisterTaskHTTPServer(s *http.Server, srv TaskHTTPServer) {
 	r.POST("v1/api/management/task", _Task_CreateTask0_HTTP_Handler(srv))
 	r.PUT("v1/api/management/task", _Task_UpdateTask0_HTTP_Handler(srv))
 	r.GET("v1/api/management/task/{id}", _Task_TaskByID0_HTTP_Handler(srv))
+	r.GET("v1/api/management/task/{name}", _Task_TaskByName0_HTTP_Handler(srv))
 	r.PUT("v1/api/management/task/status", _Task_UpdateTaskStatus0_HTTP_Handler(srv))
 	r.GET("v1/api/management/task/{id}/progress", _Task_TaskProgress0_HTTP_Handler(srv))
 }
@@ -103,6 +106,28 @@ func _Task_TaskByID0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Context) err
 	}
 }
 
+func _Task_TaskByName0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in TaskByNameRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTaskTaskByName)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.TaskByName(ctx, req.(*TaskByNameRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetTaskReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _Task_UpdateTaskStatus0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in UpdateTaskStatusRequest
@@ -147,6 +172,7 @@ func _Task_TaskProgress0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Context)
 type TaskHTTPClient interface {
 	CreateTask(ctx context.Context, req *CreateTaskRequest, opts ...http.CallOption) (rsp *CreateTaskReply, err error)
 	TaskByID(ctx context.Context, req *TaskByIDRequest, opts ...http.CallOption) (rsp *GetTaskReply, err error)
+	TaskByName(ctx context.Context, req *TaskByNameRequest, opts ...http.CallOption) (rsp *GetTaskReply, err error)
 	TaskProgress(ctx context.Context, req *TaskProgressRequest, opts ...http.CallOption) (rsp *TaskProgressReply, err error)
 	UpdateTask(ctx context.Context, req *UpdateTaskRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	UpdateTaskStatus(ctx context.Context, req *UpdateTaskStatusRequest, opts ...http.CallOption) (rsp *UpdateTaskStatusReply, err error)
@@ -178,6 +204,19 @@ func (c *TaskHTTPClientImpl) TaskByID(ctx context.Context, in *TaskByIDRequest, 
 	pattern := "v1/api/management/task/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationTaskTaskByID))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *TaskHTTPClientImpl) TaskByName(ctx context.Context, in *TaskByNameRequest, opts ...http.CallOption) (*GetTaskReply, error) {
+	var out GetTaskReply
+	pattern := "v1/api/management/task/{name}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationTaskTaskByName))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

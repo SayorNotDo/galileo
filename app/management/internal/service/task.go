@@ -137,6 +137,29 @@ func (s *TaskService) TaskByID(ctx context.Context, req *v1.TaskByIDRequest) (*v
 		return nil, err
 	}
 	return &v1.GetTaskReply{
+		Id:              task.Id,
+		Name:            task.Name,
+		Type:            int32(task.Type),
+		Rank:            int32(task.Rank),
+		Description:     task.Description,
+		TestcaseSuiteId: task.TestcaseSuites,
+		Status:          task.Status,
+		Config:          task.Config,
+		Worker:          task.Worker,
+		ScheduleTime:    timestamppb.New(task.ScheduleTime),
+		Deadline:        timestamppb.New(task.Deadline),
+		StartTime:       timestamppb.New(task.StartTime),
+		Assignee:        task.Assignee,
+	}, nil
+}
+
+func (s *TaskService) TaskByName(ctx context.Context, req *v1.TaskByNameRequest) (*v1.GetTaskReply, error) {
+	task, err := s.uc.TaskByName(ctx, req.Name)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.GetTaskReply{
+		Id:              task.Id,
 		Name:            task.Name,
 		Type:            int32(task.Type),
 		Rank:            int32(task.Rank),

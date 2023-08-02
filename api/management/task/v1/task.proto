@@ -29,6 +29,11 @@ service Task {
       get: "v1/api/management/task/{id}"
     };
   };
+  rpc TaskByName (TaskByNameRequest) returns (GetTaskReply) {
+    option(google.api.http) = {
+      get: "v1/api/management/task/{name}"
+    };
+  }
   rpc ListTimingTask (google.protobuf.Empty) returns (ListTimingTaskReply);
   rpc UpdateTaskStatus (UpdateTaskStatusRequest) returns (UpdateTaskStatusReply){
     option(google.api.http) = {
@@ -138,6 +143,11 @@ message DeleteTaskReply {}
 message TaskByIDRequest {
   int64 id = 1;
 }
+
+message TaskByNameRequest {
+  string name = 1;
+}
+
 message GetTaskReply {
   string name = 1;
   int32 rank = 2;
@@ -152,6 +162,7 @@ message GetTaskReply {
   google.protobuf.Timestamp deadline = 10;
   uint32 assignee = 12;
   string worker = 13;
+  int64 id = 64;
 }
 
 message ListTimingTaskRequest {}

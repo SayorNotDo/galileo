@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	taskV1 "galileo/api/management/task/v1"
 	userV1 "galileo/api/user/v1"
 	"galileo/app/core/internal/conf"
 	. "galileo/app/core/internal/pkg/constant"
@@ -29,14 +30,15 @@ var RedisCli *redis.Client
 type Data struct {
 	log           *log.Helper
 	uc            userV1.UserClient
+	taskCli       taskV1.TaskClient
 	redisCli      *redis.Client
 	kafkaProducer sarama.SyncProducer
 }
 
 // NewData .
-func NewData(c *conf.Data, uc userV1.UserClient, logger log.Logger, redisCli *redis.Client, kafkaProducer sarama.SyncProducer) (*Data, error) {
+func NewData(c *conf.Data, uc userV1.UserClient, logger log.Logger, redisCli *redis.Client, taskCli taskV1.TaskClient, kafkaProducer sarama.SyncProducer) (*Data, error) {
 	l := log.NewHelper(log.With(logger, "module", "core.DataService"))
-	return &Data{log: l, uc: uc, redisCli: redisCli, kafkaProducer: kafkaProducer}, nil
+	return &Data{log: l, uc: uc, redisCli: redisCli, taskCli: taskCli, kafkaProducer: kafkaProducer}, nil
 }
 
 func NewUserServiceClient(ac *conf.Auth, sr *conf.Service, rr registry.Discovery) userV1.UserClient {

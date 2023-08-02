@@ -45,7 +45,6 @@ type TaskRepo interface {
 	UpdateTaskStatus(ctx context.Context, updateTask *Task) (*Task, error)
 	TaskDetailById(ctx context.Context, id int64) (*Task, error)
 	RedisLRangeTask(ctx context.Context, key string) (*v1.TaskInfo, error)
-	RedisLPushTask(ctx context.Context, key, val string) (int64, error)
 }
 
 // TaskUseCase is a Task useCase.
@@ -90,8 +89,4 @@ func (uc *TaskUseCase) ListTimingTask(ctx context.Context) ([]*v1.TaskInfo, erro
 
 func (uc *TaskUseCase) RedisLRangeTask(ctx context.Context, key string) (*v1.TaskInfo, error) {
 	return uc.repo.RedisLRangeTask(ctx, key)
-}
-
-func (uc *TaskUseCase) RedisLPushTask(ctx context.Context, key string, val string) (int64, error) {
-	return uc.repo.RedisLPushTask(ctx, key, val)
 }
