@@ -36,7 +36,33 @@ service Task {
       body: "*"
     };
   };
+  rpc TaskProgress (TaskProgressRequest) returns (TaskProgressReply) {
+    option(google.api.http) = {
+      get: "v1/api/management/task/{id}/progress"
+    };
+  };
+  rpc CreateTestPlan (CreateTestPlanRequest) returns (CreateTestPlanReply);
 }
+
+message TaskProgressRequest {
+  int64 id = 1;
+}
+
+message TaskProgressReply {
+  int32 progress = 1;
+  progressDetail detail = 2;
+}
+
+message progressDetail {
+  int32 failure = 1;
+  int32 success = 2;
+  int32 error = 3;
+  int32 unknown = 4;
+}
+
+message CreateTestPlanRequest {}
+
+message CreateTestPlanReply {}
 
 message UpdateTaskStatusRequest {
   int64 id = 1;

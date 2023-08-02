@@ -9,7 +9,7 @@ import (
 	"galileo/ent/user"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"time"
 )
 
@@ -181,7 +181,7 @@ func (repo *userRepo) UpdatePassword(ctx context.Context, u *biz.User) (bool, er
 }
 
 func (repo *userRepo) SetToken(ctx context.Context, username string, token string) (bool, error) {
-	conn := repo.data.redisDB.Conn(ctx)
+	conn := repo.data.redisDB.Conn()
 	defer func(conn *redis.Conn) {
 		err := conn.Close()
 		if err != nil {
@@ -196,7 +196,7 @@ func (repo *userRepo) SetToken(ctx context.Context, username string, token strin
 }
 
 func (repo *userRepo) EmptyToken(ctx context.Context, username string) (bool, error) {
-	conn := repo.data.redisDB.Conn(ctx)
+	conn := repo.data.redisDB.Conn()
 	defer func(conn *redis.Conn) {
 		err := conn.Close()
 		if err != nil {

@@ -11,10 +11,9 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/go-redis/redis/extra/redisotel"
-	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	consulAPI "github.com/hashicorp/consul/api"
+	"github.com/redis/go-redis/v9"
 	"github.com/robfig/cron/v3"
 	grpcx "google.golang.org/grpc"
 	"time"
@@ -82,7 +81,6 @@ func NewRedis(conf *conf.Data, logger log.Logger) redis.Cmdable {
 		DialTimeout:  time.Second * 2,
 		PoolSize:     10,
 	})
-	rdb.AddHook(redisotel.TracingHook{})
 	timeout, cancelFunc := context.WithTimeout(context.Background(), time.Second*2)
 	err := rdb.Ping(timeout).Err()
 	defer cancelFunc()

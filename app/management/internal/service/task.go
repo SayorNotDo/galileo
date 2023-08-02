@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"galileo/api/management/task/v1"
 	"galileo/app/management/internal/biz"
 	"galileo/pkg/ctxdata"
@@ -10,7 +11,12 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"strconv"
 	"time"
+)
+
+const (
+	taskProgressKey = "taskProgress"
 )
 
 type TaskService struct {
@@ -192,3 +198,26 @@ func (s *TaskService) UpdateTaskStatus(ctx context.Context, req *v1.UpdateTaskSt
 		Status:          ret.Status,
 	}, nil
 }
+
+// TaskProgress returns the progress of a task
+/* TODO: 基于redis实现任务进度的同步管理 */
+func (s *TaskService) TaskProgress(ctx context.Context, req *v1.TaskProgressRequest) (*v1.TaskProgressReply, error) {
+	/* 接口参数获取指定任务信息 */
+	task, err := s.uc.TaskByID(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	/* 基于任务信息构建key(规则: taskProgress:taskName:startTime)，查询redis数据库中的缓存 */
+	taskKey := taskProgressKey + ":" + task.Name + ":" + strconv.FormatInt(task.StartTime.Unix(), 10)
+	fmt.Println("taskKey: ", taskKey)
+	ret, err := s.uc.RedisLRangeTask(ctx, taskKey)
+	if err != nil {
+		return nil, err
+	}
+	/* 通过缓存计算当前测试进度、详情 */
+	fmt.Println(ret)
+	return &v1.TaskProgressReply{}, nil
+}
+
+/* TODO: 当任务为完成状态时，指定Key的Redis缓存设置过期时间 */
+/* TODO: 重置任务时，清除指定Key的Redis缓存 */

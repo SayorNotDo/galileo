@@ -11,11 +11,10 @@ import (
 	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/registry"
-	"github.com/go-redis/redis/extra/redisotel"
-	"github.com/go-redis/redis/v8"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/wire"
 	consulAPI "github.com/hashicorp/consul/api"
+	"github.com/redis/go-redis/v9"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
@@ -95,7 +94,7 @@ func NewRedis(conf *conf.Data, logger log.Logger) redis.Cmdable {
 		DialTimeout:  time.Second * 2,
 		PoolSize:     10,
 	})
-	rdb.AddHook(redisotel.TracingHook{})
+	//rdb.AddHook(redisotel.TracingHook{})
 	timeout, cancelFunc := context.WithTimeout(context.Background(), time.Second*2)
 	err := rdb.Ping(timeout).Err()
 	defer cancelFunc()

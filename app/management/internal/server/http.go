@@ -133,7 +133,6 @@ func setUserInfo() middleware.Middleware {
 
 func NewWhiteListMatcher() selector.MatchFunc {
 	whiteList := make(map[string]struct{})
-	//whiteList["/api.core.v1.Core/Register"] = struct{}{}
 	whiteList["/api.task.v1.Task/Test"] = struct{}{}
 	return func(ctx context.Context, operation string) bool {
 		if _, ok := whiteList[operation]; ok {

@@ -35,6 +35,214 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on ExecuteTokenRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ExecuteTokenRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ExecuteTokenRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ExecuteTokenRequestMultiError, or nil if none found.
+func (m *ExecuteTokenRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ExecuteTokenRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Machine
+
+	if len(errors) > 0 {
+		return ExecuteTokenRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ExecuteTokenRequestMultiError is an error wrapping multiple validation
+// errors returned by ExecuteTokenRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ExecuteTokenRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ExecuteTokenRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ExecuteTokenRequestMultiError) AllErrors() []error { return m }
+
+// ExecuteTokenRequestValidationError is the validation error returned by
+// ExecuteTokenRequest.Validate if the designated constraints aren't met.
+type ExecuteTokenRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ExecuteTokenRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ExecuteTokenRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ExecuteTokenRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ExecuteTokenRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ExecuteTokenRequestValidationError) ErrorName() string {
+	return "ExecuteTokenRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ExecuteTokenRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sExecuteTokenRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ExecuteTokenRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ExecuteTokenRequestValidationError{}
+
+// Validate checks the field values on ExecuteTokenReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ExecuteTokenReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ExecuteTokenReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ExecuteTokenReplyMultiError, or nil if none found.
+func (m *ExecuteTokenReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ExecuteTokenReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ExecuteToken
+
+	if len(errors) > 0 {
+		return ExecuteTokenReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// ExecuteTokenReplyMultiError is an error wrapping multiple validation errors
+// returned by ExecuteTokenReply.ValidateAll() if the designated constraints
+// aren't met.
+type ExecuteTokenReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ExecuteTokenReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ExecuteTokenReplyMultiError) AllErrors() []error { return m }
+
+// ExecuteTokenReplyValidationError is the validation error returned by
+// ExecuteTokenReply.Validate if the designated constraints aren't met.
+type ExecuteTokenReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ExecuteTokenReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ExecuteTokenReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ExecuteTokenReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ExecuteTokenReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ExecuteTokenReplyValidationError) ErrorName() string {
+	return "ExecuteTokenReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ExecuteTokenReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sExecuteTokenReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ExecuteTokenReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ExecuteTokenReplyValidationError{}
+
 // Validate checks the field values on DataReportTrackRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

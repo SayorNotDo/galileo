@@ -29,7 +29,7 @@ type CoreRepo interface {
 	SetToken(ctx context.Context, token string) (string, error)
 	DestroyToken(ctx context.Context) error
 	UpdatePassword(ctx context.Context, password string) (bool, error)
-	DataReportTrack(ctx context.Context, data []map[string]interface{}, claims *constant.ReportClaims) error
+	DataReportTrack(ctx context.Context, data []map[string]interface{}, claims *auth.ReportClaims) error
 }
 type User struct {
 	Id          uint32
@@ -83,15 +83,28 @@ func (c *CoreUseCase) Logout(ctx context.Context) (*emptypb.Empty, error) {
 	return nil, nil
 }
 
-func userClaim(u *User) *auth.CustomClaims {
+func newUserClaim(u *User) *auth.CustomClaims {
 	return &auth.CustomClaims{
 		ID:          u.Id,
 		Username:    u.Username,
 		AuthorityId: int(u.Role),
 		RegisteredClaims: jwt2.RegisteredClaims{
 			NotBefore: jwt2.NewNumericDate(time.Now()),
-			ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 0, 1)),
-			Issuer:    "Gyl",
+			ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 1, 0)),
+			IssuedAt:  jwt2.NewNumericDate(time.Now()),
+			Issuer:    "Galileo",
+		},
+	}
+}
+
+func newReportClaim(machine string) *auth.ReportClaims {
+	return &auth.ReportClaims{
+		Machine: machine,
+		RegisteredClaims: jwt2.RegisteredClaims{
+			NotBefore: jwt2.NewNumericDate(time.Now()),
+			ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(1, 0, 0)),
+			IssuedAt:  jwt2.NewNumericDate(time.Now()),
+			Issuer:    "Galileo",
 		},
 	}
 }
@@ -110,7 +123,7 @@ func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	if _, passErr := c.repo.VerifyPassword(ctx, req.Password, user.Password); passErr != nil {
 		return nil, passErr
 	}
-	claims := userClaim(user)
+	claims := newUserClaim(user)
 	token, err := auth.CreateToken(*claims, c.signingKey)
 	if err != nil {
 		return nil, SetErrByReason(ReasonParamsError)
@@ -228,6 +241,18 @@ func NewUser(phone, username, password, email string) (User, error) {
 	}, nil
 }
 
-func (c *CoreUseCase) DataReportTrack(ctx context.Context, data []map[string]interface{}, claims *constant.ReportClaims) error {
+func (c *CoreUseCase) DataReportTrack(ctx context.Context, data []map[string]interface{}, claims *auth.ReportClaims) error {
 	return c.repo.DataReportTrack(ctx, data, claims)
+}
+
+func (c *CoreUseCase) ExecuteToken(ctx context.Context, machine string) (string, error) {
+	if len(machine) <= 0 {
+		return "", SetErrByReason(ReasonParamsError)
+	}
+	claims := newReportClaim(machine)
+	token, err := auth.GenerateExecuteToken(*claims, constant.ReportKey)
+	if err != nil {
+		return "", SetErrByReason(ReasonSystemError)
+	}
+	return token, nil
 }

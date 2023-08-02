@@ -26,6 +26,8 @@ const (
 	Task_TaskByID_FullMethodName         = "/api.task.v1.Task/TaskByID"
 	Task_ListTimingTask_FullMethodName   = "/api.task.v1.Task/ListTimingTask"
 	Task_UpdateTaskStatus_FullMethodName = "/api.task.v1.Task/UpdateTaskStatus"
+	Task_TaskProgress_FullMethodName     = "/api.task.v1.Task/TaskProgress"
+	Task_CreateTestPlan_FullMethodName   = "/api.task.v1.Task/CreateTestPlan"
 )
 
 // TaskClient is the client API for Task service.
@@ -38,6 +40,8 @@ type TaskClient interface {
 	TaskByID(ctx context.Context, in *TaskByIDRequest, opts ...grpc.CallOption) (*GetTaskReply, error)
 	ListTimingTask(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListTimingTaskReply, error)
 	UpdateTaskStatus(ctx context.Context, in *UpdateTaskStatusRequest, opts ...grpc.CallOption) (*UpdateTaskStatusReply, error)
+	TaskProgress(ctx context.Context, in *TaskProgressRequest, opts ...grpc.CallOption) (*TaskProgressReply, error)
+	CreateTestPlan(ctx context.Context, in *CreateTestPlanRequest, opts ...grpc.CallOption) (*CreateTestPlanReply, error)
 }
 
 type taskClient struct {
@@ -102,6 +106,24 @@ func (c *taskClient) UpdateTaskStatus(ctx context.Context, in *UpdateTaskStatusR
 	return out, nil
 }
 
+func (c *taskClient) TaskProgress(ctx context.Context, in *TaskProgressRequest, opts ...grpc.CallOption) (*TaskProgressReply, error) {
+	out := new(TaskProgressReply)
+	err := c.cc.Invoke(ctx, Task_TaskProgress_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *taskClient) CreateTestPlan(ctx context.Context, in *CreateTestPlanRequest, opts ...grpc.CallOption) (*CreateTestPlanReply, error) {
+	out := new(CreateTestPlanReply)
+	err := c.cc.Invoke(ctx, Task_CreateTestPlan_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskServer is the server API for Task service.
 // All implementations must embed UnimplementedTaskServer
 // for forward compatibility
@@ -112,6 +134,8 @@ type TaskServer interface {
 	TaskByID(context.Context, *TaskByIDRequest) (*GetTaskReply, error)
 	ListTimingTask(context.Context, *emptypb.Empty) (*ListTimingTaskReply, error)
 	UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error)
+	TaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error)
+	CreateTestPlan(context.Context, *CreateTestPlanRequest) (*CreateTestPlanReply, error)
 	mustEmbedUnimplementedTaskServer()
 }
 
@@ -136,6 +160,12 @@ func (UnimplementedTaskServer) ListTimingTask(context.Context, *emptypb.Empty) (
 }
 func (UnimplementedTaskServer) UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTaskStatus not implemented")
+}
+func (UnimplementedTaskServer) TaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TaskProgress not implemented")
+}
+func (UnimplementedTaskServer) CreateTestPlan(context.Context, *CreateTestPlanRequest) (*CreateTestPlanReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTestPlan not implemented")
 }
 func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
 
@@ -258,6 +288,42 @@ func _Task_UpdateTaskStatus_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Task_TaskProgress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskProgressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServer).TaskProgress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Task_TaskProgress_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServer).TaskProgress(ctx, req.(*TaskProgressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Task_CreateTestPlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTestPlanRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServer).CreateTestPlan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Task_CreateTestPlan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServer).CreateTestPlan(ctx, req.(*CreateTestPlanRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Task_ServiceDesc is the grpc.ServiceDesc for Task service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -288,6 +354,14 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateTaskStatus",
 			Handler:    _Task_UpdateTaskStatus_Handler,
+		},
+		{
+			MethodName: "TaskProgress",
+			Handler:    _Task_TaskProgress_Handler,
+		},
+		{
+			MethodName: "CreateTestPlan",
+			Handler:    _Task_CreateTestPlan_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

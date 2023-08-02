@@ -23,6 +23,7 @@ const _ = http.SupportPackageIsVersion1
 const OperationCoreCreateGroup = "/api.core.v1.Core/CreateGroup"
 const OperationCoreDataReportTrack = "/api.core.v1.Core/DataReportTrack"
 const OperationCoreDeleteUser = "/api.core.v1.Core/DeleteUser"
+const OperationCoreExecuteToken = "/api.core.v1.Core/ExecuteToken"
 const OperationCoreListUser = "/api.core.v1.Core/ListUser"
 const OperationCoreLogin = "/api.core.v1.Core/Login"
 const OperationCoreLogout = "/api.core.v1.Core/Logout"
@@ -39,6 +40,7 @@ type CoreHTTPServer interface {
 	CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupReply, error)
 	DataReportTrack(context.Context, *DataReportTrackRequest) (*emptypb.Empty, error)
 	DeleteUser(context.Context, *DeleteRequest) (*DeleteReply, error)
+	ExecuteToken(context.Context, *ExecuteTokenRequest) (*ExecuteTokenReply, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error)
@@ -68,6 +70,7 @@ func RegisterCoreHTTPServer(s *http.Server, srv CoreHTTPServer) {
 	r.POST("v1/api/user/group", _Core_CreateGroup0_HTTP_Handler(srv))
 	r.PUT("v1/api/user/group", _Core_UpdateGroup0_HTTP_Handler(srv))
 	r.POST("data/report", _Core_DataReportTrack0_HTTP_Handler(srv))
+	r.POST("v1/api/execute-token", _Core_ExecuteToken0_HTTP_Handler(srv))
 }
 
 func _Core_Register0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
@@ -342,10 +345,30 @@ func _Core_DataReportTrack0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Conte
 	}
 }
 
+func _Core_ExecuteToken0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ExecuteTokenRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCoreExecuteToken)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ExecuteToken(ctx, req.(*ExecuteTokenRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ExecuteTokenReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type CoreHTTPClient interface {
 	CreateGroup(ctx context.Context, req *CreateGroupRequest, opts ...http.CallOption) (rsp *CreateGroupReply, err error)
 	DataReportTrack(ctx context.Context, req *DataReportTrackRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	DeleteUser(ctx context.Context, req *DeleteRequest, opts ...http.CallOption) (rsp *DeleteReply, err error)
+	ExecuteToken(ctx context.Context, req *ExecuteTokenRequest, opts ...http.CallOption) (rsp *ExecuteTokenReply, err error)
 	ListUser(ctx context.Context, req *ListUserRequest, opts ...http.CallOption) (rsp *ListUserReply, err error)
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *LoginReply, err error)
 	Logout(ctx context.Context, req *LogoutRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
@@ -400,6 +423,19 @@ func (c *CoreHTTPClientImpl) DeleteUser(ctx context.Context, in *DeleteRequest, 
 	opts = append(opts, http.Operation(OperationCoreDeleteUser))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *CoreHTTPClientImpl) ExecuteToken(ctx context.Context, in *ExecuteTokenRequest, opts ...http.CallOption) (*ExecuteTokenReply, error) {
+	var out ExecuteTokenReply
+	pattern := "v1/api/execute-token"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationCoreExecuteToken))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

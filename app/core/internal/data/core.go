@@ -9,7 +9,7 @@ import (
 	userService "galileo/api/user/v1"
 	"galileo/app/core/internal/biz"
 	. "galileo/app/core/internal/pkg/constant"
-	"galileo/app/core/internal/pkg/middleware/auth"
+	. "galileo/app/core/internal/pkg/middleware/auth"
 	"galileo/pkg/encryption"
 	"github.com/IBM/sarama"
 	"github.com/go-kratos/kratos/v2/log"
@@ -129,7 +129,7 @@ func (r *coreRepo) UpdateUserInfo(c context.Context, user *biz.User) (bool, erro
 
 func (r *coreRepo) SetToken(ctx context.Context, token string) (string, error) {
 	key := encryption.EncodeMD5(token)
-	r.data.redisCli.Set(ctx, "token:"+key, token, auth.TokenExpiration)
+	r.data.redisCli.Set(ctx, "token:"+key, token, TokenExpiration)
 	return key, nil
 }
 
@@ -143,11 +143,9 @@ func (r *coreRepo) DestroyToken(ctx context.Context) error {
 
 func (r *coreRepo) DataReportTrack(ctx context.Context, data []map[string]interface{}, claims *ReportClaims) error {
 	/* 数据清洗 */
-	fmt.Println("--------------------------------")
-	fmt.Println(ctx.Value("RemoteAddr"))
 	var cleanDataList []map[string]interface{}
 	for _, v := range data {
-		cleanData, err := dataCleaner(v, claims)
+		cleanData, err := dataCleaner(ctx, v, claims)
 		if err != nil {
 			return err
 		}
@@ -160,7 +158,12 @@ func (r *coreRepo) DataReportTrack(ctx context.Context, data []map[string]interf
 	return nil
 }
 
-func dataCleaner(data map[string]interface{}, claim *ReportClaims) (map[string]interface{}, error) {
+func (r *coreRepo) sendToRedis(ctx context.Context, data []map[string]interface{}) error {
+	/* 事务函数 */
+	return nil
+}
+
+func dataCleaner(ctx context.Context, data map[string]interface{}, claim *ReportClaims) (map[string]interface{}, error) {
 	/* 检查必需字段是否存在缺失情况 */
 	for _, v := range FieldList {
 		value, ok := data[v]
@@ -181,8 +184,6 @@ func dataCleaner(data map[string]interface{}, claim *ReportClaims) (map[string]i
 			/* 是否存在时间穿越 */
 			currentTime := time.Now().UnixNano() / 1e6
 			if tNum > currentTime {
-				fmt.Println(tNum)
-				fmt.Println(currentTime)
 				return nil, errors.New("#timestamp's value cannot be greater than current time")
 			}
 		/* 上报类型是否合法 */
@@ -209,7 +210,11 @@ func dataCleaner(data map[string]interface{}, claim *ReportClaims) (map[string]i
 		}
 	}
 	/* 服务端属性添加 */
-	data["$machine"] = claim.Machine
+	remoteAddr := ctx.Value("RemoteAddr").(string)
+	data["properties"] = map[string]interface{}{
+		"$machine":        claim.Machine,
+		"$remote_address": remoteAddr,
+	}
 	/* 数据去重 */
 	/* 数据转换 */
 	/* 数据过滤 */

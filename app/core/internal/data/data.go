@@ -13,10 +13,9 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/go-redis/redis/extra/redisotel"
-	"github.com/go-redis/redis/v8"
 	"github.com/google/wire"
 	consulAPI "github.com/hashicorp/consul/api"
+	"github.com/redis/go-redis/v9"
 	grpcx "google.golang.org/grpc"
 	"time"
 )
@@ -24,18 +23,18 @@ import (
 // ProviderSet is data providers.
 var ProviderSet = wire.NewSet(NewData, NewCoreRepo, NewUserServiceClient, NewRegistrar, NewDiscovery, NewRedis, NewKafkaProducer)
 
-var RedisCli redis.Cmdable
+var RedisCli *redis.Client
 
 // Data .
 type Data struct {
 	log           *log.Helper
 	uc            userV1.UserClient
-	redisCli      redis.Cmdable
+	redisCli      *redis.Client
 	kafkaProducer sarama.SyncProducer
 }
 
 // NewData .
-func NewData(c *conf.Data, uc userV1.UserClient, logger log.Logger, redisCli redis.Cmdable, kafkaProducer sarama.SyncProducer) (*Data, error) {
+func NewData(c *conf.Data, uc userV1.UserClient, logger log.Logger, redisCli *redis.Client, kafkaProducer sarama.SyncProducer) (*Data, error) {
 	l := log.NewHelper(log.With(logger, "module", "core.DataService"))
 	return &Data{log: l, uc: uc, redisCli: redisCli, kafkaProducer: kafkaProducer}, nil
 }
@@ -84,7 +83,7 @@ func NewDiscovery(conf *conf.Registry) registry.Discovery {
 	return r
 }
 
-func NewRedis(conf *conf.Data, logger log.Logger) redis.Cmdable {
+func NewRedis(conf *conf.Data, logger log.Logger) *redis.Client {
 	logs := log.NewHelper(log.With(logger, "module", "coreService/data/redis"))
 	rdb := redis.NewClient(&redis.Options{
 		Addr:         conf.Redis.Addr,
@@ -95,7 +94,6 @@ func NewRedis(conf *conf.Data, logger log.Logger) redis.Cmdable {
 		DialTimeout:  time.Second * 2,
 		PoolSize:     10,
 	})
-	rdb.AddHook(redisotel.TracingHook{})
 	timeout, cancelFunc := context.WithTimeout(context.Background(), time.Second*2)
 	err := rdb.Ping(timeout).Err()
 	defer cancelFunc()

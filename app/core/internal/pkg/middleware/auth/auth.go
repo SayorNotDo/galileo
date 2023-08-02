@@ -17,11 +17,25 @@ type CustomClaims struct {
 	jwt.RegisteredClaims
 }
 
+type ReportClaims struct {
+	Machine string `json:"machine,omitempty"`
+	jwt.RegisteredClaims
+}
+
 func CreateToken(c CustomClaims, key string) (string, error) {
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, c)
 	signedString, err := claims.SignedString([]byte(key))
 	if err != nil {
 		return "", errors.New("generate token failed" + err.Error())
+	}
+	return signedString, nil
+}
+
+func GenerateExecuteToken(r ReportClaims, key string) (string, error) {
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, r)
+	signedString, err := claims.SignedString([]byte(key))
+	if err != nil {
+		return "", errors.New("generate execute-token failed" + err.Error())
 	}
 	return signedString, nil
 }

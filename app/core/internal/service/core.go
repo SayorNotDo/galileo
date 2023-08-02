@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	v1 "galileo/api/core/v1"
 	"galileo/app/core/internal/pkg/constant"
+	. "galileo/app/core/internal/pkg/middleware/auth"
 	"galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/http"
@@ -60,23 +61,34 @@ func (c *CoreService) DeleteUser(ctx context.Context, req *v1.DeleteRequest) (*v
 	return c.uc.DeleteUser(ctx, req.Id)
 }
 
+func (c *CoreService) ExecuteToken(ctx context.Context, req *v1.ExecuteTokenRequest) (*v1.ExecuteTokenReply, error) {
+	token, err := c.uc.ExecuteToken(ctx, req.Machine)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.ExecuteTokenReply{
+		ExecuteToken: token,
+	}, nil
+}
+
 /*DataReportTrack 数据上报后台接口 */
 func (c *CoreService) DataReportTrack(ctx context.Context, req *v1.DataReportTrackRequest) (*emptypb.Empty, error) {
 	/* 数据上报接口单独鉴权逻辑 */
-	var claims *constant.ReportClaims
+	var claims *ReportClaims
 	if tr, ok := transport.FromServerContext(ctx); ok {
 		if ht, ok := tr.(*http.Transport); ok {
+			/* 实际生产环境中，需要根据具体情况考虑是否需要处理“X-Forwarded-For”头部以获取真实的客户端IP地址 */
 			ctx = context.WithValue(ctx, "RemoteAddr", ht.Request().RemoteAddr)
 		}
 		auth := tr.RequestHeader().Get("x-execute-token")
 		/* 解析x-execute-token 获取相关信息进行校验 */
-		token, err := jwt.ParseWithClaims(auth, &constant.ReportClaims{}, func(token *jwt.Token) (interface{}, error) {
-			return constant.ReportKey, nil
+		token, err := jwt.ParseWithClaims(auth, &ReportClaims{}, func(token *jwt.Token) (interface{}, error) {
+			return []byte(constant.ReportKey), nil
 		})
 		if err != nil {
 			return nil, err
 		}
-		claims, ok = token.Claims.(*constant.ReportClaims)
+		claims, ok = token.Claims.(*ReportClaims)
 		if !ok || !token.Valid {
 			return nil, errResponse.SetErrByReason(errResponse.ReasonUserUnauthorized)
 		}

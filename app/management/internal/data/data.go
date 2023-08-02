@@ -15,10 +15,10 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/go-redis/redis/extra/redisotel"
-	"github.com/go-redis/redis/v8"
 	_ "github.com/go-sql-driver/mysql"
 	consulAPI "github.com/hashicorp/consul/api"
+	"github.com/redis/go-redis/extra/redisotel/v9"
+	"github.com/redis/go-redis/v9"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
@@ -53,11 +53,11 @@ type Data struct {
 	fileCli   fileV1.FileClient
 	entDB     *ent.Client
 	log       *log.Helper
-	redisCli  redis.Cmdable
+	redisCli  *redis.Client
 }
 
 // NewData .
-func NewData(c *conf.Data, db *ent.Client, logger log.Logger, redisCli redis.Cmdable, fc fileV1.FileClient, eg engineV1.EngineClient) (*Data, func(), error) {
+func NewData(c *conf.Data, db *ent.Client, logger log.Logger, redisCli *redis.Client, fc fileV1.FileClient, eg engineV1.EngineClient) (*Data, func(), error) {
 	l := log.NewHelper(log.With(logger, "module", "management.DataService"))
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
@@ -139,7 +139,7 @@ func NewEntDB(c *conf.Data) (*ent.Client, error) {
 	return client, nil
 }
 
-func NewRedis(conf *conf.Data, logger log.Logger) redis.Cmdable {
+func NewRedis(conf *conf.Data, logger log.Logger) *redis.Client {
 	l := log.NewHelper(log.With(logger, "module", "management.dataService.redis"))
 	rdb := redis.NewClient(&redis.Options{
 		Addr:         conf.Redis.Addr,
@@ -150,7 +150,15 @@ func NewRedis(conf *conf.Data, logger log.Logger) redis.Cmdable {
 		DialTimeout:  time.Second * 2,
 		PoolSize:     10,
 	})
-	rdb.AddHook(redisotel.TracingHook{})
+	// rdb.AddHook()
+	/* 开启tracing instrumentation */
+	if err := redisotel.InstrumentTracing(rdb); err != nil {
+		l.Fatalf(err.Error())
+	}
+	/* 开启 metrics instrumentation */
+	if err := redisotel.InstrumentMetrics(rdb); err != nil {
+		l.Fatalf(err.Error())
+	}
 	timeout, cancelFunc := context.WithTimeout(context.Background(), time.Second*2)
 	err := rdb.Ping(timeout).Err()
 	defer cancelFunc()

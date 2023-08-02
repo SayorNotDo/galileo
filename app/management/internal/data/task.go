@@ -2,13 +2,16 @@ package data
 
 import (
 	"context"
+	"fmt"
 	engineV1 "galileo/api/engine/v1"
 	taskV1 "galileo/api/management/task/v1"
 	"galileo/app/management/internal/biz"
 	"galileo/ent"
 	"galileo/ent/task"
+	"galileo/pkg/errResponse"
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/errors"
+	"github.com/redis/go-redis/v9"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 
@@ -240,6 +243,45 @@ func (r *taskRepo) CountAllTask(ctx context.Context) (int, error) {
 		return 0, err
 	}
 	return count, nil
+}
+
+func (r *taskRepo) RedisLRangeTask(ctx context.Context, key string) (*taskV1.TaskInfo, error) {
+	valList, err := r.data.redisCli.LRange(ctx, key, 0, -1).Result()
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("----------------------------------------------------------------LRange")
+	fmt.Println(valList)
+	return nil, nil
+}
+
+func (r *taskRepo) RedisLPushTask(ctx context.Context, key, val string) (int64, error) {
+	/* 事务函数: 通过乐观锁实现任务数据写入Redis */
+	maxRetries := 10
+	var cmdList []redis.Cmder
+	txf := func(tx *redis.Tx) error {
+		err := r.data.redisCli.LPush(ctx, key, val).Err()
+		if err != nil {
+			return err
+		}
+
+		cmdList, err = tx.TxPipelined(ctx, func(pipe redis.Pipeliner) error {
+			pipe.LLen(ctx, key)
+			return nil
+		})
+		return err
+	}
+	for i := 0; i < maxRetries; i++ {
+		err := r.data.redisCli.Watch(ctx, txf, key)
+		if err != nil {
+			return cmdList[0].(*redis.IntCmd).Val(), nil
+		}
+		if err == redis.TxFailedErr {
+			continue
+		}
+		return 0, err
+	}
+	return 0, errResponse.SetCustomizeErrMsg(ReasonSystemError, "max retries exceeded")
 }
 
 func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (*biz.Task, error) {
