@@ -27,8 +27,9 @@ func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, conf
 	discovery := data.NewDiscovery(registry)
 	userClient := data.NewUserServiceClient(auth, confService, discovery)
 	client := data.NewRedis(confData, logger)
+	taskClient := data.NewTaskServiceClient(auth, confService, discovery)
 	syncProducer := data.NewKafkaProducer(confData, logger)
-	dataData, err := data.NewData(confData, userClient, logger, client, syncProducer)
+	dataData, err := data.NewData(confData, userClient, logger, client, taskClient, syncProducer)
 	if err != nil {
 		return nil, nil, err
 	}

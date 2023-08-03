@@ -242,5 +242,4 @@ func (s *TaskService) TaskProgress(ctx context.Context, req *v1.TaskProgressRequ
 	return &v1.TaskProgressReply{}, nil
 }
 
-/* TODO: 当任务为完成状态时，指定Key的Redis缓存设置过期时间 */
 /* TODO: 重置任务时，清除指定Key的Redis缓存 */

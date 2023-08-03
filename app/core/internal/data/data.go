@@ -22,7 +22,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewCoreRepo, NewUserServiceClient, NewRegistrar, NewDiscovery, NewRedis, NewKafkaProducer)
+var ProviderSet = wire.NewSet(NewData, NewCoreRepo, NewUserServiceClient, NewTaskServiceClient, NewRegistrar, NewDiscovery, NewRedis, NewKafkaProducer)
 
 var RedisCli *redis.Client
 
@@ -39,6 +39,26 @@ type Data struct {
 func NewData(c *conf.Data, uc userV1.UserClient, logger log.Logger, redisCli *redis.Client, taskCli taskV1.TaskClient, kafkaProducer sarama.SyncProducer) (*Data, error) {
 	l := log.NewHelper(log.With(logger, "module", "core.DataService"))
 	return &Data{log: l, uc: uc, redisCli: redisCli, taskCli: taskCli, kafkaProducer: kafkaProducer}, nil
+}
+
+func NewTaskServiceClient(ac *conf.Auth, sr *conf.Service, rr registry.Discovery) taskV1.TaskClient {
+	conn, err := grpc.DialInsecure(
+		context.Background(),
+		grpc.WithEndpoint(sr.Management.Endpoint),
+		grpc.WithDiscovery(rr),
+		grpc.WithMiddleware(
+			tracing.Client(), // 链路追踪
+			recovery.Recovery(),
+			metadata.Client(),
+		),
+		grpc.WithTimeout(2*time.Second),
+		grpc.WithOptions(grpcx.WithStatsHandler(&tracing.ClientHandler{})),
+	)
+	if err != nil {
+		panic(err)
+	}
+	c := taskV1.NewTaskClient(conn)
+	return c
 }
 
 func NewUserServiceClient(ac *conf.Auth, sr *conf.Service, rr registry.Discovery) userV1.UserClient {

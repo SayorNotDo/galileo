@@ -7,3 +7,7 @@ var (
 	ReportType   = []string{"track", "monitor"}
 	ReportKey    = "test_data_original_report_secret_key"
 )
+
+const (
+	RedisMaxRetries = 10
+)

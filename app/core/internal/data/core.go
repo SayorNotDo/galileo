@@ -161,6 +161,7 @@ func (r *coreRepo) DataReportTrack(ctx context.Context, data []map[string]interf
 	}
 	/* 写入Redis缓存 */
 	if err := r.sendToRedis(ctx, cleanDataList); err != nil {
+		/* 写入失败时增加重试/缓存机制，保证与Kafka队列消息相同 */
 		return err
 	}
 	return nil
@@ -214,9 +215,13 @@ func dataCleaner(ctx context.Context, data map[string]interface{}, claim *Report
 	}
 	/* 服务端属性添加 */
 	remoteAddr := ctx.Value("RemoteAddr").(string)
-	data["properties"] = map[string]interface{}{
+	fieldToAdd := map[string]interface{}{
 		"$machine":        claim.Machine,
 		"$remote_address": remoteAddr,
+	}
+	properties := data["properties"].(map[string]interface{})
+	for k, v := range fieldToAdd {
+		properties[k] = v
 	}
 	/* 数据去重 */
 	/* 数据转换 */
@@ -250,8 +255,11 @@ func (r *coreRepo) sendToRedis(ctx context.Context, data []map[string]interface{
 			if !ok {
 				return errors.New("invalid properties structure")
 			}
-			taskName := properties["task_name"].(string)
-			task, err := r.data.taskCli.TaskByName(ctx, &taskV1.TaskByNameRequest{Name: taskName})
+			taskName, ok := properties["#task_name"]
+			if !ok {
+				return SetCustomizeErrMsg(ReasonParamsError, "properties do not define task_name attribute")
+			}
+			task, err := r.data.taskCli.TaskByName(ctx, &taskV1.TaskByNameRequest{Name: taskName.(string)})
 			if err != nil {
 				return err
 			}
@@ -273,7 +281,6 @@ func (r *coreRepo) sendToRedis(ctx context.Context, data []map[string]interface{
 
 func (r *coreRepo) RedisLPushTask(ctx context.Context, key, val string) error {
 	/* 事务函数: 通过乐观锁实现任务数据写入Redis */
-	maxRetries := 10
 	txf := func(tx *redis.Tx) error {
 		err := r.data.redisCli.LPush(ctx, key, val).Err()
 		if err != nil {
@@ -281,15 +288,14 @@ func (r *coreRepo) RedisLPushTask(ctx context.Context, key, val string) error {
 		}
 		return nil
 	}
-	for i := 0; i < maxRetries; i++ {
+	for i := 0; i < RedisMaxRetries; i++ {
 		err := r.data.redisCli.Watch(ctx, txf, key)
-		if err == nil {
+		switch err {
+		case nil:
 			return nil
-		}
-		if err == redis.TxFailedErr {
+		case redis.TxFailedErr:
 			continue
 		}
-		return nil
 	}
 	return SetCustomizeErrMsg(ReasonSystemError, "max retries exceeded")
 }

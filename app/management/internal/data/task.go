@@ -6,10 +6,12 @@ import (
 	engineV1 "galileo/api/engine/v1"
 	taskV1 "galileo/api/management/task/v1"
 	"galileo/app/management/internal/biz"
+	. "galileo/app/management/internal/pkg/constant"
 	"galileo/ent"
 	"galileo/ent/task"
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/errors"
+	"github.com/redis/go-redis/v9"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 
@@ -318,3 +320,35 @@ func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (
 2. 客户端发起WS连接
 3. 服务端获取执行机当前处理信息
 */
+
+func (r *taskRepo) SetTaskInfoExpiration(ctx context.Context, key string, expiration int64) error {
+	/* 事务函数：乐观锁实现任务数据缓存过期时间设置 */
+	txf := func(tx *redis.Tx) error {
+		cmd := r.data.redisCli.Get(ctx, key)
+		if cmd.Err() != nil {
+			return cmd.Err()
+		}
+		val := cmd.Val()
+
+		_, err := tx.TxPipelined(ctx, func(pipe redis.Pipeliner) error {
+			expire := pipe.TTL(ctx, key).Val()
+			if expire == -1 {
+				pipe.SetXX(ctx, key, val, time.Duration(expiration))
+				return nil
+			}
+			pipe.SetXX(ctx, key, val, expire)
+			return nil
+		})
+		return err
+	}
+	for i := 0; i < RedisMaxRetries; i++ {
+		err := r.data.redisCli.Watch(ctx, txf, key)
+		switch err {
+		case nil:
+			return nil
+		case redis.TxFailedErr:
+			continue
+		}
+	}
+	return SetCustomizeErrMsg(ReasonSystemError, "max retries exceeded")
+}

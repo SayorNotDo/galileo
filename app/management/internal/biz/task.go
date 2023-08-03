@@ -45,6 +45,7 @@ type TaskRepo interface {
 	UpdateTaskStatus(ctx context.Context, updateTask *Task) (*Task, error)
 	TaskDetailById(ctx context.Context, id int64) (*Task, error)
 	RedisLRangeTask(ctx context.Context, key string) (*v1.TaskInfo, error)
+	SetTaskInfoExpiration(ctx context.Context, key string, expiration int64) error
 }
 
 // TaskUseCase is a Task useCase.
@@ -89,4 +90,10 @@ func (uc *TaskUseCase) ListTimingTask(ctx context.Context) ([]*v1.TaskInfo, erro
 
 func (uc *TaskUseCase) RedisLRangeTask(ctx context.Context, key string) (*v1.TaskInfo, error) {
 	return uc.repo.RedisLRangeTask(ctx, key)
+}
+
+// SetTaskInfoExpiration
+/* TODO: 当任务为完成状态时，指定Key的Redis缓存设置过期时间 */
+func (uc *TaskUseCase) SetTaskInfoExpiration(ctx context.Context, key string, expiration int64) error {
+	return uc.repo.SetTaskInfoExpiration(ctx, key, expiration)
 }

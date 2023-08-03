@@ -23,3 +23,5 @@ auth:
 service:
   user:
     endpoint: discovery:///core.user.scheduler
+  management:
+    endpoint: discovery:///galileo.management.scheduler
