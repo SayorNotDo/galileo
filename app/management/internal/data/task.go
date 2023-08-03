@@ -2,7 +2,6 @@ package data
 
 import (
 	"context"
-	"fmt"
 	engineV1 "galileo/api/engine/v1"
 	taskV1 "galileo/api/management/task/v1"
 	"galileo/app/management/internal/biz"
@@ -10,6 +9,7 @@ import (
 	"galileo/ent"
 	"galileo/ent/task"
 	. "galileo/pkg/errResponse"
+	. "galileo/pkg/factory"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/redis/go-redis/v9"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -81,6 +81,7 @@ func (r *taskRepo) TaskByName(ctx context.Context, name string) (*biz.Task, erro
 		Type:           queryTask.Type,
 		CreatedAt:      queryTask.CreatedAt,
 		CreatedBy:      queryTask.CreatedBy,
+		StartTime:      queryTask.StartTime,
 		TestcaseSuites: suites,
 	}, nil
 }
@@ -106,6 +107,7 @@ func (r *taskRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) {
 		Type:           queryTask.Type,
 		CreatedAt:      queryTask.CreatedAt,
 		CreatedBy:      queryTask.CreatedBy,
+		StartTime:      queryTask.StartTime,
 		TestcaseSuites: suites,
 	}, nil
 }
@@ -204,6 +206,7 @@ func (r *taskRepo) TaskDetailById(ctx context.Context, id int64) (*biz.Task, err
 		DeletedAt:       queryTask.DeletedAt,
 		DeletedBy:       queryTask.DeletedBy,
 		Description:     queryTask.Description,
+		ExecuteId:       queryTask.ExecuteID,
 	}, nil
 }
 
@@ -254,14 +257,16 @@ func (r *taskRepo) CountAllTask(ctx context.Context) (int, error) {
 	return count, nil
 }
 
-func (r *taskRepo) RedisLRangeTask(ctx context.Context, key string) (*taskV1.TaskInfo, error) {
+func (r *taskRepo) RedisLRangeTask(ctx context.Context, key string) ([]string, error) {
 	valList, err := r.data.redisCli.LRange(ctx, key, 0, -1).Result()
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("----------------------------------------------------------------LRange")
-	fmt.Println(valList)
-	return nil, nil
+	//lo.ForEach(valList, func(item string, _ int) {
+	//	fmt.Println("---------------------------------------------------------------->> item")
+	//	fmt.Println(item)
+	//})
+	return valList, nil
 }
 
 func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (*biz.Task, error) {
@@ -283,7 +288,8 @@ func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (
 		return nil, rollback(tx, err)
 	}
 	// 当设置状态为RUNNING时，调用Engine服务进行测试任务的下发，参数：taskId，Worker
-	if updateTask.Status == taskV1.TaskStatus_RUNNING {
+	switch updateTask.Status {
+	case taskV1.TaskStatus_RUNNING:
 		reply, err := r.data.engineCli.RunJob(ctx,
 			&engineV1.RunJobRequest{
 				TaskId: updateTask.Id,
@@ -299,6 +305,13 @@ func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (
 			SetExecuteID(reply.ExecuteId).
 			SetWorker(updateTask.Worker).
 			Save(ctx)
+		if err != nil {
+			return nil, rollback(tx, err)
+		}
+	/* 当设置状态为RUNNING时，设置Redis缓存过期时间 */
+	case taskV1.TaskStatus_FINISHED:
+		key := NewTaskProgressKey(updateTask.Name, updateTask.ExecuteId)
+		err := r.SetTaskInfoExpiration(ctx, key, int64(TaskExpiration))
 		if err != nil {
 			return nil, rollback(tx, err)
 		}

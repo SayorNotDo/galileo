@@ -44,6 +44,7 @@ func NewSnowflake(datacenterId, workerId int64) (*Snowflake, error) {
 		sequence:     0,
 	}, nil
 }
+
 func (s *Snowflake) NextVal() int64 {
 	s.Lock()
 	now := time.Now().UnixNano() / 1000000 // 转毫秒
@@ -74,9 +75,9 @@ func (s *Snowflake) NextVal() int64 {
 }
 
 // GetDeviceID 获取数据中心ID和机器ID
-func GetDeviceID(sid int64) (datacenterid, workerid int64) {
-	datacenterid = (sid >> datacenterIdShift) & datacenterIdMax
-	workerid = (sid >> workerIdShift) & workerIdMax
+func GetDeviceID(sid int64) (dataCenterId, workerId int64) {
+	dataCenterId = (sid >> datacenterIdShift) & datacenterIdMax
+	workerId = (sid >> workerIdShift) & workerIdMax
 	return
 }
 

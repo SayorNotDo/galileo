@@ -6,14 +6,13 @@ import (
 	"errors"
 	"fmt"
 	v1 "galileo/api/core/v1"
-	taskV1 "galileo/api/management/task/v1"
 	userService "galileo/api/user/v1"
 	"galileo/app/core/internal/biz"
 	. "galileo/app/core/internal/pkg/constant"
 	. "galileo/app/core/internal/pkg/middleware/auth"
-	mg "galileo/app/management/pkg/constant"
 	"galileo/pkg/encryption"
 	. "galileo/pkg/errResponse"
+	. "galileo/pkg/factory"
 	"github.com/IBM/sarama"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
@@ -250,31 +249,31 @@ func sendToKafka(producer sarama.SyncProducer, topic string, data []map[string]i
 
 func (r *coreRepo) sendToRedis(ctx context.Context, data []map[string]interface{}) error {
 	for _, item := range data {
-		if item["#report_type"] == "track" {
+		switch item["#report_type"] {
+		case "track":
 			properties, ok := item["properties"].(map[string]interface{})
 			if !ok {
 				return errors.New("invalid properties structure")
 			}
 			taskName, ok := properties["#task_name"]
 			if !ok {
-				return SetCustomizeErrMsg(ReasonParamsError, "properties do not define task_name attribute")
+				return SetCustomizeErrMsg(ReasonParamsError, "properties do not define #task_name attribute")
 			}
-			task, err := r.data.taskCli.TaskByName(ctx, &taskV1.TaskByNameRequest{Name: taskName.(string)})
+			executeId, err := strconv.ParseInt(item["#execute_id"].(string), 10, 64)
 			if err != nil {
-				return err
+				return SetCustomizeErrMsg(ReasonParamsError, "convert #execute_id attribute to int64 error: "+err.Error())
 			}
 			/* 构建Redis Key */
-			taskKey := mg.TaskProgressKey + ":" + task.Name + ":" + strconv.FormatInt(task.StartTime.AsTime().Unix(), 10)
+			taskKey := NewTaskProgressKey(taskName.(string), executeId)
 			/* map[string]interface{} To string */
-			jsonData, err := json.Marshal(data)
+			jsonItem, err := json.Marshal(item)
 			if err != nil {
-				return SetCustomizeErrMsg(ReasonSystemError, "convert map[string]interface{} to string error: "+err.Error())
+				return SetCustomizeErrMsg(ReasonSystemError, "json marshal error: "+err.Error())
 			}
-			if err := r.RedisLPushTask(ctx, taskKey, string(jsonData)); err != nil {
+			if err := r.RedisLPushTask(ctx, taskKey, string(jsonItem)); err != nil {
 				return err
 			}
 		}
-
 	}
 	return nil
 }

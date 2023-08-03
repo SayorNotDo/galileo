@@ -1,5 +1,7 @@
 package constant
 
+import "time"
+
 var (
 	KafkaBrokers = []string{"localhost:9092"}
 	KafkaTopic   = "test_data_original_report"
@@ -10,4 +12,6 @@ var (
 
 const (
 	RedisMaxRetries = 10
+	TaskProgressKey = "taskProgress"
+	TaskExpiration  = time.Hour * 24 * 30
 )

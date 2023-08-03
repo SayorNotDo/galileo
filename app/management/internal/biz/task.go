@@ -33,6 +33,7 @@ type Task struct {
 	DeletedBy       uint32
 	Description     string
 	TestcaseSuites  []int64
+	ExecuteId       int64
 }
 
 // TaskRepo is a Task repo.
@@ -44,7 +45,7 @@ type TaskRepo interface {
 	UpdateTask(ctx context.Context, task *Task) (bool, error)
 	UpdateTaskStatus(ctx context.Context, updateTask *Task) (*Task, error)
 	TaskDetailById(ctx context.Context, id int64) (*Task, error)
-	RedisLRangeTask(ctx context.Context, key string) (*v1.TaskInfo, error)
+	RedisLRangeTask(ctx context.Context, key string) ([]string, error)
 	SetTaskInfoExpiration(ctx context.Context, key string, expiration int64) error
 }
 
@@ -88,7 +89,7 @@ func (uc *TaskUseCase) ListTimingTask(ctx context.Context) ([]*v1.TaskInfo, erro
 	return uc.repo.ListTimingTask(ctx)
 }
 
-func (uc *TaskUseCase) RedisLRangeTask(ctx context.Context, key string) (*v1.TaskInfo, error) {
+func (uc *TaskUseCase) RedisLRangeTask(ctx context.Context, key string) ([]string, error) {
 	return uc.repo.RedisLRangeTask(ctx, key)
 }
 

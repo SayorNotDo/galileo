@@ -8,10 +8,10 @@ import (
 	"galileo/app/management/internal/biz"
 	"galileo/pkg/ctxdata"
 	. "galileo/pkg/errResponse"
+	. "galileo/pkg/factory"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"strconv"
 	"time"
 )
 
@@ -231,8 +231,7 @@ func (s *TaskService) TaskProgress(ctx context.Context, req *v1.TaskProgressRequ
 		return nil, err
 	}
 	/* 基于任务信息构建key(规则: taskProgress:taskName:startTime)，查询redis数据库中的缓存 */
-	taskKey := taskProgressKey + ":" + task.Name + ":" + strconv.FormatInt(task.StartTime.Unix(), 10)
-	fmt.Println("taskKey: ", taskKey)
+	taskKey := NewTaskProgressKey(task.Name, task.ExecuteId)
 	ret, err := s.uc.RedisLRangeTask(ctx, taskKey)
 	if err != nil {
 		return nil, err
