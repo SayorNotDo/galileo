@@ -23,6 +23,12 @@ import (
 	"github.com/go-kratos/kratos/v2/transport"
 	jwt2 "github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/handlers"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/exporters/jaeger"
+	"go.opentelemetry.io/otel/sdk/resource"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -35,7 +41,15 @@ const (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, ac *conf.Auth, project *service.ProjectService, testcase *service.TestcaseService, task *service.TaskService, api *service.ApiService, management *service.ManagementService, logger log.Logger) *http.Server {
+func NewHTTPServer(tr *conf.Trace, c *conf.Server, ac *conf.Auth, project *service.ProjectService, testcase *service.TestcaseService, task *service.TaskService, api *service.ApiService, management *service.ManagementService, logger log.Logger) *http.Server {
+	err := initTracer(tr.Endpoint)
+	if err != nil {
+		panic(err)
+	}
+	///* 初始化 WebSocket 连接池 */
+	pool := NewConnectionPool(1000)
+	///* 注入连接池到 WebSocketHandler */
+	webSocketHandler := NewWebSocketHandler(logger, pool)
 	var opts = []http.ServerOption{
 		http.Middleware(
 			logging.Server(logger),
@@ -82,12 +96,32 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, project *service.ProjectServic
 	route := srv.Route("/")
 	route.POST("v1/api/management/testcase/upload", testcase.UploadTestcaseFile)
 	route.POST("v1/api/management/interface/upload", api.UploadApiFile)
+	srv.HandlePrefix("/ws", webSocketHandler)
 	taskV1.RegisterTaskHTTPServer(srv, task)
 	projectV1.RegisterProjectHTTPServer(srv, project)
 	testCaseV1.RegisterTestcaseHTTPServer(srv, testcase)
 	apiV1.RegisterApiHTTPServer(srv, api)
 	managementV1.RegisterManagementHTTPServer(srv, management)
 	return srv
+}
+
+// 设置全局trace
+func initTracer(url string) error {
+	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url)))
+	if err != nil {
+		return err
+	}
+	tp := tracesdk.NewTracerProvider(
+		tracesdk.WithSampler(tracesdk.ParentBased(tracesdk.TraceIDRatioBased(1.0))),
+		tracesdk.WithBatcher(exp),
+		tracesdk.WithResource(resource.NewSchemaless(
+			semconv.ServiceNameKey.String("galileo-trace"),
+			attribute.String("exporter", "jaeger"),
+			attribute.Float64("float", 312.23),
+		)),
+	)
+	otel.SetTracerProvider(tp)
+	return nil
 }
 
 func setHeaderInfo() middleware.Middleware {

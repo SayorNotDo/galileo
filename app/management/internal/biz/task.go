@@ -93,8 +93,6 @@ func (uc *TaskUseCase) RedisLRangeTask(ctx context.Context, key string) ([]strin
 	return uc.repo.RedisLRangeTask(ctx, key)
 }
 
-// SetTaskInfoExpiration
-/* TODO: 当任务为完成状态时，指定Key的Redis缓存设置过期时间 */
 func (uc *TaskUseCase) SetTaskInfoExpiration(ctx context.Context, key string, expiration int64) error {
 	return uc.repo.SetTaskInfoExpiration(ctx, key, expiration)
 }

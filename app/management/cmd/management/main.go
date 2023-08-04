@@ -56,7 +56,7 @@ func loadConfig() (*conf.Bootstrap, *conf.Registry) {
 	return &bc, &rc
 }
 
-func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, rr registry.Registrar) *kratos.App {
+func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, rr registry.Registrar, tr *conf.Trace) *kratos.App {
 	return kratos.New(
 		kratos.ID(Service.GetInstanceId()),
 		kratos.Name(Service.Name),
@@ -86,7 +86,7 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Auth, bc.Service, rc, logger)
+	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Auth, bc.Service, rc, logger, bc.Trace)
 	if err != nil {
 		panic(err)
 	}

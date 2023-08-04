@@ -23,16 +23,16 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, confService *conf.Service, registry *conf.Registry, logger log.Logger) (*kratos.App, func(), error) {
+func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, confService *conf.Service, registry *conf.Registry, logger log.Logger, trace *conf.Trace) (*kratos.App, func(), error) {
 	client, err := data.NewEntDB(confData)
 	if err != nil {
 		return nil, nil, err
 	}
-	cmdable := data.NewRedis(confData, logger)
+	redisClient := data.NewRedis(confData, logger)
 	discovery := data.NewDiscovery(registry)
 	fileClient := data.NewFileServiceClient(confService, discovery)
 	engineClient := data.NewEngineServiceClient(confService, discovery)
-	dataData, cleanup, err := data.NewData(confData, client, logger, cmdable, fileClient, engineClient)
+	dataData, cleanup, err := data.NewData(confData, client, logger, redisClient, fileClient, engineClient)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -42,7 +42,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, conf
 	taskRepo := data.NewTaskRepo(dataData, logger)
 	taskUseCase := biz.NewTaskUseCase(taskRepo, engineClient, logger)
 	taskService := service.NewTaskService(taskUseCase, logger)
-	grpcServer := server.NewGRPCServer(confServer, projectService, taskService, logger)
+	grpcServer := server.NewGRPCServer(trace, confServer, projectService, taskService, logger)
 	testcaseRepo := data.NewTestCaseRepo(dataData, logger)
 	testcaseUseCase := biz.NewTestcaseUseCase(testcaseRepo, logger)
 	testcaseService := service.NewTestcaseService(testcaseUseCase, logger)
@@ -51,9 +51,9 @@ func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, conf
 	apiService := service.NewApiService(apiUseCase, logger)
 	managementUseCase := biz.NewManagementUseCase(logger)
 	managementService := service.NewManagementService(managementUseCase, logger)
-	httpServer := server.NewHTTPServer(confServer, auth, projectService, testcaseService, taskService, apiService, managementService, logger)
+	httpServer := server.NewHTTPServer(trace, confServer, auth, projectService, testcaseService, taskService, apiService, managementService, logger)
 	registrar := data.NewRegistrar(registry)
-	app := newApp(logger, grpcServer, httpServer, registrar)
+	app := newApp(logger, grpcServer, httpServer, registrar, trace)
 	return app, func() {
 		cleanup()
 	}, nil
