@@ -31,8 +31,30 @@ func (s *EngineService) TestEngine(ctx context.Context, req *empty.Empty) (*v1.T
 	return &v1.TestEngineReply{Hello: "Galileo"}, nil
 }
 
+/* TODO: 容器化测试
+1. 创建容器化的测试环境
+	两次种创建方式:
+		a. 基于docker-compose.yml Dockerfile 创建
+		b. 简单创建
+2. File Sharing 导入测试用例
+3. 容器自动化测试执行
+4. 容器监控、日志收集
+5. 测试结果输出
+*/
+
+/* 解析docker-compose.yml
+1. 获取上传的docker-compose.yml 文件（直接上传）
+2. 使用yaml解析库解析docker-compose.yml文件到Config对象
+*/
+
+/* 解析Dockerfile
+1. 获取上传的Dockerfile
+2. yaml解析库解析
+3. 输出解析后的指令
+*/
+
 func (s *EngineService) BuildContainer(ctx context.Context, req *empty.Empty) (*v1.BuildContainerReply, error) {
-	container, err := s.uc.BuildContainer(ctx)
+	container, err := s.uc.BuildContainer(ctx, &biz.Container{})
 	if err != nil {
 		return nil, err
 	}

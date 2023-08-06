@@ -27,7 +27,8 @@ func wireApp(confServer *conf.Server, confData *conf.Data, confService *conf.Ser
 	cmdable := data.NewRedis(confData, logger)
 	discovery := data.NewDiscovery(registry)
 	taskClient := data.NewTaskServiceClient(confService, discovery)
-	dataData, cleanup, err := data.NewData(confData, logger, cmdable, taskClient)
+	client := data.NewDockerClient(confService)
+	dataData, cleanup, err := data.NewData(confData, logger, cmdable, taskClient, client)
 	if err != nil {
 		return nil, nil, err
 	}

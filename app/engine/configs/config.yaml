@@ -19,3 +19,5 @@ auth:
 service:
   management:
     endpoint: discovery:///galileo.management.scheduler
+  docker:
+    endpoint: ssh://vince@localhosr:2379

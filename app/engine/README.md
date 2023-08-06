@@ -1,6 +1,21 @@
-# Docker容器自动化测试
+# 容器化的测试技术尝试
 
-## 创建容器
-~~~
-    拉取镜像（Image）--> 创建容器 --> 回调获取容器ID、NAMES
-~~~
+## 容器化测试环境
+
+### 解析 docker-compose.yml
+
+    1. 获取上传docker-compose.yml 文件
+    2. 使用yaml解析库解析docker-compose.yml 文件
+
+### 解析 Dockerfile
+
+
+## 集成测试管道
+
+## 并行化测试
+
+## 模拟测试环境
+
+## 自动化测试工具
+
+## 容器监控化日志收集

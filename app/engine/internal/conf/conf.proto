@@ -50,7 +50,11 @@ message Service {
   message Management {
     string endpoint = 1;
   }
+  message Docker {
+    string endpoint = 1;
+  }
   Management management = 1;
+  Docker docker = 2;
 }
 
 message Trace {

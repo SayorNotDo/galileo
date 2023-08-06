@@ -3,14 +3,9 @@ package biz
 import (
 	"context"
 	taskV1 "galileo/api/management/task/v1"
-	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/client"
-	"github.com/docker/docker/pkg/stdcopy"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/robfig/cron/v3"
-	"io"
-	"os"
 	"time"
 )
 
@@ -29,9 +24,15 @@ type Task struct {
 }
 
 type Container struct {
-	Id    string
-	Name  string
-	Image string
+	Id           string
+	Name         string
+	Image        string
+	BuildCommand []string
+	AttachStdin  bool
+	AttachStdout bool
+	Env          []string
+	MacAddress   string
+	Label        map[string]string
 }
 
 type EngineRepo interface {
@@ -40,73 +41,45 @@ type EngineRepo interface {
 	TimingTaskList(ctx context.Context) ([]*Task, error)
 	GetCronJobList(ctx context.Context) []*CronJob
 	RemoveCronJob(ctx context.Context, taskId int64) error
+	BuildContainer(ctx context.Context, container *Container) (*Container, error)
+	ParseComposeFile(ctx context.Context, fp string) (map[string]container.Config, error)
 }
 
 type EngineUseCase struct {
-	Repo EngineRepo
+	repo EngineRepo
 	log  *log.Helper
 }
 
 func NewEngineUseCase(repo EngineRepo, logger log.Logger) *EngineUseCase {
 	helper := log.NewHelper(log.With(logger, "module", "engine.useCase"))
-	return &EngineUseCase{Repo: repo, log: helper}
+	return &EngineUseCase{repo: repo, log: helper}
 }
 
 func (c *EngineUseCase) TaskByID(ctx context.Context, id int64) (*Task, error) {
-	return c.Repo.TaskByID(ctx, id)
+	return c.repo.TaskByID(ctx, id)
 }
 
 func (c *EngineUseCase) AddCronJob(ctx context.Context, task *Task) (cron.EntryID, error) {
-	return c.Repo.AddCronJob(ctx, task)
+	return c.repo.AddCronJob(ctx, task)
 }
 
-func (c *EngineUseCase) BuildContainer(context.Context) (*Container, error) {
-	// TODO: 容器构建过程
-	ctx := context.Background()
-	log.Debug("Building container------------------------")
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	if err != nil {
-		return nil, err
-	}
-	reader, err := cli.ImagePull(ctx, "docker.io/library/alpine", types.ImagePullOptions{})
-	if err != nil {
-		return nil, err
-	}
-	_, _ = io.Copy(os.Stdout, reader)
-	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Image: "alpine",
-		Cmd:   []string{"echo", "hello world"},
-	}, nil, nil, nil, "")
-	if err != nil {
-		return nil, err
-	}
-	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
-		return nil, err
-	}
-	statusCh, errCh := cli.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
-	select {
-	case err := <-errCh:
-		if err != nil {
-			panic(err)
-		}
-	case <-statusCh:
-	}
-	out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true})
-	if err != nil {
-		return nil, err
-	}
-	stdcopy.StdCopy(os.Stdout, os.Stderr, out)
-	return &Container{Id: resp.ID}, nil
+func (c *EngineUseCase) BuildContainer(ctx context.Context, container *Container) (*Container, error) {
+	return c.repo.BuildContainer(ctx, container)
+
 }
 
 func (c *EngineUseCase) TimingTaskList(ctx context.Context) ([]*Task, error) {
-	return c.Repo.TimingTaskList(ctx)
+	return c.repo.TimingTaskList(ctx)
 }
 
 func (c *EngineUseCase) GetCronJobList(ctx context.Context) []*CronJob {
-	return c.Repo.GetCronJobList(ctx)
+	return c.repo.GetCronJobList(ctx)
 }
 
 func (c *EngineUseCase) RemoveCronJob(ctx context.Context, taskId int64) error {
-	return c.Repo.RemoveCronJob(ctx, taskId)
+	return c.repo.RemoveCronJob(ctx, taskId)
+}
+
+func (c *EngineUseCase) ParseComposeFile(ctx context.Context, fp string) (map[string]container.Config, error) {
+	return c.repo.ParseComposeFile(ctx, fp)
 }
