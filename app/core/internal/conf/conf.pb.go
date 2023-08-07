@@ -225,6 +225,7 @@ type Service struct {
 
 	User       *Service_User       `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	Management *Service_Management `protobuf:"bytes,2,opt,name=management,proto3" json:"management,omitempty"`
+	File       *Service_File       `protobuf:"bytes,3,opt,name=file,proto3" json:"file,omitempty"`
 }
 
 func (x *Service) Reset() {
@@ -269,6 +270,13 @@ func (x *Service) GetUser() *Service_User {
 func (x *Service) GetManagement() *Service_Management {
 	if x != nil {
 		return x.Management
+	}
+	return nil
+}
+
+func (x *Service) GetFile() *Service_File {
+	if x != nil {
+		return x.File
 	}
 	return nil
 }
@@ -847,6 +855,53 @@ func (x *Service_Management) GetEndpoint() string {
 	return ""
 }
 
+type Service_File struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Endpoint string `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+}
+
+func (x *Service_File) Reset() {
+	*x = Service_File{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_conf_conf_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Service_File) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Service_File) ProtoMessage() {}
+
+func (x *Service_File) ProtoReflect() protoreflect.Message {
+	mi := &file_conf_conf_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Service_File.ProtoReflect.Descriptor instead.
+func (*Service_File) Descriptor() ([]byte, []int) {
+	return file_conf_conf_proto_rawDescGZIP(), []int{3, 2}
+}
+
+func (x *Service_File) GetEndpoint() string {
+	if x != nil {
+		return x.Endpoint
+	}
+	return ""
+}
+
 type Registry_Consul struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -859,7 +914,7 @@ type Registry_Consul struct {
 func (x *Registry_Consul) Reset() {
 	*x = Registry_Consul{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_conf_conf_proto_msgTypes[14]
+		mi := &file_conf_conf_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -872,7 +927,7 @@ func (x *Registry_Consul) String() string {
 func (*Registry_Consul) ProtoMessage() {}
 
 func (x *Registry_Consul) ProtoReflect() protoreflect.Message {
-	mi := &file_conf_conf_proto_msgTypes[14]
+	mi := &file_conf_conf_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -984,7 +1039,7 @@ var file_conf_conf_proto_rawDesc = []byte{
 	0x5f, 0x74, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19,
 	0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
 	0x2e, 0x44, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x0f, 0x70, 0x72, 0x6f, 0x64, 0x75,
-	0x63, 0x65, 0x72, 0x54, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x22, 0xc1, 0x01, 0x0a, 0x07, 0x53,
+	0x63, 0x65, 0x72, 0x54, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x22, 0x91, 0x02, 0x0a, 0x07, 0x53,
 	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2a, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x61, 0x70, 0x69, 0x2e,
 	0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x52, 0x04, 0x75, 0x73,
@@ -992,10 +1047,15 @@ var file_conf_conf_proto_rawDesc = []byte{
 	0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1c, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x61, 0x70,
 	0x69, 0x2e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65,
 	0x6d, 0x65, 0x6e, 0x74, 0x52, 0x0a, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74,
-	0x1a, 0x22, 0x0a, 0x04, 0x55, 0x73, 0x65, 0x72, 0x12, 0x1a, 0x0a, 0x08, 0x65, 0x6e, 0x64, 0x70,
-	0x6f, 0x69, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x65, 0x6e, 0x64, 0x70,
-	0x6f, 0x69, 0x6e, 0x74, 0x1a, 0x28, 0x0a, 0x0a, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65,
-	0x6e, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x65, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x18, 0x01,
+	0x12, 0x2a, 0x0a, 0x04, 0x66, 0x69, 0x6c, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x16,
+	0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x65, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x52, 0x04, 0x66, 0x69, 0x6c, 0x65, 0x1a, 0x22, 0x0a, 0x04,
+	0x55, 0x73, 0x65, 0x72, 0x12, 0x1a, 0x0a, 0x08, 0x65, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x65, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74,
+	0x1a, 0x28, 0x0a, 0x0a, 0x4d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x1a,
+	0x0a, 0x08, 0x65, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x08, 0x65, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x1a, 0x22, 0x0a, 0x04, 0x46, 0x69,
+	0x6c, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x65, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x65, 0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x22, 0x23,
 	0x0a, 0x05, 0x54, 0x72, 0x61, 0x63, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x65, 0x6e, 0x64, 0x70, 0x6f,
 	0x69, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x65, 0x6e, 0x64, 0x70, 0x6f,
@@ -1026,7 +1086,7 @@ func file_conf_conf_proto_rawDescGZIP() []byte {
 	return file_conf_conf_proto_rawDescData
 }
 
-var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_conf_conf_proto_goTypes = []interface{}{
 	(*Bootstrap)(nil),           // 0: core.api.Bootstrap
 	(*Server)(nil),              // 1: core.api.Server
@@ -1042,8 +1102,9 @@ var file_conf_conf_proto_goTypes = []interface{}{
 	(*Data_Kafka)(nil),          // 11: core.api.Data.Kafka
 	(*Service_User)(nil),        // 12: core.api.Service.User
 	(*Service_Management)(nil),  // 13: core.api.Service.Management
-	(*Registry_Consul)(nil),     // 14: core.api.Registry.Consul
-	(*durationpb.Duration)(nil), // 15: google.protobuf.Duration
+	(*Service_File)(nil),        // 14: core.api.Service.File
+	(*Registry_Consul)(nil),     // 15: core.api.Registry.Consul
+	(*durationpb.Duration)(nil), // 16: google.protobuf.Duration
 }
 var file_conf_conf_proto_depIdxs = []int32{
 	1,  // 0: core.api.Bootstrap.server:type_name -> core.api.Server
@@ -1058,18 +1119,19 @@ var file_conf_conf_proto_depIdxs = []int32{
 	11, // 9: core.api.Data.kafka:type_name -> core.api.Data.Kafka
 	12, // 10: core.api.Service.user:type_name -> core.api.Service.User
 	13, // 11: core.api.Service.management:type_name -> core.api.Service.Management
-	14, // 12: core.api.Registry.consul:type_name -> core.api.Registry.Consul
-	15, // 13: core.api.Server.HTTP.timeout:type_name -> google.protobuf.Duration
-	15, // 14: core.api.Server.GRPC.timeout:type_name -> google.protobuf.Duration
-	15, // 15: core.api.Data.Redis.read_timeout:type_name -> google.protobuf.Duration
-	15, // 16: core.api.Data.Redis.write_timeout:type_name -> google.protobuf.Duration
-	15, // 17: core.api.Data.Redis.dial_timeout:type_name -> google.protobuf.Duration
-	15, // 18: core.api.Data.Kafka.producer_timeout:type_name -> google.protobuf.Duration
-	19, // [19:19] is the sub-list for method output_type
-	19, // [19:19] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	14, // 12: core.api.Service.file:type_name -> core.api.Service.File
+	15, // 13: core.api.Registry.consul:type_name -> core.api.Registry.Consul
+	16, // 14: core.api.Server.HTTP.timeout:type_name -> google.protobuf.Duration
+	16, // 15: core.api.Server.GRPC.timeout:type_name -> google.protobuf.Duration
+	16, // 16: core.api.Data.Redis.read_timeout:type_name -> google.protobuf.Duration
+	16, // 17: core.api.Data.Redis.write_timeout:type_name -> google.protobuf.Duration
+	16, // 18: core.api.Data.Redis.dial_timeout:type_name -> google.protobuf.Duration
+	16, // 19: core.api.Data.Kafka.producer_timeout:type_name -> google.protobuf.Duration
+	20, // [20:20] is the sub-list for method output_type
+	20, // [20:20] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_conf_conf_proto_init() }
@@ -1247,6 +1309,18 @@ func file_conf_conf_proto_init() {
 			}
 		}
 		file_conf_conf_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Service_File); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_conf_conf_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Registry_Consul); i {
 			case 0:
 				return &v.state
@@ -1265,7 +1339,7 @@ func file_conf_conf_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_conf_conf_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

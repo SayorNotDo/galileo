@@ -1,10 +1,18 @@
 package service
 
 import (
+	"bytes"
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"io"
 	"mime/multipart"
+	"path"
 )
+
+/* 接口上传的docker-compose\Dockerfile文件   写入数据库？对象存储？
+写入数据库不现实：表结构设计难、非固定
+使用对象存储
+*/
 
 func (c *EngineService) UploadEngineFile(ctx http.Context) error {
 	/* 接口参数获取（文件类型） */
@@ -25,6 +33,23 @@ func (c *EngineService) UploadEngineFile(ctx http.Context) error {
 	if fileHeader.Size > 1024*1024*5 {
 		return SetCustomizeErrInfoByReason(ReasonFileOverLimitSize)
 	}
-	//buf := bytes.NewBuffer(nil)
-	return nil
+	buf := bytes.NewBuffer(nil)
+	if _, err := io.Copy(buf, file); err != nil {
+		return err
+	}
+	/* 基于文件名进行相应操作
+	无需校验文件正确性，运行时决定
+	*/
+	switch fileName {
+	case "Dockerfile", "docker-compose":
+		url, err := c.uc.UploadEngineFile(ctx, fileName, path.Ext(fileHeader.Filename), buf.Bytes())
+		if err != nil {
+			return err
+		}
+		return ctx.Result(20000, map[string]string{
+			"url": url,
+		})
+	default:
+		return SetCustomizeErrInfoByReason(ReasonParamsError)
+	}
 }

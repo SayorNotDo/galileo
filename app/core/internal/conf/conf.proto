@@ -59,8 +59,12 @@ message Service {
   message Management {
     string endpoint = 1;
   }
+  message File {
+    string endpoint = 1;
+  }
   User user = 1;
   Management management = 2;
+  File file = 3;
 }
 
 message Trace {

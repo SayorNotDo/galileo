@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	fileV1 "galileo/api/file/v1"
 	taskV1 "galileo/api/management/task/v1"
 	userV1 "galileo/api/user/v1"
 	"galileo/app/core/internal/conf"
@@ -22,7 +23,18 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewCoreRepo, NewEngineRepo, NewUserServiceClient, NewTaskServiceClient, NewRegistrar, NewDiscovery, NewRedis, NewKafkaProducer)
+var ProviderSet = wire.NewSet(
+	NewData,
+	NewCoreRepo,
+	NewEngineRepo,
+	NewUserServiceClient,
+	NewTaskServiceClient,
+	NewFileServiceClient,
+	NewRegistrar,
+	NewDiscovery,
+	NewRedis,
+	NewKafkaProducer,
+)
 
 var RedisCli *redis.Client
 
@@ -31,14 +43,35 @@ type Data struct {
 	log           *log.Helper
 	uc            userV1.UserClient
 	taskCli       taskV1.TaskClient
+	fileCli       fileV1.FileClient
 	redisCli      *redis.Client
 	kafkaProducer sarama.SyncProducer
 }
 
 // NewData .
-func NewData(c *conf.Data, uc userV1.UserClient, logger log.Logger, redisCli *redis.Client, taskCli taskV1.TaskClient, kafkaProducer sarama.SyncProducer) (*Data, error) {
+func NewData(c *conf.Data, uc userV1.UserClient, logger log.Logger, redisCli *redis.Client, taskCli taskV1.TaskClient, fileCli fileV1.FileClient, kafkaProducer sarama.SyncProducer) (*Data, error) {
 	l := log.NewHelper(log.With(logger, "module", "core.DataService"))
-	return &Data{log: l, uc: uc, redisCli: redisCli, taskCli: taskCli, kafkaProducer: kafkaProducer}, nil
+	return &Data{log: l, uc: uc, redisCli: redisCli, taskCli: taskCli, fileCli: fileCli, kafkaProducer: kafkaProducer}, nil
+}
+
+func NewFileServiceClient(sr *conf.Service, rr registry.Discovery) fileV1.FileClient {
+	conn, err := grpc.DialInsecure(
+		context.Background(),
+		grpc.WithEndpoint(sr.File.Endpoint),
+		grpc.WithDiscovery(rr),
+		grpc.WithMiddleware(
+			tracing.Client(),
+			recovery.Recovery(),
+			metadata.Client(),
+		),
+		grpc.WithTimeout(2*time.Second),
+		grpc.WithOptions(grpcx.WithStatsHandler(&tracing.ClientHandler{})),
+	)
+	if err != nil {
+		panic(err)
+	}
+	return fileV1.NewFileClient(conn)
+
 }
 
 func NewTaskServiceClient(ac *conf.Auth, sr *conf.Service, rr registry.Discovery) taskV1.TaskClient {

@@ -18,7 +18,7 @@ func NewEngineRepo(data *Data, logger log.Logger) biz.EngineRepo {
 	}
 }
 
-func (e engineRepo) UploadEngineFile(ctx context.Context, fileName string, fileType string, content []byte) error {
+func (e engineRepo) UploadEngineFile(ctx context.Context, fileName string, fileType string, content []byte) (string, error) {
 	//TODO implement me
 	panic("implement me")
 }

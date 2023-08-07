@@ -6,7 +6,7 @@ import (
 )
 
 type EngineRepo interface {
-	UploadEngineFile(ctx context.Context, fileName string, fileType string, content []byte) error
+	UploadEngineFile(ctx context.Context, fileName string, fileType string, content []byte) (string, error)
 }
 
 type EngineUseCase struct {
@@ -14,6 +14,6 @@ type EngineUseCase struct {
 	log  *log.Helper
 }
 
-func (e *EngineUseCase) UploadEngineFile(ctx context.Context, fileName string, filetype string, content []byte) error {
+func (e *EngineUseCase) UploadEngineFile(ctx context.Context, fileName string, filetype string, content []byte) (string, error) {
 	return e.repo.UploadEngineFile(ctx, fileName, filetype, content)
 }
