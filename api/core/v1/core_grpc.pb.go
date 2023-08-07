@@ -626,3 +626,54 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "api/core/v1/core.proto",
 }
+
+const ()
+
+// EngineClient is the client API for Engine service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type EngineClient interface {
+}
+
+type engineClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewEngineClient(cc grpc.ClientConnInterface) EngineClient {
+	return &engineClient{cc}
+}
+
+// EngineServer is the server API for Engine service.
+// All implementations must embed UnimplementedEngineServer
+// for forward compatibility
+type EngineServer interface {
+	mustEmbedUnimplementedEngineServer()
+}
+
+// UnimplementedEngineServer must be embedded to have forward compatible implementations.
+type UnimplementedEngineServer struct {
+}
+
+func (UnimplementedEngineServer) mustEmbedUnimplementedEngineServer() {}
+
+// UnsafeEngineServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to EngineServer will
+// result in compilation errors.
+type UnsafeEngineServer interface {
+	mustEmbedUnimplementedEngineServer()
+}
+
+func RegisterEngineServer(s grpc.ServiceRegistrar, srv EngineServer) {
+	s.RegisterService(&Engine_ServiceDesc, srv)
+}
+
+// Engine_ServiceDesc is the grpc.ServiceDesc for Engine service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Engine_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "api.core.v1.Engine",
+	HandlerType: (*EngineServer)(nil),
+	Methods:     []grpc.MethodDesc{},
+	Streams:     []grpc.StreamDesc{},
+	Metadata:    "api/core/v1/core.proto",
+}

@@ -65,6 +65,8 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, s *service.CoreService, logger
 	// add error custom json response
 	opts = append(opts, http.ErrorEncoder(responseEncoder.ErrorEncoder))
 	srv := http.NewServer(opts...)
+	route := srv.Route("/")
+	route.POST("v1/api/engine/upload", s.UploadEngineFile)
 	openAPIHandler := openapiv2.NewHandler()
 	srv.HandlePrefix("/q/", openAPIHandler)
 	v1.RegisterCoreHTTPServer(srv, s)

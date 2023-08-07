@@ -22,7 +22,7 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewCoreRepo, NewUserServiceClient, NewTaskServiceClient, NewRegistrar, NewDiscovery, NewRedis, NewKafkaProducer)
+var ProviderSet = wire.NewSet(NewData, NewCoreRepo, NewEngineRepo, NewUserServiceClient, NewTaskServiceClient, NewRegistrar, NewDiscovery, NewRedis, NewKafkaProducer)
 
 var RedisCli *redis.Client
 

@@ -24,15 +24,31 @@ type Task struct {
 }
 
 type Container struct {
-	Id           string
-	Name         string
-	Image        string
-	BuildCommand []string
-	AttachStdin  bool
-	AttachStdout bool
-	Env          []string
-	MacAddress   string
-	Label        map[string]string
+	Id              string
+	Hostname        string
+	Domainname      string
+	User            string
+	Name            string
+	AttachStdin     bool
+	AttachStdout    bool
+	AttachStderr    bool
+	Tty             bool
+	OpenStdin       bool
+	StdinOnce       bool
+	Env             []string
+	Cmd             []string
+	Image           string
+	Labels          map[string]string
+	Volumes         map[string]struct{}
+	WorkingDir      string
+	Entrypoint      string
+	NetworkDisabled bool
+	MacAddress      string
+	ExposedPorts    map[string]struct{}
+	StopSignal      string
+	StopTimeout     *int
+	HostConfig      map[string]interface{}
+	NetworkConfig   map[string]struct{}
 }
 
 type EngineRepo interface {
@@ -82,4 +98,8 @@ func (c *EngineUseCase) RemoveCronJob(ctx context.Context, taskId int64) error {
 
 func (c *EngineUseCase) ParseComposeFile(ctx context.Context, fp string) (map[string]container.Config, error) {
 	return c.repo.ParseComposeFile(ctx, fp)
+}
+
+func (c *EngineUseCase) ParseDockerfile(ctx context.Context, fp string) (map[string]interface{}, error) {
+	return nil, nil
 }

@@ -31,6 +31,7 @@ type CoreRepo interface {
 	UpdatePassword(ctx context.Context, password string) (bool, error)
 	DataReportTrack(ctx context.Context, data []map[string]interface{}, claims *auth.ReportClaims) error
 }
+
 type User struct {
 	Id          uint32
 	Phone       string

@@ -2,7 +2,6 @@ package data
 
 import (
 	"context"
-	"fmt"
 	taskV1 "galileo/api/management/task/v1"
 	"galileo/app/engine/internal/conf"
 	"github.com/docker/cli/cli/connhelper"
@@ -122,9 +121,11 @@ func NewDiscovery(conf *conf.Registry) registry.Discovery {
 	return r
 }
 
-func NewDockerClient(conf *conf.Service) *client.Client {
+func NewDockerClient(conf *conf.Service, logger log.Logger) *client.Client {
+	logs := log.NewHelper(log.With(logger, "module", "engineService/data/docker"))
 	helper, err := connhelper.GetConnectionHelper(conf.Docker.Endpoint)
 	if err != nil {
+		logs.Fatalf("docker get connect helper error: %v", err)
 		return nil
 	}
 	httpClient := &http.Client{
@@ -138,7 +139,7 @@ func NewDockerClient(conf *conf.Service) *client.Client {
 		client.WithDialContext(helper.Dialer),
 	)
 	if err != nil {
-		fmt.Println("unable to create docker client: " + err.Error())
+		logs.Fatalf("docker connect error: %v", err)
 		return nil
 	}
 	return cli
