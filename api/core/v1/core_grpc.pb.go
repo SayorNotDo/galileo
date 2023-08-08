@@ -20,21 +20,22 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Core_Register_FullMethodName        = "/api.core.v1.Core/Register"
-	Core_Login_FullMethodName           = "/api.core.v1.Core/Login"
-	Core_Unregister_FullMethodName      = "/api.core.v1.Core/Unregister"
-	Core_Logout_FullMethodName          = "/api.core.v1.Core/Logout"
-	Core_DeleteUser_FullMethodName      = "/api.core.v1.Core/DeleteUser"
-	Core_UserDetail_FullMethodName      = "/api.core.v1.Core/UserDetail"
-	Core_UpdateUserInfo_FullMethodName  = "/api.core.v1.Core/UpdateUserInfo"
-	Core_UpdatePassword_FullMethodName  = "/api.core.v1.Core/UpdatePassword"
-	Core_UpdateEmail_FullMethodName     = "/api.core.v1.Core/UpdateEmail"
-	Core_UpdatePhone_FullMethodName     = "/api.core.v1.Core/UpdatePhone"
-	Core_ListUser_FullMethodName        = "/api.core.v1.Core/ListUser"
-	Core_CreateGroup_FullMethodName     = "/api.core.v1.Core/CreateGroup"
-	Core_UpdateGroup_FullMethodName     = "/api.core.v1.Core/UpdateGroup"
-	Core_DataReportTrack_FullMethodName = "/api.core.v1.Core/DataReportTrack"
-	Core_ExecuteToken_FullMethodName    = "/api.core.v1.Core/ExecuteToken"
+	Core_Register_FullMethodName         = "/api.core.v1.Core/Register"
+	Core_Login_FullMethodName            = "/api.core.v1.Core/Login"
+	Core_Unregister_FullMethodName       = "/api.core.v1.Core/Unregister"
+	Core_Logout_FullMethodName           = "/api.core.v1.Core/Logout"
+	Core_DeleteUser_FullMethodName       = "/api.core.v1.Core/DeleteUser"
+	Core_UserDetail_FullMethodName       = "/api.core.v1.Core/UserDetail"
+	Core_UpdateUserInfo_FullMethodName   = "/api.core.v1.Core/UpdateUserInfo"
+	Core_UpdatePassword_FullMethodName   = "/api.core.v1.Core/UpdatePassword"
+	Core_UpdateEmail_FullMethodName      = "/api.core.v1.Core/UpdateEmail"
+	Core_UpdatePhone_FullMethodName      = "/api.core.v1.Core/UpdatePhone"
+	Core_ListUser_FullMethodName         = "/api.core.v1.Core/ListUser"
+	Core_CreateGroup_FullMethodName      = "/api.core.v1.Core/CreateGroup"
+	Core_UpdateGroup_FullMethodName      = "/api.core.v1.Core/UpdateGroup"
+	Core_DataReportTrack_FullMethodName  = "/api.core.v1.Core/DataReportTrack"
+	Core_ExecuteToken_FullMethodName     = "/api.core.v1.Core/ExecuteToken"
+	Core_InspectContainer_FullMethodName = "/api.core.v1.Core/InspectContainer"
 )
 
 // CoreClient is the client API for Core service.
@@ -56,6 +57,7 @@ type CoreClient interface {
 	UpdateGroup(ctx context.Context, in *UpdateGroupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DataReportTrack(ctx context.Context, in *DataReportTrackRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ExecuteToken(ctx context.Context, in *ExecuteTokenRequest, opts ...grpc.CallOption) (*ExecuteTokenReply, error)
+	InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...grpc.CallOption) (*InspectContainerReply, error)
 }
 
 type coreClient struct {
@@ -201,6 +203,15 @@ func (c *coreClient) ExecuteToken(ctx context.Context, in *ExecuteTokenRequest, 
 	return out, nil
 }
 
+func (c *coreClient) InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...grpc.CallOption) (*InspectContainerReply, error) {
+	out := new(InspectContainerReply)
+	err := c.cc.Invoke(ctx, Core_InspectContainer_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CoreServer is the server API for Core service.
 // All implementations must embed UnimplementedCoreServer
 // for forward compatibility
@@ -220,6 +231,7 @@ type CoreServer interface {
 	UpdateGroup(context.Context, *UpdateGroupRequest) (*emptypb.Empty, error)
 	DataReportTrack(context.Context, *DataReportTrackRequest) (*emptypb.Empty, error)
 	ExecuteToken(context.Context, *ExecuteTokenRequest) (*ExecuteTokenReply, error)
+	InspectContainer(context.Context, *InspectContainerRequest) (*InspectContainerReply, error)
 	mustEmbedUnimplementedCoreServer()
 }
 
@@ -271,6 +283,9 @@ func (UnimplementedCoreServer) DataReportTrack(context.Context, *DataReportTrack
 }
 func (UnimplementedCoreServer) ExecuteToken(context.Context, *ExecuteTokenRequest) (*ExecuteTokenReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecuteToken not implemented")
+}
+func (UnimplementedCoreServer) InspectContainer(context.Context, *InspectContainerRequest) (*InspectContainerReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InspectContainer not implemented")
 }
 func (UnimplementedCoreServer) mustEmbedUnimplementedCoreServer() {}
 
@@ -555,6 +570,24 @@ func _Core_ExecuteToken_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Core_InspectContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InspectContainerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).InspectContainer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_InspectContainer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).InspectContainer(ctx, req.(*InspectContainerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Core_ServiceDesc is the grpc.ServiceDesc for Core service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -622,58 +655,11 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "ExecuteToken",
 			Handler:    _Core_ExecuteToken_Handler,
 		},
+		{
+			MethodName: "InspectContainer",
+			Handler:    _Core_InspectContainer_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "api/core/v1/core.proto",
-}
-
-const ()
-
-// EngineClient is the client API for Engine service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type EngineClient interface {
-}
-
-type engineClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewEngineClient(cc grpc.ClientConnInterface) EngineClient {
-	return &engineClient{cc}
-}
-
-// EngineServer is the server API for Engine service.
-// All implementations must embed UnimplementedEngineServer
-// for forward compatibility
-type EngineServer interface {
-	mustEmbedUnimplementedEngineServer()
-}
-
-// UnimplementedEngineServer must be embedded to have forward compatible implementations.
-type UnimplementedEngineServer struct {
-}
-
-func (UnimplementedEngineServer) mustEmbedUnimplementedEngineServer() {}
-
-// UnsafeEngineServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to EngineServer will
-// result in compilation errors.
-type UnsafeEngineServer interface {
-	mustEmbedUnimplementedEngineServer()
-}
-
-func RegisterEngineServer(s grpc.ServiceRegistrar, srv EngineServer) {
-	s.RegisterService(&Engine_ServiceDesc, srv)
-}
-
-// Engine_ServiceDesc is the grpc.ServiceDesc for Engine service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var Engine_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.core.v1.Engine",
-	HandlerType: (*EngineServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "api/core/v1/core.proto",
 }

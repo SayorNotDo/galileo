@@ -8,24 +8,9 @@ import (
 	"galileo/app/engine/internal/biz"
 	. "galileo/pkg/errResponse"
 	"galileo/pkg/utils/snowflake"
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/golang/protobuf/ptypes/empty"
 	"time"
 )
-
-type EngineService struct {
-	v1.UnimplementedEngineServer
-
-	uc  *biz.EngineUseCase
-	log *log.Helper
-}
-
-func NewEngineService(uc *biz.EngineUseCase, logger log.Logger) *EngineService {
-	return &EngineService{
-		uc:  uc,
-		log: log.NewHelper(log.With(logger, "module", "engine.Service")),
-	}
-}
 
 func (s *EngineService) TestEngine(ctx context.Context, req *empty.Empty) (*v1.TestEngineReply, error) {
 	return &v1.TestEngineReply{Hello: "Galileo"}, nil

@@ -62,9 +62,13 @@ message Service {
   message File {
     string endpoint = 1;
   }
+  message Engine {
+    string endpoint = 1;
+  }
   User user = 1;
   Management management = 2;
   File file = 3;
+  Engine engine = 4;
 }
 
 message Trace {

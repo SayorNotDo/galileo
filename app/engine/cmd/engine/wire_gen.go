@@ -34,7 +34,9 @@ func wireApp(confServer *conf.Server, confData *conf.Data, confService *conf.Ser
 	}
 	engineRepo := data.NewEngineRepo(dataData, logger)
 	engineUseCase := biz.NewEngineUseCase(engineRepo, logger)
-	engineService := service.NewEngineService(engineUseCase, logger)
+	dockerRepo := data.NewDockerRepo(dataData, logger)
+	dockerUseCase := biz.NewDockerUseCase(dockerRepo, logger)
+	engineService := service.NewEngineService(engineUseCase, dockerUseCase, logger)
 	grpcServer := server.NewGRPCServer(confServer, engineService, logger)
 	registrar := data.NewRegistrar(registry)
 	app := newApp(logger, grpcServer, registrar)

@@ -25,3 +25,7 @@ service:
     endpoint: discovery:///core.user.scheduler
   management:
     endpoint: discovery:///galileo.management.scheduler
+  engine:
+    endpoint: discovery:///galileo.engine.scheduler
+  file:
+    endpoint: discovery:///galileo.file.scheduler

@@ -29,14 +29,17 @@ func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, conf
 	client := data.NewRedis(confData, logger)
 	taskClient := data.NewTaskServiceClient(auth, confService, discovery)
 	fileClient := data.NewFileServiceClient(confService, discovery)
+	engineClient := data.NewEngineServiceClient(confService, discovery)
 	syncProducer := data.NewKafkaProducer(confData, logger)
-	dataData, err := data.NewData(confData, userClient, logger, client, taskClient, fileClient, syncProducer)
+	dataData, err := data.NewData(confData, userClient, logger, client, taskClient, fileClient, engineClient, syncProducer)
 	if err != nil {
 		return nil, nil, err
 	}
 	coreRepo := data.NewCoreRepo(dataData, logger)
 	coreUseCase := biz.NewCoreUseCase(coreRepo, logger, auth)
-	coreService := service.NewCoreService(coreUseCase, logger)
+	engineRepo := data.NewEngineRepo(dataData, logger)
+	engineUseCase := biz.NewEngineUseCase(engineRepo, logger)
+	coreService := service.NewCoreService(coreUseCase, engineUseCase, logger)
 	httpServer := server.NewHTTPServer(confServer, auth, coreService, logger)
 	registrar := data.NewRegistrar(registry)
 	app := newApp(logger, httpServer, registrar)

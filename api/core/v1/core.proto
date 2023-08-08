@@ -98,11 +98,18 @@ service Core {
       body: "*"
     };
   }
+  rpc InspectContainer(InspectContainerRequest) returns (InspectContainerReply) {
+    option(google.api.http) = {
+      get: "v1/api/engine/container/{id}",
+    };
+  }
 }
 
-service Engine {
-
+message InspectContainerRequest {
+  string id = 1;
 }
+
+message InspectContainerReply {}
 
 message ExecuteTokenRequest {
   string machine = 1;

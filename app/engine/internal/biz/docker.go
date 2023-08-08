@@ -7,26 +7,26 @@ import (
 )
 
 type Container struct {
-	Id              string
-	Hostname        string
-	Domainname      string
-	User            string
-	Name            string
-	AttachStdin     bool
-	AttachStdout    bool
-	AttachStderr    bool
-	Tty             bool
-	OpenStdin       bool
-	StdinOnce       bool
-	Env             []string
-	Cmd             []string
-	Image           string
-	Labels          map[string]string
-	Volumes         map[string]struct{}
-	WorkingDir      string
-	Entrypoint      string
-	NetworkDisabled bool
-	MacAddress      string
+	Id              string              `json:"id"`
+	Hostname        string              `json:"hostname"`
+	Domainname      string              `json:"domain_name"`
+	User            string              `json:"user"`
+	Name            string              `json:"name"`
+	AttachStdin     bool                `json:"attach_stdin,omitempty"`
+	AttachStdout    bool                `json:"attach_stdout,omitempty"`
+	AttachStderr    bool                `json:"attach_stderr,omitempty"`
+	Tty             bool                `json:"tty,omitempty"`
+	OpenStdin       bool                `json:"open_stdin,omitempty"`
+	StdinOnce       bool                `json:"stdin_once,omitempty"`
+	Env             []string            `json:"env"`
+	Cmd             []string            `json:"cmd"`
+	Image           string              `json:"image"`
+	Labels          map[string]string   `json:"labels"`
+	Volumes         map[string]struct{} `json:"volumes"`
+	WorkingDir      string              `json:"working_dir"`
+	Entrypoint      string              `json:"entrypoint"`
+	NetworkDisabled bool                `json:"network_disabled"`
+	MacAddress      string              `json:"mac_address"`
 	ExposedPorts    map[string]struct{}
 	StopSignal      string
 	StopTimeout     *int

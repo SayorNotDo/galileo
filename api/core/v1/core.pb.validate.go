@@ -35,6 +35,212 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on InspectContainerRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *InspectContainerRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on InspectContainerRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// InspectContainerRequestMultiError, or nil if none found.
+func (m *InspectContainerRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *InspectContainerRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return InspectContainerRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// InspectContainerRequestMultiError is an error wrapping multiple validation
+// errors returned by InspectContainerRequest.ValidateAll() if the designated
+// constraints aren't met.
+type InspectContainerRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m InspectContainerRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m InspectContainerRequestMultiError) AllErrors() []error { return m }
+
+// InspectContainerRequestValidationError is the validation error returned by
+// InspectContainerRequest.Validate if the designated constraints aren't met.
+type InspectContainerRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e InspectContainerRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e InspectContainerRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e InspectContainerRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e InspectContainerRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e InspectContainerRequestValidationError) ErrorName() string {
+	return "InspectContainerRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e InspectContainerRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sInspectContainerRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = InspectContainerRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = InspectContainerRequestValidationError{}
+
+// Validate checks the field values on InspectContainerReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *InspectContainerReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on InspectContainerReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// InspectContainerReplyMultiError, or nil if none found.
+func (m *InspectContainerReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *InspectContainerReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return InspectContainerReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// InspectContainerReplyMultiError is an error wrapping multiple validation
+// errors returned by InspectContainerReply.ValidateAll() if the designated
+// constraints aren't met.
+type InspectContainerReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m InspectContainerReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m InspectContainerReplyMultiError) AllErrors() []error { return m }
+
+// InspectContainerReplyValidationError is the validation error returned by
+// InspectContainerReply.Validate if the designated constraints aren't met.
+type InspectContainerReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e InspectContainerReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e InspectContainerReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e InspectContainerReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e InspectContainerReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e InspectContainerReplyValidationError) ErrorName() string {
+	return "InspectContainerReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e InspectContainerReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sInspectContainerReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = InspectContainerReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = InspectContainerReplyValidationError{}
+
 // Validate checks the field values on ExecuteTokenRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

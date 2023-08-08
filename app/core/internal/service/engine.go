@@ -2,6 +2,8 @@ package service
 
 import (
 	"bytes"
+	"context"
+	v1 "galileo/api/core/v1"
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"io"
@@ -9,12 +11,20 @@ import (
 	"path"
 )
 
+func (c *CoreService) InspectContainer(ctx context.Context, req *v1.InspectContainerRequest) (*v1.InspectContainerReply, error) {
+	_, err := c.ec.InspectContainer(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.InspectContainerReply{}, err
+}
+
 /* 接口上传的docker-compose\Dockerfile文件   写入数据库？对象存储？
 写入数据库不现实：表结构设计难、非固定
 使用对象存储
 */
 
-func (c *EngineService) UploadEngineFile(ctx http.Context) error {
+func (c *CoreService) UploadEngineFile(ctx http.Context) error {
 	/* 接口参数获取（文件类型） */
 	fileName := ctx.Request().FormValue("fileName")
 	if fileName == "" {
@@ -42,7 +52,7 @@ func (c *EngineService) UploadEngineFile(ctx http.Context) error {
 	*/
 	switch fileName {
 	case "Dockerfile", "docker-compose":
-		url, err := c.uc.UploadEngineFile(ctx, fileName, path.Ext(fileHeader.Filename), buf.Bytes())
+		url, err := c.ec.UploadEngineFile(ctx, fileName, path.Ext(fileHeader.Filename), buf.Bytes())
 		if err != nil {
 			return err
 		}

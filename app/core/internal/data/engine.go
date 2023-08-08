@@ -19,7 +19,7 @@ func NewEngineRepo(data *Data, logger log.Logger) biz.EngineRepo {
 	}
 }
 
-func (e engineRepo) UploadEngineFile(ctx context.Context, fileName string, fileType string, content []byte) (string, error) {
+func (e *engineRepo) UploadEngineFile(ctx context.Context, fileName string, fileType string, content []byte) (string, error) {
 	res, err := e.data.fileCli.UploadFile(ctx, &fileV1.UploadFileRequest{
 		Name:    fileName,
 		Type:    fileType,
@@ -29,4 +29,9 @@ func (e engineRepo) UploadEngineFile(ctx context.Context, fileName string, fileT
 		return "", err
 	}
 	return res.Url, err
+}
+
+func (e *engineRepo) InspectContainer(ctx context.Context, id string) (string, error) {
+	//res, err := e.data.engineCli
+	return "", nil
 }

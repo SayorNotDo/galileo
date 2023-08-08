@@ -21,10 +21,12 @@ service Engine {
   rpc AddCronJob(AddCronJobRequest) returns (AddCronJobReply);
   rpc UpdateCronJob(UpdateCronJobRequest) returns (google.protobuf.Empty);
   rpc BuildContainer(google.protobuf.Empty) returns (BuildContainerReply);
+  rpc ListContainers(ListContainerRequest) returns (ListContainersReply);
+  rpc InspectContainer(google.protobuf.Empty) returns (Container);
 }
 
-service Docker {
-  rpc ListContainers(google.protobuf.Empty) returns (ListContainersReply);
+message InspectContainerRequest {
+  string id = 1;
 }
 
 message ListContainerRequest {
