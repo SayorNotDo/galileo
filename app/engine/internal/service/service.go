@@ -5,4 +5,4 @@ import (
 )
 
 // ProviderSet is scheduler providers.
-var ProviderSet = wire.NewSet(NewEngineService)
+var ProviderSet = wire.NewSet(NewEngineService, NewDockerService)

@@ -26,6 +26,7 @@ import (
 var ProviderSet = wire.NewSet(
 	NewData,
 	NewEngineRepo,
+	NewDockerRepo,
 	NewRedis,
 	NewDockerClient,
 	NewRegistrar,
@@ -33,7 +34,9 @@ var ProviderSet = wire.NewSet(
 	NewTaskServiceClient,
 )
 
-var RedisCli redis.Cmdable
+var (
+	RedisCli redis.Cmdable
+)
 
 // Data .
 type Data struct {

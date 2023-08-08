@@ -12,16 +12,76 @@ option java_multiple_files = true;
 option java_package = "api.engine.v1";
 
 service Engine {
-  rpc TestEngine (google.protobuf.Empty) returns (TestEngineReply) {};
+  rpc TestEngine (google.protobuf.Empty) returns (TestEngineReply);
   rpc RunJob(RunJobRequest) returns (RunJobReply);
-  rpc CancelJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
-  rpc PauseJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
-  rpc ResumeJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
-  rpc DeleteJob(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc CancelJob(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc PauseJob(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc ResumeJob(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc DeleteJob(google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc AddCronJob(AddCronJobRequest) returns (AddCronJobReply);
   rpc UpdateCronJob(UpdateCronJobRequest) returns (google.protobuf.Empty);
-  rpc BuildContainer(google.protobuf.Empty) returns (BuildContainerReply){}
+  rpc BuildContainer(google.protobuf.Empty) returns (BuildContainerReply);
 }
+
+service Docker {
+  rpc ListContainers(google.protobuf.Empty) returns (ListContainersReply);
+}
+
+message ListContainerRequest {
+  bool all = 1;
+  int32 limit = 2;
+  bool size = 3;
+  map<string, StringList> filters = 4;
+  message StringList {
+    repeated string values = 1;
+  }
+}
+
+message ListContainersReply {
+  repeated Container container = 1;
+}
+
+message Container {
+  message Names {
+    repeated string name = 1;
+  }
+  string id = 1;
+  Names names = 2;
+  string image = 3;
+  string imageID = 4;
+  string command = 5;
+  int64 created = 6;
+  message Ports {
+    repeated Port ports = 1;
+
+    message Port {
+      int32 privatePort = 1;
+      int32 publicPort = 2;
+      string type = 3;
+    }
+  }
+  Ports ports = 7;
+  map<string, string> labels = 8;
+  string state = 9;
+  string status = 10;
+  message HostConfig {
+    string networkMode = 1;
+  }
+  HostConfig hostConfig = 11;
+  message NetworkSetting {
+    message Networks {
+    }
+  }
+  message Mounts {
+    repeated Mount mounts = 1;
+
+    message Mount {
+
+    }
+  }
+  Mounts mounts = 12;
+}
+
 
 message UpdateCronJobRequest {
   int64 taskId = 1;

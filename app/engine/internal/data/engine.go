@@ -26,7 +26,7 @@ type engineRepo struct {
 func NewEngineRepo(data *Data, logger log.Logger) biz.EngineRepo {
 	return &engineRepo{
 		data: data,
-		log:  log.NewHelper(log.With(logger, "module", "engine.engineRepo")),
+		log:  log.NewHelper(log.With(logger, "module", "engine.Repo")),
 	}
 }
 
@@ -145,7 +145,7 @@ func (r *engineRepo) BuildContainer(ctx context.Context, b *biz.Container) (*biz
 	/* 定义容器配置 */
 	containerConfig := &container.Config{
 		Image: b.Image,
-		Cmd:   b.BuildCommand,
+		Cmd:   b.Cmd,
 	}
 	/* 拉取容器镜像 */
 	reader, err := cli.ImagePull(ctx, "docker.io/library/alpine", types.ImagePullOptions{})

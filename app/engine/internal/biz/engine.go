@@ -23,34 +23,6 @@ type Task struct {
 	ExecuteId      int64
 }
 
-type Container struct {
-	Id              string
-	Hostname        string
-	Domainname      string
-	User            string
-	Name            string
-	AttachStdin     bool
-	AttachStdout    bool
-	AttachStderr    bool
-	Tty             bool
-	OpenStdin       bool
-	StdinOnce       bool
-	Env             []string
-	Cmd             []string
-	Image           string
-	Labels          map[string]string
-	Volumes         map[string]struct{}
-	WorkingDir      string
-	Entrypoint      string
-	NetworkDisabled bool
-	MacAddress      string
-	ExposedPorts    map[string]struct{}
-	StopSignal      string
-	StopTimeout     *int
-	HostConfig      map[string]interface{}
-	NetworkConfig   map[string]struct{}
-}
-
 type EngineRepo interface {
 	TaskByID(ctx context.Context, id int64) (*Task, error)
 	AddCronJob(ctx context.Context, task *Task) (cron.EntryID, error)

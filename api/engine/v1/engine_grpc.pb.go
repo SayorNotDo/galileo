@@ -404,3 +404,93 @@ var Engine_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "api/engine/v1/engine.proto",
 }
+
+const (
+	Docker_ListContainers_FullMethodName = "/api.engine.v1.Docker/ListContainers"
+)
+
+// DockerClient is the client API for Docker service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type DockerClient interface {
+	ListContainers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListContainersReply, error)
+}
+
+type dockerClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewDockerClient(cc grpc.ClientConnInterface) DockerClient {
+	return &dockerClient{cc}
+}
+
+func (c *dockerClient) ListContainers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListContainersReply, error) {
+	out := new(ListContainersReply)
+	err := c.cc.Invoke(ctx, Docker_ListContainers_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// DockerServer is the server API for Docker service.
+// All implementations must embed UnimplementedDockerServer
+// for forward compatibility
+type DockerServer interface {
+	ListContainers(context.Context, *emptypb.Empty) (*ListContainersReply, error)
+	mustEmbedUnimplementedDockerServer()
+}
+
+// UnimplementedDockerServer must be embedded to have forward compatible implementations.
+type UnimplementedDockerServer struct {
+}
+
+func (UnimplementedDockerServer) ListContainers(context.Context, *emptypb.Empty) (*ListContainersReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListContainers not implemented")
+}
+func (UnimplementedDockerServer) mustEmbedUnimplementedDockerServer() {}
+
+// UnsafeDockerServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to DockerServer will
+// result in compilation errors.
+type UnsafeDockerServer interface {
+	mustEmbedUnimplementedDockerServer()
+}
+
+func RegisterDockerServer(s grpc.ServiceRegistrar, srv DockerServer) {
+	s.RegisterService(&Docker_ServiceDesc, srv)
+}
+
+func _Docker_ListContainers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DockerServer).ListContainers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Docker_ListContainers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DockerServer).ListContainers(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Docker_ServiceDesc is the grpc.ServiceDesc for Docker service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Docker_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "api.engine.v1.Docker",
+	HandlerType: (*DockerServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListContainers",
+			Handler:    _Docker_ListContainers_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "api/engine/v1/engine.proto",
+}
