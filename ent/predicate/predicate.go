@@ -21,6 +21,9 @@ type ApiStatistics func(*sql.Selector)
 // ApiTag is the predicate function for apitag builders.
 type ApiTag func(*sql.Selector)
 
+// Container is the predicate function for container builders.
+type Container func(*sql.Selector)
+
 // Group is the predicate function for group builders.
 type Group func(*sql.Selector)
 
@@ -29,6 +32,9 @@ type Project func(*sql.Selector)
 
 // Task is the predicate function for task builders.
 type Task func(*sql.Selector)
+
+// TestPlan is the predicate function for testplan builders.
+type TestPlan func(*sql.Selector)
 
 // Testcase is the predicate function for testcase builders.
 type Testcase func(*sql.Selector)

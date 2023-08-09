@@ -4,12 +4,14 @@ package ent
 
 import (
 	"galileo/ent/api"
+	"galileo/ent/container"
 	"galileo/ent/group"
 	"galileo/ent/project"
 	"galileo/ent/schema"
 	"galileo/ent/task"
 	"galileo/ent/testcase"
 	"galileo/ent/testcasesuite"
+	"galileo/ent/testplan"
 	"galileo/ent/user"
 	"time"
 
@@ -46,6 +48,28 @@ func init() {
 	apiDescUpdateAt := apiFields[15].Descriptor()
 	// api.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
 	api.UpdateDefaultUpdateAt = apiDescUpdateAt.UpdateDefault.(func() time.Time)
+	containerFields := schema.Container{}.Fields()
+	_ = containerFields
+	// containerDescHostname is the schema descriptor for hostname field.
+	containerDescHostname := containerFields[1].Descriptor()
+	// container.HostnameValidator is a validator for the "hostname" field. It is called by the builders before save.
+	container.HostnameValidator = containerDescHostname.Validators[0].(func(string) error)
+	// containerDescDomainname is the schema descriptor for domainname field.
+	containerDescDomainname := containerFields[2].Descriptor()
+	// container.DomainnameValidator is a validator for the "domainname" field. It is called by the builders before save.
+	container.DomainnameValidator = containerDescDomainname.Validators[0].(func(string) error)
+	// containerDescImage is the schema descriptor for image field.
+	containerDescImage := containerFields[6].Descriptor()
+	// container.ImageValidator is a validator for the "image" field. It is called by the builders before save.
+	container.ImageValidator = containerDescImage.Validators[0].(func(string) error)
+	// containerDescMACAddress is the schema descriptor for mac_address field.
+	containerDescMACAddress := containerFields[11].Descriptor()
+	// container.MACAddressValidator is a validator for the "mac_address" field. It is called by the builders before save.
+	container.MACAddressValidator = containerDescMACAddress.Validators[0].(func(string) error)
+	// containerDescID is the schema descriptor for id field.
+	containerDescID := containerFields[0].Descriptor()
+	// container.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	container.IDValidator = containerDescID.Validators[0].(func(string) error)
 	groupFields := schema.Group{}.Fields()
 	_ = groupFields
 	// groupDescName is the schema descriptor for name field.
@@ -104,6 +128,20 @@ func init() {
 	taskDescUpdatedAt := taskFields[14].Descriptor()
 	// task.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	task.UpdateDefaultUpdatedAt = taskDescUpdatedAt.UpdateDefault.(func() time.Time)
+	testplanFields := schema.TestPlan{}.Fields()
+	_ = testplanFields
+	// testplanDescName is the schema descriptor for name field.
+	testplanDescName := testplanFields[1].Descriptor()
+	// testplan.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	testplan.NameValidator = testplanDescName.Validators[0].(func(string) error)
+	// testplanDescCreatedAt is the schema descriptor for created_at field.
+	testplanDescCreatedAt := testplanFields[2].Descriptor()
+	// testplan.DefaultCreatedAt holds the default value on creation for the created_at field.
+	testplan.DefaultCreatedAt = testplanDescCreatedAt.Default.(func() time.Time)
+	// testplanDescUpdatedAt is the schema descriptor for updated_at field.
+	testplanDescUpdatedAt := testplanFields[4].Descriptor()
+	// testplan.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	testplan.UpdateDefaultUpdatedAt = testplanDescUpdatedAt.UpdateDefault.(func() time.Time)
 	testcaseFields := schema.Testcase{}.Fields()
 	_ = testcaseFields
 	// testcaseDescName is the schema descriptor for name field.

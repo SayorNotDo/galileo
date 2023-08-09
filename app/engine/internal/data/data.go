@@ -2,8 +2,12 @@ package data
 
 import (
 	"context"
+	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/sql"
+	"fmt"
 	taskV1 "galileo/api/management/task/v1"
 	"galileo/app/engine/internal/conf"
+	"galileo/ent"
 	"github.com/docker/docker/client"
 	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/log"
@@ -16,6 +20,9 @@ import (
 	consulAPI "github.com/hashicorp/consul/api"
 	"github.com/redis/go-redis/v9"
 	"github.com/robfig/cron/v3"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	grpcx "google.golang.org/grpc"
 	"time"
 )
@@ -23,6 +30,7 @@ import (
 // ProviderSet is data providers.
 var ProviderSet = wire.NewSet(
 	NewData,
+	NewEntDB,
 	NewEngineRepo,
 	NewDockerRepo,
 	NewRedis,
@@ -38,11 +46,12 @@ var (
 
 // Data .
 type Data struct {
+	entDB     *ent.Client
 	log       *log.Helper
 	redisCli  redis.Cmdable
 	taskCli   taskV1.TaskClient
-	cron      *cron.Cron
 	dockerCli *client.Client
+	cron      *cron.Cron
 }
 
 // NewData .
@@ -54,6 +63,35 @@ func NewData(c *conf.Data, logger log.Logger, redisCli redis.Cmdable, taskCli ta
 		l.Info("closing the data resources")
 	}
 	return &Data{log: l, redisCli: redisCli, taskCli: taskCli, cron: cronJob, dockerCli: dockerCli}, cleanup, nil
+}
+
+func NewEntDB(c *conf.Data) (*ent.Client, error) {
+	drv, err := sql.Open(
+		c.Database.Driver,
+		c.Database.Source,
+	)
+	sqlDB := drv.DB()
+	sqlDB.SetMaxOpenConns(150)
+	sqlDB.SetConnMaxLifetime(25 * time.Second)
+	sqlDrv := dialect.DebugWithContext(drv, func(ctx context.Context, i ...interface{}) {
+		log.Context(ctx).Info(i)
+		tracer := otel.Tracer("ent.")
+		kind := trace.SpanKindServer
+		_, span := tracer.Start(ctx,
+			"Query",
+			trace.WithAttributes(attribute.String("sql", fmt.Sprintln(i...))),
+			trace.WithSpanKind(kind),
+		)
+		span.End()
+	})
+	cli := ent.NewClient(ent.Driver(sqlDrv))
+	if err != nil {
+		return nil, err
+	}
+	if err := cli.Schema.Create(context.Background()); err != nil {
+		return nil, err
+	}
+	return cli, nil
 }
 
 func NewTaskServiceClient(sr *conf.Service, rr registry.Discovery) taskV1.TaskClient {
@@ -124,6 +162,7 @@ func NewDiscovery(conf *conf.Registry) registry.Discovery {
 
 func NewDockerClient(conf *conf.Service, logger log.Logger) *client.Client {
 	logs := log.NewHelper(log.With(logger, "module", "data.docker"))
+	/* 远程连接 */
 	//helper, err := connhelper.GetConnectionHelper(conf.Docker.Endpoint)
 	//if err != nil {
 	//	logs.Fatalf("docker get connect helper error: %v", err)

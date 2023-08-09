@@ -11,11 +11,13 @@ import (
 	"galileo/ent/apihistory"
 	"galileo/ent/apistatistics"
 	"galileo/ent/apitag"
+	"galileo/ent/container"
 	"galileo/ent/group"
 	"galileo/ent/project"
 	"galileo/ent/task"
 	"galileo/ent/testcase"
 	"galileo/ent/testcasesuite"
+	"galileo/ent/testplan"
 	"galileo/ent/user"
 	"reflect"
 
@@ -80,9 +82,11 @@ func columnChecker(table string) func(string) error {
 		apihistory.Table:    apihistory.ValidColumn,
 		apistatistics.Table: apistatistics.ValidColumn,
 		apitag.Table:        apitag.ValidColumn,
+		container.Table:     container.ValidColumn,
 		group.Table:         group.ValidColumn,
 		project.Table:       project.ValidColumn,
 		task.Table:          task.ValidColumn,
+		testplan.Table:      testplan.ValidColumn,
 		testcase.Table:      testcase.ValidColumn,
 		testcasesuite.Table: testcasesuite.ValidColumn,
 		user.Table:          user.ValidColumn,

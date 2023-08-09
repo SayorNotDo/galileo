@@ -24,9 +24,8 @@ func (c *CoreService) InspectContainer(ctx context.Context, req *v1.InspectConta
 	}, err
 }
 
-/* 接口上传的docker-compose\Dockerfile文件   写入数据库？对象存储？
-写入数据库不现实：表结构设计难、非固定
-使用对象存储
+/*
+接口上传的docker-compose\Dockerfile文件   对象存储
 */
 
 func (c *CoreService) UploadEngineFile(ctx http.Context) error {
@@ -61,7 +60,7 @@ func (c *CoreService) UploadEngineFile(ctx http.Context) error {
 		if err != nil {
 			return err
 		}
-		return ctx.Result(20000, map[string]string{
+		return ctx.Result(2000, map[string]string{
 			"url": url,
 		})
 	default:

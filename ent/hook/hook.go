@@ -68,6 +68,18 @@ func (f ApiTagFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, erro
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ApiTagMutation", m)
 }
 
+// The ContainerFunc type is an adapter to allow the use of ordinary
+// function as Container mutator.
+type ContainerFunc func(context.Context, *ent.ContainerMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ContainerFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ContainerMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ContainerMutation", m)
+}
+
 // The GroupFunc type is an adapter to allow the use of ordinary
 // function as Group mutator.
 type GroupFunc func(context.Context, *ent.GroupMutation) (ent.Value, error)
@@ -102,6 +114,18 @@ func (f TaskFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TaskMutation", m)
+}
+
+// The TestPlanFunc type is an adapter to allow the use of ordinary
+// function as TestPlan mutator.
+type TestPlanFunc func(context.Context, *ent.TestPlanMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TestPlanFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TestPlanMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TestPlanMutation", m)
 }
 
 // The TestcaseFunc type is an adapter to allow the use of ordinary

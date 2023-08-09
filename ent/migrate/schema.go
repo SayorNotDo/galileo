@@ -117,6 +117,30 @@ var (
 		Columns:    APITagColumns,
 		PrimaryKey: []*schema.Column{APITagColumns[0]},
 	}
+	// ContainerColumns holds the columns for the "container" table.
+	ContainerColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "hostname", Type: field.TypeString},
+		{Name: "domainname", Type: field.TypeString},
+		{Name: "user", Type: field.TypeString, Nullable: true},
+		{Name: "env", Type: field.TypeJSON, Nullable: true},
+		{Name: "cmd", Type: field.TypeJSON, Nullable: true},
+		{Name: "image", Type: field.TypeString},
+		{Name: "labels", Type: field.TypeJSON, Nullable: true},
+		{Name: "volumes", Type: field.TypeJSON, Nullable: true},
+		{Name: "working_dir", Type: field.TypeString, Nullable: true},
+		{Name: "entrypoint", Type: field.TypeJSON, Nullable: true},
+		{Name: "mac_address", Type: field.TypeString},
+		{Name: "expose_ports", Type: field.TypeJSON, Nullable: true},
+		{Name: "compose_file_url", Type: field.TypeString, Nullable: true},
+		{Name: "dockerfile_url", Type: field.TypeString, Nullable: true},
+	}
+	// ContainerTable holds the schema information for the "container" table.
+	ContainerTable = &schema.Table{
+		Name:       "container",
+		Columns:    ContainerColumns,
+		PrimaryKey: []*schema.Column{ContainerColumns[0]},
+	}
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -181,6 +205,22 @@ var (
 		Name:       "task",
 		Columns:    TaskColumns,
 		PrimaryKey: []*schema.Column{TaskColumns[0]},
+	}
+	// TestPlanColumns holds the columns for the "test_plan" table.
+	TestPlanColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
+	}
+	// TestPlanTable holds the schema information for the "test_plan" table.
+	TestPlanTable = &schema.Table{
+		Name:       "test_plan",
+		Columns:    TestPlanColumns,
+		PrimaryKey: []*schema.Column{TestPlanColumns[0]},
 	}
 	// TestcaseColumns holds the columns for the "testcase" table.
 	TestcaseColumns = []*schema.Column{
@@ -293,9 +333,11 @@ var (
 		APIHistoryTable,
 		APIStatisticsTable,
 		APITagTable,
+		ContainerTable,
 		GroupsTable,
 		ProjectTable,
 		TaskTable,
+		TestPlanTable,
 		TestcaseTable,
 		TestcaseSuiteTable,
 		UserTable,
@@ -320,11 +362,17 @@ func init() {
 	APITagTable.Annotation = &entsql.Annotation{
 		Table: "api_tag",
 	}
+	ContainerTable.Annotation = &entsql.Annotation{
+		Table: "container",
+	}
 	ProjectTable.Annotation = &entsql.Annotation{
 		Table: "project",
 	}
 	TaskTable.Annotation = &entsql.Annotation{
 		Table: "task",
+	}
+	TestPlanTable.Annotation = &entsql.Annotation{
+		Table: "test_plan",
 	}
 	TestcaseTable.Annotation = &entsql.Annotation{
 		Table: "testcase",

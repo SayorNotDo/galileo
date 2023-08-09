@@ -15,11 +15,13 @@ import (
 	"galileo/ent/apihistory"
 	"galileo/ent/apistatistics"
 	"galileo/ent/apitag"
+	"galileo/ent/container"
 	"galileo/ent/group"
 	"galileo/ent/project"
 	"galileo/ent/task"
 	"galileo/ent/testcase"
 	"galileo/ent/testcasesuite"
+	"galileo/ent/testplan"
 	"galileo/ent/user"
 
 	"entgo.io/ent"
@@ -43,12 +45,16 @@ type Client struct {
 	ApiStatistics *ApiStatisticsClient
 	// ApiTag is the client for interacting with the ApiTag builders.
 	ApiTag *ApiTagClient
+	// Container is the client for interacting with the Container builders.
+	Container *ContainerClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
+	// TestPlan is the client for interacting with the TestPlan builders.
+	TestPlan *TestPlanClient
 	// Testcase is the client for interacting with the Testcase builders.
 	Testcase *TestcaseClient
 	// TestcaseSuite is the client for interacting with the TestcaseSuite builders.
@@ -73,9 +79,11 @@ func (c *Client) init() {
 	c.ApiHistory = NewApiHistoryClient(c.config)
 	c.ApiStatistics = NewApiStatisticsClient(c.config)
 	c.ApiTag = NewApiTagClient(c.config)
+	c.Container = NewContainerClient(c.config)
 	c.Group = NewGroupClient(c.config)
 	c.Project = NewProjectClient(c.config)
 	c.Task = NewTaskClient(c.config)
+	c.TestPlan = NewTestPlanClient(c.config)
 	c.Testcase = NewTestcaseClient(c.config)
 	c.TestcaseSuite = NewTestcaseSuiteClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -166,9 +174,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ApiHistory:    NewApiHistoryClient(cfg),
 		ApiStatistics: NewApiStatisticsClient(cfg),
 		ApiTag:        NewApiTagClient(cfg),
+		Container:     NewContainerClient(cfg),
 		Group:         NewGroupClient(cfg),
 		Project:       NewProjectClient(cfg),
 		Task:          NewTaskClient(cfg),
+		TestPlan:      NewTestPlanClient(cfg),
 		Testcase:      NewTestcaseClient(cfg),
 		TestcaseSuite: NewTestcaseSuiteClient(cfg),
 		User:          NewUserClient(cfg),
@@ -196,9 +206,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ApiHistory:    NewApiHistoryClient(cfg),
 		ApiStatistics: NewApiStatisticsClient(cfg),
 		ApiTag:        NewApiTagClient(cfg),
+		Container:     NewContainerClient(cfg),
 		Group:         NewGroupClient(cfg),
 		Project:       NewProjectClient(cfg),
 		Task:          NewTaskClient(cfg),
+		TestPlan:      NewTestPlanClient(cfg),
 		Testcase:      NewTestcaseClient(cfg),
 		TestcaseSuite: NewTestcaseSuiteClient(cfg),
 		User:          NewUserClient(cfg),
@@ -231,8 +243,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Api, c.ApiCategory, c.ApiHistory, c.ApiStatistics, c.ApiTag, c.Group,
-		c.Project, c.Task, c.Testcase, c.TestcaseSuite, c.User,
+		c.Api, c.ApiCategory, c.ApiHistory, c.ApiStatistics, c.ApiTag, c.Container,
+		c.Group, c.Project, c.Task, c.TestPlan, c.Testcase, c.TestcaseSuite, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -242,8 +254,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Api, c.ApiCategory, c.ApiHistory, c.ApiStatistics, c.ApiTag, c.Group,
-		c.Project, c.Task, c.Testcase, c.TestcaseSuite, c.User,
+		c.Api, c.ApiCategory, c.ApiHistory, c.ApiStatistics, c.ApiTag, c.Container,
+		c.Group, c.Project, c.Task, c.TestPlan, c.Testcase, c.TestcaseSuite, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -262,12 +274,16 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ApiStatistics.mutate(ctx, m)
 	case *ApiTagMutation:
 		return c.ApiTag.mutate(ctx, m)
+	case *ContainerMutation:
+		return c.Container.mutate(ctx, m)
 	case *GroupMutation:
 		return c.Group.mutate(ctx, m)
 	case *ProjectMutation:
 		return c.Project.mutate(ctx, m)
 	case *TaskMutation:
 		return c.Task.mutate(ctx, m)
+	case *TestPlanMutation:
+		return c.TestPlan.mutate(ctx, m)
 	case *TestcaseMutation:
 		return c.Testcase.mutate(ctx, m)
 	case *TestcaseSuiteMutation:
@@ -901,6 +917,124 @@ func (c *ApiTagClient) mutate(ctx context.Context, m *ApiTagMutation) (Value, er
 	}
 }
 
+// ContainerClient is a client for the Container schema.
+type ContainerClient struct {
+	config
+}
+
+// NewContainerClient returns a client for the Container from the given config.
+func NewContainerClient(c config) *ContainerClient {
+	return &ContainerClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `container.Hooks(f(g(h())))`.
+func (c *ContainerClient) Use(hooks ...Hook) {
+	c.hooks.Container = append(c.hooks.Container, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `container.Intercept(f(g(h())))`.
+func (c *ContainerClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Container = append(c.inters.Container, interceptors...)
+}
+
+// Create returns a builder for creating a Container entity.
+func (c *ContainerClient) Create() *ContainerCreate {
+	mutation := newContainerMutation(c.config, OpCreate)
+	return &ContainerCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Container entities.
+func (c *ContainerClient) CreateBulk(builders ...*ContainerCreate) *ContainerCreateBulk {
+	return &ContainerCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Container.
+func (c *ContainerClient) Update() *ContainerUpdate {
+	mutation := newContainerMutation(c.config, OpUpdate)
+	return &ContainerUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ContainerClient) UpdateOne(co *Container) *ContainerUpdateOne {
+	mutation := newContainerMutation(c.config, OpUpdateOne, withContainer(co))
+	return &ContainerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ContainerClient) UpdateOneID(id string) *ContainerUpdateOne {
+	mutation := newContainerMutation(c.config, OpUpdateOne, withContainerID(id))
+	return &ContainerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Container.
+func (c *ContainerClient) Delete() *ContainerDelete {
+	mutation := newContainerMutation(c.config, OpDelete)
+	return &ContainerDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ContainerClient) DeleteOne(co *Container) *ContainerDeleteOne {
+	return c.DeleteOneID(co.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ContainerClient) DeleteOneID(id string) *ContainerDeleteOne {
+	builder := c.Delete().Where(container.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ContainerDeleteOne{builder}
+}
+
+// Query returns a query builder for Container.
+func (c *ContainerClient) Query() *ContainerQuery {
+	return &ContainerQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeContainer},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Container entity by its id.
+func (c *ContainerClient) Get(ctx context.Context, id string) (*Container, error) {
+	return c.Query().Where(container.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ContainerClient) GetX(ctx context.Context, id string) *Container {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ContainerClient) Hooks() []Hook {
+	return c.hooks.Container
+}
+
+// Interceptors returns the client interceptors.
+func (c *ContainerClient) Interceptors() []Interceptor {
+	return c.inters.Container
+}
+
+func (c *ContainerClient) mutate(ctx context.Context, m *ContainerMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ContainerCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ContainerUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ContainerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ContainerDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Container mutation op: %q", m.Op())
+	}
+}
+
 // GroupClient is a client for the Group schema.
 type GroupClient struct {
 	config
@@ -1284,6 +1418,124 @@ func (c *TaskClient) mutate(ctx context.Context, m *TaskMutation) (Value, error)
 		return (&TaskDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Task mutation op: %q", m.Op())
+	}
+}
+
+// TestPlanClient is a client for the TestPlan schema.
+type TestPlanClient struct {
+	config
+}
+
+// NewTestPlanClient returns a client for the TestPlan from the given config.
+func NewTestPlanClient(c config) *TestPlanClient {
+	return &TestPlanClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `testplan.Hooks(f(g(h())))`.
+func (c *TestPlanClient) Use(hooks ...Hook) {
+	c.hooks.TestPlan = append(c.hooks.TestPlan, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `testplan.Intercept(f(g(h())))`.
+func (c *TestPlanClient) Intercept(interceptors ...Interceptor) {
+	c.inters.TestPlan = append(c.inters.TestPlan, interceptors...)
+}
+
+// Create returns a builder for creating a TestPlan entity.
+func (c *TestPlanClient) Create() *TestPlanCreate {
+	mutation := newTestPlanMutation(c.config, OpCreate)
+	return &TestPlanCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of TestPlan entities.
+func (c *TestPlanClient) CreateBulk(builders ...*TestPlanCreate) *TestPlanCreateBulk {
+	return &TestPlanCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for TestPlan.
+func (c *TestPlanClient) Update() *TestPlanUpdate {
+	mutation := newTestPlanMutation(c.config, OpUpdate)
+	return &TestPlanUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TestPlanClient) UpdateOne(tp *TestPlan) *TestPlanUpdateOne {
+	mutation := newTestPlanMutation(c.config, OpUpdateOne, withTestPlan(tp))
+	return &TestPlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TestPlanClient) UpdateOneID(id int64) *TestPlanUpdateOne {
+	mutation := newTestPlanMutation(c.config, OpUpdateOne, withTestPlanID(id))
+	return &TestPlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for TestPlan.
+func (c *TestPlanClient) Delete() *TestPlanDelete {
+	mutation := newTestPlanMutation(c.config, OpDelete)
+	return &TestPlanDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TestPlanClient) DeleteOne(tp *TestPlan) *TestPlanDeleteOne {
+	return c.DeleteOneID(tp.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *TestPlanClient) DeleteOneID(id int64) *TestPlanDeleteOne {
+	builder := c.Delete().Where(testplan.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TestPlanDeleteOne{builder}
+}
+
+// Query returns a query builder for TestPlan.
+func (c *TestPlanClient) Query() *TestPlanQuery {
+	return &TestPlanQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTestPlan},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a TestPlan entity by its id.
+func (c *TestPlanClient) Get(ctx context.Context, id int64) (*TestPlan, error) {
+	return c.Query().Where(testplan.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TestPlanClient) GetX(ctx context.Context, id int64) *TestPlan {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *TestPlanClient) Hooks() []Hook {
+	return c.hooks.TestPlan
+}
+
+// Interceptors returns the client interceptors.
+func (c *TestPlanClient) Interceptors() []Interceptor {
+	return c.inters.TestPlan
+}
+
+func (c *TestPlanClient) mutate(ctx context.Context, m *TestPlanMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TestPlanCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TestPlanUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TestPlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TestPlanDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown TestPlan mutation op: %q", m.Op())
 	}
 }
 
@@ -1676,11 +1928,11 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Group, Project, Task,
-		Testcase, TestcaseSuite, User []ent.Hook
+		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Container, Group, Project,
+		Task, TestPlan, Testcase, TestcaseSuite, User []ent.Hook
 	}
 	inters struct {
-		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Group, Project, Task,
-		Testcase, TestcaseSuite, User []ent.Interceptor
+		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Container, Group, Project,
+		Task, TestPlan, Testcase, TestcaseSuite, User []ent.Interceptor
 	}
 )

@@ -4,7 +4,6 @@ import (
 	"context"
 	v1 "galileo/api/engine/v1"
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -12,7 +11,7 @@ type DockerRepo interface {
 	ListContainers(ctx context.Context, options types.ContainerListOptions) ([]*Container, error)
 	InspectContainer(ctx context.Context, id string) (*Container, error)
 	CreateContainer(ctx context.Context, container *Container) (id string, warnings []string, err error)
-	ParseComposeFile(ctx context.Context, fp string) (map[string]container.Config, error)
+	ParseComposeFile(ctx context.Context, fp []byte) ([]*ContainerConfig, error)
 }
 
 type DockerUseCase struct {
@@ -29,7 +28,7 @@ func (dc *DockerUseCase) ListContainers(ctx context.Context, options types.Conta
 	return dc.repo.ListContainers(ctx, options)
 }
 
-func (dc *DockerUseCase) ParseComposeFile(ctx context.Context, fp string) (map[string]container.Config, error) {
+func (dc *DockerUseCase) ParseComposeFile(ctx context.Context, fp []byte) ([]*ContainerConfig, error) {
 	return dc.repo.ParseComposeFile(ctx, fp)
 }
 

@@ -12,10 +12,6 @@ import (
 	"time"
 )
 
-func (s *EngineService) TestEngine(ctx context.Context, req *empty.Empty) (*v1.TestEngineReply, error) {
-	return &v1.TestEngineReply{Hello: "Galileo"}, nil
-}
-
 func (s *EngineService) CronJobScheduler(ctx context.Context) {
 	// 设置循环频率为 5 min
 	interval := 5 * time.Minute
@@ -100,6 +96,7 @@ func (s *EngineService) UpdateCronJob(ctx context.Context, req *v1.UpdateCronJob
 	}
 	return nil, nil
 }
+
 func (s *EngineService) RunJob(ctx context.Context, req *v1.RunJobRequest) (*v1.RunJobReply, error) {
 	s.log.Info("*--------------------------------*Run Job*--------------------------------*")
 	res, err := s.uc.TaskByID(ctx, req.TaskId)

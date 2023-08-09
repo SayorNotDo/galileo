@@ -20,7 +20,6 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Engine_TestEngine_FullMethodName       = "/api.engine.v1.Engine/TestEngine"
 	Engine_RunJob_FullMethodName           = "/api.engine.v1.Engine/RunJob"
 	Engine_CancelJob_FullMethodName        = "/api.engine.v1.Engine/CancelJob"
 	Engine_PauseJob_FullMethodName         = "/api.engine.v1.Engine/PauseJob"
@@ -37,7 +36,6 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EngineClient interface {
-	TestEngine(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TestEngineReply, error)
 	RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobReply, error)
 	CancelJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	PauseJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -56,15 +54,6 @@ type engineClient struct {
 
 func NewEngineClient(cc grpc.ClientConnInterface) EngineClient {
 	return &engineClient{cc}
-}
-
-func (c *engineClient) TestEngine(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TestEngineReply, error) {
-	out := new(TestEngineReply)
-	err := c.cc.Invoke(ctx, Engine_TestEngine_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *engineClient) RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobReply, error) {
@@ -161,7 +150,6 @@ func (c *engineClient) InspectContainer(ctx context.Context, in *InspectContaine
 // All implementations must embed UnimplementedEngineServer
 // for forward compatibility
 type EngineServer interface {
-	TestEngine(context.Context, *emptypb.Empty) (*TestEngineReply, error)
 	RunJob(context.Context, *RunJobRequest) (*RunJobReply, error)
 	CancelJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	PauseJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
@@ -179,9 +167,6 @@ type EngineServer interface {
 type UnimplementedEngineServer struct {
 }
 
-func (UnimplementedEngineServer) TestEngine(context.Context, *emptypb.Empty) (*TestEngineReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TestEngine not implemented")
-}
 func (UnimplementedEngineServer) RunJob(context.Context, *RunJobRequest) (*RunJobReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RunJob not implemented")
 }
@@ -223,24 +208,6 @@ type UnsafeEngineServer interface {
 
 func RegisterEngineServer(s grpc.ServiceRegistrar, srv EngineServer) {
 	s.RegisterService(&Engine_ServiceDesc, srv)
-}
-
-func _Engine_TestEngine_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EngineServer).TestEngine(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Engine_TestEngine_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EngineServer).TestEngine(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _Engine_RunJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -430,10 +397,6 @@ var Engine_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "api.engine.v1.Engine",
 	HandlerType: (*EngineServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "TestEngine",
-			Handler:    _Engine_TestEngine_Handler,
-		},
 		{
 			MethodName: "RunJob",
 			Handler:    _Engine_RunJob_Handler,

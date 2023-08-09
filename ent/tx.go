@@ -22,12 +22,16 @@ type Tx struct {
 	ApiStatistics *ApiStatisticsClient
 	// ApiTag is the client for interacting with the ApiTag builders.
 	ApiTag *ApiTagClient
+	// Container is the client for interacting with the Container builders.
+	Container *ContainerClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
+	// TestPlan is the client for interacting with the TestPlan builders.
+	TestPlan *TestPlanClient
 	// Testcase is the client for interacting with the Testcase builders.
 	Testcase *TestcaseClient
 	// TestcaseSuite is the client for interacting with the TestcaseSuite builders.
@@ -170,9 +174,11 @@ func (tx *Tx) init() {
 	tx.ApiHistory = NewApiHistoryClient(tx.config)
 	tx.ApiStatistics = NewApiStatisticsClient(tx.config)
 	tx.ApiTag = NewApiTagClient(tx.config)
+	tx.Container = NewContainerClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
+	tx.TestPlan = NewTestPlanClient(tx.config)
 	tx.Testcase = NewTestcaseClient(tx.config)
 	tx.TestcaseSuite = NewTestcaseSuiteClient(tx.config)
 	tx.User = NewUserClient(tx.config)

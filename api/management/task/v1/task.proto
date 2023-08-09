@@ -46,7 +46,6 @@ service Task {
       get: "v1/api/management/task/{id}/progress"
     };
   };
-  rpc CreateTestPlan (CreateTestPlanRequest) returns (CreateTestPlanReply);
 }
 
 message TaskProgressRequest {
@@ -65,9 +64,7 @@ message progressDetail {
   int32 unknown = 4;
 }
 
-message CreateTestPlanRequest {}
 
-message CreateTestPlanReply {}
 
 message UpdateTaskStatusRequest {
   int64 id = 1;

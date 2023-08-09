@@ -61,11 +61,6 @@ func (s *EngineService) InspectContainer(ctx context.Context, req *v1.InspectCon
 5. 测试结果输出
 */
 
-/* 解析docker-compose.yml
-1. 获取上传的docker-compose.yml 文件（直接上传）
-2. 使用yaml解析库解析docker-compose.yml文件到Config对象
-*/
-
 /* 解析Dockerfile
 1. 获取上传的Dockerfile
 2. yaml解析库解析
@@ -73,12 +68,12 @@ func (s *EngineService) InspectContainer(ctx context.Context, req *v1.InspectCon
 */
 
 func (s *EngineService) CreateContainer(ctx context.Context, req *v1.CreateContainerRequest) (*v1.CreateContainerReply, error) {
-	container, err := s.uc.CreateContainer(ctx, &biz.Container{})
+	containerId, _, err := s.dc.CreateContainer(ctx, &biz.Container{})
 	if err != nil {
 		return nil, err
 	}
 	return &v1.CreateContainerReply{
-		Id:      container.Id,
+		Id:      containerId,
 		Warning: "",
 	}, nil
 }

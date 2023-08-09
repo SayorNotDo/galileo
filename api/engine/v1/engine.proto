@@ -12,7 +12,6 @@ option java_multiple_files = true;
 option java_package = "api.engine.v1";
 
 service Engine {
-  rpc TestEngine (google.protobuf.Empty) returns (TestEngineReply);
   rpc RunJob(RunJobRequest) returns (RunJobReply);
   rpc CancelJob(google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc PauseJob(google.protobuf.Empty) returns (google.protobuf.Empty);
@@ -112,10 +111,6 @@ enum frequency {
 
 message AddCronJobReply {
   int64 executeId = 1;
-}
-
-message TestEngineReply {
-  string hello = 1;
 }
 
 message CreateContainerRequest {}

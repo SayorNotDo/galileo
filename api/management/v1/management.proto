@@ -15,6 +15,7 @@ service Management {
       get: "v1/api/management/info"
     };
   }
+  rpc CreateTestPlan (CreateTestPlanRequest) returns (CreateTestPlanReply);
 }
 
 message BaseInfoReply {
@@ -23,3 +24,7 @@ message BaseInfoReply {
   int64 apiCaseCount = 3;
   int64 cronJobCount = 4;
 };
+
+message CreateTestPlanRequest {}
+
+message CreateTestPlanReply {}

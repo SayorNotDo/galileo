@@ -1,6 +1,12 @@
 package biz
 
-import "github.com/docker/go-connections/nat"
+import (
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/network"
+	"github.com/docker/go-connections/nat"
+	v1 "github.com/opencontainers/image-spec/specs-go/v1"
+)
 
 type Container struct {
 	Id              string              `json:"id"`
@@ -32,4 +38,46 @@ type Container struct {
 	Platform        string              `json:"platform"`
 	SizeRw          *int64              `json:"size_rw,omitempty"`
 	SizeRootFs      *int64              `json:"size_root_fs,omitempty"`
+}
+
+func NewContainer(data types.ContainerJSON) *Container {
+	return &Container{
+		Id:              data.ID,
+		Created:         data.Created,
+		Hostname:        data.Config.Hostname,
+		Domainname:      data.Config.Domainname,
+		User:            data.Config.User,
+		Name:            data.Name,
+		AttachStdin:     data.Config.AttachStdin,
+		AttachStdout:    data.Config.AttachStdout,
+		AttachStderr:    data.Config.AttachStderr,
+		Tty:             data.Config.Tty,
+		RestartCount:    data.RestartCount,
+		OpenStdin:       data.Config.OpenStdin,
+		StdinOnce:       data.Config.StdinOnce,
+		Env:             data.Config.Env,
+		Cmd:             data.Config.Cmd,
+		Image:           data.Config.Image,
+		Labels:          data.Config.Labels,
+		Volumes:         data.Config.Volumes,
+		WorkingDir:      data.Config.WorkingDir,
+		Entrypoint:      data.Config.Entrypoint,
+		NetworkDisabled: data.Config.NetworkDisabled,
+		MacAddress:      data.Config.MacAddress,
+		ExposedPorts:    data.Config.ExposedPorts,
+		StopSignal:      data.Config.StopSignal,
+		StopTimeout:     data.Config.StopTimeout,
+		Driver:          data.Driver,
+		Platform:        data.Platform,
+		SizeRw:          data.SizeRw,
+		SizeRootFs:      data.SizeRootFs,
+	}
+}
+
+type ContainerConfig struct {
+	Config        *container.Config
+	HostConfig    *container.HostConfig
+	NetworkConfig *network.NetworkingConfig
+	Platform      *v1.Platform
+	containerName string
 }
