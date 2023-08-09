@@ -24,7 +24,9 @@ import (
 // ProviderSet is data providers.
 var ProviderSet = wire.NewSet(NewData, NewFileRepo, NewEntDB, NewRedis, NewDiscovery, NewOssClient)
 
-var RedisCli redis.Cmdable
+var (
+	RedisCli redis.Cmdable
+)
 
 // Data .
 type Data struct {
