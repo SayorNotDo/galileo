@@ -113,28 +113,6 @@ func (r *engineRepo) RemoveCronJob(ctx context.Context, taskId int64) error {
 	return errResponse.SetCustomizeErrMsg(errResponse.ReasonRecordNotFound, "entry not found")
 }
 
-func (r *engineRepo) ParseComposeFile(ctx context.Context, fp string) (map[string]container.Config, error) {
-	/* 读取docker-compose文件 */
-	//file, err := os.ReadFile(fp)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//defer func(file *os.File) {
-	//	err := file.Close()
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//}(file)
-	//var config container.Config
-	///* 使用yaml解析库解析docker-compose.yml文件到Config对象 */
-	//decoder := yaml.NewDecoder(file)
-	//if err := decoder.Decode(&config); err != nil {
-	//	return nil, err
-	//}
-
-	return nil, nil
-}
-
 func (r *engineRepo) BuildContainer(ctx context.Context, b *biz.Container) (*biz.Container, error) {
 	/* TODO: 容器构建过程 */
 	/* 创建Docker客户端 */

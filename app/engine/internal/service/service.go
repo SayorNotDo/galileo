@@ -21,6 +21,7 @@ type EngineService struct {
 func NewEngineService(uc *biz.EngineUseCase, dc *biz.DockerUseCase, logger log.Logger) *EngineService {
 	return &EngineService{
 		uc:  uc,
+		dc:  dc,
 		log: log.NewHelper(log.With(logger, "module", "engine.Service")),
 	}
 }

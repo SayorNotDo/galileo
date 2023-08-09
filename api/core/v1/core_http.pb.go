@@ -42,7 +42,7 @@ type CoreHTTPServer interface {
 	DataReportTrack(context.Context, *DataReportTrackRequest) (*emptypb.Empty, error)
 	DeleteUser(context.Context, *DeleteRequest) (*DeleteReply, error)
 	ExecuteToken(context.Context, *ExecuteTokenRequest) (*ExecuteTokenReply, error)
-	InspectContainer(context.Context, *InspectContainerRequest) (*InspectContainerReply, error)
+	InspectContainer(context.Context, *InspectContainerRequest) (*ContainerInfo, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error)
@@ -384,7 +384,7 @@ func _Core_InspectContainer0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Cont
 		if err != nil {
 			return err
 		}
-		reply := out.(*InspectContainerReply)
+		reply := out.(*ContainerInfo)
 		return ctx.Result(200, reply)
 	}
 }
@@ -394,7 +394,7 @@ type CoreHTTPClient interface {
 	DataReportTrack(ctx context.Context, req *DataReportTrackRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	DeleteUser(ctx context.Context, req *DeleteRequest, opts ...http.CallOption) (rsp *DeleteReply, err error)
 	ExecuteToken(ctx context.Context, req *ExecuteTokenRequest, opts ...http.CallOption) (rsp *ExecuteTokenReply, err error)
-	InspectContainer(ctx context.Context, req *InspectContainerRequest, opts ...http.CallOption) (rsp *InspectContainerReply, err error)
+	InspectContainer(ctx context.Context, req *InspectContainerRequest, opts ...http.CallOption) (rsp *ContainerInfo, err error)
 	ListUser(ctx context.Context, req *ListUserRequest, opts ...http.CallOption) (rsp *ListUserReply, err error)
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *LoginReply, err error)
 	Logout(ctx context.Context, req *LogoutRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
@@ -468,8 +468,8 @@ func (c *CoreHTTPClientImpl) ExecuteToken(ctx context.Context, in *ExecuteTokenR
 	return &out, err
 }
 
-func (c *CoreHTTPClientImpl) InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...http.CallOption) (*InspectContainerReply, error) {
-	var out InspectContainerReply
+func (c *CoreHTTPClientImpl) InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...http.CallOption) (*ContainerInfo, error) {
+	var out ContainerInfo
 	pattern := "v1/api/engine/container/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCoreInspectContainer))

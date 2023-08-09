@@ -3,7 +3,6 @@ package biz
 import (
 	"context"
 	taskV1 "galileo/api/management/task/v1"
-	"github.com/docker/docker/api/types/container"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/robfig/cron/v3"
 	"time"
@@ -29,8 +28,6 @@ type EngineRepo interface {
 	TimingTaskList(ctx context.Context) ([]*Task, error)
 	GetCronJobList(ctx context.Context) []*CronJob
 	RemoveCronJob(ctx context.Context, taskId int64) error
-	BuildContainer(ctx context.Context, container *Container) (*Container, error)
-	ParseComposeFile(ctx context.Context, fp string) (map[string]container.Config, error)
 }
 
 type EngineUseCase struct {
@@ -51,11 +48,6 @@ func (c *EngineUseCase) AddCronJob(ctx context.Context, task *Task) (cron.EntryI
 	return c.repo.AddCronJob(ctx, task)
 }
 
-func (c *EngineUseCase) BuildContainer(ctx context.Context, container *Container) (*Container, error) {
-	return c.repo.BuildContainer(ctx, container)
-
-}
-
 func (c *EngineUseCase) TimingTaskList(ctx context.Context) ([]*Task, error) {
 	return c.repo.TimingTaskList(ctx)
 }
@@ -66,10 +58,6 @@ func (c *EngineUseCase) GetCronJobList(ctx context.Context) []*CronJob {
 
 func (c *EngineUseCase) RemoveCronJob(ctx context.Context, taskId int64) error {
 	return c.repo.RemoveCronJob(ctx, taskId)
-}
-
-func (c *EngineUseCase) ParseComposeFile(ctx context.Context, fp string) (map[string]container.Config, error) {
-	return c.repo.ParseComposeFile(ctx, fp)
 }
 
 func (c *EngineUseCase) ParseDockerfile(ctx context.Context, fp string) (map[string]interface{}, error) {

@@ -2,40 +2,17 @@ package biz
 
 import (
 	"context"
+	v1 "galileo/api/engine/v1"
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-type Container struct {
-	Id              string              `json:"id"`
-	Hostname        string              `json:"hostname"`
-	Domainname      string              `json:"domain_name"`
-	User            string              `json:"user"`
-	Name            string              `json:"name"`
-	AttachStdin     bool                `json:"attach_stdin,omitempty"`
-	AttachStdout    bool                `json:"attach_stdout,omitempty"`
-	AttachStderr    bool                `json:"attach_stderr,omitempty"`
-	Tty             bool                `json:"tty,omitempty"`
-	OpenStdin       bool                `json:"open_stdin,omitempty"`
-	StdinOnce       bool                `json:"stdin_once,omitempty"`
-	Env             []string            `json:"env"`
-	Cmd             []string            `json:"cmd"`
-	Image           string              `json:"image"`
-	Labels          map[string]string   `json:"labels"`
-	Volumes         map[string]struct{} `json:"volumes"`
-	WorkingDir      string              `json:"working_dir"`
-	Entrypoint      string              `json:"entrypoint"`
-	NetworkDisabled bool                `json:"network_disabled"`
-	MacAddress      string              `json:"mac_address"`
-	ExposedPorts    map[string]struct{}
-	StopSignal      string
-	StopTimeout     *int
-	HostConfig      map[string]interface{}
-	NetworkConfig   map[string]struct{}
-}
-
 type DockerRepo interface {
 	ListContainers(ctx context.Context, options types.ContainerListOptions) ([]*Container, error)
+	InspectContainer(ctx context.Context, id string) (*Container, error)
+	CreateContainer(ctx context.Context, container *Container) (id string, warnings []string, err error)
+	ParseComposeFile(ctx context.Context, fp string) (map[string]container.Config, error)
 }
 
 type DockerUseCase struct {
@@ -48,6 +25,40 @@ func NewDockerUseCase(repo DockerRepo, logger log.Logger) *DockerUseCase {
 	return &DockerUseCase{repo: repo, log: helper}
 }
 
-func (uc *DockerUseCase) ListContainers(ctx context.Context, options types.ContainerListOptions) ([]*Container, error) {
-	return uc.repo.ListContainers(ctx, options)
+func (dc *DockerUseCase) ListContainers(ctx context.Context, options types.ContainerListOptions) ([]*Container, error) {
+	return dc.repo.ListContainers(ctx, options)
+}
+
+func (dc *DockerUseCase) ParseComposeFile(ctx context.Context, fp string) (map[string]container.Config, error) {
+	return dc.repo.ParseComposeFile(ctx, fp)
+}
+
+func (dc *DockerUseCase) CreateContainer(ctx context.Context, container *Container) (id string, warnings []string, err error) {
+	return dc.repo.CreateContainer(ctx, container)
+
+}
+
+func (dc *DockerUseCase) InspectContainer(ctx context.Context, id string) (*Container, error) {
+	return dc.repo.InspectContainer(ctx, id)
+}
+
+func ContainerMessageBody(c *Container) *v1.Container {
+	var portsMap []*v1.Container_ExposedPorts
+	for port, _ := range c.ExposedPorts {
+		containerPort := &v1.Container_ExposedPorts{
+			Port: port.Port(),
+			Type: port.Proto(),
+		}
+		portsMap = append(portsMap, containerPort)
+	}
+	return &v1.Container{
+		Id:           c.Id,
+		Name:         c.Name,
+		Created:      c.Created,
+		Hostname:     c.Hostname,
+		Domainname:   c.Domainname,
+		Image:        c.Image,
+		Cmd:          c.Cmd,
+		ExposedPorts: portsMap,
+	}
 }

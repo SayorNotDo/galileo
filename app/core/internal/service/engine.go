@@ -11,12 +11,17 @@ import (
 	"path"
 )
 
-func (c *CoreService) InspectContainer(ctx context.Context, req *v1.InspectContainerRequest) (*v1.InspectContainerReply, error) {
-	_, err := c.ec.InspectContainer(ctx, req.Id)
+func (c *CoreService) InspectContainer(ctx context.Context, req *v1.InspectContainerRequest) (*v1.ContainerInfo, error) {
+	ret, err := c.ec.InspectContainer(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
-	return &v1.InspectContainerReply{}, err
+	return &v1.ContainerInfo{
+		Id:     ret.Id,
+		Name:   ret.Name,
+		Image:  ret.Image,
+		Labels: ret.Labels,
+	}, err
 }
 
 /* 接口上传的docker-compose\Dockerfile文件   写入数据库？对象存储？

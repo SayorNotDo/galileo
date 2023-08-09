@@ -20,4 +20,4 @@ service:
   management:
     endpoint: discovery:///galileo.management.scheduler
   docker:
-    endpoint: ssh://vince@localhosr:2379
+    endpoint: ssh://localhost:2379

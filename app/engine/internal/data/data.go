@@ -4,7 +4,6 @@ import (
 	"context"
 	taskV1 "galileo/api/management/task/v1"
 	"galileo/app/engine/internal/conf"
-	"github.com/docker/cli/cli/connhelper"
 	"github.com/docker/docker/client"
 	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/log"
@@ -18,7 +17,6 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/robfig/cron/v3"
 	grpcx "google.golang.org/grpc"
-	"net/http"
 	"time"
 )
 
@@ -125,22 +123,24 @@ func NewDiscovery(conf *conf.Registry) registry.Discovery {
 }
 
 func NewDockerClient(conf *conf.Service, logger log.Logger) *client.Client {
-	logs := log.NewHelper(log.With(logger, "module", "engineService/data/docker"))
-	helper, err := connhelper.GetConnectionHelper(conf.Docker.Endpoint)
-	if err != nil {
-		logs.Fatalf("docker get connect helper error: %v", err)
-		return nil
-	}
-	httpClient := &http.Client{
-		Transport: &http.Transport{
-			DialContext: helper.Dialer,
-		},
-	}
-	cli, err := client.NewClientWithOpts(
-		client.WithHTTPClient(httpClient),
-		client.WithHost(helper.Host),
-		client.WithDialContext(helper.Dialer),
-	)
+	logs := log.NewHelper(log.With(logger, "module", "data.docker"))
+	//helper, err := connhelper.GetConnectionHelper(conf.Docker.Endpoint)
+	//if err != nil {
+	//	logs.Fatalf("docker get connect helper error: %v", err)
+	//	return nil
+	//}
+	//httpClient := &http.Client{
+	//	Transport: &http.Transport{
+	//		DialContext: helper.Dialer,
+	//	},
+	//}
+	//cli, err := client.NewClientWithOpts(
+	//	client.WithHTTPClient(httpClient),
+	//	client.WithHost(helper.Host),
+	//	client.WithDialContext(helper.Dialer),
+	//)
+	/* 本地连接 */
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		logs.Fatalf("docker connect error: %v", err)
 		return nil

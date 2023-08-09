@@ -28,7 +28,7 @@ const (
 	Engine_DeleteJob_FullMethodName        = "/api.engine.v1.Engine/DeleteJob"
 	Engine_AddCronJob_FullMethodName       = "/api.engine.v1.Engine/AddCronJob"
 	Engine_UpdateCronJob_FullMethodName    = "/api.engine.v1.Engine/UpdateCronJob"
-	Engine_BuildContainer_FullMethodName   = "/api.engine.v1.Engine/BuildContainer"
+	Engine_CreateContainer_FullMethodName  = "/api.engine.v1.Engine/CreateContainer"
 	Engine_ListContainers_FullMethodName   = "/api.engine.v1.Engine/ListContainers"
 	Engine_InspectContainer_FullMethodName = "/api.engine.v1.Engine/InspectContainer"
 )
@@ -45,9 +45,9 @@ type EngineClient interface {
 	DeleteJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	AddCronJob(ctx context.Context, in *AddCronJobRequest, opts ...grpc.CallOption) (*AddCronJobReply, error)
 	UpdateCronJob(ctx context.Context, in *UpdateCronJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	BuildContainer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BuildContainerReply, error)
+	CreateContainer(ctx context.Context, in *CreateContainerRequest, opts ...grpc.CallOption) (*CreateContainerReply, error)
 	ListContainers(ctx context.Context, in *ListContainerRequest, opts ...grpc.CallOption) (*ListContainersReply, error)
-	InspectContainer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Container, error)
+	InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...grpc.CallOption) (*InspectContainerReply, error)
 }
 
 type engineClient struct {
@@ -130,9 +130,9 @@ func (c *engineClient) UpdateCronJob(ctx context.Context, in *UpdateCronJobReque
 	return out, nil
 }
 
-func (c *engineClient) BuildContainer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BuildContainerReply, error) {
-	out := new(BuildContainerReply)
-	err := c.cc.Invoke(ctx, Engine_BuildContainer_FullMethodName, in, out, opts...)
+func (c *engineClient) CreateContainer(ctx context.Context, in *CreateContainerRequest, opts ...grpc.CallOption) (*CreateContainerReply, error) {
+	out := new(CreateContainerReply)
+	err := c.cc.Invoke(ctx, Engine_CreateContainer_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -148,8 +148,8 @@ func (c *engineClient) ListContainers(ctx context.Context, in *ListContainerRequ
 	return out, nil
 }
 
-func (c *engineClient) InspectContainer(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Container, error) {
-	out := new(Container)
+func (c *engineClient) InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...grpc.CallOption) (*InspectContainerReply, error) {
+	out := new(InspectContainerReply)
 	err := c.cc.Invoke(ctx, Engine_InspectContainer_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -169,9 +169,9 @@ type EngineServer interface {
 	DeleteJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	AddCronJob(context.Context, *AddCronJobRequest) (*AddCronJobReply, error)
 	UpdateCronJob(context.Context, *UpdateCronJobRequest) (*emptypb.Empty, error)
-	BuildContainer(context.Context, *emptypb.Empty) (*BuildContainerReply, error)
+	CreateContainer(context.Context, *CreateContainerRequest) (*CreateContainerReply, error)
 	ListContainers(context.Context, *ListContainerRequest) (*ListContainersReply, error)
-	InspectContainer(context.Context, *emptypb.Empty) (*Container, error)
+	InspectContainer(context.Context, *InspectContainerRequest) (*InspectContainerReply, error)
 	mustEmbedUnimplementedEngineServer()
 }
 
@@ -203,13 +203,13 @@ func (UnimplementedEngineServer) AddCronJob(context.Context, *AddCronJobRequest)
 func (UnimplementedEngineServer) UpdateCronJob(context.Context, *UpdateCronJobRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCronJob not implemented")
 }
-func (UnimplementedEngineServer) BuildContainer(context.Context, *emptypb.Empty) (*BuildContainerReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BuildContainer not implemented")
+func (UnimplementedEngineServer) CreateContainer(context.Context, *CreateContainerRequest) (*CreateContainerReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateContainer not implemented")
 }
 func (UnimplementedEngineServer) ListContainers(context.Context, *ListContainerRequest) (*ListContainersReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListContainers not implemented")
 }
-func (UnimplementedEngineServer) InspectContainer(context.Context, *emptypb.Empty) (*Container, error) {
+func (UnimplementedEngineServer) InspectContainer(context.Context, *InspectContainerRequest) (*InspectContainerReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InspectContainer not implemented")
 }
 func (UnimplementedEngineServer) mustEmbedUnimplementedEngineServer() {}
@@ -369,20 +369,20 @@ func _Engine_UpdateCronJob_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Engine_BuildContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+func _Engine_CreateContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateContainerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EngineServer).BuildContainer(ctx, in)
+		return srv.(EngineServer).CreateContainer(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Engine_BuildContainer_FullMethodName,
+		FullMethod: Engine_CreateContainer_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EngineServer).BuildContainer(ctx, req.(*emptypb.Empty))
+		return srv.(EngineServer).CreateContainer(ctx, req.(*CreateContainerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -406,7 +406,7 @@ func _Engine_ListContainers_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _Engine_InspectContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(InspectContainerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -418,7 +418,7 @@ func _Engine_InspectContainer_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: Engine_InspectContainer_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EngineServer).InspectContainer(ctx, req.(*emptypb.Empty))
+		return srv.(EngineServer).InspectContainer(ctx, req.(*InspectContainerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -463,8 +463,8 @@ var Engine_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Engine_UpdateCronJob_Handler,
 		},
 		{
-			MethodName: "BuildContainer",
-			Handler:    _Engine_BuildContainer_Handler,
+			MethodName: "CreateContainer",
+			Handler:    _Engine_CreateContainer_Handler,
 		},
 		{
 			MethodName: "ListContainers",

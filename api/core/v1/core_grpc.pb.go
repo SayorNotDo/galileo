@@ -57,7 +57,7 @@ type CoreClient interface {
 	UpdateGroup(ctx context.Context, in *UpdateGroupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DataReportTrack(ctx context.Context, in *DataReportTrackRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ExecuteToken(ctx context.Context, in *ExecuteTokenRequest, opts ...grpc.CallOption) (*ExecuteTokenReply, error)
-	InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...grpc.CallOption) (*InspectContainerReply, error)
+	InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...grpc.CallOption) (*ContainerInfo, error)
 }
 
 type coreClient struct {
@@ -203,8 +203,8 @@ func (c *coreClient) ExecuteToken(ctx context.Context, in *ExecuteTokenRequest, 
 	return out, nil
 }
 
-func (c *coreClient) InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...grpc.CallOption) (*InspectContainerReply, error) {
-	out := new(InspectContainerReply)
+func (c *coreClient) InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...grpc.CallOption) (*ContainerInfo, error) {
+	out := new(ContainerInfo)
 	err := c.cc.Invoke(ctx, Core_InspectContainer_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -231,7 +231,7 @@ type CoreServer interface {
 	UpdateGroup(context.Context, *UpdateGroupRequest) (*emptypb.Empty, error)
 	DataReportTrack(context.Context, *DataReportTrackRequest) (*emptypb.Empty, error)
 	ExecuteToken(context.Context, *ExecuteTokenRequest) (*ExecuteTokenReply, error)
-	InspectContainer(context.Context, *InspectContainerRequest) (*InspectContainerReply, error)
+	InspectContainer(context.Context, *InspectContainerRequest) (*ContainerInfo, error)
 	mustEmbedUnimplementedCoreServer()
 }
 
@@ -284,7 +284,7 @@ func (UnimplementedCoreServer) DataReportTrack(context.Context, *DataReportTrack
 func (UnimplementedCoreServer) ExecuteToken(context.Context, *ExecuteTokenRequest) (*ExecuteTokenReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecuteToken not implemented")
 }
-func (UnimplementedCoreServer) InspectContainer(context.Context, *InspectContainerRequest) (*InspectContainerReply, error) {
+func (UnimplementedCoreServer) InspectContainer(context.Context, *InspectContainerRequest) (*ContainerInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InspectContainer not implemented")
 }
 func (UnimplementedCoreServer) mustEmbedUnimplementedCoreServer() {}
