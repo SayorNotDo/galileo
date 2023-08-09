@@ -23,6 +23,10 @@ const (
 	FieldUpdatedBy = "updated_by"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldStartTime holds the string denoting the start_time field in the database.
+	FieldStartTime = "start_time"
+	// FieldDeadline holds the string denoting the deadline field in the database.
+	FieldDeadline = "deadline"
 	// Table holds the table name of the testplan in the database.
 	Table = "test_plan"
 )
@@ -36,6 +40,8 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldUpdatedBy,
 	FieldDescription,
+	FieldStartTime,
+	FieldDeadline,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

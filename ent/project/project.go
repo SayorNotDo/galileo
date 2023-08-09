@@ -29,6 +29,10 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldStartTime holds the string denoting the start_time field in the database.
+	FieldStartTime = "start_time"
+	// FieldDeadline holds the string denoting the deadline field in the database.
+	FieldDeadline = "deadline"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldRemark holds the string denoting the remark field in the database.
@@ -49,6 +53,8 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldStatus,
+	FieldStartTime,
+	FieldDeadline,
 	FieldDescription,
 	FieldRemark,
 }

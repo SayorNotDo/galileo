@@ -25,7 +25,7 @@ type Project struct {
 type ProjectRepo interface {
 	CreateProject(context.Context, *Project) (*Project, error)
 	GetProjectById(context.Context, int64) (*Project, error)
-	UpdateProject(context.Context, *Project) (bool, error)
+	UpdateProject(context.Context, *Project) error
 }
 
 // ProjectUseCase is a Project use case.
@@ -53,7 +53,7 @@ func (uc *ProjectUseCase) GetProjectById(ctx context.Context, id int64) (*Projec
 }
 
 // UpdateProject updates the Project
-func (uc *ProjectUseCase) UpdateProject(ctx context.Context, project *Project) (bool, error) {
+func (uc *ProjectUseCase) UpdateProject(ctx context.Context, project *Project) error {
 	return uc.repo.UpdateProject(ctx, project)
 }
 

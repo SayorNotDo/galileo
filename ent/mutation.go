@@ -6606,6 +6606,8 @@ type ProjectMutation struct {
 	adddeleted_by *int32
 	status        *int8
 	addstatus     *int8
+	start_time    *time.Time
+	deadline      *time.Time
 	description   *string
 	remark        *string
 	clearedFields map[string]struct{}
@@ -7176,6 +7178,104 @@ func (m *ProjectMutation) ResetStatus() {
 	m.addstatus = nil
 }
 
+// SetStartTime sets the "start_time" field.
+func (m *ProjectMutation) SetStartTime(t time.Time) {
+	m.start_time = &t
+}
+
+// StartTime returns the value of the "start_time" field in the mutation.
+func (m *ProjectMutation) StartTime() (r time.Time, exists bool) {
+	v := m.start_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartTime returns the old "start_time" field's value of the Project entity.
+// If the Project object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProjectMutation) OldStartTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartTime: %w", err)
+	}
+	return oldValue.StartTime, nil
+}
+
+// ClearStartTime clears the value of the "start_time" field.
+func (m *ProjectMutation) ClearStartTime() {
+	m.start_time = nil
+	m.clearedFields[project.FieldStartTime] = struct{}{}
+}
+
+// StartTimeCleared returns if the "start_time" field was cleared in this mutation.
+func (m *ProjectMutation) StartTimeCleared() bool {
+	_, ok := m.clearedFields[project.FieldStartTime]
+	return ok
+}
+
+// ResetStartTime resets all changes to the "start_time" field.
+func (m *ProjectMutation) ResetStartTime() {
+	m.start_time = nil
+	delete(m.clearedFields, project.FieldStartTime)
+}
+
+// SetDeadline sets the "deadline" field.
+func (m *ProjectMutation) SetDeadline(t time.Time) {
+	m.deadline = &t
+}
+
+// Deadline returns the value of the "deadline" field in the mutation.
+func (m *ProjectMutation) Deadline() (r time.Time, exists bool) {
+	v := m.deadline
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeadline returns the old "deadline" field's value of the Project entity.
+// If the Project object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProjectMutation) OldDeadline(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeadline is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeadline requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeadline: %w", err)
+	}
+	return oldValue.Deadline, nil
+}
+
+// ClearDeadline clears the value of the "deadline" field.
+func (m *ProjectMutation) ClearDeadline() {
+	m.deadline = nil
+	m.clearedFields[project.FieldDeadline] = struct{}{}
+}
+
+// DeadlineCleared returns if the "deadline" field was cleared in this mutation.
+func (m *ProjectMutation) DeadlineCleared() bool {
+	_, ok := m.clearedFields[project.FieldDeadline]
+	return ok
+}
+
+// ResetDeadline resets all changes to the "deadline" field.
+func (m *ProjectMutation) ResetDeadline() {
+	m.deadline = nil
+	delete(m.clearedFields, project.FieldDeadline)
+}
+
 // SetDescription sets the "description" field.
 func (m *ProjectMutation) SetDescription(s string) {
 	m.description = &s
@@ -7308,7 +7408,7 @@ func (m *ProjectMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ProjectMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 13)
 	if m.name != nil {
 		fields = append(fields, project.FieldName)
 	}
@@ -7335,6 +7435,12 @@ func (m *ProjectMutation) Fields() []string {
 	}
 	if m.status != nil {
 		fields = append(fields, project.FieldStatus)
+	}
+	if m.start_time != nil {
+		fields = append(fields, project.FieldStartTime)
+	}
+	if m.deadline != nil {
+		fields = append(fields, project.FieldDeadline)
 	}
 	if m.description != nil {
 		fields = append(fields, project.FieldDescription)
@@ -7368,6 +7474,10 @@ func (m *ProjectMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedBy()
 	case project.FieldStatus:
 		return m.Status()
+	case project.FieldStartTime:
+		return m.StartTime()
+	case project.FieldDeadline:
+		return m.Deadline()
 	case project.FieldDescription:
 		return m.Description()
 	case project.FieldRemark:
@@ -7399,6 +7509,10 @@ func (m *ProjectMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldDeletedBy(ctx)
 	case project.FieldStatus:
 		return m.OldStatus(ctx)
+	case project.FieldStartTime:
+		return m.OldStartTime(ctx)
+	case project.FieldDeadline:
+		return m.OldDeadline(ctx)
 	case project.FieldDescription:
 		return m.OldDescription(ctx)
 	case project.FieldRemark:
@@ -7474,6 +7588,20 @@ func (m *ProjectMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
+		return nil
+	case project.FieldStartTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartTime(v)
+		return nil
+	case project.FieldDeadline:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeadline(v)
 		return nil
 	case project.FieldDescription:
 		v, ok := value.(string)
@@ -7582,6 +7710,12 @@ func (m *ProjectMutation) ClearedFields() []string {
 	if m.FieldCleared(project.FieldDeletedBy) {
 		fields = append(fields, project.FieldDeletedBy)
 	}
+	if m.FieldCleared(project.FieldStartTime) {
+		fields = append(fields, project.FieldStartTime)
+	}
+	if m.FieldCleared(project.FieldDeadline) {
+		fields = append(fields, project.FieldDeadline)
+	}
 	if m.FieldCleared(project.FieldDescription) {
 		fields = append(fields, project.FieldDescription)
 	}
@@ -7613,6 +7747,12 @@ func (m *ProjectMutation) ClearField(name string) error {
 		return nil
 	case project.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case project.FieldStartTime:
+		m.ClearStartTime()
+		return nil
+	case project.FieldDeadline:
+		m.ClearDeadline()
 		return nil
 	case project.FieldDescription:
 		m.ClearDescription()
@@ -7654,6 +7794,12 @@ func (m *ProjectMutation) ResetField(name string) error {
 		return nil
 	case project.FieldStatus:
 		m.ResetStatus()
+		return nil
+	case project.FieldStartTime:
+		m.ResetStartTime()
+		return nil
+	case project.FieldDeadline:
+		m.ResetDeadline()
 		return nil
 	case project.FieldDescription:
 		m.ResetDescription()
@@ -9791,6 +9937,8 @@ type TestPlanMutation struct {
 	updated_by    *uint32
 	addupdated_by *int32
 	description   *string
+	start_time    *time.Time
+	deadline      *time.Time
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*TestPlan, error)
@@ -10197,6 +10345,104 @@ func (m *TestPlanMutation) ResetDescription() {
 	delete(m.clearedFields, testplan.FieldDescription)
 }
 
+// SetStartTime sets the "start_time" field.
+func (m *TestPlanMutation) SetStartTime(t time.Time) {
+	m.start_time = &t
+}
+
+// StartTime returns the value of the "start_time" field in the mutation.
+func (m *TestPlanMutation) StartTime() (r time.Time, exists bool) {
+	v := m.start_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartTime returns the old "start_time" field's value of the TestPlan entity.
+// If the TestPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TestPlanMutation) OldStartTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartTime: %w", err)
+	}
+	return oldValue.StartTime, nil
+}
+
+// ClearStartTime clears the value of the "start_time" field.
+func (m *TestPlanMutation) ClearStartTime() {
+	m.start_time = nil
+	m.clearedFields[testplan.FieldStartTime] = struct{}{}
+}
+
+// StartTimeCleared returns if the "start_time" field was cleared in this mutation.
+func (m *TestPlanMutation) StartTimeCleared() bool {
+	_, ok := m.clearedFields[testplan.FieldStartTime]
+	return ok
+}
+
+// ResetStartTime resets all changes to the "start_time" field.
+func (m *TestPlanMutation) ResetStartTime() {
+	m.start_time = nil
+	delete(m.clearedFields, testplan.FieldStartTime)
+}
+
+// SetDeadline sets the "deadline" field.
+func (m *TestPlanMutation) SetDeadline(t time.Time) {
+	m.deadline = &t
+}
+
+// Deadline returns the value of the "deadline" field in the mutation.
+func (m *TestPlanMutation) Deadline() (r time.Time, exists bool) {
+	v := m.deadline
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeadline returns the old "deadline" field's value of the TestPlan entity.
+// If the TestPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TestPlanMutation) OldDeadline(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeadline is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeadline requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeadline: %w", err)
+	}
+	return oldValue.Deadline, nil
+}
+
+// ClearDeadline clears the value of the "deadline" field.
+func (m *TestPlanMutation) ClearDeadline() {
+	m.deadline = nil
+	m.clearedFields[testplan.FieldDeadline] = struct{}{}
+}
+
+// DeadlineCleared returns if the "deadline" field was cleared in this mutation.
+func (m *TestPlanMutation) DeadlineCleared() bool {
+	_, ok := m.clearedFields[testplan.FieldDeadline]
+	return ok
+}
+
+// ResetDeadline resets all changes to the "deadline" field.
+func (m *TestPlanMutation) ResetDeadline() {
+	m.deadline = nil
+	delete(m.clearedFields, testplan.FieldDeadline)
+}
+
 // Where appends a list predicates to the TestPlanMutation builder.
 func (m *TestPlanMutation) Where(ps ...predicate.TestPlan) {
 	m.predicates = append(m.predicates, ps...)
@@ -10231,7 +10477,7 @@ func (m *TestPlanMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TestPlanMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 8)
 	if m.name != nil {
 		fields = append(fields, testplan.FieldName)
 	}
@@ -10249,6 +10495,12 @@ func (m *TestPlanMutation) Fields() []string {
 	}
 	if m.description != nil {
 		fields = append(fields, testplan.FieldDescription)
+	}
+	if m.start_time != nil {
+		fields = append(fields, testplan.FieldStartTime)
+	}
+	if m.deadline != nil {
+		fields = append(fields, testplan.FieldDeadline)
 	}
 	return fields
 }
@@ -10270,6 +10522,10 @@ func (m *TestPlanMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedBy()
 	case testplan.FieldDescription:
 		return m.Description()
+	case testplan.FieldStartTime:
+		return m.StartTime()
+	case testplan.FieldDeadline:
+		return m.Deadline()
 	}
 	return nil, false
 }
@@ -10291,6 +10547,10 @@ func (m *TestPlanMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldUpdatedBy(ctx)
 	case testplan.FieldDescription:
 		return m.OldDescription(ctx)
+	case testplan.FieldStartTime:
+		return m.OldStartTime(ctx)
+	case testplan.FieldDeadline:
+		return m.OldDeadline(ctx)
 	}
 	return nil, fmt.Errorf("unknown TestPlan field %s", name)
 }
@@ -10341,6 +10601,20 @@ func (m *TestPlanMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
+		return nil
+	case testplan.FieldStartTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartTime(v)
+		return nil
+	case testplan.FieldDeadline:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeadline(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TestPlan field %s", name)
@@ -10408,6 +10682,12 @@ func (m *TestPlanMutation) ClearedFields() []string {
 	if m.FieldCleared(testplan.FieldDescription) {
 		fields = append(fields, testplan.FieldDescription)
 	}
+	if m.FieldCleared(testplan.FieldStartTime) {
+		fields = append(fields, testplan.FieldStartTime)
+	}
+	if m.FieldCleared(testplan.FieldDeadline) {
+		fields = append(fields, testplan.FieldDeadline)
+	}
 	return fields
 }
 
@@ -10430,6 +10710,12 @@ func (m *TestPlanMutation) ClearField(name string) error {
 		return nil
 	case testplan.FieldDescription:
 		m.ClearDescription()
+		return nil
+	case testplan.FieldStartTime:
+		m.ClearStartTime()
+		return nil
+	case testplan.FieldDeadline:
+		m.ClearDeadline()
 		return nil
 	}
 	return fmt.Errorf("unknown TestPlan nullable field %s", name)
@@ -10456,6 +10742,12 @@ func (m *TestPlanMutation) ResetField(name string) error {
 		return nil
 	case testplan.FieldDescription:
 		m.ResetDescription()
+		return nil
+	case testplan.FieldStartTime:
+		m.ResetStartTime()
+		return nil
+	case testplan.FieldDeadline:
+		m.ResetDeadline()
 		return nil
 	}
 	return fmt.Errorf("unknown TestPlan field %s", name)

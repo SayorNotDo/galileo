@@ -88,6 +88,34 @@ func (tpc *TestPlanCreate) SetNillableDescription(s *string) *TestPlanCreate {
 	return tpc
 }
 
+// SetStartTime sets the "start_time" field.
+func (tpc *TestPlanCreate) SetStartTime(t time.Time) *TestPlanCreate {
+	tpc.mutation.SetStartTime(t)
+	return tpc
+}
+
+// SetNillableStartTime sets the "start_time" field if the given value is not nil.
+func (tpc *TestPlanCreate) SetNillableStartTime(t *time.Time) *TestPlanCreate {
+	if t != nil {
+		tpc.SetStartTime(*t)
+	}
+	return tpc
+}
+
+// SetDeadline sets the "deadline" field.
+func (tpc *TestPlanCreate) SetDeadline(t time.Time) *TestPlanCreate {
+	tpc.mutation.SetDeadline(t)
+	return tpc
+}
+
+// SetNillableDeadline sets the "deadline" field if the given value is not nil.
+func (tpc *TestPlanCreate) SetNillableDeadline(t *time.Time) *TestPlanCreate {
+	if t != nil {
+		tpc.SetDeadline(*t)
+	}
+	return tpc
+}
+
 // SetID sets the "id" field.
 func (tpc *TestPlanCreate) SetID(i int64) *TestPlanCreate {
 	tpc.mutation.SetID(i)
@@ -206,6 +234,14 @@ func (tpc *TestPlanCreate) createSpec() (*TestPlan, *sqlgraph.CreateSpec) {
 	if value, ok := tpc.mutation.Description(); ok {
 		_spec.SetField(testplan.FieldDescription, field.TypeString, value)
 		_node.Description = value
+	}
+	if value, ok := tpc.mutation.StartTime(); ok {
+		_spec.SetField(testplan.FieldStartTime, field.TypeTime, value)
+		_node.StartTime = value
+	}
+	if value, ok := tpc.mutation.Deadline(); ok {
+		_spec.SetField(testplan.FieldDeadline, field.TypeTime, value)
+		_node.Deadline = value
 	}
 	return _node, _spec
 }

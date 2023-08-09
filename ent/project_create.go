@@ -122,6 +122,34 @@ func (pc *ProjectCreate) SetNillableStatus(i *int8) *ProjectCreate {
 	return pc
 }
 
+// SetStartTime sets the "start_time" field.
+func (pc *ProjectCreate) SetStartTime(t time.Time) *ProjectCreate {
+	pc.mutation.SetStartTime(t)
+	return pc
+}
+
+// SetNillableStartTime sets the "start_time" field if the given value is not nil.
+func (pc *ProjectCreate) SetNillableStartTime(t *time.Time) *ProjectCreate {
+	if t != nil {
+		pc.SetStartTime(*t)
+	}
+	return pc
+}
+
+// SetDeadline sets the "deadline" field.
+func (pc *ProjectCreate) SetDeadline(t time.Time) *ProjectCreate {
+	pc.mutation.SetDeadline(t)
+	return pc
+}
+
+// SetNillableDeadline sets the "deadline" field if the given value is not nil.
+func (pc *ProjectCreate) SetNillableDeadline(t *time.Time) *ProjectCreate {
+	if t != nil {
+		pc.SetDeadline(*t)
+	}
+	return pc
+}
+
 // SetDescription sets the "description" field.
 func (pc *ProjectCreate) SetDescription(s string) *ProjectCreate {
 	pc.mutation.SetDescription(s)
@@ -295,6 +323,14 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.Status(); ok {
 		_spec.SetField(project.FieldStatus, field.TypeInt8, value)
 		_node.Status = value
+	}
+	if value, ok := pc.mutation.StartTime(); ok {
+		_spec.SetField(project.FieldStartTime, field.TypeTime, value)
+		_node.StartTime = value
+	}
+	if value, ok := pc.mutation.Deadline(); ok {
+		_spec.SetField(project.FieldDeadline, field.TypeTime, value)
+		_node.Deadline = value
 	}
 	if value, ok := pc.mutation.Description(); ok {
 		_spec.SetField(project.FieldDescription, field.TypeString, value)

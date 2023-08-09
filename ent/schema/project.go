@@ -32,6 +32,8 @@ func (Project) Fields() []ent.Field {
 		field.Time("deleted_at").Optional(),
 		field.Uint32("deleted_by").Optional(),
 		field.Int8("status").Default(0),
+		field.Time("start_time").Optional(),
+		field.Time("deadline").Optional(),
 		field.Text("description").Optional(),
 		field.Text("remark").Optional(),
 	}

@@ -15,20 +15,6 @@ import (
 	"path"
 )
 
-type TestcaseService struct {
-	pb.UnimplementedTestcaseServer
-
-	uc     *biz.TestcaseUseCase
-	logger *log.Helper
-}
-
-func NewTestcaseService(uc *biz.TestcaseUseCase, logger log.Logger) *TestcaseService {
-	return &TestcaseService{
-		uc:     uc,
-		logger: log.NewHelper(log.With(logger, "module", "management.testcaseService")),
-	}
-}
-
 func NewTestcase(name string, caseType int8, priority int8, description string, url string) (biz.Testcase, error) {
 	if len(name) <= 0 {
 		return biz.Testcase{}, SetCustomizeErrMsg(ReasonParamsError, "testcase name cannot be empty")
@@ -47,7 +33,7 @@ func NewTestcase(name string, caseType int8, priority int8, description string, 
 }
 
 // UploadTestcaseFile Upload Testcase file get url
-func (s *TestcaseService) UploadTestcaseFile(ctx http.Context) (err error) {
+func (s *ManagementService) UploadTestcaseFile(ctx http.Context) (err error) {
 	fileName := ctx.Request().FormValue("fileName")
 	if fileName == "" {
 		return SetCustomizeErrInfoByReason(ReasonFileNameMissing)
@@ -69,10 +55,10 @@ func (s *TestcaseService) UploadTestcaseFile(ctx http.Context) (err error) {
 	if _, err := io.Copy(buf, file); err != nil {
 		return err
 	}
-	if err := s.uc.TestcaseValidator(path.Ext(fileHeader.Filename), buf.String()); err != nil {
+	if err := s.tc.TestcaseValidator(path.Ext(fileHeader.Filename), buf.String()); err != nil {
 		return err
 	}
-	url, err := s.uc.UploadTestcaseFile(ctx, fileName, path.Ext(fileHeader.Filename), buf.Bytes())
+	url, err := s.tc.UploadTestcaseFile(ctx, fileName, path.Ext(fileHeader.Filename), buf.Bytes())
 	if err != nil {
 		return SetCustomizeErrMsg(ReasonSystemError, err.Error())
 	}
@@ -82,38 +68,38 @@ func (s *TestcaseService) UploadTestcaseFile(ctx http.Context) (err error) {
 }
 
 // CreateTestcase creates a new Testcase, returns id, create time
-func (s *TestcaseService) CreateTestcase(ctx context.Context, req *pb.CreateTestcaseRequest) (*pb.CreateTestcaseReply, error) {
+func (s *ManagementService) CreateTestcase(ctx context.Context, req *pb.CreateTestcaseRequest) (*pb.CreateTestcaseReply, error) {
 	newTestcase, err := NewTestcase(req.Name, int8(req.Type), int8(req.Priority), req.Description, req.Url)
 	if err != nil {
 		return nil, err
 	}
-	if ret, _ := s.uc.TestcaseByName(ctx, req.Name); ret != nil {
+	if ret, _ := s.tc.TestcaseByName(ctx, req.Name); ret != nil {
 		return nil, SetCustomizeErrMsg(ReasonParamsError, "duplicated testcase name")
 	}
 	uid := ctx.Value(ctxdata.UserIdKey).(uint32)
 	newTestcase.CreatedBy = uid
-	res, err := s.uc.CreateTestcase(ctx, &newTestcase)
+	res, err := s.tc.CreateTestcase(ctx, &newTestcase)
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonUnknownError, err.Error())
 	}
 	return &pb.CreateTestcaseReply{Id: res.Id, CreatedAt: timestamppb.New(res.CreatedAt)}, nil
 }
 
-func (s *TestcaseService) UpdateTestcase(ctx context.Context, req *pb.UpdateTestcaseRequest) (*pb.UpdateTestcaseReply, error) {
-	if _, err := s.uc.TestcaseById(ctx, req.Id); err != nil {
+func (s *ManagementService) UpdateTestcase(ctx context.Context, req *pb.UpdateTestcaseRequest) (*pb.UpdateTestcaseReply, error) {
+	if _, err := s.tc.TestcaseById(ctx, req.Id); err != nil {
 		return nil, SetCustomizeErrMsg(ReasonRecordNotFound, err.Error())
 	}
 	updateTestcase, err := NewTestcase(req.Name, int8(req.Type), int8(req.Priority), req.Description, req.Url)
 	if err != nil {
 		return nil, err
 	}
-	if ret, _ := s.uc.TestcaseByName(ctx, req.Name); ret != nil {
+	if ret, _ := s.tc.TestcaseByName(ctx, req.Name); ret != nil {
 		return nil, SetCustomizeErrMsg(ReasonParamsError, "duplicated testcase name")
 	}
 	uid := ctx.Value(ctxdata.UserIdKey).(uint32)
 	updateTestcase.Id = req.Id
 	updateTestcase.UpdatedBy = uid
-	ok, err := s.uc.UpdateTestcase(ctx, &updateTestcase)
+	ok, err := s.tc.UpdateTestcase(ctx, &updateTestcase)
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonUnknownError, err.Error())
 	}
@@ -122,12 +108,12 @@ func (s *TestcaseService) UpdateTestcase(ctx context.Context, req *pb.UpdateTest
 	}, nil
 }
 
-func (s *TestcaseService) DeleteTestcase(ctx context.Context, req *pb.DeleteTestcaseRequest) (*pb.DeleteTestcaseReply, error) {
+func (s *ManagementService) DeleteTestcase(ctx context.Context, req *pb.DeleteTestcaseRequest) (*pb.DeleteTestcaseReply, error) {
 	return &pb.DeleteTestcaseReply{}, nil
 }
 
-func (s *TestcaseService) GetTestcaseById(ctx context.Context, req *pb.GetTestcaseRequest) (*pb.GetTestcaseReply, error) {
-	queryTestcase, err := s.uc.TestcaseById(ctx, req.Id)
+func (s *ManagementService) GetTestcaseById(ctx context.Context, req *pb.GetTestcaseRequest) (*pb.GetTestcaseReply, error) {
+	queryTestcase, err := s.tc.TestcaseById(ctx, req.Id)
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonRecordNotFound, err.Error())
 	}
@@ -145,11 +131,11 @@ func (s *TestcaseService) GetTestcaseById(ctx context.Context, req *pb.GetTestca
 	}, nil
 }
 
-func (s *TestcaseService) ListTestcase(ctx context.Context, req *pb.ListTestcaseRequest) (*pb.ListTestcaseReply, error) {
+func (s *ManagementService) ListTestcase(ctx context.Context, req *pb.ListTestcaseRequest) (*pb.ListTestcaseReply, error) {
 	return &pb.ListTestcaseReply{}, nil
 }
 
-func (s *TestcaseService) LoadFramework(ctx context.Context, req *pb.LoadFrameworkRequest) (*pb.LoadFrameworkReply, error) {
+func (s *ManagementService) LoadFramework(ctx context.Context, req *pb.LoadFrameworkRequest) (*pb.LoadFrameworkReply, error) {
 	fpath, lang, config := req.Path, req.Lang, req.Config
 	log.Debugf("LoadFrameWork request path: %s, lang: %d, config: %s", fpath, lang, string(config))
 	// run docker return container-id
@@ -157,11 +143,11 @@ func (s *TestcaseService) LoadFramework(ctx context.Context, req *pb.LoadFramewo
 	return &pb.LoadFrameworkReply{Success: true, Worker: "docker-container-id"}, nil
 }
 
-func (s *TestcaseService) CreateTestcaseSuite(ctx context.Context, req *pb.CreateTestcaseSuiteRequest) (*pb.CreateTestcaseSuiteReply, error) {
+func (s *ManagementService) CreateTestcaseSuite(ctx context.Context, req *pb.CreateTestcaseSuiteRequest) (*pb.CreateTestcaseSuiteReply, error) {
 	if len(req.Name) <= 0 {
 		return nil, SetCustomizeErrMsg(ReasonParamsError, "suite name cannot be empty")
 	}
-	res, err := s.uc.CreateTestcaseSuite(ctx, req.Name, req.TestcaseList)
+	res, err := s.tc.CreateTestcaseSuite(ctx, req.Name, req.TestcaseList)
 	if err != nil {
 		return nil, err
 	}
@@ -171,13 +157,13 @@ func (s *TestcaseService) CreateTestcaseSuite(ctx context.Context, req *pb.Creat
 	}, nil
 }
 
-func (s *TestcaseService) DebugTestcase(ctx context.Context, req *pb.DebugTestcaseRequest) (*pb.DebugTestcaseReply, error) {
+func (s *ManagementService) DebugTestcase(ctx context.Context, req *pb.DebugTestcaseRequest) (*pb.DebugTestcaseReply, error) {
 	/* 1.调用TestcaseValidator */
-	if err := s.uc.TestcaseValidator(".json", req.Content); err != nil {
+	if err := s.tc.TestcaseValidator(".json", req.Content); err != nil {
 		return nil, err
 	}
 	/* 2.MOCK环境运行测试用例 */
-	err, ret := s.uc.DebugTestcase(ctx, req.Content)
+	err, ret := s.tc.DebugTestcase(ctx, req.Content)
 	if err != nil {
 		return nil, err
 	}

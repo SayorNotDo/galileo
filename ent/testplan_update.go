@@ -93,6 +93,46 @@ func (tpu *TestPlanUpdate) ClearDescription() *TestPlanUpdate {
 	return tpu
 }
 
+// SetStartTime sets the "start_time" field.
+func (tpu *TestPlanUpdate) SetStartTime(t time.Time) *TestPlanUpdate {
+	tpu.mutation.SetStartTime(t)
+	return tpu
+}
+
+// SetNillableStartTime sets the "start_time" field if the given value is not nil.
+func (tpu *TestPlanUpdate) SetNillableStartTime(t *time.Time) *TestPlanUpdate {
+	if t != nil {
+		tpu.SetStartTime(*t)
+	}
+	return tpu
+}
+
+// ClearStartTime clears the value of the "start_time" field.
+func (tpu *TestPlanUpdate) ClearStartTime() *TestPlanUpdate {
+	tpu.mutation.ClearStartTime()
+	return tpu
+}
+
+// SetDeadline sets the "deadline" field.
+func (tpu *TestPlanUpdate) SetDeadline(t time.Time) *TestPlanUpdate {
+	tpu.mutation.SetDeadline(t)
+	return tpu
+}
+
+// SetNillableDeadline sets the "deadline" field if the given value is not nil.
+func (tpu *TestPlanUpdate) SetNillableDeadline(t *time.Time) *TestPlanUpdate {
+	if t != nil {
+		tpu.SetDeadline(*t)
+	}
+	return tpu
+}
+
+// ClearDeadline clears the value of the "deadline" field.
+func (tpu *TestPlanUpdate) ClearDeadline() *TestPlanUpdate {
+	tpu.mutation.ClearDeadline()
+	return tpu
+}
+
 // Mutation returns the TestPlanMutation object of the builder.
 func (tpu *TestPlanUpdate) Mutation() *TestPlanMutation {
 	return tpu.mutation
@@ -180,6 +220,18 @@ func (tpu *TestPlanUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if tpu.mutation.DescriptionCleared() {
 		_spec.ClearField(testplan.FieldDescription, field.TypeString)
 	}
+	if value, ok := tpu.mutation.StartTime(); ok {
+		_spec.SetField(testplan.FieldStartTime, field.TypeTime, value)
+	}
+	if tpu.mutation.StartTimeCleared() {
+		_spec.ClearField(testplan.FieldStartTime, field.TypeTime)
+	}
+	if value, ok := tpu.mutation.Deadline(); ok {
+		_spec.SetField(testplan.FieldDeadline, field.TypeTime, value)
+	}
+	if tpu.mutation.DeadlineCleared() {
+		_spec.ClearField(testplan.FieldDeadline, field.TypeTime)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tpu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{testplan.Label}
@@ -262,6 +314,46 @@ func (tpuo *TestPlanUpdateOne) SetNillableDescription(s *string) *TestPlanUpdate
 // ClearDescription clears the value of the "description" field.
 func (tpuo *TestPlanUpdateOne) ClearDescription() *TestPlanUpdateOne {
 	tpuo.mutation.ClearDescription()
+	return tpuo
+}
+
+// SetStartTime sets the "start_time" field.
+func (tpuo *TestPlanUpdateOne) SetStartTime(t time.Time) *TestPlanUpdateOne {
+	tpuo.mutation.SetStartTime(t)
+	return tpuo
+}
+
+// SetNillableStartTime sets the "start_time" field if the given value is not nil.
+func (tpuo *TestPlanUpdateOne) SetNillableStartTime(t *time.Time) *TestPlanUpdateOne {
+	if t != nil {
+		tpuo.SetStartTime(*t)
+	}
+	return tpuo
+}
+
+// ClearStartTime clears the value of the "start_time" field.
+func (tpuo *TestPlanUpdateOne) ClearStartTime() *TestPlanUpdateOne {
+	tpuo.mutation.ClearStartTime()
+	return tpuo
+}
+
+// SetDeadline sets the "deadline" field.
+func (tpuo *TestPlanUpdateOne) SetDeadline(t time.Time) *TestPlanUpdateOne {
+	tpuo.mutation.SetDeadline(t)
+	return tpuo
+}
+
+// SetNillableDeadline sets the "deadline" field if the given value is not nil.
+func (tpuo *TestPlanUpdateOne) SetNillableDeadline(t *time.Time) *TestPlanUpdateOne {
+	if t != nil {
+		tpuo.SetDeadline(*t)
+	}
+	return tpuo
+}
+
+// ClearDeadline clears the value of the "deadline" field.
+func (tpuo *TestPlanUpdateOne) ClearDeadline() *TestPlanUpdateOne {
+	tpuo.mutation.ClearDeadline()
 	return tpuo
 }
 
@@ -381,6 +473,18 @@ func (tpuo *TestPlanUpdateOne) sqlSave(ctx context.Context) (_node *TestPlan, er
 	}
 	if tpuo.mutation.DescriptionCleared() {
 		_spec.ClearField(testplan.FieldDescription, field.TypeString)
+	}
+	if value, ok := tpuo.mutation.StartTime(); ok {
+		_spec.SetField(testplan.FieldStartTime, field.TypeTime, value)
+	}
+	if tpuo.mutation.StartTimeCleared() {
+		_spec.ClearField(testplan.FieldStartTime, field.TypeTime)
+	}
+	if value, ok := tpuo.mutation.Deadline(); ok {
+		_spec.SetField(testplan.FieldDeadline, field.TypeTime, value)
+	}
+	if tpuo.mutation.DeadlineCleared() {
+		_spec.ClearField(testplan.FieldDeadline, field.TypeTime)
 	}
 	_node = &TestPlan{config: tpuo.config}
 	_spec.Assign = _node.assignValues

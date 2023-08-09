@@ -32,9 +32,9 @@ type ProjectHTTPServer interface {
 
 func RegisterProjectHTTPServer(s *http.Server, srv ProjectHTTPServer) {
 	r := s.Route("/")
-	r.POST("v1/api/project", _Project_CreateProject0_HTTP_Handler(srv))
-	r.PUT("v1/api/project", _Project_UpdateProject0_HTTP_Handler(srv))
-	r.GET("v1/api/project/{id}", _Project_GetProject0_HTTP_Handler(srv))
+	r.POST("v1/api/management/project", _Project_CreateProject0_HTTP_Handler(srv))
+	r.PUT("v1/api/management/project", _Project_UpdateProject0_HTTP_Handler(srv))
+	r.GET("v1/api/management/project/{id}", _Project_GetProject0_HTTP_Handler(srv))
 }
 
 func _Project_CreateProject0_HTTP_Handler(srv ProjectHTTPServer) func(ctx http.Context) error {
@@ -113,7 +113,7 @@ func NewProjectHTTPClient(client *http.Client) ProjectHTTPClient {
 
 func (c *ProjectHTTPClientImpl) CreateProject(ctx context.Context, in *CreateProjectRequest, opts ...http.CallOption) (*CreateProjectReply, error) {
 	var out CreateProjectReply
-	pattern := "v1/api/project"
+	pattern := "v1/api/management/project"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationProjectCreateProject))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -126,7 +126,7 @@ func (c *ProjectHTTPClientImpl) CreateProject(ctx context.Context, in *CreatePro
 
 func (c *ProjectHTTPClientImpl) GetProject(ctx context.Context, in *GetProjectRequest, opts ...http.CallOption) (*ProjectInfo, error) {
 	var out ProjectInfo
-	pattern := "v1/api/project/{id}"
+	pattern := "v1/api/management/project/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationProjectGetProject))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -139,7 +139,7 @@ func (c *ProjectHTTPClientImpl) GetProject(ctx context.Context, in *GetProjectRe
 
 func (c *ProjectHTTPClientImpl) UpdateProject(ctx context.Context, in *UpdateProjectRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "v1/api/project"
+	pattern := "v1/api/management/project"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationProjectUpdateProject))
 	opts = append(opts, http.PathTemplate(pattern))

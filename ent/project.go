@@ -34,6 +34,10 @@ type Project struct {
 	DeletedBy uint32 `json:"deleted_by,omitempty"`
 	// Status holds the value of the "status" field.
 	Status int8 `json:"status,omitempty"`
+	// StartTime holds the value of the "start_time" field.
+	StartTime time.Time `json:"start_time,omitempty"`
+	// Deadline holds the value of the "deadline" field.
+	Deadline time.Time `json:"deadline,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
 	// Remark holds the value of the "remark" field.
@@ -49,7 +53,7 @@ func (*Project) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case project.FieldName, project.FieldIdentifier, project.FieldDescription, project.FieldRemark:
 			values[i] = new(sql.NullString)
-		case project.FieldCreatedAt, project.FieldUpdatedAt, project.FieldDeletedAt:
+		case project.FieldCreatedAt, project.FieldUpdatedAt, project.FieldDeletedAt, project.FieldStartTime, project.FieldDeadline:
 			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Project", columns[i])
@@ -126,6 +130,18 @@ func (pr *Project) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pr.Status = int8(value.Int64)
 			}
+		case project.FieldStartTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field start_time", values[i])
+			} else if value.Valid {
+				pr.StartTime = value.Time
+			}
+		case project.FieldDeadline:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deadline", values[i])
+			} else if value.Valid {
+				pr.Deadline = value.Time
+			}
 		case project.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
@@ -192,6 +208,12 @@ func (pr *Project) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", pr.Status))
+	builder.WriteString(", ")
+	builder.WriteString("start_time=")
+	builder.WriteString(pr.StartTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deadline=")
+	builder.WriteString(pr.Deadline.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(pr.Description)

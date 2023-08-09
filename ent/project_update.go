@@ -147,6 +147,46 @@ func (pu *ProjectUpdate) AddStatus(i int8) *ProjectUpdate {
 	return pu
 }
 
+// SetStartTime sets the "start_time" field.
+func (pu *ProjectUpdate) SetStartTime(t time.Time) *ProjectUpdate {
+	pu.mutation.SetStartTime(t)
+	return pu
+}
+
+// SetNillableStartTime sets the "start_time" field if the given value is not nil.
+func (pu *ProjectUpdate) SetNillableStartTime(t *time.Time) *ProjectUpdate {
+	if t != nil {
+		pu.SetStartTime(*t)
+	}
+	return pu
+}
+
+// ClearStartTime clears the value of the "start_time" field.
+func (pu *ProjectUpdate) ClearStartTime() *ProjectUpdate {
+	pu.mutation.ClearStartTime()
+	return pu
+}
+
+// SetDeadline sets the "deadline" field.
+func (pu *ProjectUpdate) SetDeadline(t time.Time) *ProjectUpdate {
+	pu.mutation.SetDeadline(t)
+	return pu
+}
+
+// SetNillableDeadline sets the "deadline" field if the given value is not nil.
+func (pu *ProjectUpdate) SetNillableDeadline(t *time.Time) *ProjectUpdate {
+	if t != nil {
+		pu.SetDeadline(*t)
+	}
+	return pu
+}
+
+// ClearDeadline clears the value of the "deadline" field.
+func (pu *ProjectUpdate) ClearDeadline() *ProjectUpdate {
+	pu.mutation.ClearDeadline()
+	return pu
+}
+
 // SetDescription sets the "description" field.
 func (pu *ProjectUpdate) SetDescription(s string) *ProjectUpdate {
 	pu.mutation.SetDescription(s)
@@ -297,6 +337,18 @@ func (pu *ProjectUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := pu.mutation.AddedStatus(); ok {
 		_spec.AddField(project.FieldStatus, field.TypeInt8, value)
 	}
+	if value, ok := pu.mutation.StartTime(); ok {
+		_spec.SetField(project.FieldStartTime, field.TypeTime, value)
+	}
+	if pu.mutation.StartTimeCleared() {
+		_spec.ClearField(project.FieldStartTime, field.TypeTime)
+	}
+	if value, ok := pu.mutation.Deadline(); ok {
+		_spec.SetField(project.FieldDeadline, field.TypeTime, value)
+	}
+	if pu.mutation.DeadlineCleared() {
+		_spec.ClearField(project.FieldDeadline, field.TypeTime)
+	}
 	if value, ok := pu.mutation.Description(); ok {
 		_spec.SetField(project.FieldDescription, field.TypeString, value)
 	}
@@ -445,6 +497,46 @@ func (puo *ProjectUpdateOne) SetNillableStatus(i *int8) *ProjectUpdateOne {
 // AddStatus adds i to the "status" field.
 func (puo *ProjectUpdateOne) AddStatus(i int8) *ProjectUpdateOne {
 	puo.mutation.AddStatus(i)
+	return puo
+}
+
+// SetStartTime sets the "start_time" field.
+func (puo *ProjectUpdateOne) SetStartTime(t time.Time) *ProjectUpdateOne {
+	puo.mutation.SetStartTime(t)
+	return puo
+}
+
+// SetNillableStartTime sets the "start_time" field if the given value is not nil.
+func (puo *ProjectUpdateOne) SetNillableStartTime(t *time.Time) *ProjectUpdateOne {
+	if t != nil {
+		puo.SetStartTime(*t)
+	}
+	return puo
+}
+
+// ClearStartTime clears the value of the "start_time" field.
+func (puo *ProjectUpdateOne) ClearStartTime() *ProjectUpdateOne {
+	puo.mutation.ClearStartTime()
+	return puo
+}
+
+// SetDeadline sets the "deadline" field.
+func (puo *ProjectUpdateOne) SetDeadline(t time.Time) *ProjectUpdateOne {
+	puo.mutation.SetDeadline(t)
+	return puo
+}
+
+// SetNillableDeadline sets the "deadline" field if the given value is not nil.
+func (puo *ProjectUpdateOne) SetNillableDeadline(t *time.Time) *ProjectUpdateOne {
+	if t != nil {
+		puo.SetDeadline(*t)
+	}
+	return puo
+}
+
+// ClearDeadline clears the value of the "deadline" field.
+func (puo *ProjectUpdateOne) ClearDeadline() *ProjectUpdateOne {
+	puo.mutation.ClearDeadline()
 	return puo
 }
 
@@ -627,6 +719,18 @@ func (puo *ProjectUpdateOne) sqlSave(ctx context.Context) (_node *Project, err e
 	}
 	if value, ok := puo.mutation.AddedStatus(); ok {
 		_spec.AddField(project.FieldStatus, field.TypeInt8, value)
+	}
+	if value, ok := puo.mutation.StartTime(); ok {
+		_spec.SetField(project.FieldStartTime, field.TypeTime, value)
+	}
+	if puo.mutation.StartTimeCleared() {
+		_spec.ClearField(project.FieldStartTime, field.TypeTime)
+	}
+	if value, ok := puo.mutation.Deadline(); ok {
+		_spec.SetField(project.FieldDeadline, field.TypeTime, value)
+	}
+	if puo.mutation.DeadlineCleared() {
+		_spec.ClearField(project.FieldDeadline, field.TypeTime)
 	}
 	if value, ok := puo.mutation.Description(); ok {
 		_spec.SetField(project.FieldDescription, field.TypeString, value)

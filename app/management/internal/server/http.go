@@ -2,10 +2,6 @@ package server
 
 import (
 	"context"
-	apiV1 "galileo/api/management/api/v1"
-	projectV1 "galileo/api/management/project/v1"
-	taskV1 "galileo/api/management/task/v1"
-	testCaseV1 "galileo/api/management/testcase/v1"
 	managementV1 "galileo/api/management/v1"
 	"galileo/app/management/internal/conf"
 	"galileo/app/management/internal/data"
@@ -41,7 +37,7 @@ const (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(tr *conf.Trace, c *conf.Server, ac *conf.Auth, project *service.ProjectService, testcase *service.TestcaseService, task *service.TaskService, api *service.ApiService, management *service.ManagementService, logger log.Logger) *http.Server {
+func NewHTTPServer(tr *conf.Trace, c *conf.Server, ac *conf.Auth, management *service.ManagementService, logger log.Logger) *http.Server {
 	err := initTracer(tr.Endpoint)
 	if err != nil {
 		panic(err)
@@ -94,13 +90,9 @@ func NewHTTPServer(tr *conf.Trace, c *conf.Server, ac *conf.Auth, project *servi
 	opts = append(opts, http.ErrorEncoder(responseEncoder.ErrorEncoder))
 	srv := http.NewServer(opts...)
 	route := srv.Route("/")
-	route.POST("v1/api/management/testcase/upload", testcase.UploadTestcaseFile)
-	route.POST("v1/api/management/interface/upload", api.UploadApiFile)
+	route.POST("v1/api/management/testcase/upload", management.UploadTestcaseFile)
+	route.POST("v1/api/management/interface/upload", management.UploadApiFile)
 	srv.HandlePrefix("/ws", webSocketHandler)
-	taskV1.RegisterTaskHTTPServer(srv, task)
-	projectV1.RegisterProjectHTTPServer(srv, project)
-	testCaseV1.RegisterTestcaseHTTPServer(srv, testcase)
-	apiV1.RegisterApiHTTPServer(srv, api)
 	managementV1.RegisterManagementHTTPServer(srv, management)
 	return srv
 }

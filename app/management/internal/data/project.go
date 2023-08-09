@@ -5,7 +5,7 @@ import (
 	"galileo/app/management/internal/biz"
 	"galileo/ent"
 	"galileo/ent/project"
-	"galileo/pkg/errResponse"
+	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -19,7 +19,7 @@ type projectRepo struct {
 func NewProjectRepo(data *Data, logger log.Logger) biz.ProjectRepo {
 	return &projectRepo{
 		data: data,
-		log:  log.NewHelper(log.With(logger, "module", "management.projectRepo")),
+		log:  log.NewHelper(log.With(logger, "module", "project.Repo")),
 	}
 }
 
@@ -30,18 +30,25 @@ func (repo *projectRepo) CreateProject(ctx context.Context, p *biz.Project) (*bi
 		SetIdentifier(p.Identifier).
 		SetDescription(p.Description).
 		SetRemark(p.Description).Save(ctx)
-	if err != nil {
+	switch {
+	case ent.IsNotFound(err):
+		return nil, errors.NotFound(ReasonRecordNotFound, err.Error())
+	case err != nil:
 		return nil, err
 	}
 	return &biz.Project{
 		ID: res.ID,
 	}, nil
 }
+
 func (repo *projectRepo) GetProjectById(ctx context.Context, id int64) (*biz.Project, error) {
 	res, err := repo.data.entDB.Project.Query().
 		Where(project.ID(id)).
 		Only(ctx)
-	if err != nil {
+	switch {
+	case ent.IsNotFound(err):
+		return nil, errors.NotFound(ReasonRecordNotFound, err.Error())
+	case err != nil:
 		return nil, err
 	}
 	return &biz.Project{
@@ -58,7 +65,7 @@ func (repo *projectRepo) GetProjectById(ctx context.Context, id int64) (*biz.Pro
 	}, err
 }
 
-func (repo *projectRepo) UpdateProject(ctx context.Context, p *biz.Project) (bool, error) {
+func (repo *projectRepo) UpdateProject(ctx context.Context, p *biz.Project) error {
 	err := repo.data.entDB.Project.UpdateOneID(p.ID).
 		SetName(p.Name).
 		SetIdentifier(p.Identifier).
@@ -68,9 +75,9 @@ func (repo *projectRepo) UpdateProject(ctx context.Context, p *biz.Project) (boo
 		Exec(ctx)
 	switch {
 	case ent.IsNotFound(err):
-		return false, errors.NotFound(errResponse.ReasonRecordNotFound, err.Error())
+		return errors.NotFound(ReasonRecordNotFound, err.Error())
 	case err != nil:
-		return false, err
+		return err
 	}
-	return true, nil
+	return nil
 }

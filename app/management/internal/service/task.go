@@ -9,29 +9,10 @@ import (
 	"galileo/pkg/ctxdata"
 	. "galileo/pkg/errResponse"
 	. "galileo/pkg/factory"
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 )
-
-const (
-	taskProgressKey = "taskProgress"
-)
-
-type TaskService struct {
-	v1.UnimplementedTaskServer
-
-	uc     *biz.TaskUseCase
-	logger *log.Helper
-}
-
-func NewTaskService(uc *biz.TaskUseCase, logger log.Logger) *TaskService {
-	return &TaskService{
-		uc:     uc,
-		logger: log.NewHelper(log.With(logger, "module", "management.taskService")),
-	}
-}
 
 func NewTask(name string, rank, taskType int32, description string, testcaseSuites []int64, scheduleTime time.Time, worker string, assignee uint32, frequency v1.Frequency, deadline time.Time, config string) (biz.Task, error) {
 	if len(name) <= 0 {
@@ -58,7 +39,7 @@ func NewTask(name string, rank, taskType int32, description string, testcaseSuit
 	}, nil
 }
 
-func (s *TaskService) CreateTask(ctx context.Context, req *v1.CreateTaskRequest) (*v1.CreateTaskReply, error) {
+func (s *ManagementService) CreateTask(ctx context.Context, req *v1.CreateTaskRequest) (*v1.CreateTaskReply, error) {
 	/* 工厂模式新建 Task 校验传入参数的合法性 */
 	createTask, err := NewTask(
 		req.Name,
@@ -77,14 +58,14 @@ func (s *TaskService) CreateTask(ctx context.Context, req *v1.CreateTaskRequest)
 		return nil, SetCustomizeErrMsg(ReasonParamsError, err.Error())
 	}
 	/* 查询数据库中是否存在同名的 Task */
-	if queryTask, _ := s.uc.TaskByName(ctx, createTask.Name); queryTask != nil {
+	if queryTask, _ := s.sc.TaskByName(ctx, createTask.Name); queryTask != nil {
 		return nil, SetCustomizeErrMsg(ReasonParamsError, "duplicated task name")
 	}
 	/* 获取创建任务的用户ID */
 	uid := ctx.Value(ctxdata.UserIdKey)
 	createTask.CreatedBy = uid.(uint32)
 	/* 创建任务 */
-	ret, err := s.uc.CreateTask(ctx, &createTask)
+	ret, err := s.sc.CreateTask(ctx, &createTask)
 	if err != nil {
 		return nil, err
 	}
@@ -95,9 +76,9 @@ func (s *TaskService) CreateTask(ctx context.Context, req *v1.CreateTaskRequest)
 	}, nil
 }
 
-func (s *TaskService) UpdateTask(ctx context.Context, req *v1.UpdateTaskRequest) (*empty.Empty, error) {
+func (s *ManagementService) UpdateTask(ctx context.Context, req *v1.UpdateTaskRequest) (*empty.Empty, error) {
 	/* 查询 Task */
-	ret, err := s.uc.TaskByID(ctx, req.Id)
+	ret, err := s.sc.TaskByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -121,18 +102,18 @@ func (s *TaskService) UpdateTask(ctx context.Context, req *v1.UpdateTaskRequest)
 	/* 赋值 Task 更新的ID */
 	updateTask.Id = ret.Id
 	/* 更新 */
-	if _, err := s.uc.UpdateTask(ctx, &updateTask); err != nil {
+	if _, err := s.sc.UpdateTask(ctx, &updateTask); err != nil {
 		return nil, err
 	}
 	return nil, nil
 }
 
-func (s *TaskService) DeleteTask(ctx context.Context, req *v1.DeleteTaskRequest) (*v1.DeleteTaskReply, error) {
+func (s *ManagementService) DeleteTask(ctx context.Context, req *v1.DeleteTaskRequest) (*v1.DeleteTaskReply, error) {
 	return &v1.DeleteTaskReply{}, nil
 }
 
-func (s *TaskService) TaskByID(ctx context.Context, req *v1.TaskByIDRequest) (*v1.GetTaskReply, error) {
-	task, err := s.uc.TaskByID(ctx, req.Id)
+func (s *ManagementService) TaskByID(ctx context.Context, req *v1.TaskByIDRequest) (*v1.GetTaskReply, error) {
+	task, err := s.sc.TaskByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -153,8 +134,8 @@ func (s *TaskService) TaskByID(ctx context.Context, req *v1.TaskByIDRequest) (*v
 	}, nil
 }
 
-func (s *TaskService) TaskByName(ctx context.Context, req *v1.TaskByNameRequest) (*v1.GetTaskReply, error) {
-	task, err := s.uc.TaskByName(ctx, req.Name)
+func (s *ManagementService) TaskByName(ctx context.Context, req *v1.TaskByNameRequest) (*v1.GetTaskReply, error) {
+	task, err := s.sc.TaskByName(ctx, req.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -176,8 +157,8 @@ func (s *TaskService) TaskByName(ctx context.Context, req *v1.TaskByNameRequest)
 }
 
 // ListTimingTask 获取数据库中所有的延时/定时任务
-func (s *TaskService) ListTimingTask(ctx context.Context, req *empty.Empty) (*v1.ListTimingTaskReply, error) {
-	ret, err := s.uc.ListTimingTask(ctx)
+func (s *ManagementService) ListTimingTask(ctx context.Context, req *empty.Empty) (*v1.ListTimingTaskReply, error) {
+	ret, err := s.sc.ListTimingTask(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -187,9 +168,9 @@ func (s *TaskService) ListTimingTask(ctx context.Context, req *empty.Empty) (*v1
 }
 
 // UpdateTaskStatus 更新数据库中指定任务的状态
-func (s *TaskService) UpdateTaskStatus(ctx context.Context, req *v1.UpdateTaskStatusRequest) (*v1.UpdateTaskStatusReply, error) {
+func (s *ManagementService) UpdateTaskStatus(ctx context.Context, req *v1.UpdateTaskStatusRequest) (*v1.UpdateTaskStatusReply, error) {
 	/* 获取需要更新状态的任务 */
-	queryTask, err := s.uc.TaskByID(ctx, req.Id)
+	queryTask, err := s.sc.TaskByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -212,7 +193,7 @@ func (s *TaskService) UpdateTaskStatus(ctx context.Context, req *v1.UpdateTaskSt
 	}
 	/* 更新状态 */
 	queryTask.Status = req.Status
-	ret, err := s.uc.UpdateTaskStatus(ctx, queryTask)
+	ret, err := s.sc.UpdateTaskStatus(ctx, queryTask)
 	if err != nil {
 		return nil, err
 	}
@@ -224,15 +205,15 @@ func (s *TaskService) UpdateTaskStatus(ctx context.Context, req *v1.UpdateTaskSt
 
 // TaskProgress returns the progress of a task
 /* TODO: 基于redis实现任务进度的同步管理 */
-func (s *TaskService) TaskProgress(ctx context.Context, req *v1.TaskProgressRequest) (*v1.TaskProgressReply, error) {
+func (s *ManagementService) TaskProgress(ctx context.Context, req *v1.TaskProgressRequest) (*v1.TaskProgressReply, error) {
 	/* 接口参数获取指定任务信息 */
-	task, err := s.uc.TaskByID(ctx, req.Id)
+	task, err := s.sc.TaskByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
 	/* 基于任务信息构建key(规则: taskProgress:taskName:startTime)，查询redis数据库中的缓存 */
 	taskKey := NewTaskProgressKey(task.Name, task.ExecuteId)
-	ret, err := s.uc.RedisLRangeTask(ctx, taskKey)
+	ret, err := s.sc.RedisLRangeTask(ctx, taskKey)
 	if err != nil {
 		return nil, err
 	}

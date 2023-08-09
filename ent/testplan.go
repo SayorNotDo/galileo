@@ -28,6 +28,10 @@ type TestPlan struct {
 	UpdatedBy uint32 `json:"updated_by,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
+	// StartTime holds the value of the "start_time" field.
+	StartTime time.Time `json:"start_time,omitempty"`
+	// Deadline holds the value of the "deadline" field.
+	Deadline time.Time `json:"deadline,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -39,7 +43,7 @@ func (*TestPlan) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case testplan.FieldName, testplan.FieldDescription:
 			values[i] = new(sql.NullString)
-		case testplan.FieldCreatedAt, testplan.FieldUpdatedAt:
+		case testplan.FieldCreatedAt, testplan.FieldUpdatedAt, testplan.FieldStartTime, testplan.FieldDeadline:
 			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type TestPlan", columns[i])
@@ -98,6 +102,18 @@ func (tp *TestPlan) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				tp.Description = value.String
 			}
+		case testplan.FieldStartTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field start_time", values[i])
+			} else if value.Valid {
+				tp.StartTime = value.Time
+			}
+		case testplan.FieldDeadline:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deadline", values[i])
+			} else if value.Valid {
+				tp.Deadline = value.Time
+			}
 		}
 	}
 	return nil
@@ -143,6 +159,12 @@ func (tp *TestPlan) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(tp.Description)
+	builder.WriteString(", ")
+	builder.WriteString("start_time=")
+	builder.WriteString(tp.StartTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deadline=")
+	builder.WriteString(tp.Deadline.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

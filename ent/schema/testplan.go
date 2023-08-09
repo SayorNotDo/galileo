@@ -29,6 +29,8 @@ func (TestPlan) Fields() []ent.Field {
 		field.Time("updated_at").Optional().UpdateDefault(time.Now),
 		field.Uint32("updated_by").Optional(),
 		field.Text("description").Optional(),
+		field.Time("start_time").Optional(),
+		field.Time("deadline").Optional(),
 	}
 }
 

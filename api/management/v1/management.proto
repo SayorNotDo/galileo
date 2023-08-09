@@ -4,6 +4,7 @@ package api.management.v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "galileo/api/management/v1;v1";
 option java_multiple_files = true;
@@ -25,6 +26,11 @@ message BaseInfoReply {
   int64 cronJobCount = 4;
 };
 
-message CreateTestPlanRequest {}
+message CreateTestPlanRequest {
+  string name = 1;
+  string description = 2;
+  google.protobuf.Timestamp startTime = 3;
+  google.protobuf.Timestamp deadline = 4;
+}
 
 message CreateTestPlanReply {}

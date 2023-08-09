@@ -6,25 +6,11 @@ import (
 	v1 "galileo/api/management/api/v1"
 	"galileo/app/management/internal/biz"
 	. "galileo/pkg/errResponse"
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"io"
 	"mime/multipart"
 	"path"
 )
-
-type ApiService struct {
-	v1.UnimplementedApiServer
-	uc     *biz.ApiUseCase
-	logger *log.Helper
-}
-
-func NewApiService(uc *biz.ApiUseCase, logger log.Logger) *ApiService {
-	return &ApiService{
-		uc:     uc,
-		logger: log.NewHelper(log.With(logger, "module", "management.apiService")),
-	}
-}
 
 func NewApi(req *v1.ApiInfo) (biz.Api, error) {
 	if len(req.Name) <= 0 {
@@ -49,23 +35,23 @@ func NewApi(req *v1.ApiInfo) (biz.Api, error) {
 	}, nil
 }
 
-func (s *ApiService) CreateApi(ctx context.Context, req *v1.CreateApiRequest) (*v1.CreateApiReply, error) {
+func (s *ManagementService) CreateApi(ctx context.Context, req *v1.CreateApiRequest) (*v1.CreateApiReply, error) {
 	newApi, err := NewApi(req.ApiInfo)
 	if err != nil {
 		return nil, err
 	}
-	if ret, _ := s.uc.ApiByName(ctx, newApi.Name); ret != nil {
+	if ret, _ := s.ac.ApiByName(ctx, newApi.Name); ret != nil {
 		return nil, SetCustomizeErrInfoByReason(ReasonRecordExists)
 	}
 	// check if record already exists
-	if ok, err := s.uc.IsApiDuplicated(ctx, newApi.Type, newApi.Url); err != nil {
+	if ok, err := s.ac.IsApiDuplicated(ctx, newApi.Type, newApi.Url); err != nil {
 		return nil, SetCustomizeErrInfo(err)
 	} else if !ok {
 		return nil, SetCustomizeErrInfoByReason(ReasonRecordExists)
 	}
 	userId := ctx.Value("x-md-global-userId").(uint32)
 	newApi.CreatedBy = userId
-	ret, err := s.uc.CreateApi(ctx, &newApi)
+	ret, err := s.ac.CreateApi(ctx, &newApi)
 	if err != nil {
 		return nil, err
 	}
@@ -75,8 +61,8 @@ func (s *ApiService) CreateApi(ctx context.Context, req *v1.CreateApiRequest) (*
 	}, nil
 }
 
-func (s *ApiService) UpdateApi(ctx context.Context, req *v1.UpdateApiRequest) (*v1.UpdateApiReply, error) {
-	_, err := s.uc.ApiById(ctx, req.Id)
+func (s *ManagementService) UpdateApi(ctx context.Context, req *v1.UpdateApiRequest) (*v1.UpdateApiReply, error) {
+	_, err := s.ac.ApiById(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -84,14 +70,14 @@ func (s *ApiService) UpdateApi(ctx context.Context, req *v1.UpdateApiRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	if _, err := s.uc.UpdateApi(ctx, &updateApi); err != nil {
+	if _, err := s.ac.UpdateApi(ctx, &updateApi); err != nil {
 		return nil, err
 	}
 	return &v1.UpdateApiReply{}, nil
 }
 
 // UploadApiFile Upload Api File get url
-func (s *ApiService) UploadApiFile(ctx http.Context) (err error) {
+func (s *ManagementService) UploadApiFile(ctx http.Context) (err error) {
 	fileName := ctx.Request().FormValue("fileName")
 	file, fileHeader, _ := ctx.Request().FormFile("file")
 	if fileName == "" {
@@ -113,7 +99,7 @@ func (s *ApiService) UploadApiFile(ctx http.Context) (err error) {
 	if _, err := io.Copy(buf, file); err != nil {
 		return err
 	}
-	url, err := s.uc.UploadInterfaceFile(ctx, fileName, path.Ext(fileHeader.Filename), buf.Bytes())
+	url, err := s.ac.UploadInterfaceFile(ctx, fileName, path.Ext(fileHeader.Filename), buf.Bytes())
 	if err != nil {
 		return SetCustomizeErrMsg(ReasonSystemError, err.Error())
 	}

@@ -13,20 +13,20 @@ option java_package = "api.management.project.v1";
 service Project {
   rpc CreateProject (CreateProjectRequest) returns (CreateProjectReply) {
     option(google.api.http) = {
-      post: "v1/api/project"
+      post: "v1/api/management/project"
       body: "*"
     };
   };
   rpc UpdateProject (UpdateProjectRequest) returns (google.protobuf.Empty){
     option(google.api.http) = {
-      put: "v1/api/project"
+      put: "v1/api/management/project"
       body: "*"
     };
   };
   rpc DeleteProject (DeleteProjectRequest) returns (DeleteProjectReply);
   rpc GetProject (GetProjectRequest) returns (ProjectInfo) {
     option(google.api.http) = {
-      get: "v1/api/project/{id}"
+      get: "v1/api/management/project/{id}"
     };
   };
   rpc ListProject (ListProjectRequest) returns (ListProjectReply);
@@ -36,8 +36,9 @@ message CreateProjectRequest {
   string name = 1;
   string identifier = 2;
   string description = 3;
-  string remark = 4;
-  uint32 createdBy = 5;
+  google.protobuf.Timestamp startTime = 4;
+  google.protobuf.Timestamp endTime = 5;
+  string remark = 6;
 }
 
 message CreateProjectReply {

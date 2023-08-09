@@ -84,6 +84,16 @@ func Description(v string) predicate.TestPlan {
 	return predicate.TestPlan(sql.FieldEQ(FieldDescription, v))
 }
 
+// StartTime applies equality check predicate on the "start_time" field. It's identical to StartTimeEQ.
+func StartTime(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldEQ(FieldStartTime, v))
+}
+
+// Deadline applies equality check predicate on the "deadline" field. It's identical to DeadlineEQ.
+func Deadline(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldEQ(FieldDeadline, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.TestPlan {
 	return predicate.TestPlan(sql.FieldEQ(FieldName, v))
@@ -402,6 +412,106 @@ func DescriptionEqualFold(v string) predicate.TestPlan {
 // DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
 func DescriptionContainsFold(v string) predicate.TestPlan {
 	return predicate.TestPlan(sql.FieldContainsFold(FieldDescription, v))
+}
+
+// StartTimeEQ applies the EQ predicate on the "start_time" field.
+func StartTimeEQ(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldEQ(FieldStartTime, v))
+}
+
+// StartTimeNEQ applies the NEQ predicate on the "start_time" field.
+func StartTimeNEQ(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldNEQ(FieldStartTime, v))
+}
+
+// StartTimeIn applies the In predicate on the "start_time" field.
+func StartTimeIn(vs ...time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldIn(FieldStartTime, vs...))
+}
+
+// StartTimeNotIn applies the NotIn predicate on the "start_time" field.
+func StartTimeNotIn(vs ...time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldNotIn(FieldStartTime, vs...))
+}
+
+// StartTimeGT applies the GT predicate on the "start_time" field.
+func StartTimeGT(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldGT(FieldStartTime, v))
+}
+
+// StartTimeGTE applies the GTE predicate on the "start_time" field.
+func StartTimeGTE(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldGTE(FieldStartTime, v))
+}
+
+// StartTimeLT applies the LT predicate on the "start_time" field.
+func StartTimeLT(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldLT(FieldStartTime, v))
+}
+
+// StartTimeLTE applies the LTE predicate on the "start_time" field.
+func StartTimeLTE(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldLTE(FieldStartTime, v))
+}
+
+// StartTimeIsNil applies the IsNil predicate on the "start_time" field.
+func StartTimeIsNil() predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldIsNull(FieldStartTime))
+}
+
+// StartTimeNotNil applies the NotNil predicate on the "start_time" field.
+func StartTimeNotNil() predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldNotNull(FieldStartTime))
+}
+
+// DeadlineEQ applies the EQ predicate on the "deadline" field.
+func DeadlineEQ(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldEQ(FieldDeadline, v))
+}
+
+// DeadlineNEQ applies the NEQ predicate on the "deadline" field.
+func DeadlineNEQ(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldNEQ(FieldDeadline, v))
+}
+
+// DeadlineIn applies the In predicate on the "deadline" field.
+func DeadlineIn(vs ...time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldIn(FieldDeadline, vs...))
+}
+
+// DeadlineNotIn applies the NotIn predicate on the "deadline" field.
+func DeadlineNotIn(vs ...time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldNotIn(FieldDeadline, vs...))
+}
+
+// DeadlineGT applies the GT predicate on the "deadline" field.
+func DeadlineGT(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldGT(FieldDeadline, v))
+}
+
+// DeadlineGTE applies the GTE predicate on the "deadline" field.
+func DeadlineGTE(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldGTE(FieldDeadline, v))
+}
+
+// DeadlineLT applies the LT predicate on the "deadline" field.
+func DeadlineLT(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldLT(FieldDeadline, v))
+}
+
+// DeadlineLTE applies the LTE predicate on the "deadline" field.
+func DeadlineLTE(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldLTE(FieldDeadline, v))
+}
+
+// DeadlineIsNil applies the IsNil predicate on the "deadline" field.
+func DeadlineIsNil() predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldIsNull(FieldDeadline))
+}
+
+// DeadlineNotNil applies the NotNil predicate on the "deadline" field.
+func DeadlineNotNil() predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldNotNull(FieldDeadline))
 }
 
 // And groups predicates with the AND operator between them.

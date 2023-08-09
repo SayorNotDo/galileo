@@ -1,8 +1,7 @@
 package server
 
 import (
-	projectV1 "galileo/api/management/project/v1"
-	taskV1 "galileo/api/management/task/v1"
+	managementV1 "galileo/api/management/v1"
 	"galileo/app/management/internal/conf"
 	"galileo/app/management/internal/service"
 	"github.com/go-kratos/kratos/v2/log"
@@ -14,7 +13,7 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(tr *conf.Trace, c *conf.Server, project *service.ProjectService, task *service.TaskService, logger log.Logger) *grpc.Server {
+func NewGRPCServer(tr *conf.Trace, c *conf.Server, management *service.ManagementService, logger log.Logger) *grpc.Server {
 	err := initTracer(tr.Endpoint)
 	if err != nil {
 		panic(err)
@@ -37,7 +36,6 @@ func NewGRPCServer(tr *conf.Trace, c *conf.Server, project *service.ProjectServi
 		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
-	projectV1.RegisterProjectServer(srv, project)
-	taskV1.RegisterTaskServer(srv, task)
+	managementV1.RegisterManagementServer(srv, management)
 	return srv
 }

@@ -166,6 +166,8 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "status", Type: field.TypeInt8, Default: 0},
+		{Name: "start_time", Type: field.TypeTime, Nullable: true},
+		{Name: "deadline", Type: field.TypeTime, Nullable: true},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
@@ -215,6 +217,8 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "start_time", Type: field.TypeTime, Nullable: true},
+		{Name: "deadline", Type: field.TypeTime, Nullable: true},
 	}
 	// TestPlanTable holds the schema information for the "test_plan" table.
 	TestPlanTable = &schema.Table{

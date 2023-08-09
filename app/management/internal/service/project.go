@@ -5,30 +5,17 @@ import (
 	v1 "galileo/api/management/project/v1"
 	"galileo/app/management/internal/biz"
 	. "galileo/pkg/errResponse"
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type ProjectService struct {
-	v1.UnimplementedProjectServer
-	uc     *biz.ProjectUseCase
-	logger *log.Helper
-}
-
-func NewProjectService(uc *biz.ProjectUseCase, logger log.Logger) *ProjectService {
-	return &ProjectService{
-		uc:     uc,
-		logger: log.NewHelper(log.With(logger, "module", "management.projectService")),
-	}
-}
-
-func (s *ProjectService) CreateProject(ctx context.Context, req *v1.CreateProjectRequest) (*v1.CreateProjectReply, error) {
-	createProject, err := biz.NewProject(req.Name, req.Identifier, req.CreatedBy)
+func (s *ManagementService) CreateProject(ctx context.Context, req *v1.CreateProjectRequest) (*v1.CreateProjectReply, error) {
+	userId := ctx.Value("x-md-global-userId")
+	createProject, err := biz.NewProject(req.Name, req.Identifier, userId.(uint32))
 	if err != nil {
 		return nil, err
 	}
-	ret, err := s.uc.CreateProject(ctx, &createProject)
+	ret, err := s.pc.CreateProject(ctx, &createProject)
 	if err != nil {
 		return nil, err
 	}
@@ -37,11 +24,11 @@ func (s *ProjectService) CreateProject(ctx context.Context, req *v1.CreateProjec
 	}, nil
 }
 
-func (s *ProjectService) GetProject(ctx context.Context, req *v1.GetProjectRequest) (*v1.ProjectInfo, error) {
+func (s *ManagementService) GetProject(ctx context.Context, req *v1.GetProjectRequest) (*v1.ProjectInfo, error) {
 	if req.Id <= 0 {
 		return nil, SetCustomizeErrMsg(ReasonParamsError, "project id must be greater than zero")
 	}
-	ret, err := s.uc.GetProjectById(ctx, req.Id)
+	ret, err := s.pc.GetProjectById(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -59,11 +46,11 @@ func (s *ProjectService) GetProject(ctx context.Context, req *v1.GetProjectReque
 	}, nil
 }
 
-func (s *ProjectService) UpdateProject(ctx context.Context, req *v1.UpdateProjectRequest) (*empty.Empty, error) {
+func (s *ManagementService) UpdateProject(ctx context.Context, req *v1.UpdateProjectRequest) (*empty.Empty, error) {
 	if req.Id <= 0 {
 		return nil, SetCustomizeErrMsg(ReasonParamsError, "project id must be greater than zero")
 	}
-	ret, err := s.uc.GetProjectById(ctx, req.Id)
+	ret, err := s.pc.GetProjectById(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +62,7 @@ func (s *ProjectService) UpdateProject(ctx context.Context, req *v1.UpdateProjec
 	updateProject.Description = req.Description
 	updateProject.Remark = req.Remark
 	updateProject.Status = int8(req.Status)
-	if _, err := s.uc.UpdateProject(ctx, &updateProject); err != nil {
+	if err := s.pc.UpdateProject(ctx, &updateProject); err != nil {
 		return nil, err
 	}
 	return nil, nil
