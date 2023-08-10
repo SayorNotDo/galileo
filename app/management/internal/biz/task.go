@@ -39,7 +39,7 @@ type Task struct {
 
 // TaskRepo is a Task repo.
 type TaskRepo interface {
-	ListTimingTask(ctx context.Context) ([]*v1.TaskInfo, error)
+	ListTimingTask(ctx context.Context, status []v1.TaskStatus) ([]*v1.TaskInfo, error)
 	CreateTask(ctx context.Context, task *Task) (*Task, error)
 	TaskByName(ctx context.Context, name string) (*Task, error)
 	TaskByID(ctx context.Context, id int64) (*Task, error)
@@ -86,8 +86,8 @@ func (uc *TaskUseCase) UpdateTaskStatus(ctx context.Context, updateTask *Task) (
 	return uc.repo.UpdateTaskStatus(ctx, updateTask)
 }
 
-func (uc *TaskUseCase) ListTimingTask(ctx context.Context) ([]*v1.TaskInfo, error) {
-	return uc.repo.ListTimingTask(ctx)
+func (uc *TaskUseCase) ListTimingTask(ctx context.Context, status []v1.TaskStatus) ([]*v1.TaskInfo, error) {
+	return uc.repo.ListTimingTask(ctx, status)
 }
 
 func (uc *TaskUseCase) RedisLRangeTask(ctx context.Context, key string) ([]string, error) {

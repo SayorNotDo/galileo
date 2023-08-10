@@ -13,16 +13,18 @@ import (
 )
 
 func (s *EngineService) CronJobScheduler(ctx context.Context) {
-	// 设置循环频率为 5 min
+	/* 设置循环频率为 5 min */
 	interval := 5 * time.Minute
-	// 循环逻辑
+	/* 循环逻辑 */
 	for {
 		select {
+		/* 上下文返回截止信号时退出循环 */
 		case <-ctx.Done():
 			s.log.Info("*--------------------------------*CronJobScheduler Stopped*--------------------------------*")
 			return
 		default:
 			s.log.Info("*--------------------------------*Running loop routine*--------------------------------*")
+			/* 获取处于新建状态的定时任务列表 */
 			taskList, err := s.uc.TimingTaskList(ctx)
 			if err != nil {
 				s.log.Error("Error getting timing task list")

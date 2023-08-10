@@ -11,7 +11,6 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/stdcopy"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/robfig/cron/v3"
 	"io"
 	"os"
@@ -66,7 +65,9 @@ func (r *engineRepo) AddCronJob(ctx context.Context, task *biz.Task) (cron.Entry
 }
 
 func (r *engineRepo) TimingTaskList(ctx context.Context) ([]*biz.Task, error) {
-	res, err := r.data.taskCli.ListTimingTask(ctx, &empty.Empty{})
+	res, err := r.data.taskCli.ListTimingTask(ctx, &taskV1.ListTimingTaskRequest{
+		Status: []taskV1.TaskStatus{taskV1.TaskStatus_NEW},
+	})
 	if err != nil {
 		log.Error(err)
 		return nil, err

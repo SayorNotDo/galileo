@@ -222,8 +222,17 @@ func (r *taskRepo) IsTaskDeleted(ctx context.Context, id int64) (bool, error) {
 	return false, err
 }
 
-func (r *taskRepo) ListTimingTask(ctx context.Context) ([]*taskV1.TaskInfo, error) {
-	ret, err := r.data.entDB.Task.Query().Where(task.TypeIn(1, 2)).All(ctx)
+func (r *taskRepo) ListTimingTask(ctx context.Context, status []taskV1.TaskStatus) ([]*taskV1.TaskInfo, error) {
+	var numList []int8
+	/* 枚举状态值转化为Int8类型 */
+	for _, t := range status {
+		numList = append(numList, int8(t.Number()))
+	}
+	/* 查询 */
+	ret, err := r.data.entDB.Task.Query().
+		Where(task.TypeIn(1, 2)).
+		Where(task.StatusIn(numList...)).
+		All(ctx)
 	if err != nil {
 		return nil, err
 	}

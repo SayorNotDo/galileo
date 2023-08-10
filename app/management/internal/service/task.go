@@ -158,9 +158,9 @@ func (s *ManagementService) TaskByName(ctx context.Context, req *v1.TaskByNameRe
 	}, nil
 }
 
-// ListTimingTask 获取数据库中所有的延时/定时任务
-func (s *ManagementService) ListTimingTask(ctx context.Context, req *empty.Empty) (*v1.ListTimingTaskReply, error) {
-	ret, err := s.sc.ListTimingTask(ctx)
+// ListTimingTask 获取数据库中的延时/定时任务·
+func (s *ManagementService) ListTimingTask(ctx context.Context, req *v1.ListTimingTaskRequest) (*v1.ListTimingTaskReply, error) {
+	ret, err := s.sc.ListTimingTask(ctx, req.Status)
 	if err != nil {
 		return nil, err
 	}

@@ -39,7 +39,7 @@ type TaskClient interface {
 	DeleteTask(ctx context.Context, in *DeleteTaskRequest, opts ...grpc.CallOption) (*DeleteTaskReply, error)
 	TaskByID(ctx context.Context, in *TaskByIDRequest, opts ...grpc.CallOption) (*GetTaskReply, error)
 	TaskByName(ctx context.Context, in *TaskByNameRequest, opts ...grpc.CallOption) (*GetTaskReply, error)
-	ListTimingTask(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListTimingTaskReply, error)
+	ListTimingTask(ctx context.Context, in *ListTimingTaskRequest, opts ...grpc.CallOption) (*ListTimingTaskReply, error)
 	UpdateTaskStatus(ctx context.Context, in *UpdateTaskStatusRequest, opts ...grpc.CallOption) (*UpdateTaskStatusReply, error)
 	TaskProgress(ctx context.Context, in *TaskProgressRequest, opts ...grpc.CallOption) (*TaskProgressReply, error)
 }
@@ -97,7 +97,7 @@ func (c *taskClient) TaskByName(ctx context.Context, in *TaskByNameRequest, opts
 	return out, nil
 }
 
-func (c *taskClient) ListTimingTask(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListTimingTaskReply, error) {
+func (c *taskClient) ListTimingTask(ctx context.Context, in *ListTimingTaskRequest, opts ...grpc.CallOption) (*ListTimingTaskReply, error) {
 	out := new(ListTimingTaskReply)
 	err := c.cc.Invoke(ctx, Task_ListTimingTask_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -133,7 +133,7 @@ type TaskServer interface {
 	DeleteTask(context.Context, *DeleteTaskRequest) (*DeleteTaskReply, error)
 	TaskByID(context.Context, *TaskByIDRequest) (*GetTaskReply, error)
 	TaskByName(context.Context, *TaskByNameRequest) (*GetTaskReply, error)
-	ListTimingTask(context.Context, *emptypb.Empty) (*ListTimingTaskReply, error)
+	ListTimingTask(context.Context, *ListTimingTaskRequest) (*ListTimingTaskReply, error)
 	UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error)
 	TaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error)
 	mustEmbedUnimplementedTaskServer()
@@ -158,7 +158,7 @@ func (UnimplementedTaskServer) TaskByID(context.Context, *TaskByIDRequest) (*Get
 func (UnimplementedTaskServer) TaskByName(context.Context, *TaskByNameRequest) (*GetTaskReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TaskByName not implemented")
 }
-func (UnimplementedTaskServer) ListTimingTask(context.Context, *emptypb.Empty) (*ListTimingTaskReply, error) {
+func (UnimplementedTaskServer) ListTimingTask(context.Context, *ListTimingTaskRequest) (*ListTimingTaskReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTimingTask not implemented")
 }
 func (UnimplementedTaskServer) UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error) {
@@ -271,7 +271,7 @@ func _Task_TaskByName_Handler(srv interface{}, ctx context.Context, dec func(int
 }
 
 func _Task_ListTimingTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(ListTimingTaskRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -283,7 +283,7 @@ func _Task_ListTimingTask_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: Task_ListTimingTask_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TaskServer).ListTimingTask(ctx, req.(*emptypb.Empty))
+		return srv.(TaskServer).ListTimingTask(ctx, req.(*ListTimingTaskRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
