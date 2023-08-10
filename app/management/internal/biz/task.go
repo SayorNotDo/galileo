@@ -13,6 +13,7 @@ import (
 type Task struct {
 	Id              int64
 	Name            string
+	TestPlanId      int64
 	Rank            int8
 	Type            int8
 	Status          v1.TaskStatus

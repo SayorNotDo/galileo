@@ -142,6 +142,14 @@ func init() {
 	testplanDescUpdatedAt := testplanFields[4].Descriptor()
 	// testplan.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	testplan.UpdateDefaultUpdatedAt = testplanDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// testplanDescStatus is the schema descriptor for status field.
+	testplanDescStatus := testplanFields[10].Descriptor()
+	// testplan.DefaultStatus holds the default value on creation for the status field.
+	testplan.DefaultStatus = testplanDescStatus.Default.(int8)
+	// testplanDescProjectID is the schema descriptor for project_id field.
+	testplanDescProjectID := testplanFields[12].Descriptor()
+	// testplan.ProjectIDValidator is a validator for the "project_id" field. It is called by the builders before save.
+	testplan.ProjectIDValidator = testplanDescProjectID.Validators[0].(func(int64) error)
 	testcaseFields := schema.Testcase{}.Fields()
 	_ = testcaseFields
 	// testcaseDescName is the schema descriptor for name field.

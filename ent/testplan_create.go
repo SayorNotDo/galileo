@@ -116,6 +116,46 @@ func (tpc *TestPlanCreate) SetNillableDeadline(t *time.Time) *TestPlanCreate {
 	return tpc
 }
 
+// SetStatusUpdatedAt sets the "status_updated_at" field.
+func (tpc *TestPlanCreate) SetStatusUpdatedAt(t time.Time) *TestPlanCreate {
+	tpc.mutation.SetStatusUpdatedAt(t)
+	return tpc
+}
+
+// SetNillableStatusUpdatedAt sets the "status_updated_at" field if the given value is not nil.
+func (tpc *TestPlanCreate) SetNillableStatusUpdatedAt(t *time.Time) *TestPlanCreate {
+	if t != nil {
+		tpc.SetStatusUpdatedAt(*t)
+	}
+	return tpc
+}
+
+// SetStatus sets the "status" field.
+func (tpc *TestPlanCreate) SetStatus(i int8) *TestPlanCreate {
+	tpc.mutation.SetStatus(i)
+	return tpc
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (tpc *TestPlanCreate) SetNillableStatus(i *int8) *TestPlanCreate {
+	if i != nil {
+		tpc.SetStatus(*i)
+	}
+	return tpc
+}
+
+// SetTasks sets the "tasks" field.
+func (tpc *TestPlanCreate) SetTasks(i []int64) *TestPlanCreate {
+	tpc.mutation.SetTasks(i)
+	return tpc
+}
+
+// SetProjectID sets the "project_id" field.
+func (tpc *TestPlanCreate) SetProjectID(i int64) *TestPlanCreate {
+	tpc.mutation.SetProjectID(i)
+	return tpc
+}
+
 // SetID sets the "id" field.
 func (tpc *TestPlanCreate) SetID(i int64) *TestPlanCreate {
 	tpc.mutation.SetID(i)
@@ -161,6 +201,10 @@ func (tpc *TestPlanCreate) defaults() {
 		v := testplan.DefaultCreatedAt()
 		tpc.mutation.SetCreatedAt(v)
 	}
+	if _, ok := tpc.mutation.Status(); !ok {
+		v := testplan.DefaultStatus
+		tpc.mutation.SetStatus(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -178,6 +222,17 @@ func (tpc *TestPlanCreate) check() error {
 	}
 	if _, ok := tpc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "TestPlan.created_by"`)}
+	}
+	if _, ok := tpc.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "TestPlan.status"`)}
+	}
+	if _, ok := tpc.mutation.ProjectID(); !ok {
+		return &ValidationError{Name: "project_id", err: errors.New(`ent: missing required field "TestPlan.project_id"`)}
+	}
+	if v, ok := tpc.mutation.ProjectID(); ok {
+		if err := testplan.ProjectIDValidator(v); err != nil {
+			return &ValidationError{Name: "project_id", err: fmt.Errorf(`ent: validator failed for field "TestPlan.project_id": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -242,6 +297,22 @@ func (tpc *TestPlanCreate) createSpec() (*TestPlan, *sqlgraph.CreateSpec) {
 	if value, ok := tpc.mutation.Deadline(); ok {
 		_spec.SetField(testplan.FieldDeadline, field.TypeTime, value)
 		_node.Deadline = value
+	}
+	if value, ok := tpc.mutation.StatusUpdatedAt(); ok {
+		_spec.SetField(testplan.FieldStatusUpdatedAt, field.TypeTime, value)
+		_node.StatusUpdatedAt = value
+	}
+	if value, ok := tpc.mutation.Status(); ok {
+		_spec.SetField(testplan.FieldStatus, field.TypeInt8, value)
+		_node.Status = value
+	}
+	if value, ok := tpc.mutation.Tasks(); ok {
+		_spec.SetField(testplan.FieldTasks, field.TypeJSON, value)
+		_node.Tasks = value
+	}
+	if value, ok := tpc.mutation.ProjectID(); ok {
+		_spec.SetField(testplan.FieldProjectID, field.TypeInt64, value)
+		_node.ProjectID = value
 	}
 	return _node, _spec
 }

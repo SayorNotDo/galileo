@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"galileo/api/management/task/v1"
+	managementV1 "galileo/api/management/v1"
 	"galileo/app/management/internal/biz"
 	"galileo/pkg/ctxdata"
 	. "galileo/pkg/errResponse"
@@ -65,6 +66,7 @@ func (s *ManagementService) CreateTask(ctx context.Context, req *v1.CreateTaskRe
 	uid := ctx.Value(ctxdata.UserIdKey)
 	createTask.CreatedBy = uid.(uint32)
 	/* 创建任务 */
+	createTask.TestPlanId = req.TestPlanId
 	ret, err := s.sc.CreateTask(ctx, &createTask)
 	if err != nil {
 		return nil, err
@@ -196,6 +198,18 @@ func (s *ManagementService) UpdateTaskStatus(ctx context.Context, req *v1.Update
 	ret, err := s.sc.UpdateTaskStatus(ctx, queryTask)
 	if err != nil {
 		return nil, err
+	}
+	/* 当设置状态为EXCEPTION，且任务属于某一测试计划，需要变更测试计划的状态 */
+	if ret.Status == v1.TaskStatus_EXCEPTION && ret.TestPlanId >= 0 {
+		/* 基于ID获取对应的测试计划 */
+		queryPlan, err := s.uc.GetTestPlanById(ctx, ret.TestPlanId)
+		if err != nil {
+			return nil, err
+		}
+		queryPlan.Status = managementV1.PlanStatus_BLOCKED
+		if err := s.uc.UpdateTestPlan(ctx, queryPlan); err != nil {
+			return nil, err
+		}
 	}
 	return &v1.UpdateTaskStatusReply{
 		StatusUpdatedAt: timestamppb.New(ret.StatusUpdatedAt),

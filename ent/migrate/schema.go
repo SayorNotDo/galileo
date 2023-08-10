@@ -200,6 +200,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "testplan_id", Type: field.TypeInt64, Nullable: true},
 		{Name: "execute_id", Type: field.TypeInt64, Nullable: true},
 	}
 	// TaskTable holds the schema information for the "task" table.
@@ -219,6 +220,10 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "start_time", Type: field.TypeTime, Nullable: true},
 		{Name: "deadline", Type: field.TypeTime, Nullable: true},
+		{Name: "status_updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "status", Type: field.TypeInt8, Default: 0},
+		{Name: "tasks", Type: field.TypeJSON, Nullable: true},
+		{Name: "project_id", Type: field.TypeInt64},
 	}
 	// TestPlanTable holds the schema information for the "test_plan" table.
 	TestPlanTable = &schema.Table{

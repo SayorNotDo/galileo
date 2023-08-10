@@ -2,23 +2,27 @@ package biz
 
 import (
 	"context"
+	v1 "galileo/api/management/project/v1"
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 )
 
 // Project is a Project model.
 type Project struct {
-	ID          int64     `json:"id,omitempty"`
-	Name        string    `json:"name,omitempty"`
-	Identifier  string    `json:"identifier,omitempty"`
-	CreatedBy   uint32    `json:"created_by,omitempty"`
-	CreatedAt   time.Time `json:"created_at,omitempty"`
-	UpdatedBy   uint32    `json:"updated_by,omitempty"`
-	UpdatedAt   time.Time `json:"updated_at,omitempty"`
-	Description string    `json:"description,omitempty"`
-	Remark      string    `json:"remark"`
-	Status      int8      `json:"status,omitempty"`
+	ID          int64            `json:"id,omitempty"`
+	Name        string           `json:"name,omitempty"`
+	Identifier  string           `json:"identifier,omitempty"`
+	CreatedBy   uint32           `json:"created_by,omitempty"`
+	CreatedAt   time.Time        `json:"created_at,omitempty"`
+	UpdatedBy   uint32           `json:"updated_by,omitempty"`
+	UpdatedAt   time.Time        `json:"updated_at,omitempty"`
+	StartTime   time.Time        `json:"start_time,omitempty"`
+	Deadline    time.Time        `json:"deadline,omitempty"`
+	Description string           `json:"description,omitempty"`
+	Remark      string           `json:"remark"`
+	Status      v1.ProjectStatus `json:"status,omitempty"`
 }
 
 // ProjectRepo is a Project repo.
@@ -57,7 +61,7 @@ func (uc *ProjectUseCase) UpdateProject(ctx context.Context, project *Project) e
 	return uc.repo.UpdateProject(ctx, project)
 }
 
-func NewProject(name, identifier string, createdBy uint32) (Project, error) {
+func NewProject(name, identifier string, createdBy uint32, startTime *timestamppb.Timestamp, endTime *timestamppb.Timestamp) (Project, error) {
 	if len(name) <= 0 {
 		return Project{}, SetCustomizeErrMsg(ReasonParamsError, "project name must not be empty")
 	} else if len(identifier) <= 0 {
@@ -69,5 +73,7 @@ func NewProject(name, identifier string, createdBy uint32) (Project, error) {
 		Name:       name,
 		Identifier: identifier,
 		CreatedBy:  createdBy,
+		StartTime:  startTime.AsTime(),
+		Deadline:   endTime.AsTime(),
 	}, nil
 }

@@ -155,6 +155,11 @@ func Description(v string) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldDescription, v))
 }
 
+// TestplanID applies equality check predicate on the "testplan_id" field. It's identical to TestplanIDEQ.
+func TestplanID(v int64) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldTestplanID, v))
+}
+
 // ExecuteID applies equality check predicate on the "execute_id" field. It's identical to ExecuteIDEQ.
 func ExecuteID(v int64) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldExecuteID, v))
@@ -1223,6 +1228,56 @@ func DescriptionEqualFold(v string) predicate.Task {
 // DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
 func DescriptionContainsFold(v string) predicate.Task {
 	return predicate.Task(sql.FieldContainsFold(FieldDescription, v))
+}
+
+// TestplanIDEQ applies the EQ predicate on the "testplan_id" field.
+func TestplanIDEQ(v int64) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldTestplanID, v))
+}
+
+// TestplanIDNEQ applies the NEQ predicate on the "testplan_id" field.
+func TestplanIDNEQ(v int64) predicate.Task {
+	return predicate.Task(sql.FieldNEQ(FieldTestplanID, v))
+}
+
+// TestplanIDIn applies the In predicate on the "testplan_id" field.
+func TestplanIDIn(vs ...int64) predicate.Task {
+	return predicate.Task(sql.FieldIn(FieldTestplanID, vs...))
+}
+
+// TestplanIDNotIn applies the NotIn predicate on the "testplan_id" field.
+func TestplanIDNotIn(vs ...int64) predicate.Task {
+	return predicate.Task(sql.FieldNotIn(FieldTestplanID, vs...))
+}
+
+// TestplanIDGT applies the GT predicate on the "testplan_id" field.
+func TestplanIDGT(v int64) predicate.Task {
+	return predicate.Task(sql.FieldGT(FieldTestplanID, v))
+}
+
+// TestplanIDGTE applies the GTE predicate on the "testplan_id" field.
+func TestplanIDGTE(v int64) predicate.Task {
+	return predicate.Task(sql.FieldGTE(FieldTestplanID, v))
+}
+
+// TestplanIDLT applies the LT predicate on the "testplan_id" field.
+func TestplanIDLT(v int64) predicate.Task {
+	return predicate.Task(sql.FieldLT(FieldTestplanID, v))
+}
+
+// TestplanIDLTE applies the LTE predicate on the "testplan_id" field.
+func TestplanIDLTE(v int64) predicate.Task {
+	return predicate.Task(sql.FieldLTE(FieldTestplanID, v))
+}
+
+// TestplanIDIsNil applies the IsNil predicate on the "testplan_id" field.
+func TestplanIDIsNil() predicate.Task {
+	return predicate.Task(sql.FieldIsNull(FieldTestplanID))
+}
+
+// TestplanIDNotNil applies the NotNil predicate on the "testplan_id" field.
+func TestplanIDNotNil() predicate.Task {
+	return predicate.Task(sql.FieldNotNull(FieldTestplanID))
 }
 
 // ExecuteIDEQ applies the EQ predicate on the "execute_id" field.

@@ -44,6 +44,7 @@ func (Task) Fields() []ent.Field {
 		field.Time("deleted_at").Optional(),                         // 任务删除时间
 		field.Uint32("deleted_by").Optional(),                       // 任务删除人
 		field.Text("description").Optional(),                        // 任务描述
+		field.Int64("testplan_id").Optional(),                       // 任务所属的测试计划,
 		field.Int64("execute_id").Optional(),                        // 任务执行全局唯一ID，通过雪花算法生成
 	}
 }

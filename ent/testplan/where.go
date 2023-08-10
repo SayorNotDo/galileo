@@ -94,6 +94,21 @@ func Deadline(v time.Time) predicate.TestPlan {
 	return predicate.TestPlan(sql.FieldEQ(FieldDeadline, v))
 }
 
+// StatusUpdatedAt applies equality check predicate on the "status_updated_at" field. It's identical to StatusUpdatedAtEQ.
+func StatusUpdatedAt(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldEQ(FieldStatusUpdatedAt, v))
+}
+
+// Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
+func Status(v int8) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldEQ(FieldStatus, v))
+}
+
+// ProjectID applies equality check predicate on the "project_id" field. It's identical to ProjectIDEQ.
+func ProjectID(v int64) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldEQ(FieldProjectID, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.TestPlan {
 	return predicate.TestPlan(sql.FieldEQ(FieldName, v))
@@ -512,6 +527,146 @@ func DeadlineIsNil() predicate.TestPlan {
 // DeadlineNotNil applies the NotNil predicate on the "deadline" field.
 func DeadlineNotNil() predicate.TestPlan {
 	return predicate.TestPlan(sql.FieldNotNull(FieldDeadline))
+}
+
+// StatusUpdatedAtEQ applies the EQ predicate on the "status_updated_at" field.
+func StatusUpdatedAtEQ(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldEQ(FieldStatusUpdatedAt, v))
+}
+
+// StatusUpdatedAtNEQ applies the NEQ predicate on the "status_updated_at" field.
+func StatusUpdatedAtNEQ(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldNEQ(FieldStatusUpdatedAt, v))
+}
+
+// StatusUpdatedAtIn applies the In predicate on the "status_updated_at" field.
+func StatusUpdatedAtIn(vs ...time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldIn(FieldStatusUpdatedAt, vs...))
+}
+
+// StatusUpdatedAtNotIn applies the NotIn predicate on the "status_updated_at" field.
+func StatusUpdatedAtNotIn(vs ...time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldNotIn(FieldStatusUpdatedAt, vs...))
+}
+
+// StatusUpdatedAtGT applies the GT predicate on the "status_updated_at" field.
+func StatusUpdatedAtGT(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldGT(FieldStatusUpdatedAt, v))
+}
+
+// StatusUpdatedAtGTE applies the GTE predicate on the "status_updated_at" field.
+func StatusUpdatedAtGTE(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldGTE(FieldStatusUpdatedAt, v))
+}
+
+// StatusUpdatedAtLT applies the LT predicate on the "status_updated_at" field.
+func StatusUpdatedAtLT(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldLT(FieldStatusUpdatedAt, v))
+}
+
+// StatusUpdatedAtLTE applies the LTE predicate on the "status_updated_at" field.
+func StatusUpdatedAtLTE(v time.Time) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldLTE(FieldStatusUpdatedAt, v))
+}
+
+// StatusUpdatedAtIsNil applies the IsNil predicate on the "status_updated_at" field.
+func StatusUpdatedAtIsNil() predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldIsNull(FieldStatusUpdatedAt))
+}
+
+// StatusUpdatedAtNotNil applies the NotNil predicate on the "status_updated_at" field.
+func StatusUpdatedAtNotNil() predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldNotNull(FieldStatusUpdatedAt))
+}
+
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v int8) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldEQ(FieldStatus, v))
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v int8) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldNEQ(FieldStatus, v))
+}
+
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...int8) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldIn(FieldStatus, vs...))
+}
+
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...int8) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldNotIn(FieldStatus, vs...))
+}
+
+// StatusGT applies the GT predicate on the "status" field.
+func StatusGT(v int8) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldGT(FieldStatus, v))
+}
+
+// StatusGTE applies the GTE predicate on the "status" field.
+func StatusGTE(v int8) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldGTE(FieldStatus, v))
+}
+
+// StatusLT applies the LT predicate on the "status" field.
+func StatusLT(v int8) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldLT(FieldStatus, v))
+}
+
+// StatusLTE applies the LTE predicate on the "status" field.
+func StatusLTE(v int8) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldLTE(FieldStatus, v))
+}
+
+// TasksIsNil applies the IsNil predicate on the "tasks" field.
+func TasksIsNil() predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldIsNull(FieldTasks))
+}
+
+// TasksNotNil applies the NotNil predicate on the "tasks" field.
+func TasksNotNil() predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldNotNull(FieldTasks))
+}
+
+// ProjectIDEQ applies the EQ predicate on the "project_id" field.
+func ProjectIDEQ(v int64) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldEQ(FieldProjectID, v))
+}
+
+// ProjectIDNEQ applies the NEQ predicate on the "project_id" field.
+func ProjectIDNEQ(v int64) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldNEQ(FieldProjectID, v))
+}
+
+// ProjectIDIn applies the In predicate on the "project_id" field.
+func ProjectIDIn(vs ...int64) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldIn(FieldProjectID, vs...))
+}
+
+// ProjectIDNotIn applies the NotIn predicate on the "project_id" field.
+func ProjectIDNotIn(vs ...int64) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldNotIn(FieldProjectID, vs...))
+}
+
+// ProjectIDGT applies the GT predicate on the "project_id" field.
+func ProjectIDGT(v int64) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldGT(FieldProjectID, v))
+}
+
+// ProjectIDGTE applies the GTE predicate on the "project_id" field.
+func ProjectIDGTE(v int64) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldGTE(FieldProjectID, v))
+}
+
+// ProjectIDLT applies the LT predicate on the "project_id" field.
+func ProjectIDLT(v int64) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldLT(FieldProjectID, v))
+}
+
+// ProjectIDLTE applies the LTE predicate on the "project_id" field.
+func ProjectIDLTE(v int64) predicate.TestPlan {
+	return predicate.TestPlan(sql.FieldLTE(FieldProjectID, v))
 }
 
 // And groups predicates with the AND operator between them.

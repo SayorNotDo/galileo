@@ -12,6 +12,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
@@ -133,6 +134,78 @@ func (tpu *TestPlanUpdate) ClearDeadline() *TestPlanUpdate {
 	return tpu
 }
 
+// SetStatusUpdatedAt sets the "status_updated_at" field.
+func (tpu *TestPlanUpdate) SetStatusUpdatedAt(t time.Time) *TestPlanUpdate {
+	tpu.mutation.SetStatusUpdatedAt(t)
+	return tpu
+}
+
+// SetNillableStatusUpdatedAt sets the "status_updated_at" field if the given value is not nil.
+func (tpu *TestPlanUpdate) SetNillableStatusUpdatedAt(t *time.Time) *TestPlanUpdate {
+	if t != nil {
+		tpu.SetStatusUpdatedAt(*t)
+	}
+	return tpu
+}
+
+// ClearStatusUpdatedAt clears the value of the "status_updated_at" field.
+func (tpu *TestPlanUpdate) ClearStatusUpdatedAt() *TestPlanUpdate {
+	tpu.mutation.ClearStatusUpdatedAt()
+	return tpu
+}
+
+// SetStatus sets the "status" field.
+func (tpu *TestPlanUpdate) SetStatus(i int8) *TestPlanUpdate {
+	tpu.mutation.ResetStatus()
+	tpu.mutation.SetStatus(i)
+	return tpu
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (tpu *TestPlanUpdate) SetNillableStatus(i *int8) *TestPlanUpdate {
+	if i != nil {
+		tpu.SetStatus(*i)
+	}
+	return tpu
+}
+
+// AddStatus adds i to the "status" field.
+func (tpu *TestPlanUpdate) AddStatus(i int8) *TestPlanUpdate {
+	tpu.mutation.AddStatus(i)
+	return tpu
+}
+
+// SetTasks sets the "tasks" field.
+func (tpu *TestPlanUpdate) SetTasks(i []int64) *TestPlanUpdate {
+	tpu.mutation.SetTasks(i)
+	return tpu
+}
+
+// AppendTasks appends i to the "tasks" field.
+func (tpu *TestPlanUpdate) AppendTasks(i []int64) *TestPlanUpdate {
+	tpu.mutation.AppendTasks(i)
+	return tpu
+}
+
+// ClearTasks clears the value of the "tasks" field.
+func (tpu *TestPlanUpdate) ClearTasks() *TestPlanUpdate {
+	tpu.mutation.ClearTasks()
+	return tpu
+}
+
+// SetProjectID sets the "project_id" field.
+func (tpu *TestPlanUpdate) SetProjectID(i int64) *TestPlanUpdate {
+	tpu.mutation.ResetProjectID()
+	tpu.mutation.SetProjectID(i)
+	return tpu
+}
+
+// AddProjectID adds i to the "project_id" field.
+func (tpu *TestPlanUpdate) AddProjectID(i int64) *TestPlanUpdate {
+	tpu.mutation.AddProjectID(i)
+	return tpu
+}
+
 // Mutation returns the TestPlanMutation object of the builder.
 func (tpu *TestPlanUpdate) Mutation() *TestPlanMutation {
 	return tpu.mutation
@@ -179,6 +252,11 @@ func (tpu *TestPlanUpdate) check() error {
 	if v, ok := tpu.mutation.Name(); ok {
 		if err := testplan.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "TestPlan.name": %w`, err)}
+		}
+	}
+	if v, ok := tpu.mutation.ProjectID(); ok {
+		if err := testplan.ProjectIDValidator(v); err != nil {
+			return &ValidationError{Name: "project_id", err: fmt.Errorf(`ent: validator failed for field "TestPlan.project_id": %w`, err)}
 		}
 	}
 	return nil
@@ -231,6 +309,35 @@ func (tpu *TestPlanUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tpu.mutation.DeadlineCleared() {
 		_spec.ClearField(testplan.FieldDeadline, field.TypeTime)
+	}
+	if value, ok := tpu.mutation.StatusUpdatedAt(); ok {
+		_spec.SetField(testplan.FieldStatusUpdatedAt, field.TypeTime, value)
+	}
+	if tpu.mutation.StatusUpdatedAtCleared() {
+		_spec.ClearField(testplan.FieldStatusUpdatedAt, field.TypeTime)
+	}
+	if value, ok := tpu.mutation.Status(); ok {
+		_spec.SetField(testplan.FieldStatus, field.TypeInt8, value)
+	}
+	if value, ok := tpu.mutation.AddedStatus(); ok {
+		_spec.AddField(testplan.FieldStatus, field.TypeInt8, value)
+	}
+	if value, ok := tpu.mutation.Tasks(); ok {
+		_spec.SetField(testplan.FieldTasks, field.TypeJSON, value)
+	}
+	if value, ok := tpu.mutation.AppendedTasks(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, testplan.FieldTasks, value)
+		})
+	}
+	if tpu.mutation.TasksCleared() {
+		_spec.ClearField(testplan.FieldTasks, field.TypeJSON)
+	}
+	if value, ok := tpu.mutation.ProjectID(); ok {
+		_spec.SetField(testplan.FieldProjectID, field.TypeInt64, value)
+	}
+	if value, ok := tpu.mutation.AddedProjectID(); ok {
+		_spec.AddField(testplan.FieldProjectID, field.TypeInt64, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tpu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -357,6 +464,78 @@ func (tpuo *TestPlanUpdateOne) ClearDeadline() *TestPlanUpdateOne {
 	return tpuo
 }
 
+// SetStatusUpdatedAt sets the "status_updated_at" field.
+func (tpuo *TestPlanUpdateOne) SetStatusUpdatedAt(t time.Time) *TestPlanUpdateOne {
+	tpuo.mutation.SetStatusUpdatedAt(t)
+	return tpuo
+}
+
+// SetNillableStatusUpdatedAt sets the "status_updated_at" field if the given value is not nil.
+func (tpuo *TestPlanUpdateOne) SetNillableStatusUpdatedAt(t *time.Time) *TestPlanUpdateOne {
+	if t != nil {
+		tpuo.SetStatusUpdatedAt(*t)
+	}
+	return tpuo
+}
+
+// ClearStatusUpdatedAt clears the value of the "status_updated_at" field.
+func (tpuo *TestPlanUpdateOne) ClearStatusUpdatedAt() *TestPlanUpdateOne {
+	tpuo.mutation.ClearStatusUpdatedAt()
+	return tpuo
+}
+
+// SetStatus sets the "status" field.
+func (tpuo *TestPlanUpdateOne) SetStatus(i int8) *TestPlanUpdateOne {
+	tpuo.mutation.ResetStatus()
+	tpuo.mutation.SetStatus(i)
+	return tpuo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (tpuo *TestPlanUpdateOne) SetNillableStatus(i *int8) *TestPlanUpdateOne {
+	if i != nil {
+		tpuo.SetStatus(*i)
+	}
+	return tpuo
+}
+
+// AddStatus adds i to the "status" field.
+func (tpuo *TestPlanUpdateOne) AddStatus(i int8) *TestPlanUpdateOne {
+	tpuo.mutation.AddStatus(i)
+	return tpuo
+}
+
+// SetTasks sets the "tasks" field.
+func (tpuo *TestPlanUpdateOne) SetTasks(i []int64) *TestPlanUpdateOne {
+	tpuo.mutation.SetTasks(i)
+	return tpuo
+}
+
+// AppendTasks appends i to the "tasks" field.
+func (tpuo *TestPlanUpdateOne) AppendTasks(i []int64) *TestPlanUpdateOne {
+	tpuo.mutation.AppendTasks(i)
+	return tpuo
+}
+
+// ClearTasks clears the value of the "tasks" field.
+func (tpuo *TestPlanUpdateOne) ClearTasks() *TestPlanUpdateOne {
+	tpuo.mutation.ClearTasks()
+	return tpuo
+}
+
+// SetProjectID sets the "project_id" field.
+func (tpuo *TestPlanUpdateOne) SetProjectID(i int64) *TestPlanUpdateOne {
+	tpuo.mutation.ResetProjectID()
+	tpuo.mutation.SetProjectID(i)
+	return tpuo
+}
+
+// AddProjectID adds i to the "project_id" field.
+func (tpuo *TestPlanUpdateOne) AddProjectID(i int64) *TestPlanUpdateOne {
+	tpuo.mutation.AddProjectID(i)
+	return tpuo
+}
+
 // Mutation returns the TestPlanMutation object of the builder.
 func (tpuo *TestPlanUpdateOne) Mutation() *TestPlanMutation {
 	return tpuo.mutation
@@ -416,6 +595,11 @@ func (tpuo *TestPlanUpdateOne) check() error {
 	if v, ok := tpuo.mutation.Name(); ok {
 		if err := testplan.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "TestPlan.name": %w`, err)}
+		}
+	}
+	if v, ok := tpuo.mutation.ProjectID(); ok {
+		if err := testplan.ProjectIDValidator(v); err != nil {
+			return &ValidationError{Name: "project_id", err: fmt.Errorf(`ent: validator failed for field "TestPlan.project_id": %w`, err)}
 		}
 	}
 	return nil
@@ -485,6 +669,35 @@ func (tpuo *TestPlanUpdateOne) sqlSave(ctx context.Context) (_node *TestPlan, er
 	}
 	if tpuo.mutation.DeadlineCleared() {
 		_spec.ClearField(testplan.FieldDeadline, field.TypeTime)
+	}
+	if value, ok := tpuo.mutation.StatusUpdatedAt(); ok {
+		_spec.SetField(testplan.FieldStatusUpdatedAt, field.TypeTime, value)
+	}
+	if tpuo.mutation.StatusUpdatedAtCleared() {
+		_spec.ClearField(testplan.FieldStatusUpdatedAt, field.TypeTime)
+	}
+	if value, ok := tpuo.mutation.Status(); ok {
+		_spec.SetField(testplan.FieldStatus, field.TypeInt8, value)
+	}
+	if value, ok := tpuo.mutation.AddedStatus(); ok {
+		_spec.AddField(testplan.FieldStatus, field.TypeInt8, value)
+	}
+	if value, ok := tpuo.mutation.Tasks(); ok {
+		_spec.SetField(testplan.FieldTasks, field.TypeJSON, value)
+	}
+	if value, ok := tpuo.mutation.AppendedTasks(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, testplan.FieldTasks, value)
+		})
+	}
+	if tpuo.mutation.TasksCleared() {
+		_spec.ClearField(testplan.FieldTasks, field.TypeJSON)
+	}
+	if value, ok := tpuo.mutation.ProjectID(); ok {
+		_spec.SetField(testplan.FieldProjectID, field.TypeInt64, value)
+	}
+	if value, ok := tpuo.mutation.AddedProjectID(); ok {
+		_spec.AddField(testplan.FieldProjectID, field.TypeInt64, value)
 	}
 	_node = &TestPlan{config: tpuo.config}
 	_spec.Assign = _node.assignValues

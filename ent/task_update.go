@@ -391,6 +391,33 @@ func (tu *TaskUpdate) ClearDescription() *TaskUpdate {
 	return tu
 }
 
+// SetTestplanID sets the "testplan_id" field.
+func (tu *TaskUpdate) SetTestplanID(i int64) *TaskUpdate {
+	tu.mutation.ResetTestplanID()
+	tu.mutation.SetTestplanID(i)
+	return tu
+}
+
+// SetNillableTestplanID sets the "testplan_id" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableTestplanID(i *int64) *TaskUpdate {
+	if i != nil {
+		tu.SetTestplanID(*i)
+	}
+	return tu
+}
+
+// AddTestplanID adds i to the "testplan_id" field.
+func (tu *TaskUpdate) AddTestplanID(i int64) *TaskUpdate {
+	tu.mutation.AddTestplanID(i)
+	return tu
+}
+
+// ClearTestplanID clears the value of the "testplan_id" field.
+func (tu *TaskUpdate) ClearTestplanID() *TaskUpdate {
+	tu.mutation.ClearTestplanID()
+	return tu
+}
+
 // SetExecuteID sets the "execute_id" field.
 func (tu *TaskUpdate) SetExecuteID(i int64) *TaskUpdate {
 	tu.mutation.ResetExecuteID()
@@ -630,6 +657,15 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.DescriptionCleared() {
 		_spec.ClearField(task.FieldDescription, field.TypeString)
+	}
+	if value, ok := tu.mutation.TestplanID(); ok {
+		_spec.SetField(task.FieldTestplanID, field.TypeInt64, value)
+	}
+	if value, ok := tu.mutation.AddedTestplanID(); ok {
+		_spec.AddField(task.FieldTestplanID, field.TypeInt64, value)
+	}
+	if tu.mutation.TestplanIDCleared() {
+		_spec.ClearField(task.FieldTestplanID, field.TypeInt64)
 	}
 	if value, ok := tu.mutation.ExecuteID(); ok {
 		_spec.SetField(task.FieldExecuteID, field.TypeInt64, value)
@@ -1067,6 +1103,33 @@ func (tuo *TaskUpdateOne) ClearDescription() *TaskUpdateOne {
 	return tuo
 }
 
+// SetTestplanID sets the "testplan_id" field.
+func (tuo *TaskUpdateOne) SetTestplanID(i int64) *TaskUpdateOne {
+	tuo.mutation.ResetTestplanID()
+	tuo.mutation.SetTestplanID(i)
+	return tuo
+}
+
+// SetNillableTestplanID sets the "testplan_id" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableTestplanID(i *int64) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetTestplanID(*i)
+	}
+	return tuo
+}
+
+// AddTestplanID adds i to the "testplan_id" field.
+func (tuo *TaskUpdateOne) AddTestplanID(i int64) *TaskUpdateOne {
+	tuo.mutation.AddTestplanID(i)
+	return tuo
+}
+
+// ClearTestplanID clears the value of the "testplan_id" field.
+func (tuo *TaskUpdateOne) ClearTestplanID() *TaskUpdateOne {
+	tuo.mutation.ClearTestplanID()
+	return tuo
+}
+
 // SetExecuteID sets the "execute_id" field.
 func (tuo *TaskUpdateOne) SetExecuteID(i int64) *TaskUpdateOne {
 	tuo.mutation.ResetExecuteID()
@@ -1336,6 +1399,15 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if tuo.mutation.DescriptionCleared() {
 		_spec.ClearField(task.FieldDescription, field.TypeString)
+	}
+	if value, ok := tuo.mutation.TestplanID(); ok {
+		_spec.SetField(task.FieldTestplanID, field.TypeInt64, value)
+	}
+	if value, ok := tuo.mutation.AddedTestplanID(); ok {
+		_spec.AddField(task.FieldTestplanID, field.TypeInt64, value)
+	}
+	if tuo.mutation.TestplanIDCleared() {
+		_spec.ClearField(task.FieldTestplanID, field.TypeInt64)
 	}
 	if value, ok := tuo.mutation.ExecuteID(); ok {
 		_spec.SetField(task.FieldExecuteID, field.TypeInt64, value)

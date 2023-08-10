@@ -11,13 +11,60 @@ option java_multiple_files = true;
 option java_package = "api.management.v1";
 
 service Management {
-  rpc BaseInfo(google.protobuf.Empty) returns (BaseInfoReply) {
+  rpc BaseInformation(google.protobuf.Empty) returns (BaseInfoReply) {
     option (google.api.http) = {
       get: "v1/api/management/info"
     };
   }
-  rpc CreateTestPlan (CreateTestPlanRequest) returns (CreateTestPlanReply);
+  rpc CreateTestPlan (CreateTestPlanRequest) returns (CreateTestPlanReply) {
+    option (google.api.http) = {
+      post: "v1/api/management/testplan"
+      body: "*"
+    };
+  };
+  rpc UpdateTestPlan (UpdateTestPlanRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "v1/api/management/testplan"
+      body: "*"
+    };
+  }
+  rpc GetTestPlaById (GetTestPlanRequest) returns (GetTestPlanReply) {
+    option (google.api.http) = {
+      get: "v1/api/management/testplan/{id}"
+    };
+  }
 }
+
+message GetTestPlanRequest {
+  int64 id = 1;
+}
+
+message GetTestPlanReply {
+  int64 id = 1;
+  string name = 2;
+  google.protobuf.Timestamp createdAt = 3;
+  uint32 createdBy = 4;
+  google.protobuf.Timestamp updatedAt = 5;
+  uint32 updatedBy = 6;
+  string description = 7;
+  google.protobuf.Timestamp startTime = 8;
+  google.protobuf.Timestamp deadline = 9;
+  google.protobuf.Timestamp statusUpdatedAt = 10;
+  planStatus status = 11;
+  repeated int64 tasks = 12;
+  int64 projectId = 13;
+}
+
+message UpdateTestPlanRequest {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Timestamp startTime = 4;
+  google.protobuf.Timestamp deadline = 5;
+  planStatus status = 6;
+  repeated int64 tasks = 7;
+}
+
 
 message BaseInfoReply {
   int64 apiCount = 1;
@@ -26,11 +73,24 @@ message BaseInfoReply {
   int64 cronJobCount = 4;
 };
 
+enum planStatus {
+  TODO = 0;
+  INPROGRESS = 1;
+  DELAY = 2;
+  BLOCKED = 3;
+  COMPLETED = 4;
+  TERMINATED = 5;
+}
+
 message CreateTestPlanRequest {
   string name = 1;
   string description = 2;
   google.protobuf.Timestamp startTime = 3;
   google.protobuf.Timestamp deadline = 4;
+  int64 projectId = 5;
+  repeated int64 tasks = 6;
 }
 
-message CreateTestPlanReply {}
+message CreateTestPlanReply {
+  int64 id = 1;
+}

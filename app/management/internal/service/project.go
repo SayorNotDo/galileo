@@ -11,7 +11,7 @@ import (
 
 func (s *ManagementService) CreateProject(ctx context.Context, req *v1.CreateProjectRequest) (*v1.CreateProjectReply, error) {
 	userId := ctx.Value("x-md-global-userId")
-	createProject, err := biz.NewProject(req.Name, req.Identifier, userId.(uint32))
+	createProject, err := biz.NewProject(req.Name, req.Identifier, userId.(uint32), req.StartTime, req.EndTime)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (s *ManagementService) GetProject(ctx context.Context, req *v1.GetProjectRe
 		Id:          ret.ID,
 		Name:        ret.Name,
 		Identifier:  ret.Identifier,
-		Status:      int32(ret.Status),
+		Status:      v1.ProjectStatus(ret.Status),
 		CreatedAt:   timestamppb.New(ret.CreatedAt),
 		CreatedBy:   ret.CreatedBy,
 		UpdatedAt:   timestamppb.New(ret.UpdatedAt),
@@ -54,14 +54,14 @@ func (s *ManagementService) UpdateProject(ctx context.Context, req *v1.UpdatePro
 	if err != nil {
 		return nil, err
 	}
-	updateProject, err := biz.NewProject(req.Name, req.Identifier, ret.CreatedBy)
+	updateProject, err := biz.NewProject(req.Name, req.Identifier, ret.CreatedBy, req.StartTime, req.EndTime)
 	if err != nil {
 		return nil, err
 	}
 	updateProject.ID = req.Id
 	updateProject.Description = req.Description
 	updateProject.Remark = req.Remark
-	updateProject.Status = int8(req.Status)
+	updateProject.Status = req.Status
 	if err := s.pc.UpdateProject(ctx, &updateProject); err != nil {
 		return nil, err
 	}

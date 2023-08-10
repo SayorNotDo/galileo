@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"galileo/ent/testplan"
 	"strings"
@@ -32,6 +33,14 @@ type TestPlan struct {
 	StartTime time.Time `json:"start_time,omitempty"`
 	// Deadline holds the value of the "deadline" field.
 	Deadline time.Time `json:"deadline,omitempty"`
+	// StatusUpdatedAt holds the value of the "status_updated_at" field.
+	StatusUpdatedAt time.Time `json:"status_updated_at,omitempty"`
+	// Status holds the value of the "status" field.
+	Status int8 `json:"status,omitempty"`
+	// Tasks holds the value of the "tasks" field.
+	Tasks []int64 `json:"tasks,omitempty"`
+	// ProjectID holds the value of the "project_id" field.
+	ProjectID int64 `json:"project_id,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -39,11 +48,13 @@ func (*TestPlan) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case testplan.FieldID, testplan.FieldCreatedBy, testplan.FieldUpdatedBy:
+		case testplan.FieldTasks:
+			values[i] = new([]byte)
+		case testplan.FieldID, testplan.FieldCreatedBy, testplan.FieldUpdatedBy, testplan.FieldStatus, testplan.FieldProjectID:
 			values[i] = new(sql.NullInt64)
 		case testplan.FieldName, testplan.FieldDescription:
 			values[i] = new(sql.NullString)
-		case testplan.FieldCreatedAt, testplan.FieldUpdatedAt, testplan.FieldStartTime, testplan.FieldDeadline:
+		case testplan.FieldCreatedAt, testplan.FieldUpdatedAt, testplan.FieldStartTime, testplan.FieldDeadline, testplan.FieldStatusUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type TestPlan", columns[i])
@@ -114,6 +125,32 @@ func (tp *TestPlan) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				tp.Deadline = value.Time
 			}
+		case testplan.FieldStatusUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field status_updated_at", values[i])
+			} else if value.Valid {
+				tp.StatusUpdatedAt = value.Time
+			}
+		case testplan.FieldStatus:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				tp.Status = int8(value.Int64)
+			}
+		case testplan.FieldTasks:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tasks", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &tp.Tasks); err != nil {
+					return fmt.Errorf("unmarshal field tasks: %w", err)
+				}
+			}
+		case testplan.FieldProjectID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field project_id", values[i])
+			} else if value.Valid {
+				tp.ProjectID = value.Int64
+			}
 		}
 	}
 	return nil
@@ -165,6 +202,18 @@ func (tp *TestPlan) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deadline=")
 	builder.WriteString(tp.Deadline.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("status_updated_at=")
+	builder.WriteString(tp.StatusUpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("status=")
+	builder.WriteString(fmt.Sprintf("%v", tp.Status))
+	builder.WriteString(", ")
+	builder.WriteString("tasks=")
+	builder.WriteString(fmt.Sprintf("%v", tp.Tasks))
+	builder.WriteString(", ")
+	builder.WriteString("project_id=")
+	builder.WriteString(fmt.Sprintf("%v", tp.ProjectID))
 	builder.WriteByte(')')
 	return builder.String()
 }

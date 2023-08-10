@@ -41,5 +41,5 @@ func (Project) Fields() []ent.Field {
 
 // Edges of the Project.
 func (Project) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{}
 }

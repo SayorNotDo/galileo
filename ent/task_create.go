@@ -285,6 +285,20 @@ func (tc *TaskCreate) SetNillableDescription(s *string) *TaskCreate {
 	return tc
 }
 
+// SetTestplanID sets the "testplan_id" field.
+func (tc *TaskCreate) SetTestplanID(i int64) *TaskCreate {
+	tc.mutation.SetTestplanID(i)
+	return tc
+}
+
+// SetNillableTestplanID sets the "testplan_id" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableTestplanID(i *int64) *TaskCreate {
+	if i != nil {
+		tc.SetTestplanID(*i)
+	}
+	return tc
+}
+
 // SetExecuteID sets the "execute_id" field.
 func (tc *TaskCreate) SetExecuteID(i int64) *TaskCreate {
 	tc.mutation.SetExecuteID(i)
@@ -509,6 +523,10 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Description(); ok {
 		_spec.SetField(task.FieldDescription, field.TypeString, value)
 		_node.Description = value
+	}
+	if value, ok := tc.mutation.TestplanID(); ok {
+		_spec.SetField(task.FieldTestplanID, field.TypeInt64, value)
+		_node.TestplanID = value
 	}
 	if value, ok := tc.mutation.ExecuteID(); ok {
 		_spec.SetField(task.FieldExecuteID, field.TypeInt64, value)

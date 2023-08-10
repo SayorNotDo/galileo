@@ -45,12 +45,21 @@ message CreateProjectReply {
   int64 id = 1;
 }
 
+enum projectStatus {
+  TODO = 0;
+  INPROGRESS = 1;
+  DELAY = 2;
+  BLOCKED = 3;
+  COMPLETED = 4;
+  TERMINATED = 5;
+}
+
 message ProjectInfo {
   int64 id = 1;
   string name = 2;
   string identifier = 3;
   string remark = 4;
-  int32 status = 5;
+  projectStatus status = 5;
   string description = 6;
   google.protobuf.Timestamp createdAt = 7;
   uint32 createdBy = 8;
@@ -62,9 +71,11 @@ message UpdateProjectRequest {
   int64 id = 1;
   string name = 2;
   string identifier = 3;
-  int32 status = 4;
-  string description = 5;
-  string remark = 6;
+  projectStatus status = 4;
+  google.protobuf.Timestamp startTime = 5;
+  google.protobuf.Timestamp endTime = 6;
+  string description = 7;
+  string remark = 8;
 }
 
 message UpdateProjectReply {}

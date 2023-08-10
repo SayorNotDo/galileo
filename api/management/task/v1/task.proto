@@ -90,6 +90,7 @@ message CreateTaskRequest {
   uint32 assignee = 9;
   google.protobuf.Timestamp deadline = 11;
   repeated int64 testcaseSuiteId = 12;
+  int64 testPlanId = 13;
 }
 
 enum frequency {
@@ -159,7 +160,7 @@ message GetTaskReply {
   google.protobuf.Timestamp deadline = 10;
   uint32 assignee = 12;
   string worker = 13;
-  int64 id = 64;
+  int64 id = 14;
 }
 
 message ListTimingTaskRequest {}

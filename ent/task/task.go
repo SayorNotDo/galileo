@@ -51,6 +51,8 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldTestplanID holds the string denoting the testplan_id field in the database.
+	FieldTestplanID = "testplan_id"
 	// FieldExecuteID holds the string denoting the execute_id field in the database.
 	FieldExecuteID = "execute_id"
 	// EdgeTestcaseSuite holds the string denoting the testcase_suite edge name in mutations.
@@ -89,6 +91,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldDescription,
+	FieldTestplanID,
 	FieldExecuteID,
 }
 

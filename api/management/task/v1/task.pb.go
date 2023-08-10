@@ -309,82 +309,6 @@ func (x *ProgressDetail) GetUnknown() int32 {
 	return 0
 }
 
-type CreateTestPlanRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-}
-
-func (x *CreateTestPlanRequest) Reset() {
-	*x = CreateTestPlanRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[3]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CreateTestPlanRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateTestPlanRequest) ProtoMessage() {}
-
-func (x *CreateTestPlanRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[3]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateTestPlanRequest.ProtoReflect.Descriptor instead.
-func (*CreateTestPlanRequest) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{3}
-}
-
-type CreateTestPlanReply struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-}
-
-func (x *CreateTestPlanReply) Reset() {
-	*x = CreateTestPlanReply{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[4]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CreateTestPlanReply) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateTestPlanReply) ProtoMessage() {}
-
-func (x *CreateTestPlanReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[4]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateTestPlanReply.ProtoReflect.Descriptor instead.
-func (*CreateTestPlanReply) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{4}
-}
-
 type UpdateTaskStatusRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -398,7 +322,7 @@ type UpdateTaskStatusRequest struct {
 func (x *UpdateTaskStatusRequest) Reset() {
 	*x = UpdateTaskStatusRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[5]
+		mi := &file_api_management_task_v1_task_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -411,7 +335,7 @@ func (x *UpdateTaskStatusRequest) String() string {
 func (*UpdateTaskStatusRequest) ProtoMessage() {}
 
 func (x *UpdateTaskStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[5]
+	mi := &file_api_management_task_v1_task_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -424,7 +348,7 @@ func (x *UpdateTaskStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTaskStatusRequest.ProtoReflect.Descriptor instead.
 func (*UpdateTaskStatusRequest) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{5}
+	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *UpdateTaskStatusRequest) GetId() int64 {
@@ -460,7 +384,7 @@ type UpdateTaskStatusReply struct {
 func (x *UpdateTaskStatusReply) Reset() {
 	*x = UpdateTaskStatusReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[6]
+		mi := &file_api_management_task_v1_task_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -473,7 +397,7 @@ func (x *UpdateTaskStatusReply) String() string {
 func (*UpdateTaskStatusReply) ProtoMessage() {}
 
 func (x *UpdateTaskStatusReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[6]
+	mi := &file_api_management_task_v1_task_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -486,7 +410,7 @@ func (x *UpdateTaskStatusReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTaskStatusReply.ProtoReflect.Descriptor instead.
 func (*UpdateTaskStatusReply) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{6}
+	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *UpdateTaskStatusReply) GetStatus() TaskStatus {
@@ -519,12 +443,13 @@ type CreateTaskRequest struct {
 	Assignee        uint32                 `protobuf:"varint,9,opt,name=assignee,proto3" json:"assignee,omitempty"`
 	Deadline        *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=deadline,proto3" json:"deadline,omitempty"`
 	TestcaseSuiteId []int64                `protobuf:"varint,12,rep,packed,name=testcaseSuiteId,proto3" json:"testcaseSuiteId,omitempty"`
+	TestPlanId      int64                  `protobuf:"varint,13,opt,name=testPlanId,proto3" json:"testPlanId,omitempty"`
 }
 
 func (x *CreateTaskRequest) Reset() {
 	*x = CreateTaskRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[7]
+		mi := &file_api_management_task_v1_task_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -537,7 +462,7 @@ func (x *CreateTaskRequest) String() string {
 func (*CreateTaskRequest) ProtoMessage() {}
 
 func (x *CreateTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[7]
+	mi := &file_api_management_task_v1_task_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -550,7 +475,7 @@ func (x *CreateTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTaskRequest.ProtoReflect.Descriptor instead.
 func (*CreateTaskRequest) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{7}
+	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CreateTaskRequest) GetName() string {
@@ -630,6 +555,13 @@ func (x *CreateTaskRequest) GetTestcaseSuiteId() []int64 {
 	return nil
 }
 
+func (x *CreateTaskRequest) GetTestPlanId() int64 {
+	if x != nil {
+		return x.TestPlanId
+	}
+	return 0
+}
+
 type CreateTaskReply struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -643,7 +575,7 @@ type CreateTaskReply struct {
 func (x *CreateTaskReply) Reset() {
 	*x = CreateTaskReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[8]
+		mi := &file_api_management_task_v1_task_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -656,7 +588,7 @@ func (x *CreateTaskReply) String() string {
 func (*CreateTaskReply) ProtoMessage() {}
 
 func (x *CreateTaskReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[8]
+	mi := &file_api_management_task_v1_task_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -669,7 +601,7 @@ func (x *CreateTaskReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTaskReply.ProtoReflect.Descriptor instead.
 func (*CreateTaskReply) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{8}
+	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *CreateTaskReply) GetId() int64 {
@@ -715,7 +647,7 @@ type UpdateTaskRequest struct {
 func (x *UpdateTaskRequest) Reset() {
 	*x = UpdateTaskRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[9]
+		mi := &file_api_management_task_v1_task_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -728,7 +660,7 @@ func (x *UpdateTaskRequest) String() string {
 func (*UpdateTaskRequest) ProtoMessage() {}
 
 func (x *UpdateTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[9]
+	mi := &file_api_management_task_v1_task_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -741,7 +673,7 @@ func (x *UpdateTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTaskRequest.ProtoReflect.Descriptor instead.
 func (*UpdateTaskRequest) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{9}
+	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *UpdateTaskRequest) GetId() int64 {
@@ -839,7 +771,7 @@ type UpdateTaskReply struct {
 func (x *UpdateTaskReply) Reset() {
 	*x = UpdateTaskReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[10]
+		mi := &file_api_management_task_v1_task_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -852,7 +784,7 @@ func (x *UpdateTaskReply) String() string {
 func (*UpdateTaskReply) ProtoMessage() {}
 
 func (x *UpdateTaskReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[10]
+	mi := &file_api_management_task_v1_task_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -865,7 +797,7 @@ func (x *UpdateTaskReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTaskReply.ProtoReflect.Descriptor instead.
 func (*UpdateTaskReply) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{10}
+	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *UpdateTaskReply) GetSuccess() bool {
@@ -884,7 +816,7 @@ type DeleteTaskRequest struct {
 func (x *DeleteTaskRequest) Reset() {
 	*x = DeleteTaskRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[11]
+		mi := &file_api_management_task_v1_task_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -897,7 +829,7 @@ func (x *DeleteTaskRequest) String() string {
 func (*DeleteTaskRequest) ProtoMessage() {}
 
 func (x *DeleteTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[11]
+	mi := &file_api_management_task_v1_task_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -910,7 +842,7 @@ func (x *DeleteTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTaskRequest.ProtoReflect.Descriptor instead.
 func (*DeleteTaskRequest) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{11}
+	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{9}
 }
 
 type DeleteTaskReply struct {
@@ -922,7 +854,7 @@ type DeleteTaskReply struct {
 func (x *DeleteTaskReply) Reset() {
 	*x = DeleteTaskReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[12]
+		mi := &file_api_management_task_v1_task_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -935,7 +867,7 @@ func (x *DeleteTaskReply) String() string {
 func (*DeleteTaskReply) ProtoMessage() {}
 
 func (x *DeleteTaskReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[12]
+	mi := &file_api_management_task_v1_task_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -948,7 +880,7 @@ func (x *DeleteTaskReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTaskReply.ProtoReflect.Descriptor instead.
 func (*DeleteTaskReply) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{12}
+	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{10}
 }
 
 type TaskByIDRequest struct {
@@ -962,7 +894,7 @@ type TaskByIDRequest struct {
 func (x *TaskByIDRequest) Reset() {
 	*x = TaskByIDRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[13]
+		mi := &file_api_management_task_v1_task_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -975,7 +907,7 @@ func (x *TaskByIDRequest) String() string {
 func (*TaskByIDRequest) ProtoMessage() {}
 
 func (x *TaskByIDRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[13]
+	mi := &file_api_management_task_v1_task_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -988,7 +920,7 @@ func (x *TaskByIDRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskByIDRequest.ProtoReflect.Descriptor instead.
 func (*TaskByIDRequest) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{13}
+	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *TaskByIDRequest) GetId() int64 {
@@ -1009,7 +941,7 @@ type TaskByNameRequest struct {
 func (x *TaskByNameRequest) Reset() {
 	*x = TaskByNameRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[14]
+		mi := &file_api_management_task_v1_task_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1022,7 +954,7 @@ func (x *TaskByNameRequest) String() string {
 func (*TaskByNameRequest) ProtoMessage() {}
 
 func (x *TaskByNameRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[14]
+	mi := &file_api_management_task_v1_task_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1035,7 +967,7 @@ func (x *TaskByNameRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskByNameRequest.ProtoReflect.Descriptor instead.
 func (*TaskByNameRequest) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{14}
+	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *TaskByNameRequest) GetName() string {
@@ -1063,13 +995,13 @@ type GetTaskReply struct {
 	Deadline        *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=deadline,proto3" json:"deadline,omitempty"`
 	Assignee        uint32                 `protobuf:"varint,12,opt,name=assignee,proto3" json:"assignee,omitempty"`
 	Worker          string                 `protobuf:"bytes,13,opt,name=worker,proto3" json:"worker,omitempty"`
-	Id              int64                  `protobuf:"varint,64,opt,name=id,proto3" json:"id,omitempty"`
+	Id              int64                  `protobuf:"varint,14,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (x *GetTaskReply) Reset() {
 	*x = GetTaskReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[15]
+		mi := &file_api_management_task_v1_task_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1082,7 +1014,7 @@ func (x *GetTaskReply) String() string {
 func (*GetTaskReply) ProtoMessage() {}
 
 func (x *GetTaskReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[15]
+	mi := &file_api_management_task_v1_task_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1095,7 +1027,7 @@ func (x *GetTaskReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTaskReply.ProtoReflect.Descriptor instead.
 func (*GetTaskReply) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{15}
+	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GetTaskReply) GetName() string {
@@ -1205,7 +1137,7 @@ type ListTimingTaskRequest struct {
 func (x *ListTimingTaskRequest) Reset() {
 	*x = ListTimingTaskRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[16]
+		mi := &file_api_management_task_v1_task_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1218,7 +1150,7 @@ func (x *ListTimingTaskRequest) String() string {
 func (*ListTimingTaskRequest) ProtoMessage() {}
 
 func (x *ListTimingTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[16]
+	mi := &file_api_management_task_v1_task_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1231,7 +1163,7 @@ func (x *ListTimingTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTimingTaskRequest.ProtoReflect.Descriptor instead.
 func (*ListTimingTaskRequest) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{16}
+	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{14}
 }
 
 type TaskInfo struct {
@@ -1257,7 +1189,7 @@ type TaskInfo struct {
 func (x *TaskInfo) Reset() {
 	*x = TaskInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[17]
+		mi := &file_api_management_task_v1_task_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1270,7 +1202,7 @@ func (x *TaskInfo) String() string {
 func (*TaskInfo) ProtoMessage() {}
 
 func (x *TaskInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[17]
+	mi := &file_api_management_task_v1_task_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1283,7 +1215,7 @@ func (x *TaskInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskInfo.ProtoReflect.Descriptor instead.
 func (*TaskInfo) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{17}
+	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *TaskInfo) GetId() int64 {
@@ -1388,7 +1320,7 @@ type ListTimingTaskReply struct {
 func (x *ListTimingTaskReply) Reset() {
 	*x = ListTimingTaskReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_management_task_v1_task_proto_msgTypes[18]
+		mi := &file_api_management_task_v1_task_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1401,7 +1333,7 @@ func (x *ListTimingTaskReply) String() string {
 func (*ListTimingTaskReply) ProtoMessage() {}
 
 func (x *ListTimingTaskReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_management_task_v1_task_proto_msgTypes[18]
+	mi := &file_api_management_task_v1_task_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1414,7 +1346,7 @@ func (x *ListTimingTaskReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTimingTaskReply.ProtoReflect.Descriptor instead.
 func (*ListTimingTaskReply) Descriptor() ([]byte, []int) {
-	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{18}
+	return file_api_management_task_v1_task_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ListTimingTaskReply) GetTaskList() []*TaskInfo {
@@ -1452,9 +1384,6 @@ var file_api_management_task_v1_task_proto_rawDesc = []byte{
 	0x14, 0x0a, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05,
 	0x65, 0x72, 0x72, 0x6f, 0x72, 0x12, 0x18, 0x0a, 0x07, 0x75, 0x6e, 0x6b, 0x6e, 0x6f, 0x77, 0x6e,
 	0x18, 0x04, 0x20, 0x01, 0x28, 0x05, 0x52, 0x07, 0x75, 0x6e, 0x6b, 0x6e, 0x6f, 0x77, 0x6e, 0x22,
-	0x17, 0x0a, 0x15, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x65, 0x73, 0x74, 0x50, 0x6c, 0x61,
-	0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x15, 0x0a, 0x13, 0x43, 0x72, 0x65, 0x61,
-	0x74, 0x65, 0x54, 0x65, 0x73, 0x74, 0x50, 0x6c, 0x61, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
 	0x72, 0x0a, 0x17, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x54, 0x61, 0x73, 0x6b, 0x53, 0x74, 0x61,
 	0x74, 0x75, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64,
 	0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x2f, 0x0a, 0x06, 0x73, 0x74,
@@ -1471,7 +1400,7 @@ var file_api_management_task_v1_task_proto_rawDesc = []byte{
 	0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
 	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74,
 	0x61, 0x6d, 0x70, 0x52, 0x0f, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x55, 0x70, 0x64, 0x61, 0x74,
-	0x65, 0x64, 0x41, 0x74, 0x22, 0x95, 0x03, 0x0a, 0x11, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54,
+	0x65, 0x64, 0x41, 0x74, 0x22, 0xb5, 0x03, 0x0a, 0x11, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54,
 	0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61,
 	0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x12,
 	0x0a, 0x04, 0x72, 0x61, 0x6e, 0x6b, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x72, 0x61,
@@ -1496,7 +1425,9 @@ var file_api_management_task_v1_task_proto_rawDesc = []byte{
 	0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x08, 0x64, 0x65, 0x61, 0x64, 0x6c, 0x69,
 	0x6e, 0x65, 0x12, 0x28, 0x0a, 0x0f, 0x74, 0x65, 0x73, 0x74, 0x63, 0x61, 0x73, 0x65, 0x53, 0x75,
 	0x69, 0x74, 0x65, 0x49, 0x64, 0x18, 0x0c, 0x20, 0x03, 0x28, 0x03, 0x52, 0x0f, 0x74, 0x65, 0x73,
-	0x74, 0x63, 0x61, 0x73, 0x65, 0x53, 0x75, 0x69, 0x74, 0x65, 0x49, 0x64, 0x22, 0x8c, 0x01, 0x0a,
+	0x74, 0x63, 0x61, 0x73, 0x65, 0x53, 0x75, 0x69, 0x74, 0x65, 0x49, 0x64, 0x12, 0x1e, 0x0a, 0x0a,
+	0x74, 0x65, 0x73, 0x74, 0x50, 0x6c, 0x61, 0x6e, 0x49, 0x64, 0x18, 0x0d, 0x20, 0x01, 0x28, 0x03,
+	0x52, 0x0a, 0x74, 0x65, 0x73, 0x74, 0x50, 0x6c, 0x61, 0x6e, 0x49, 0x64, 0x22, 0x8c, 0x01, 0x0a,
 	0x0f, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x70, 0x6c, 0x79,
 	0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64,
 	0x12, 0x2f, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e,
@@ -1574,7 +1505,7 @@ var file_api_management_task_v1_task_proto_rawDesc = []byte{
 	0x0a, 0x08, 0x61, 0x73, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x65, 0x18, 0x0c, 0x20, 0x01, 0x28, 0x0d,
 	0x52, 0x08, 0x61, 0x73, 0x73, 0x69, 0x67, 0x6e, 0x65, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x77, 0x6f,
 	0x72, 0x6b, 0x65, 0x72, 0x18, 0x0d, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x77, 0x6f, 0x72, 0x6b,
-	0x65, 0x72, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x40, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02,
+	0x65, 0x72, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x0e, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02,
 	0x69, 0x64, 0x22, 0x17, 0x0a, 0x15, 0x4c, 0x69, 0x73, 0x74, 0x54, 0x69, 0x6d, 0x69, 0x6e, 0x67,
 	0x54, 0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0xe5, 0x03, 0x0a, 0x08,
 	0x54, 0x61, 0x73, 0x6b, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01,
@@ -1622,7 +1553,7 @@ var file_api_management_task_v1_task_proto_rawDesc = []byte{
 	0x4c, 0x4f, 0x53, 0x45, 0x44, 0x10, 0x04, 0x12, 0x0d, 0x0a, 0x09, 0x45, 0x58, 0x43, 0x45, 0x50,
 	0x54, 0x49, 0x4f, 0x4e, 0x10, 0x05, 0x12, 0x0d, 0x0a, 0x09, 0x43, 0x41, 0x4e, 0x43, 0x45, 0x4c,
 	0x4c, 0x45, 0x44, 0x10, 0x06, 0x12, 0x0c, 0x0a, 0x08, 0x46, 0x49, 0x4e, 0x49, 0x53, 0x48, 0x45,
-	0x44, 0x10, 0x07, 0x32, 0xb1, 0x07, 0x0a, 0x04, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x6d, 0x0a, 0x0a,
+	0x44, 0x10, 0x07, 0x32, 0xd9, 0x06, 0x0a, 0x04, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x6d, 0x0a, 0x0a,
 	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x61, 0x73, 0x6b, 0x12, 0x1e, 0x2e, 0x61, 0x70, 0x69,
 	0x2e, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54,
 	0x61, 0x73, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x61, 0x70, 0x69,
@@ -1675,17 +1606,12 @@ var file_api_management_task_v1_task_proto_rawDesc = []byte{
 	0x54, 0x61, 0x73, 0x6b, 0x50, 0x72, 0x6f, 0x67, 0x72, 0x65, 0x73, 0x73, 0x52, 0x65, 0x70, 0x6c,
 	0x79, 0x22, 0x2c, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x26, 0x12, 0x24, 0x76, 0x31, 0x2f, 0x61, 0x70,
 	0x69, 0x2f, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x2f, 0x74, 0x61, 0x73,
-	0x6b, 0x2f, 0x7b, 0x69, 0x64, 0x7d, 0x2f, 0x70, 0x72, 0x6f, 0x67, 0x72, 0x65, 0x73, 0x73, 0x12,
-	0x56, 0x0a, 0x0e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x65, 0x73, 0x74, 0x50, 0x6c, 0x61,
-	0x6e, 0x12, 0x22, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x76, 0x31, 0x2e,
-	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x65, 0x73, 0x74, 0x50, 0x6c, 0x61, 0x6e, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x20, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x74, 0x61, 0x73, 0x6b,
-	0x2e, 0x76, 0x31, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x54, 0x65, 0x73, 0x74, 0x50, 0x6c,
-	0x61, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x42, 0x3d, 0x0a, 0x16, 0x61, 0x70, 0x69, 0x2e, 0x6d,
-	0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x2e, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x76,
-	0x31, 0x50, 0x01, 0x5a, 0x21, 0x67, 0x61, 0x6c, 0x69, 0x6c, 0x65, 0x6f, 0x2f, 0x61, 0x70, 0x69,
-	0x2f, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x2f, 0x74, 0x61, 0x73, 0x6b,
-	0x2f, 0x76, 0x31, 0x3b, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6b, 0x2f, 0x7b, 0x69, 0x64, 0x7d, 0x2f, 0x70, 0x72, 0x6f, 0x67, 0x72, 0x65, 0x73, 0x73, 0x42,
+	0x3d, 0x0a, 0x16, 0x61, 0x70, 0x69, 0x2e, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d, 0x65, 0x6e,
+	0x74, 0x2e, 0x74, 0x61, 0x73, 0x6b, 0x2e, 0x76, 0x31, 0x50, 0x01, 0x5a, 0x21, 0x67, 0x61, 0x6c,
+	0x69, 0x6c, 0x65, 0x6f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x6d,
+	0x65, 0x6e, 0x74, 0x2f, 0x74, 0x61, 0x73, 0x6b, 0x2f, 0x76, 0x31, 0x3b, 0x76, 0x31, 0x62, 0x06,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1701,76 +1627,72 @@ func file_api_management_task_v1_task_proto_rawDescGZIP() []byte {
 }
 
 var file_api_management_task_v1_task_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_api_management_task_v1_task_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_api_management_task_v1_task_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_api_management_task_v1_task_proto_goTypes = []interface{}{
 	(Frequency)(0),                  // 0: api.task.v1.frequency
 	(TaskStatus)(0),                 // 1: api.task.v1.taskStatus
 	(*TaskProgressRequest)(nil),     // 2: api.task.v1.TaskProgressRequest
 	(*TaskProgressReply)(nil),       // 3: api.task.v1.TaskProgressReply
 	(*ProgressDetail)(nil),          // 4: api.task.v1.progressDetail
-	(*CreateTestPlanRequest)(nil),   // 5: api.task.v1.CreateTestPlanRequest
-	(*CreateTestPlanReply)(nil),     // 6: api.task.v1.CreateTestPlanReply
-	(*UpdateTaskStatusRequest)(nil), // 7: api.task.v1.UpdateTaskStatusRequest
-	(*UpdateTaskStatusReply)(nil),   // 8: api.task.v1.UpdateTaskStatusReply
-	(*CreateTaskRequest)(nil),       // 9: api.task.v1.CreateTaskRequest
-	(*CreateTaskReply)(nil),         // 10: api.task.v1.CreateTaskReply
-	(*UpdateTaskRequest)(nil),       // 11: api.task.v1.UpdateTaskRequest
-	(*UpdateTaskReply)(nil),         // 12: api.task.v1.UpdateTaskReply
-	(*DeleteTaskRequest)(nil),       // 13: api.task.v1.DeleteTaskRequest
-	(*DeleteTaskReply)(nil),         // 14: api.task.v1.DeleteTaskReply
-	(*TaskByIDRequest)(nil),         // 15: api.task.v1.TaskByIDRequest
-	(*TaskByNameRequest)(nil),       // 16: api.task.v1.TaskByNameRequest
-	(*GetTaskReply)(nil),            // 17: api.task.v1.GetTaskReply
-	(*ListTimingTaskRequest)(nil),   // 18: api.task.v1.ListTimingTaskRequest
-	(*TaskInfo)(nil),                // 19: api.task.v1.TaskInfo
-	(*ListTimingTaskReply)(nil),     // 20: api.task.v1.ListTimingTaskReply
-	(*timestamppb.Timestamp)(nil),   // 21: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),           // 22: google.protobuf.Empty
+	(*UpdateTaskStatusRequest)(nil), // 5: api.task.v1.UpdateTaskStatusRequest
+	(*UpdateTaskStatusReply)(nil),   // 6: api.task.v1.UpdateTaskStatusReply
+	(*CreateTaskRequest)(nil),       // 7: api.task.v1.CreateTaskRequest
+	(*CreateTaskReply)(nil),         // 8: api.task.v1.CreateTaskReply
+	(*UpdateTaskRequest)(nil),       // 9: api.task.v1.UpdateTaskRequest
+	(*UpdateTaskReply)(nil),         // 10: api.task.v1.UpdateTaskReply
+	(*DeleteTaskRequest)(nil),       // 11: api.task.v1.DeleteTaskRequest
+	(*DeleteTaskReply)(nil),         // 12: api.task.v1.DeleteTaskReply
+	(*TaskByIDRequest)(nil),         // 13: api.task.v1.TaskByIDRequest
+	(*TaskByNameRequest)(nil),       // 14: api.task.v1.TaskByNameRequest
+	(*GetTaskReply)(nil),            // 15: api.task.v1.GetTaskReply
+	(*ListTimingTaskRequest)(nil),   // 16: api.task.v1.ListTimingTaskRequest
+	(*TaskInfo)(nil),                // 17: api.task.v1.TaskInfo
+	(*ListTimingTaskReply)(nil),     // 18: api.task.v1.ListTimingTaskReply
+	(*timestamppb.Timestamp)(nil),   // 19: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),           // 20: google.protobuf.Empty
 }
 var file_api_management_task_v1_task_proto_depIdxs = []int32{
 	4,  // 0: api.task.v1.TaskProgressReply.detail:type_name -> api.task.v1.progressDetail
 	1,  // 1: api.task.v1.UpdateTaskStatusRequest.status:type_name -> api.task.v1.taskStatus
 	1,  // 2: api.task.v1.UpdateTaskStatusReply.status:type_name -> api.task.v1.taskStatus
-	21, // 3: api.task.v1.UpdateTaskStatusReply.statusUpdatedAt:type_name -> google.protobuf.Timestamp
+	19, // 3: api.task.v1.UpdateTaskStatusReply.statusUpdatedAt:type_name -> google.protobuf.Timestamp
 	0,  // 4: api.task.v1.CreateTaskRequest.frequency:type_name -> api.task.v1.frequency
-	21, // 5: api.task.v1.CreateTaskRequest.scheduleTime:type_name -> google.protobuf.Timestamp
-	21, // 6: api.task.v1.CreateTaskRequest.deadline:type_name -> google.protobuf.Timestamp
+	19, // 5: api.task.v1.CreateTaskRequest.scheduleTime:type_name -> google.protobuf.Timestamp
+	19, // 6: api.task.v1.CreateTaskRequest.deadline:type_name -> google.protobuf.Timestamp
 	1,  // 7: api.task.v1.CreateTaskReply.status:type_name -> api.task.v1.taskStatus
-	21, // 8: api.task.v1.CreateTaskReply.createdAt:type_name -> google.protobuf.Timestamp
+	19, // 8: api.task.v1.CreateTaskReply.createdAt:type_name -> google.protobuf.Timestamp
 	0,  // 9: api.task.v1.UpdateTaskRequest.frequency:type_name -> api.task.v1.frequency
-	21, // 10: api.task.v1.UpdateTaskRequest.scheduleTime:type_name -> google.protobuf.Timestamp
-	21, // 11: api.task.v1.UpdateTaskRequest.deadline:type_name -> google.protobuf.Timestamp
+	19, // 10: api.task.v1.UpdateTaskRequest.scheduleTime:type_name -> google.protobuf.Timestamp
+	19, // 11: api.task.v1.UpdateTaskRequest.deadline:type_name -> google.protobuf.Timestamp
 	1,  // 12: api.task.v1.GetTaskReply.status:type_name -> api.task.v1.taskStatus
 	0,  // 13: api.task.v1.GetTaskReply.frequency:type_name -> api.task.v1.frequency
-	21, // 14: api.task.v1.GetTaskReply.startTime:type_name -> google.protobuf.Timestamp
-	21, // 15: api.task.v1.GetTaskReply.scheduleTime:type_name -> google.protobuf.Timestamp
-	21, // 16: api.task.v1.GetTaskReply.deadline:type_name -> google.protobuf.Timestamp
+	19, // 14: api.task.v1.GetTaskReply.startTime:type_name -> google.protobuf.Timestamp
+	19, // 15: api.task.v1.GetTaskReply.scheduleTime:type_name -> google.protobuf.Timestamp
+	19, // 16: api.task.v1.GetTaskReply.deadline:type_name -> google.protobuf.Timestamp
 	1,  // 17: api.task.v1.TaskInfo.status:type_name -> api.task.v1.taskStatus
-	21, // 18: api.task.v1.TaskInfo.scheduleTime:type_name -> google.protobuf.Timestamp
-	21, // 19: api.task.v1.TaskInfo.startTime:type_name -> google.protobuf.Timestamp
-	21, // 20: api.task.v1.TaskInfo.deadline:type_name -> google.protobuf.Timestamp
+	19, // 18: api.task.v1.TaskInfo.scheduleTime:type_name -> google.protobuf.Timestamp
+	19, // 19: api.task.v1.TaskInfo.startTime:type_name -> google.protobuf.Timestamp
+	19, // 20: api.task.v1.TaskInfo.deadline:type_name -> google.protobuf.Timestamp
 	0,  // 21: api.task.v1.TaskInfo.frequency:type_name -> api.task.v1.frequency
-	19, // 22: api.task.v1.ListTimingTaskReply.taskList:type_name -> api.task.v1.TaskInfo
-	9,  // 23: api.task.v1.Task.CreateTask:input_type -> api.task.v1.CreateTaskRequest
-	11, // 24: api.task.v1.Task.UpdateTask:input_type -> api.task.v1.UpdateTaskRequest
-	13, // 25: api.task.v1.Task.DeleteTask:input_type -> api.task.v1.DeleteTaskRequest
-	15, // 26: api.task.v1.Task.TaskByID:input_type -> api.task.v1.TaskByIDRequest
-	16, // 27: api.task.v1.Task.TaskByName:input_type -> api.task.v1.TaskByNameRequest
-	22, // 28: api.task.v1.Task.ListTimingTask:input_type -> google.protobuf.Empty
-	7,  // 29: api.task.v1.Task.UpdateTaskStatus:input_type -> api.task.v1.UpdateTaskStatusRequest
+	17, // 22: api.task.v1.ListTimingTaskReply.taskList:type_name -> api.task.v1.TaskInfo
+	7,  // 23: api.task.v1.Task.CreateTask:input_type -> api.task.v1.CreateTaskRequest
+	9,  // 24: api.task.v1.Task.UpdateTask:input_type -> api.task.v1.UpdateTaskRequest
+	11, // 25: api.task.v1.Task.DeleteTask:input_type -> api.task.v1.DeleteTaskRequest
+	13, // 26: api.task.v1.Task.TaskByID:input_type -> api.task.v1.TaskByIDRequest
+	14, // 27: api.task.v1.Task.TaskByName:input_type -> api.task.v1.TaskByNameRequest
+	20, // 28: api.task.v1.Task.ListTimingTask:input_type -> google.protobuf.Empty
+	5,  // 29: api.task.v1.Task.UpdateTaskStatus:input_type -> api.task.v1.UpdateTaskStatusRequest
 	2,  // 30: api.task.v1.Task.TaskProgress:input_type -> api.task.v1.TaskProgressRequest
-	5,  // 31: api.task.v1.Task.CreateTestPlan:input_type -> api.task.v1.CreateTestPlanRequest
-	10, // 32: api.task.v1.Task.CreateTask:output_type -> api.task.v1.CreateTaskReply
-	22, // 33: api.task.v1.Task.UpdateTask:output_type -> google.protobuf.Empty
-	14, // 34: api.task.v1.Task.DeleteTask:output_type -> api.task.v1.DeleteTaskReply
-	17, // 35: api.task.v1.Task.TaskByID:output_type -> api.task.v1.GetTaskReply
-	17, // 36: api.task.v1.Task.TaskByName:output_type -> api.task.v1.GetTaskReply
-	20, // 37: api.task.v1.Task.ListTimingTask:output_type -> api.task.v1.ListTimingTaskReply
-	8,  // 38: api.task.v1.Task.UpdateTaskStatus:output_type -> api.task.v1.UpdateTaskStatusReply
-	3,  // 39: api.task.v1.Task.TaskProgress:output_type -> api.task.v1.TaskProgressReply
-	6,  // 40: api.task.v1.Task.CreateTestPlan:output_type -> api.task.v1.CreateTestPlanReply
-	32, // [32:41] is the sub-list for method output_type
-	23, // [23:32] is the sub-list for method input_type
+	8,  // 31: api.task.v1.Task.CreateTask:output_type -> api.task.v1.CreateTaskReply
+	20, // 32: api.task.v1.Task.UpdateTask:output_type -> google.protobuf.Empty
+	12, // 33: api.task.v1.Task.DeleteTask:output_type -> api.task.v1.DeleteTaskReply
+	15, // 34: api.task.v1.Task.TaskByID:output_type -> api.task.v1.GetTaskReply
+	15, // 35: api.task.v1.Task.TaskByName:output_type -> api.task.v1.GetTaskReply
+	18, // 36: api.task.v1.Task.ListTimingTask:output_type -> api.task.v1.ListTimingTaskReply
+	6,  // 37: api.task.v1.Task.UpdateTaskStatus:output_type -> api.task.v1.UpdateTaskStatusReply
+	3,  // 38: api.task.v1.Task.TaskProgress:output_type -> api.task.v1.TaskProgressReply
+	31, // [31:39] is the sub-list for method output_type
+	23, // [23:31] is the sub-list for method input_type
 	23, // [23:23] is the sub-list for extension type_name
 	23, // [23:23] is the sub-list for extension extendee
 	0,  // [0:23] is the sub-list for field type_name
@@ -1819,30 +1741,6 @@ func file_api_management_task_v1_task_proto_init() {
 			}
 		}
 		file_api_management_task_v1_task_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateTestPlanRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_api_management_task_v1_task_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateTestPlanReply); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_api_management_task_v1_task_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateTaskStatusRequest); i {
 			case 0:
 				return &v.state
@@ -1854,7 +1752,7 @@ func file_api_management_task_v1_task_proto_init() {
 				return nil
 			}
 		}
-		file_api_management_task_v1_task_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+		file_api_management_task_v1_task_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateTaskStatusReply); i {
 			case 0:
 				return &v.state
@@ -1866,7 +1764,7 @@ func file_api_management_task_v1_task_proto_init() {
 				return nil
 			}
 		}
-		file_api_management_task_v1_task_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+		file_api_management_task_v1_task_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateTaskRequest); i {
 			case 0:
 				return &v.state
@@ -1878,7 +1776,7 @@ func file_api_management_task_v1_task_proto_init() {
 				return nil
 			}
 		}
-		file_api_management_task_v1_task_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+		file_api_management_task_v1_task_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateTaskReply); i {
 			case 0:
 				return &v.state
@@ -1890,7 +1788,7 @@ func file_api_management_task_v1_task_proto_init() {
 				return nil
 			}
 		}
-		file_api_management_task_v1_task_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+		file_api_management_task_v1_task_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateTaskRequest); i {
 			case 0:
 				return &v.state
@@ -1902,7 +1800,7 @@ func file_api_management_task_v1_task_proto_init() {
 				return nil
 			}
 		}
-		file_api_management_task_v1_task_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+		file_api_management_task_v1_task_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateTaskReply); i {
 			case 0:
 				return &v.state
@@ -1914,7 +1812,7 @@ func file_api_management_task_v1_task_proto_init() {
 				return nil
 			}
 		}
-		file_api_management_task_v1_task_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+		file_api_management_task_v1_task_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteTaskRequest); i {
 			case 0:
 				return &v.state
@@ -1926,7 +1824,7 @@ func file_api_management_task_v1_task_proto_init() {
 				return nil
 			}
 		}
-		file_api_management_task_v1_task_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+		file_api_management_task_v1_task_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteTaskReply); i {
 			case 0:
 				return &v.state
@@ -1938,7 +1836,7 @@ func file_api_management_task_v1_task_proto_init() {
 				return nil
 			}
 		}
-		file_api_management_task_v1_task_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+		file_api_management_task_v1_task_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TaskByIDRequest); i {
 			case 0:
 				return &v.state
@@ -1950,7 +1848,7 @@ func file_api_management_task_v1_task_proto_init() {
 				return nil
 			}
 		}
-		file_api_management_task_v1_task_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+		file_api_management_task_v1_task_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TaskByNameRequest); i {
 			case 0:
 				return &v.state
@@ -1962,7 +1860,7 @@ func file_api_management_task_v1_task_proto_init() {
 				return nil
 			}
 		}
-		file_api_management_task_v1_task_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+		file_api_management_task_v1_task_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetTaskReply); i {
 			case 0:
 				return &v.state
@@ -1974,7 +1872,7 @@ func file_api_management_task_v1_task_proto_init() {
 				return nil
 			}
 		}
-		file_api_management_task_v1_task_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+		file_api_management_task_v1_task_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListTimingTaskRequest); i {
 			case 0:
 				return &v.state
@@ -1986,7 +1884,7 @@ func file_api_management_task_v1_task_proto_init() {
 				return nil
 			}
 		}
-		file_api_management_task_v1_task_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+		file_api_management_task_v1_task_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*TaskInfo); i {
 			case 0:
 				return &v.state
@@ -1998,7 +1896,7 @@ func file_api_management_task_v1_task_proto_init() {
 				return nil
 			}
 		}
-		file_api_management_task_v1_task_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+		file_api_management_task_v1_task_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListTimingTaskReply); i {
 			case 0:
 				return &v.state
@@ -2017,7 +1915,7 @@ func file_api_management_task_v1_task_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_management_task_v1_task_proto_rawDesc,
 			NumEnums:      2,
-			NumMessages:   19,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

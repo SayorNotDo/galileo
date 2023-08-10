@@ -3,19 +3,19 @@
 
 openapi: 3.0.3
 info:
-    title: Project API
+    title: Task API
     version: 0.0.1
 paths:
-    v1/api/management/project:
+    v1/api/management/task:
         put:
             tags:
-                - Project
-            operationId: Project_UpdateProject
+                - Task
+            operationId: Task_UpdateTask
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateProjectRequest'
+                            $ref: '#/components/schemas/UpdateTaskRequest'
                 required: true
             responses:
                 "200":
@@ -29,13 +29,13 @@ paths:
                                 $ref: '#/components/schemas/Status'
         post:
             tags:
-                - Project
-            operationId: Project_CreateProject
+                - Task
+            operationId: Task_CreateTask
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CreateProjectRequest'
+                            $ref: '#/components/schemas/CreateTaskRequest'
                 required: true
             responses:
                 "200":
@@ -43,18 +43,42 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/CreateProjectReply'
+                                $ref: '#/components/schemas/CreateTaskReply'
                 default:
                     description: Default error response
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/management/project/{id}:
+    v1/api/management/task/status:
+        put:
+            tags:
+                - Task
+            operationId: Task_UpdateTaskStatus
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateTaskStatusRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateTaskStatusReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/task/{id}:
         get:
             tags:
-                - Project
-            operationId: Project_GetProject
+                - Task
+            operationId: Task_TaskByID
             parameters:
                 - name: id
                   in: path
@@ -68,7 +92,56 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ProjectInfo'
+                                $ref: '#/components/schemas/GetTaskReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/task/{id}/progress:
+        get:
+            tags:
+                - Task
+            operationId: Task_TaskProgress
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TaskProgressReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/task/{name}:
+        get:
+            tags:
+                - Task
+            operationId: Task_TaskByName
+            parameters:
+                - name: name
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetTaskReply'
                 default:
                     description: Default error response
                     content:
@@ -77,29 +150,98 @@ paths:
                                 $ref: '#/components/schemas/Status'
 components:
     schemas:
-        CreateProjectReply:
+        CreateTaskReply:
             type: object
             properties:
                 id:
                     type: integer
                     format: int64
-        CreateProjectRequest:
+                status:
+                    type: integer
+                    format: enum
+                createdAt:
+                    type: string
+                    format: date-time
+        CreateTaskRequest:
             type: object
             properties:
                 name:
                     type: string
-                identifier:
+                rank:
+                    type: integer
+                    format: int32
+                type:
+                    type: integer
+                    format: int32
+                frequency:
+                    type: integer
+                    format: enum
+                scheduleTime:
+                    type: string
+                    format: date-time
+                worker:
+                    type: string
+                config:
                     type: string
                 description:
                     type: string
+                assignee:
+                    type: integer
+                    format: uint32
+                deadline:
+                    type: string
+                    format: date-time
+                testcaseSuiteId:
+                    type: array
+                    items:
+                        type: integer
+                        format: int64
+                testPlanId:
+                    type: integer
+                    format: int64
+        GetTaskReply:
+            type: object
+            properties:
+                name:
+                    type: string
+                rank:
+                    type: integer
+                    format: int32
+                type:
+                    type: integer
+                    format: int32
+                description:
+                    type: string
+                testcaseSuiteId:
+                    type: array
+                    items:
+                        type: integer
+                        format: int64
+                status:
+                    type: integer
+                    format: enum
+                config:
+                    type: string
+                frequency:
+                    type: integer
+                    format: enum
                 startTime:
                     type: string
                     format: date-time
-                endTime:
+                scheduleTime:
                     type: string
                     format: date-time
-                remark:
+                deadline:
                     type: string
+                    format: date-time
+                assignee:
+                    type: integer
+                    format: uint32
+                worker:
+                    type: string
+                id:
+                    type: integer
+                    format: int64
         GoogleProtobufAny:
             type: object
             properties:
@@ -108,35 +250,21 @@ components:
                     description: The type of the serialized message.
             additionalProperties: true
             description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
-        ProjectInfo:
+        ProgressDetail:
             type: object
             properties:
-                id:
-                    type: integer
-                    format: int64
-                name:
-                    type: string
-                identifier:
-                    type: string
-                remark:
-                    type: string
-                status:
+                failure:
                     type: integer
                     format: int32
-                description:
-                    type: string
-                createdAt:
-                    type: string
-                    format: date-time
-                createdBy:
+                success:
                     type: integer
-                    format: uint32
-                updatedAt:
-                    type: string
-                    format: date-time
-                updatedBy:
+                    format: int32
+                error:
                     type: integer
-                    format: uint32
+                    format: int32
+                unknown:
+                    type: integer
+                    format: int32
         Status:
             type: object
             properties:
@@ -153,7 +281,15 @@ components:
                         $ref: '#/components/schemas/GoogleProtobufAny'
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
-        UpdateProjectRequest:
+        TaskProgressReply:
+            type: object
+            properties:
+                progress:
+                    type: integer
+                    format: int32
+                detail:
+                    $ref: '#/components/schemas/ProgressDetail'
+        UpdateTaskRequest:
             type: object
             properties:
                 id:
@@ -161,14 +297,54 @@ components:
                     format: int64
                 name:
                     type: string
-                identifier:
-                    type: string
-                status:
+                assignee:
+                    type: integer
+                    format: uint32
+                type:
                     type: integer
                     format: int32
+                rank:
+                    type: integer
+                    format: int32
+                config:
+                    type: string
+                frequency:
+                    type: integer
+                    format: enum
+                scheduleTime:
+                    type: string
+                    format: date-time
+                deadline:
+                    type: string
+                    format: date-time
                 description:
                     type: string
-                remark:
+                testcaseSuiteId:
+                    type: array
+                    items:
+                        type: integer
+                        format: int64
+                worker:
+                    type: string
+        UpdateTaskStatusReply:
+            type: object
+            properties:
+                status:
+                    type: integer
+                    format: enum
+                statusUpdatedAt:
+                    type: string
+                    format: date-time
+        UpdateTaskStatusRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                status:
+                    type: integer
+                    format: enum
+                worker:
                     type: string
 tags:
-    - name: Project
+    - name: Task

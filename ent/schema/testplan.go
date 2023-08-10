@@ -31,10 +31,14 @@ func (TestPlan) Fields() []ent.Field {
 		field.Text("description").Optional(),
 		field.Time("start_time").Optional(),
 		field.Time("deadline").Optional(),
+		field.Time("status_updated_at").Optional(),
+		field.Int8("status").Default(0),
+		field.JSON("tasks", []int64{}).Optional(),
+		field.Int64("project_id").Positive(),
 	}
 }
 
 // Edges of the TestPlan.
 func (TestPlan) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{}
 }

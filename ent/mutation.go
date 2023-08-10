@@ -7892,6 +7892,8 @@ type TaskMutation struct {
 	deleted_by            *uint32
 	adddeleted_by         *int32
 	description           *string
+	testplan_id           *int64
+	addtestplan_id        *int64
 	execute_id            *int64
 	addexecute_id         *int64
 	clearedFields         map[string]struct{}
@@ -9052,6 +9054,76 @@ func (m *TaskMutation) ResetDescription() {
 	delete(m.clearedFields, task.FieldDescription)
 }
 
+// SetTestplanID sets the "testplan_id" field.
+func (m *TaskMutation) SetTestplanID(i int64) {
+	m.testplan_id = &i
+	m.addtestplan_id = nil
+}
+
+// TestplanID returns the value of the "testplan_id" field in the mutation.
+func (m *TaskMutation) TestplanID() (r int64, exists bool) {
+	v := m.testplan_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTestplanID returns the old "testplan_id" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldTestplanID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTestplanID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTestplanID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTestplanID: %w", err)
+	}
+	return oldValue.TestplanID, nil
+}
+
+// AddTestplanID adds i to the "testplan_id" field.
+func (m *TaskMutation) AddTestplanID(i int64) {
+	if m.addtestplan_id != nil {
+		*m.addtestplan_id += i
+	} else {
+		m.addtestplan_id = &i
+	}
+}
+
+// AddedTestplanID returns the value that was added to the "testplan_id" field in this mutation.
+func (m *TaskMutation) AddedTestplanID() (r int64, exists bool) {
+	v := m.addtestplan_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTestplanID clears the value of the "testplan_id" field.
+func (m *TaskMutation) ClearTestplanID() {
+	m.testplan_id = nil
+	m.addtestplan_id = nil
+	m.clearedFields[task.FieldTestplanID] = struct{}{}
+}
+
+// TestplanIDCleared returns if the "testplan_id" field was cleared in this mutation.
+func (m *TaskMutation) TestplanIDCleared() bool {
+	_, ok := m.clearedFields[task.FieldTestplanID]
+	return ok
+}
+
+// ResetTestplanID resets all changes to the "testplan_id" field.
+func (m *TaskMutation) ResetTestplanID() {
+	m.testplan_id = nil
+	m.addtestplan_id = nil
+	delete(m.clearedFields, task.FieldTestplanID)
+}
+
 // SetExecuteID sets the "execute_id" field.
 func (m *TaskMutation) SetExecuteID(i int64) {
 	m.execute_id = &i
@@ -9210,7 +9282,7 @@ func (m *TaskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskMutation) Fields() []string {
-	fields := make([]string, 0, 21)
+	fields := make([]string, 0, 22)
 	if m.name != nil {
 		fields = append(fields, task.FieldName)
 	}
@@ -9271,6 +9343,9 @@ func (m *TaskMutation) Fields() []string {
 	if m.description != nil {
 		fields = append(fields, task.FieldDescription)
 	}
+	if m.testplan_id != nil {
+		fields = append(fields, task.FieldTestplanID)
+	}
 	if m.execute_id != nil {
 		fields = append(fields, task.FieldExecuteID)
 	}
@@ -9322,6 +9397,8 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedBy()
 	case task.FieldDescription:
 		return m.Description()
+	case task.FieldTestplanID:
+		return m.TestplanID()
 	case task.FieldExecuteID:
 		return m.ExecuteID()
 	}
@@ -9373,6 +9450,8 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldDeletedBy(ctx)
 	case task.FieldDescription:
 		return m.OldDescription(ctx)
+	case task.FieldTestplanID:
+		return m.OldTestplanID(ctx)
 	case task.FieldExecuteID:
 		return m.OldExecuteID(ctx)
 	}
@@ -9524,6 +9603,13 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDescription(v)
 		return nil
+	case task.FieldTestplanID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTestplanID(v)
+		return nil
 	case task.FieldExecuteID:
 		v, ok := value.(int64)
 		if !ok {
@@ -9560,6 +9646,9 @@ func (m *TaskMutation) AddedFields() []string {
 	if m.adddeleted_by != nil {
 		fields = append(fields, task.FieldDeletedBy)
 	}
+	if m.addtestplan_id != nil {
+		fields = append(fields, task.FieldTestplanID)
+	}
 	if m.addexecute_id != nil {
 		fields = append(fields, task.FieldExecuteID)
 	}
@@ -9585,6 +9674,8 @@ func (m *TaskMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case task.FieldDeletedBy:
 		return m.AddedDeletedBy()
+	case task.FieldTestplanID:
+		return m.AddedTestplanID()
 	case task.FieldExecuteID:
 		return m.AddedExecuteID()
 	}
@@ -9645,6 +9736,13 @@ func (m *TaskMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDeletedBy(v)
 		return nil
+	case task.FieldTestplanID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTestplanID(v)
+		return nil
 	case task.FieldExecuteID:
 		v, ok := value.(int64)
 		if !ok {
@@ -9701,6 +9799,9 @@ func (m *TaskMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(task.FieldDescription) {
 		fields = append(fields, task.FieldDescription)
+	}
+	if m.FieldCleared(task.FieldTestplanID) {
+		fields = append(fields, task.FieldTestplanID)
 	}
 	if m.FieldCleared(task.FieldExecuteID) {
 		fields = append(fields, task.FieldExecuteID)
@@ -9760,6 +9861,9 @@ func (m *TaskMutation) ClearField(name string) error {
 		return nil
 	case task.FieldDescription:
 		m.ClearDescription()
+		return nil
+	case task.FieldTestplanID:
+		m.ClearTestplanID()
 		return nil
 	case task.FieldExecuteID:
 		m.ClearExecuteID()
@@ -9831,6 +9935,9 @@ func (m *TaskMutation) ResetField(name string) error {
 		return nil
 	case task.FieldDescription:
 		m.ResetDescription()
+		return nil
+	case task.FieldTestplanID:
+		m.ResetTestplanID()
 		return nil
 	case task.FieldExecuteID:
 		m.ResetExecuteID()
@@ -9926,23 +10033,30 @@ func (m *TaskMutation) ResetEdge(name string) error {
 // TestPlanMutation represents an operation that mutates the TestPlan nodes in the graph.
 type TestPlanMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int64
-	name          *string
-	created_at    *time.Time
-	created_by    *uint32
-	addcreated_by *int32
-	updated_at    *time.Time
-	updated_by    *uint32
-	addupdated_by *int32
-	description   *string
-	start_time    *time.Time
-	deadline      *time.Time
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*TestPlan, error)
-	predicates    []predicate.TestPlan
+	op                Op
+	typ               string
+	id                *int64
+	name              *string
+	created_at        *time.Time
+	created_by        *uint32
+	addcreated_by     *int32
+	updated_at        *time.Time
+	updated_by        *uint32
+	addupdated_by     *int32
+	description       *string
+	start_time        *time.Time
+	deadline          *time.Time
+	status_updated_at *time.Time
+	status            *int8
+	addstatus         *int8
+	tasks             *[]int64
+	appendtasks       []int64
+	project_id        *int64
+	addproject_id     *int64
+	clearedFields     map[string]struct{}
+	done              bool
+	oldValue          func(context.Context) (*TestPlan, error)
+	predicates        []predicate.TestPlan
 }
 
 var _ ent.Mutation = (*TestPlanMutation)(nil)
@@ -10443,6 +10557,232 @@ func (m *TestPlanMutation) ResetDeadline() {
 	delete(m.clearedFields, testplan.FieldDeadline)
 }
 
+// SetStatusUpdatedAt sets the "status_updated_at" field.
+func (m *TestPlanMutation) SetStatusUpdatedAt(t time.Time) {
+	m.status_updated_at = &t
+}
+
+// StatusUpdatedAt returns the value of the "status_updated_at" field in the mutation.
+func (m *TestPlanMutation) StatusUpdatedAt() (r time.Time, exists bool) {
+	v := m.status_updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatusUpdatedAt returns the old "status_updated_at" field's value of the TestPlan entity.
+// If the TestPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TestPlanMutation) OldStatusUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatusUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatusUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatusUpdatedAt: %w", err)
+	}
+	return oldValue.StatusUpdatedAt, nil
+}
+
+// ClearStatusUpdatedAt clears the value of the "status_updated_at" field.
+func (m *TestPlanMutation) ClearStatusUpdatedAt() {
+	m.status_updated_at = nil
+	m.clearedFields[testplan.FieldStatusUpdatedAt] = struct{}{}
+}
+
+// StatusUpdatedAtCleared returns if the "status_updated_at" field was cleared in this mutation.
+func (m *TestPlanMutation) StatusUpdatedAtCleared() bool {
+	_, ok := m.clearedFields[testplan.FieldStatusUpdatedAt]
+	return ok
+}
+
+// ResetStatusUpdatedAt resets all changes to the "status_updated_at" field.
+func (m *TestPlanMutation) ResetStatusUpdatedAt() {
+	m.status_updated_at = nil
+	delete(m.clearedFields, testplan.FieldStatusUpdatedAt)
+}
+
+// SetStatus sets the "status" field.
+func (m *TestPlanMutation) SetStatus(i int8) {
+	m.status = &i
+	m.addstatus = nil
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *TestPlanMutation) Status() (r int8, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the TestPlan entity.
+// If the TestPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TestPlanMutation) OldStatus(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// AddStatus adds i to the "status" field.
+func (m *TestPlanMutation) AddStatus(i int8) {
+	if m.addstatus != nil {
+		*m.addstatus += i
+	} else {
+		m.addstatus = &i
+	}
+}
+
+// AddedStatus returns the value that was added to the "status" field in this mutation.
+func (m *TestPlanMutation) AddedStatus() (r int8, exists bool) {
+	v := m.addstatus
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *TestPlanMutation) ResetStatus() {
+	m.status = nil
+	m.addstatus = nil
+}
+
+// SetTasks sets the "tasks" field.
+func (m *TestPlanMutation) SetTasks(i []int64) {
+	m.tasks = &i
+	m.appendtasks = nil
+}
+
+// Tasks returns the value of the "tasks" field in the mutation.
+func (m *TestPlanMutation) Tasks() (r []int64, exists bool) {
+	v := m.tasks
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTasks returns the old "tasks" field's value of the TestPlan entity.
+// If the TestPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TestPlanMutation) OldTasks(ctx context.Context) (v []int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTasks is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTasks requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTasks: %w", err)
+	}
+	return oldValue.Tasks, nil
+}
+
+// AppendTasks adds i to the "tasks" field.
+func (m *TestPlanMutation) AppendTasks(i []int64) {
+	m.appendtasks = append(m.appendtasks, i...)
+}
+
+// AppendedTasks returns the list of values that were appended to the "tasks" field in this mutation.
+func (m *TestPlanMutation) AppendedTasks() ([]int64, bool) {
+	if len(m.appendtasks) == 0 {
+		return nil, false
+	}
+	return m.appendtasks, true
+}
+
+// ClearTasks clears the value of the "tasks" field.
+func (m *TestPlanMutation) ClearTasks() {
+	m.tasks = nil
+	m.appendtasks = nil
+	m.clearedFields[testplan.FieldTasks] = struct{}{}
+}
+
+// TasksCleared returns if the "tasks" field was cleared in this mutation.
+func (m *TestPlanMutation) TasksCleared() bool {
+	_, ok := m.clearedFields[testplan.FieldTasks]
+	return ok
+}
+
+// ResetTasks resets all changes to the "tasks" field.
+func (m *TestPlanMutation) ResetTasks() {
+	m.tasks = nil
+	m.appendtasks = nil
+	delete(m.clearedFields, testplan.FieldTasks)
+}
+
+// SetProjectID sets the "project_id" field.
+func (m *TestPlanMutation) SetProjectID(i int64) {
+	m.project_id = &i
+	m.addproject_id = nil
+}
+
+// ProjectID returns the value of the "project_id" field in the mutation.
+func (m *TestPlanMutation) ProjectID() (r int64, exists bool) {
+	v := m.project_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProjectID returns the old "project_id" field's value of the TestPlan entity.
+// If the TestPlan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TestPlanMutation) OldProjectID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProjectID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProjectID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProjectID: %w", err)
+	}
+	return oldValue.ProjectID, nil
+}
+
+// AddProjectID adds i to the "project_id" field.
+func (m *TestPlanMutation) AddProjectID(i int64) {
+	if m.addproject_id != nil {
+		*m.addproject_id += i
+	} else {
+		m.addproject_id = &i
+	}
+}
+
+// AddedProjectID returns the value that was added to the "project_id" field in this mutation.
+func (m *TestPlanMutation) AddedProjectID() (r int64, exists bool) {
+	v := m.addproject_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetProjectID resets all changes to the "project_id" field.
+func (m *TestPlanMutation) ResetProjectID() {
+	m.project_id = nil
+	m.addproject_id = nil
+}
+
 // Where appends a list predicates to the TestPlanMutation builder.
 func (m *TestPlanMutation) Where(ps ...predicate.TestPlan) {
 	m.predicates = append(m.predicates, ps...)
@@ -10477,7 +10817,7 @@ func (m *TestPlanMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TestPlanMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 12)
 	if m.name != nil {
 		fields = append(fields, testplan.FieldName)
 	}
@@ -10501,6 +10841,18 @@ func (m *TestPlanMutation) Fields() []string {
 	}
 	if m.deadline != nil {
 		fields = append(fields, testplan.FieldDeadline)
+	}
+	if m.status_updated_at != nil {
+		fields = append(fields, testplan.FieldStatusUpdatedAt)
+	}
+	if m.status != nil {
+		fields = append(fields, testplan.FieldStatus)
+	}
+	if m.tasks != nil {
+		fields = append(fields, testplan.FieldTasks)
+	}
+	if m.project_id != nil {
+		fields = append(fields, testplan.FieldProjectID)
 	}
 	return fields
 }
@@ -10526,6 +10878,14 @@ func (m *TestPlanMutation) Field(name string) (ent.Value, bool) {
 		return m.StartTime()
 	case testplan.FieldDeadline:
 		return m.Deadline()
+	case testplan.FieldStatusUpdatedAt:
+		return m.StatusUpdatedAt()
+	case testplan.FieldStatus:
+		return m.Status()
+	case testplan.FieldTasks:
+		return m.Tasks()
+	case testplan.FieldProjectID:
+		return m.ProjectID()
 	}
 	return nil, false
 }
@@ -10551,6 +10911,14 @@ func (m *TestPlanMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldStartTime(ctx)
 	case testplan.FieldDeadline:
 		return m.OldDeadline(ctx)
+	case testplan.FieldStatusUpdatedAt:
+		return m.OldStatusUpdatedAt(ctx)
+	case testplan.FieldStatus:
+		return m.OldStatus(ctx)
+	case testplan.FieldTasks:
+		return m.OldTasks(ctx)
+	case testplan.FieldProjectID:
+		return m.OldProjectID(ctx)
 	}
 	return nil, fmt.Errorf("unknown TestPlan field %s", name)
 }
@@ -10616,6 +10984,34 @@ func (m *TestPlanMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDeadline(v)
 		return nil
+	case testplan.FieldStatusUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatusUpdatedAt(v)
+		return nil
+	case testplan.FieldStatus:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case testplan.FieldTasks:
+		v, ok := value.([]int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTasks(v)
+		return nil
+	case testplan.FieldProjectID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProjectID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown TestPlan field %s", name)
 }
@@ -10630,6 +11026,12 @@ func (m *TestPlanMutation) AddedFields() []string {
 	if m.addupdated_by != nil {
 		fields = append(fields, testplan.FieldUpdatedBy)
 	}
+	if m.addstatus != nil {
+		fields = append(fields, testplan.FieldStatus)
+	}
+	if m.addproject_id != nil {
+		fields = append(fields, testplan.FieldProjectID)
+	}
 	return fields
 }
 
@@ -10642,6 +11044,10 @@ func (m *TestPlanMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedCreatedBy()
 	case testplan.FieldUpdatedBy:
 		return m.AddedUpdatedBy()
+	case testplan.FieldStatus:
+		return m.AddedStatus()
+	case testplan.FieldProjectID:
+		return m.AddedProjectID()
 	}
 	return nil, false
 }
@@ -10665,6 +11071,20 @@ func (m *TestPlanMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddUpdatedBy(v)
 		return nil
+	case testplan.FieldStatus:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStatus(v)
+		return nil
+	case testplan.FieldProjectID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddProjectID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown TestPlan numeric field %s", name)
 }
@@ -10687,6 +11107,12 @@ func (m *TestPlanMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(testplan.FieldDeadline) {
 		fields = append(fields, testplan.FieldDeadline)
+	}
+	if m.FieldCleared(testplan.FieldStatusUpdatedAt) {
+		fields = append(fields, testplan.FieldStatusUpdatedAt)
+	}
+	if m.FieldCleared(testplan.FieldTasks) {
+		fields = append(fields, testplan.FieldTasks)
 	}
 	return fields
 }
@@ -10716,6 +11142,12 @@ func (m *TestPlanMutation) ClearField(name string) error {
 		return nil
 	case testplan.FieldDeadline:
 		m.ClearDeadline()
+		return nil
+	case testplan.FieldStatusUpdatedAt:
+		m.ClearStatusUpdatedAt()
+		return nil
+	case testplan.FieldTasks:
+		m.ClearTasks()
 		return nil
 	}
 	return fmt.Errorf("unknown TestPlan nullable field %s", name)
@@ -10748,6 +11180,18 @@ func (m *TestPlanMutation) ResetField(name string) error {
 		return nil
 	case testplan.FieldDeadline:
 		m.ResetDeadline()
+		return nil
+	case testplan.FieldStatusUpdatedAt:
+		m.ResetStatusUpdatedAt()
+		return nil
+	case testplan.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case testplan.FieldTasks:
+		m.ResetTasks()
+		return nil
+	case testplan.FieldProjectID:
+		m.ResetProjectID()
 		return nil
 	}
 	return fmt.Errorf("unknown TestPlan field %s", name)

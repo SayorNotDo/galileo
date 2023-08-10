@@ -131,6 +131,7 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, e
 		SetStartTime(task.StartTime).
 		SetDeadline(task.Deadline).
 		SetCreatedBy(task.CreatedBy).
+		SetTestplanID(task.TestPlanId).
 		SetDescription(task.Description).
 		AddTestcaseSuiteIDs(task.TestcaseSuites...).
 		Save(ctx)
@@ -308,7 +309,7 @@ func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (
 		if err != nil {
 			return nil, rollback(tx, err)
 		}
-	/* 当设置状态为RUNNING时，设置Redis缓存过期时间 */
+	/* 当设置状态为FINISHED时，设置Redis缓存过期时间 */
 	case taskV1.TaskStatus_FINISHED:
 		key := NewTaskProgressKey(updateTask.Name, updateTask.ExecuteId)
 		err := r.SetTaskInfoExpiration(ctx, key, int64(TaskExpiration))

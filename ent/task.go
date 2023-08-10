@@ -56,6 +56,8 @@ type Task struct {
 	DeletedBy uint32 `json:"deleted_by,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
+	// TestplanID holds the value of the "testplan_id" field.
+	TestplanID int64 `json:"testplan_id,omitempty"`
 	// ExecuteID holds the value of the "execute_id" field.
 	ExecuteID int64 `json:"execute_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -86,7 +88,7 @@ func (*Task) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case task.FieldID, task.FieldCreatedBy, task.FieldAssignee, task.FieldType, task.FieldRank, task.FieldStatus, task.FieldUpdatedBy, task.FieldDeletedBy, task.FieldExecuteID:
+		case task.FieldID, task.FieldCreatedBy, task.FieldAssignee, task.FieldType, task.FieldRank, task.FieldStatus, task.FieldUpdatedBy, task.FieldDeletedBy, task.FieldTestplanID, task.FieldExecuteID:
 			values[i] = new(sql.NullInt64)
 		case task.FieldName, task.FieldFrequency, task.FieldWorker, task.FieldConfig, task.FieldDescription:
 			values[i] = new(sql.NullString)
@@ -233,6 +235,12 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Description = value.String
 			}
+		case task.FieldTestplanID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field testplan_id", values[i])
+			} else if value.Valid {
+				t.TestplanID = value.Int64
+			}
 		case task.FieldExecuteID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field execute_id", values[i])
@@ -331,6 +339,9 @@ func (t *Task) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(t.Description)
+	builder.WriteString(", ")
+	builder.WriteString("testplan_id=")
+	builder.WriteString(fmt.Sprintf("%v", t.TestplanID))
 	builder.WriteString(", ")
 	builder.WriteString("execute_id=")
 	builder.WriteString(fmt.Sprintf("%v", t.ExecuteID))
