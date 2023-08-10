@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package api.analytics.v1;
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+
+option go_package = "galileo/api/analytics/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.analytics.v1";
+
+service Analytics {
+  rpc HelloWorld (google.protobuf.Empty) returns (google.protobuf.Empty){
+    option(google.api.http) = {
+      get: "v1/api/analytics"
+    };
+  };
+}
