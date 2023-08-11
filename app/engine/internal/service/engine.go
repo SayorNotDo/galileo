@@ -9,10 +9,11 @@ import (
 	. "galileo/pkg/errResponse"
 	"galileo/pkg/utils/snowflake"
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/samber/lo"
 	"time"
 )
 
-func (s *EngineService) CronJobScheduler(ctx context.Context) {
+func (s *EngineService) Cron(ctx context.Context) {
 	/* 设置循环频率为 5 min */
 	interval := 5 * time.Minute
 	/* 循环逻辑 */
@@ -20,33 +21,54 @@ func (s *EngineService) CronJobScheduler(ctx context.Context) {
 		select {
 		/* 上下文返回截止信号时退出循环 */
 		case <-ctx.Done():
-			s.log.Info("*--------------------------------*CronJobScheduler Stopped*--------------------------------*")
 			return
 		default:
-			s.log.Info("*--------------------------------*Running loop routine*--------------------------------*")
-			/* 获取处于新建状态的定时任务列表 */
-			taskList, err := s.uc.TimingTaskList(ctx)
-			if err != nil {
-				s.log.Error("Error getting timing task list")
-			}
-			s.log.Debug("Getting Timing TaskList: ", taskList)
-			// TODO: 检查当前定时任务的调度列表
-			cronJobList := s.uc.GetCronJobList(ctx)
-			for _, v := range cronJobList {
-				s.log.Debug("Getting Cron Job: ", v.TaskId)
-			}
-			// TODO: 遍历定时任务、延时任务的列表记录，若记录不在定时任务中，则重新调度，若调度列表存在过期任务，则移除
-			timingTaskList, err := s.uc.TimingTaskList(ctx)
-			if err != nil {
-				s.log.Error("Getting Timing Task List Error")
-			}
-			for _, task := range timingTaskList {
-				fmt.Println("Getting Timing Task: ", task)
-			}
-
+			s.Scheduler(ctx)
 		}
 		time.Sleep(interval)
 	}
+}
+
+func (s *EngineService) Scheduler(ctx context.Context) {
+	s.log.Info("*** Running Scheduler ***")
+	/* 获取处于新建状态 (NEW) 的定时任务列表 */
+	timingTaskList, err := s.uc.TimingTaskList(ctx, []taskV1.TaskStatus{taskV1.TaskStatus_NEW})
+	if err != nil {
+		/* TODO：增加重试逻辑 */
+		s.log.Error("Error getting timing task list")
+	}
+	s.log.Info("Getting Timing TaskList: ", timingTaskList)
+	cronJobList := s.uc.GetCronJobList(ctx)
+	/* 检查新建的任务是否处于调度列表，如果不在则放入调度列表 */
+	for _, task := range timingTaskList {
+		fmt.Println("Getting Timing Task: ", task)
+		_, exist := lo.Find(cronJobList, func(item *biz.CronJob) bool {
+			return item.TaskId == task.Id
+		})
+		if !exist {
+			/* 调用函数将任务重新加入调度列表 */
+			if _, err := s.uc.AddCronJob(ctx, &biz.Task{
+				Id:           task.Id,
+				Type:         task.Type,
+				ScheduleTime: task.ScheduleTime,
+				Frequency:    task.Frequency,
+			}); err != nil {
+				s.log.Info("Error adding Timing Task: ", err)
+			}
+		} else {
+			/* 调整cronJobList调度列表 */
+			cronJobList = lo.DropWhile(cronJobList, func(item *biz.CronJob) bool {
+				return item.TaskId == task.Id
+			})
+		}
+	}
+	/* 从调度列表中删除无效的任务 */
+	for _, item := range cronJobList {
+		if err := s.uc.RemoveCronJob(ctx, item.TaskId); err != nil {
+			s.log.Error("Error delete invalid timing task list")
+		}
+	}
+
 }
 
 func (s *EngineService) AddCronJob(ctx context.Context, req *v1.AddCronJobRequest) (*v1.AddCronJobReply, error) {

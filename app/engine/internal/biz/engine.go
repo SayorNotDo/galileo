@@ -25,7 +25,7 @@ type Task struct {
 type EngineRepo interface {
 	TaskByID(ctx context.Context, id int64) (*Task, error)
 	AddCronJob(ctx context.Context, task *Task) (cron.EntryID, error)
-	TimingTaskList(ctx context.Context) ([]*Task, error)
+	TimingTaskList(ctx context.Context, status []taskV1.TaskStatus) ([]*Task, error)
 	GetCronJobList(ctx context.Context) []*CronJob
 	RemoveCronJob(ctx context.Context, taskId int64) error
 }
@@ -48,8 +48,8 @@ func (c *EngineUseCase) AddCronJob(ctx context.Context, task *Task) (cron.EntryI
 	return c.repo.AddCronJob(ctx, task)
 }
 
-func (c *EngineUseCase) TimingTaskList(ctx context.Context) ([]*Task, error) {
-	return c.repo.TimingTaskList(ctx)
+func (c *EngineUseCase) TimingTaskList(ctx context.Context, status []taskV1.TaskStatus) ([]*Task, error) {
+	return c.repo.TimingTaskList(ctx, status)
 }
 
 func (c *EngineUseCase) GetCronJobList(ctx context.Context) []*CronJob {

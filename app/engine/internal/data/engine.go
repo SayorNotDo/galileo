@@ -64,14 +64,16 @@ func (r *engineRepo) AddCronJob(ctx context.Context, task *biz.Task) (cron.Entry
 	return entryId, nil
 }
 
-func (r *engineRepo) TimingTaskList(ctx context.Context) ([]*biz.Task, error) {
+func (r *engineRepo) TimingTaskList(ctx context.Context, status []taskV1.TaskStatus) ([]*biz.Task, error) {
+	/* 获取状态为待办的定时/延时类型任务列表 */
 	res, err := r.data.taskCli.ListTimingTask(ctx, &taskV1.ListTimingTaskRequest{
-		Status: []taskV1.TaskStatus{taskV1.TaskStatus_NEW},
+		Status: status,
 	})
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
+	/* 组织结构体返回 */
 	rv := make([]*biz.Task, 0)
 	for _, v := range res.TaskList {
 		rv = append(rv, &biz.Task{

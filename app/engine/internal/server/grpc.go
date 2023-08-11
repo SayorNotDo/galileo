@@ -36,6 +36,6 @@ func NewGRPCServer(c *conf.Server, engine *service.EngineService, logger log.Log
 	srv := grpc.NewServer(opts...)
 	v1.RegisterEngineServer(srv, engine)
 	/* 开启定时任务调度器 */
-	go engine.CronJobScheduler(context.Background())
+	go engine.Cron(context.Background())
 	return srv
 }
