@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package api.analytics.v1;
 
-import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 
 
 option go_package = "galileo/api/analytics/v1;v1";
@@ -11,9 +11,43 @@ option java_multiple_files = true;
 option java_package = "api.analytics.v1";
 
 service Analytics {
-  rpc HelloWorld (google.protobuf.Empty) returns (google.protobuf.Empty){
+  rpc EventAnalytics (EventAnalyticsRequest) returns (EventAnalyticReply){
     option(google.api.http) = {
-      get: "v1/api/analytics"
+      post: "v1/api/analytics/event"
+      body: "*"
     };
   };
+}
+
+message EventAnalyticsRequest {
+  message Filter {}
+  message Event {
+    string analysis = 1;
+    string analysisDesc = 2;
+    string eventId = 3;
+    string eventName = 4;
+    string eventNameDisplay = 5;
+    string eventType = 6;
+    int32 relation = 7;
+    int32 type = 8;
+    repeated Filter filters = 9;
+  }
+  message EventsView {
+    repeated string groupBy = 1;
+    string timeParticleSize = 2;
+    repeated string tableSorts = 3;
+    string byType = 4;
+    repeated Filter filters = 5;
+    string recentDay = 6;
+  }
+  repeated Event events = 1;
+  EventsView eventsView = 2;
+  string origin = 3;
+}
+
+message EventAnalyticReply {
+  repeated string xAxis = 1;
+  repeated string yAxis = 2;
+  repeated string unionGroups = 3;
+  google.protobuf.Timestamp resultGenerateTime = 4;
 }

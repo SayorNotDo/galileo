@@ -67,6 +67,7 @@ func (s *EngineService) Scheduler(ctx context.Context) {
 		if err := s.uc.RemoveCronJob(ctx, item.TaskId); err != nil {
 			s.log.Error("Error delete invalid timing task list")
 		}
+		s.log.Infof("Removed Timing Task: %v : %v", item.TaskId, item.Worker)
 	}
 
 }
@@ -122,14 +123,13 @@ func (s *EngineService) UpdateCronJob(ctx context.Context, req *v1.UpdateCronJob
 }
 
 func (s *EngineService) RunJob(ctx context.Context, req *v1.RunJobRequest) (*v1.RunJobReply, error) {
-	s.log.Info("*--------------------------------*Run Job*--------------------------------*")
 	res, err := s.uc.TaskByID(ctx, req.TaskId)
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonRecordNotFound, err.Error())
 	}
-	//if err := biz.JobCommand(req.Schema, req.Worker, req.TaskId); err != nil {
-	//	return nil, err
-	//}
+	if err := biz.JobCommand(req.Schema, req.Worker, req.TaskId); err != nil {
+		return nil, err
+	}
 	/* 雪花算法生成执行ID */
 	if req.Type == 0 {
 		sn, err := snowflake.NewSnowflake(int64(0), int64(0))

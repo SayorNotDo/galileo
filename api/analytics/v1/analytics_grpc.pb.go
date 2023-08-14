@@ -11,7 +11,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -20,14 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Analytics_HelloWorld_FullMethodName = "/api.analytics.v1.Analytics/HelloWorld"
+	Analytics_EventAnalytics_FullMethodName = "/api.analytics.v1.Analytics/EventAnalytics"
 )
 
 // AnalyticsClient is the client API for Analytics service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AnalyticsClient interface {
-	HelloWorld(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	EventAnalytics(ctx context.Context, in *EventAnalyticsRequest, opts ...grpc.CallOption) (*EventAnalyticReply, error)
 }
 
 type analyticsClient struct {
@@ -38,9 +37,9 @@ func NewAnalyticsClient(cc grpc.ClientConnInterface) AnalyticsClient {
 	return &analyticsClient{cc}
 }
 
-func (c *analyticsClient) HelloWorld(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Analytics_HelloWorld_FullMethodName, in, out, opts...)
+func (c *analyticsClient) EventAnalytics(ctx context.Context, in *EventAnalyticsRequest, opts ...grpc.CallOption) (*EventAnalyticReply, error) {
+	out := new(EventAnalyticReply)
+	err := c.cc.Invoke(ctx, Analytics_EventAnalytics_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +50,7 @@ func (c *analyticsClient) HelloWorld(ctx context.Context, in *emptypb.Empty, opt
 // All implementations must embed UnimplementedAnalyticsServer
 // for forward compatibility
 type AnalyticsServer interface {
-	HelloWorld(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	EventAnalytics(context.Context, *EventAnalyticsRequest) (*EventAnalyticReply, error)
 	mustEmbedUnimplementedAnalyticsServer()
 }
 
@@ -59,8 +58,8 @@ type AnalyticsServer interface {
 type UnimplementedAnalyticsServer struct {
 }
 
-func (UnimplementedAnalyticsServer) HelloWorld(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HelloWorld not implemented")
+func (UnimplementedAnalyticsServer) EventAnalytics(context.Context, *EventAnalyticsRequest) (*EventAnalyticReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EventAnalytics not implemented")
 }
 func (UnimplementedAnalyticsServer) mustEmbedUnimplementedAnalyticsServer() {}
 
@@ -75,20 +74,20 @@ func RegisterAnalyticsServer(s grpc.ServiceRegistrar, srv AnalyticsServer) {
 	s.RegisterService(&Analytics_ServiceDesc, srv)
 }
 
-func _Analytics_HelloWorld_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+func _Analytics_EventAnalytics_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EventAnalyticsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AnalyticsServer).HelloWorld(ctx, in)
+		return srv.(AnalyticsServer).EventAnalytics(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Analytics_HelloWorld_FullMethodName,
+		FullMethod: Analytics_EventAnalytics_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AnalyticsServer).HelloWorld(ctx, req.(*emptypb.Empty))
+		return srv.(AnalyticsServer).EventAnalytics(ctx, req.(*EventAnalyticsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -101,8 +100,8 @@ var Analytics_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AnalyticsServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "HelloWorld",
-			Handler:    _Analytics_HelloWorld_Handler,
+			MethodName: "EventAnalytics",
+			Handler:    _Analytics_EventAnalytics_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -10,7 +10,6 @@ import (
 	context "context"
 	http "github.com/go-kratos/kratos/v2/transport/http"
 	binding "github.com/go-kratos/kratos/v2/transport/http/binding"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -20,38 +19,41 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationAnalyticsHelloWorld = "/api.analytics.v1.Analytics/HelloWorld"
+const OperationAnalyticsEventAnalytics = "/api.analytics.v1.Analytics/EventAnalytics"
 
 type AnalyticsHTTPServer interface {
-	HelloWorld(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	EventAnalytics(context.Context, *EventAnalyticsRequest) (*EventAnalyticReply, error)
 }
 
 func RegisterAnalyticsHTTPServer(s *http.Server, srv AnalyticsHTTPServer) {
 	r := s.Route("/")
-	r.GET("v1/api/analytics", _Analytics_HelloWorld0_HTTP_Handler(srv))
+	r.POST("v1/api/analytics/event", _Analytics_EventAnalytics0_HTTP_Handler(srv))
 }
 
-func _Analytics_HelloWorld0_HTTP_Handler(srv AnalyticsHTTPServer) func(ctx http.Context) error {
+func _Analytics_EventAnalytics0_HTTP_Handler(srv AnalyticsHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in emptypb.Empty
+		var in EventAnalyticsRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationAnalyticsHelloWorld)
+		http.SetOperation(ctx, OperationAnalyticsEventAnalytics)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.HelloWorld(ctx, req.(*emptypb.Empty))
+			return srv.EventAnalytics(ctx, req.(*EventAnalyticsRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*emptypb.Empty)
+		reply := out.(*EventAnalyticReply)
 		return ctx.Result(200, reply)
 	}
 }
 
 type AnalyticsHTTPClient interface {
-	HelloWorld(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	EventAnalytics(ctx context.Context, req *EventAnalyticsRequest, opts ...http.CallOption) (rsp *EventAnalyticReply, err error)
 }
 
 type AnalyticsHTTPClientImpl struct {
@@ -62,13 +64,13 @@ func NewAnalyticsHTTPClient(client *http.Client) AnalyticsHTTPClient {
 	return &AnalyticsHTTPClientImpl{client}
 }
 
-func (c *AnalyticsHTTPClientImpl) HelloWorld(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*emptypb.Empty, error) {
-	var out emptypb.Empty
-	pattern := "v1/api/analytics"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationAnalyticsHelloWorld))
+func (c *AnalyticsHTTPClientImpl) EventAnalytics(ctx context.Context, in *EventAnalyticsRequest, opts ...http.CallOption) (*EventAnalyticReply, error) {
+	var out EventAnalyticReply
+	pattern := "v1/api/analytics/event"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAnalyticsEventAnalytics))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

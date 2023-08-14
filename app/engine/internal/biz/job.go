@@ -16,6 +16,8 @@ type CronJob struct {
 	Worker  string `json:"worker,omitempty"`
 }
 
+// Run
+/* 定时任务调度器执行函数 */
 func (c *CronJob) Run() {
 	// TODO: 测试任务触发（更新任务状态）
 	fmt.Println("下发测试任务: ", c.TaskId)
@@ -35,6 +37,7 @@ func JobCommand(schema, worker string, taskId int64) error {
 
 	// TODO: 创建发送至Worker的HTTP请求
 	url := fmt.Sprintf("%s%s/job", schema, worker)
+	/* body: taskId, token, */
 	payload := strings.NewReader("taskId=%s" + strconv.FormatInt(taskId, 10))
 	req, err := http.NewRequest("POST", url, payload)
 	if err != nil {

@@ -272,10 +272,6 @@ func (r *taskRepo) RedisLRangeTask(ctx context.Context, key string) ([]string, e
 	if err != nil {
 		return nil, err
 	}
-	//lo.ForEach(valList, func(item string, _ int) {
-	//	fmt.Println("---------------------------------------------------------------->> item")
-	//	fmt.Println(item)
-	//})
 	return valList, nil
 }
 
