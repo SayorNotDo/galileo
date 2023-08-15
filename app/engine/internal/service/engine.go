@@ -8,6 +8,7 @@ import (
 	"galileo/app/engine/internal/biz"
 	. "galileo/pkg/errResponse"
 	"galileo/pkg/utils/snowflake"
+	"github.com/avast/retry-go"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/samber/lo"
 	"time"
@@ -23,21 +24,38 @@ func (s *EngineService) Cron(ctx context.Context) {
 		case <-ctx.Done():
 			return
 		default:
+			/* 调度器执行 */
 			s.Scheduler(ctx)
 		}
 		time.Sleep(interval)
 	}
 }
 
+// Scheduler
+/* 定时任务调度器的主逻辑函数 */
 func (s *EngineService) Scheduler(ctx context.Context) {
-	s.log.Info("*** Running Scheduler ***")
+	s.log.Info("*** Scheduler ***")
+	/* 定义重试策略 */
+	retryStrategy := []retry.Option{
+		retry.Delay(100 * time.Millisecond),
+		retry.Attempts(5),
+		retry.LastErrorOnly(true),
+	}
 	/* 获取处于新建状态 (NEW) 的定时任务列表 */
-	timingTaskList, err := s.uc.TimingTaskList(ctx, []taskV1.TaskStatus{taskV1.TaskStatus_NEW})
+	var timingTaskList []*biz.Task
+	var err error
+	err = retry.Do(func() error {
+		timingTaskList, err = s.uc.TimingTaskList(ctx, []taskV1.TaskStatus{taskV1.TaskStatus_NEW})
+		if err != nil {
+			return err
+		}
+		return nil
+	}, retryStrategy...)
 	if err != nil {
-		/* TODO：增加重试逻辑 */
-		s.log.Error("Error getting timing task list")
+		s.log.Error("Error getting timing task list after 5 retries")
 	}
 	s.log.Info("Getting Timing TaskList: ", timingTaskList)
+	/* 获取调度器的任务列表 */
 	cronJobList := s.uc.GetCronJobList(ctx)
 	/* 检查新建的任务是否处于调度列表，如果不在则放入调度列表 */
 	for _, task := range timingTaskList {
@@ -72,6 +90,8 @@ func (s *EngineService) Scheduler(ctx context.Context) {
 
 }
 
+// AddCronJob
+/* 添加任务到调度列表 */
 func (s *EngineService) AddCronJob(ctx context.Context, req *v1.AddCronJobRequest) (*v1.AddCronJobReply, error) {
 	/* 构建Task对象 */
 	task := &biz.Task{
@@ -85,7 +105,7 @@ func (s *EngineService) AddCronJob(ctx context.Context, req *v1.AddCronJobReques
 	if err != nil {
 		return nil, err
 	}
-	/* 雪花算法生成执行ID */
+	/* 雪花算法生成executeId */
 	sn, err := snowflake.NewSnowflake(int64(0), int64(0))
 	if err != nil {
 		return nil, err
@@ -104,20 +124,14 @@ func (s *EngineService) UpdateCronJob(ctx context.Context, req *v1.UpdateCronJob
 		ScheduleTime: req.ScheduleTime.AsTime(),
 		Frequency:    taskV1.Frequency(req.Frequency),
 	}
-	/* 查询定时任务调度列表 */
-	cronJobList := s.uc.GetCronJobList(ctx)
-	for _, v := range cronJobList {
-		if v.TaskId == task.Id {
-			/* 更新定时任务逻辑：旧任务移除 */
-			err := s.uc.RemoveCronJob(ctx, task.Id)
-			if err != nil {
-				return nil, err
-			}
-			/* 添加新的定时任务 */
-			if _, err := s.uc.AddCronJob(ctx, task); err != nil {
-				return nil, err
-			}
-		}
+	/* 更新定时任务逻辑：旧任务移除 */
+	err := s.uc.RemoveCronJob(ctx, task.Id)
+	if err != nil {
+		return nil, err
+	}
+	/* 添加新的定时任务 */
+	if _, err := s.uc.AddCronJob(ctx, task); err != nil {
+		return nil, err
 	}
 	return nil, nil
 }

@@ -186,6 +186,10 @@ func init() {
 	testcasesuiteDescCreatedAt := testcasesuiteFields[2].Descriptor()
 	// testcasesuite.DefaultCreatedAt holds the default value on creation for the created_at field.
 	testcasesuite.DefaultCreatedAt = testcasesuiteDescCreatedAt.Default.(func() time.Time)
+	// testcasesuiteDescUpdatedAt is the schema descriptor for updated_at field.
+	testcasesuiteDescUpdatedAt := testcasesuiteFields[4].Descriptor()
+	// testcasesuite.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	testcasesuite.UpdateDefaultUpdatedAt = testcasesuiteDescUpdatedAt.UpdateDefault.(func() time.Time)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.

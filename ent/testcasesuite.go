@@ -22,6 +22,10 @@ type TestcaseSuite struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy uint32 `json:"created_by,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// UpdatedBy holds the value of the "updated_by" field.
+	UpdatedBy uint32 `json:"updated_by,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TestcaseSuiteQuery when eager-loading is set.
 	Edges               TestcaseSuiteEdges `json:"edges"`
@@ -51,11 +55,11 @@ func (*TestcaseSuite) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case testcasesuite.FieldID, testcasesuite.FieldCreatedBy:
+		case testcasesuite.FieldID, testcasesuite.FieldCreatedBy, testcasesuite.FieldUpdatedBy:
 			values[i] = new(sql.NullInt64)
 		case testcasesuite.FieldName:
 			values[i] = new(sql.NullString)
-		case testcasesuite.FieldCreatedAt:
+		case testcasesuite.FieldCreatedAt, testcasesuite.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case testcasesuite.ForeignKeys[0]: // task_testcase_suite
 			values[i] = new(sql.NullInt64)
@@ -97,6 +101,18 @@ func (ts *TestcaseSuite) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
 				ts.CreatedBy = uint32(value.Int64)
+			}
+		case testcasesuite.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				ts.UpdatedAt = value.Time
+			}
+		case testcasesuite.FieldUpdatedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+			} else if value.Valid {
+				ts.UpdatedBy = uint32(value.Int64)
 			}
 		case testcasesuite.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -146,6 +162,12 @@ func (ts *TestcaseSuite) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
 	builder.WriteString(fmt.Sprintf("%v", ts.CreatedBy))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(ts.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_by=")
+	builder.WriteString(fmt.Sprintf("%v", ts.UpdatedBy))
 	builder.WriteByte(')')
 	return builder.String()
 }

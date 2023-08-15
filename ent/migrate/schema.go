@@ -260,6 +260,8 @@ var (
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "task_testcase_suite", Type: field.TypeInt64, Nullable: true},
 	}
 	// TestcaseSuiteTable holds the schema information for the "testcase_suite" table.
@@ -270,7 +272,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "testcase_suite_task_testcase_suite",
-				Columns:    []*schema.Column{TestcaseSuiteColumns[4]},
+				Columns:    []*schema.Column{TestcaseSuiteColumns[6]},
 				RefColumns: []*schema.Column{TaskColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

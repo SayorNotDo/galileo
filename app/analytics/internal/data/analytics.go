@@ -17,15 +17,48 @@ func NewAnalyticsRepo(data *Data, logger log.Logger) biz.AnalyticsRepo {
 	}
 }
 
+/* TODO：DryRun 生成提交查询的SQL到大数据处 */
+
 type AnalysisSQL struct {
-	Sql string
+	tableName   string
+	selectCols  []string
+	joins       []string
+	conditions  []string
+	groupBy     string
+	orderBy     string
+	limit       int
+	offset      int
+	nestedWhere []*AnalysisSQL /* 存储嵌套的条件表达式 */
 }
 
 type AnalysisSQLBuilder struct {
 	analysisSQL AnalysisSQL
 }
 
-type AnalysisSqlBuilderOption func(*AnalysisSQLBuilder)
+type AnalysisSqlBuilderWithOption func(*AnalysisSQLBuilder)
+
+func WithSELECT() AnalysisSqlBuilderWithOption {
+	return func(builder *AnalysisSQLBuilder) {
+		builder.analysisSQL.selectCols = []string{}
+	}
+}
+
+func WithFROM() AnalysisSqlBuilderWithOption {
+	return func(builder *AnalysisSQLBuilder) {}
+}
+
+func Offset() AnalysisSqlBuilderWithOption {
+	return func(builder *AnalysisSQLBuilder) {}
+
+}
+
+func NewAnalysisSQLBuilder(options ...AnalysisSqlBuilderWithOption) *AnalysisSQLBuilder {
+	builder := &AnalysisSQLBuilder{}
+	for _, option := range options {
+		option(builder)
+	}
+	return builder
+}
 
 func NewAnalysisSqlBuilder() *AnalysisSQLBuilder {
 	return &AnalysisSQLBuilder{}
@@ -52,6 +85,10 @@ func (b *AnalysisSQLBuilder) WithORDERBY() *AnalysisSQLBuilder {
 }
 
 func (b *AnalysisSQLBuilder) WithLIMIT() *AnalysisSQLBuilder {
+	return b
+}
+
+func (b *AnalysisSQLBuilder) WithOFFSET() *AnalysisSQLBuilder {
 	return b
 }
 

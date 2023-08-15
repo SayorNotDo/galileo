@@ -21,17 +21,17 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationTaskCreateTask = "/api.task.v1.Task/CreateTask"
+const OperationTaskGetTaskProgress = "/api.task.v1.Task/GetTaskProgress"
 const OperationTaskTaskByID = "/api.task.v1.Task/TaskByID"
 const OperationTaskTaskByName = "/api.task.v1.Task/TaskByName"
-const OperationTaskTaskProgress = "/api.task.v1.Task/TaskProgress"
 const OperationTaskUpdateTask = "/api.task.v1.Task/UpdateTask"
 const OperationTaskUpdateTaskStatus = "/api.task.v1.Task/UpdateTaskStatus"
 
 type TaskHTTPServer interface {
 	CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskReply, error)
+	GetTaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error)
 	TaskByID(context.Context, *TaskByIDRequest) (*GetTaskReply, error)
 	TaskByName(context.Context, *TaskByNameRequest) (*GetTaskReply, error)
-	TaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error)
 	UpdateTask(context.Context, *UpdateTaskRequest) (*emptypb.Empty, error)
 	UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error)
 }
@@ -43,7 +43,7 @@ func RegisterTaskHTTPServer(s *http.Server, srv TaskHTTPServer) {
 	r.GET("v1/api/management/task/{id}", _Task_TaskByID0_HTTP_Handler(srv))
 	r.GET("v1/api/management/task/{name}", _Task_TaskByName0_HTTP_Handler(srv))
 	r.PUT("v1/api/management/task/status", _Task_UpdateTaskStatus0_HTTP_Handler(srv))
-	r.GET("v1/api/management/task/{id}/progress", _Task_TaskProgress0_HTTP_Handler(srv))
+	r.GET("v1/api/management/task/{id}/progress", _Task_GetTaskProgress0_HTTP_Handler(srv))
 }
 
 func _Task_CreateTask0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Context) error {
@@ -156,7 +156,7 @@ func _Task_UpdateTaskStatus0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Cont
 	}
 }
 
-func _Task_TaskProgress0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Context) error {
+func _Task_GetTaskProgress0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in TaskProgressRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -165,9 +165,9 @@ func _Task_TaskProgress0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Context)
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationTaskTaskProgress)
+		http.SetOperation(ctx, OperationTaskGetTaskProgress)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.TaskProgress(ctx, req.(*TaskProgressRequest))
+			return srv.GetTaskProgress(ctx, req.(*TaskProgressRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -180,9 +180,9 @@ func _Task_TaskProgress0_HTTP_Handler(srv TaskHTTPServer) func(ctx http.Context)
 
 type TaskHTTPClient interface {
 	CreateTask(ctx context.Context, req *CreateTaskRequest, opts ...http.CallOption) (rsp *CreateTaskReply, err error)
+	GetTaskProgress(ctx context.Context, req *TaskProgressRequest, opts ...http.CallOption) (rsp *TaskProgressReply, err error)
 	TaskByID(ctx context.Context, req *TaskByIDRequest, opts ...http.CallOption) (rsp *GetTaskReply, err error)
 	TaskByName(ctx context.Context, req *TaskByNameRequest, opts ...http.CallOption) (rsp *GetTaskReply, err error)
-	TaskProgress(ctx context.Context, req *TaskProgressRequest, opts ...http.CallOption) (rsp *TaskProgressReply, err error)
 	UpdateTask(ctx context.Context, req *UpdateTaskRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	UpdateTaskStatus(ctx context.Context, req *UpdateTaskStatusRequest, opts ...http.CallOption) (rsp *UpdateTaskStatusReply, err error)
 }
@@ -208,6 +208,19 @@ func (c *TaskHTTPClientImpl) CreateTask(ctx context.Context, in *CreateTaskReque
 	return &out, err
 }
 
+func (c *TaskHTTPClientImpl) GetTaskProgress(ctx context.Context, in *TaskProgressRequest, opts ...http.CallOption) (*TaskProgressReply, error) {
+	var out TaskProgressReply
+	pattern := "v1/api/management/task/{id}/progress"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationTaskGetTaskProgress))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
 func (c *TaskHTTPClientImpl) TaskByID(ctx context.Context, in *TaskByIDRequest, opts ...http.CallOption) (*GetTaskReply, error) {
 	var out GetTaskReply
 	pattern := "v1/api/management/task/{id}"
@@ -226,19 +239,6 @@ func (c *TaskHTTPClientImpl) TaskByName(ctx context.Context, in *TaskByNameReque
 	pattern := "v1/api/management/task/{name}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationTaskTaskByName))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, err
-}
-
-func (c *TaskHTTPClientImpl) TaskProgress(ctx context.Context, in *TaskProgressRequest, opts ...http.CallOption) (*TaskProgressReply, error) {
-	var out TaskProgressReply
-	pattern := "v1/api/management/task/{id}/progress"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationTaskTaskProgress))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

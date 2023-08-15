@@ -18,7 +18,9 @@ type CustomClaims struct {
 }
 
 type ReportClaims struct {
-	Machine string `json:"machine,omitempty"`
+	Machine  string `json:"machine,omitempty"`
+	Username string `json:"username,omitempty"`
+	UserId   int    `json:"userId,omitempty"`
 	jwt.RegisteredClaims
 }
 

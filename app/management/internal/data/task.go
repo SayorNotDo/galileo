@@ -269,9 +269,13 @@ func (r *taskRepo) CountAllTask(ctx context.Context) (int, error) {
 
 func (r *taskRepo) RedisLRangeTask(ctx context.Context, key string) ([]string, error) {
 	valList, err := r.data.redisCli.LRange(ctx, key, 0, -1).Result()
-	if err != nil {
+	switch {
+	case err == redis.Nil:
+		return nil, SetCustomizeErrMsg(ReasonRecordNotFound, "key not found")
+	case err != nil:
 		return nil, err
 	}
+	/* 返回值：进度（已执行次数 / 需执行次数），详情 */
 	return valList, nil
 }
 

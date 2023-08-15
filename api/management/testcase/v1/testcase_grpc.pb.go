@@ -30,6 +30,7 @@ const (
 	Testcase_DebugTestcase_FullMethodName       = "/api.management.testcase.Testcase/DebugTestcase"
 	Testcase_LoadFramework_FullMethodName       = "/api.management.testcase.Testcase/LoadFramework"
 	Testcase_CreateTestcaseSuite_FullMethodName = "/api.management.testcase.Testcase/CreateTestcaseSuite"
+	Testcase_GetTestcaseSuite_FullMethodName    = "/api.management.testcase.Testcase/GetTestcaseSuite"
 )
 
 // TestcaseClient is the client API for Testcase service.
@@ -46,6 +47,7 @@ type TestcaseClient interface {
 	DebugTestcase(ctx context.Context, in *DebugTestcaseRequest, opts ...grpc.CallOption) (*DebugTestcaseReply, error)
 	LoadFramework(ctx context.Context, in *LoadFrameworkRequest, opts ...grpc.CallOption) (*LoadFrameworkReply, error)
 	CreateTestcaseSuite(ctx context.Context, in *CreateTestcaseSuiteRequest, opts ...grpc.CallOption) (*CreateTestcaseSuiteReply, error)
+	GetTestcaseSuite(ctx context.Context, in *GetTestcaseSuiteRequest, opts ...grpc.CallOption) (*GetTestcaseSuiteReply, error)
 }
 
 type testcaseClient struct {
@@ -146,6 +148,15 @@ func (c *testcaseClient) CreateTestcaseSuite(ctx context.Context, in *CreateTest
 	return out, nil
 }
 
+func (c *testcaseClient) GetTestcaseSuite(ctx context.Context, in *GetTestcaseSuiteRequest, opts ...grpc.CallOption) (*GetTestcaseSuiteReply, error) {
+	out := new(GetTestcaseSuiteReply)
+	err := c.cc.Invoke(ctx, Testcase_GetTestcaseSuite_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TestcaseServer is the server API for Testcase service.
 // All implementations must embed UnimplementedTestcaseServer
 // for forward compatibility
@@ -160,6 +171,7 @@ type TestcaseServer interface {
 	DebugTestcase(context.Context, *DebugTestcaseRequest) (*DebugTestcaseReply, error)
 	LoadFramework(context.Context, *LoadFrameworkRequest) (*LoadFrameworkReply, error)
 	CreateTestcaseSuite(context.Context, *CreateTestcaseSuiteRequest) (*CreateTestcaseSuiteReply, error)
+	GetTestcaseSuite(context.Context, *GetTestcaseSuiteRequest) (*GetTestcaseSuiteReply, error)
 	mustEmbedUnimplementedTestcaseServer()
 }
 
@@ -196,6 +208,9 @@ func (UnimplementedTestcaseServer) LoadFramework(context.Context, *LoadFramework
 }
 func (UnimplementedTestcaseServer) CreateTestcaseSuite(context.Context, *CreateTestcaseSuiteRequest) (*CreateTestcaseSuiteReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTestcaseSuite not implemented")
+}
+func (UnimplementedTestcaseServer) GetTestcaseSuite(context.Context, *GetTestcaseSuiteRequest) (*GetTestcaseSuiteReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTestcaseSuite not implemented")
 }
 func (UnimplementedTestcaseServer) mustEmbedUnimplementedTestcaseServer() {}
 
@@ -390,6 +405,24 @@ func _Testcase_CreateTestcaseSuite_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Testcase_GetTestcaseSuite_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTestcaseSuiteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TestcaseServer).GetTestcaseSuite(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Testcase_GetTestcaseSuite_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TestcaseServer).GetTestcaseSuite(ctx, req.(*GetTestcaseSuiteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Testcase_ServiceDesc is the grpc.ServiceDesc for Testcase service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -436,6 +469,10 @@ var Testcase_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateTestcaseSuite",
 			Handler:    _Testcase_CreateTestcaseSuite_Handler,
+		},
+		{
+			MethodName: "GetTestcaseSuite",
+			Handler:    _Testcase_GetTestcaseSuite_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

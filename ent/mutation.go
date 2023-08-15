@@ -12667,6 +12667,9 @@ type TestcaseSuiteMutation struct {
 	created_at      *time.Time
 	created_by      *uint32
 	addcreated_by   *int32
+	updated_at      *time.Time
+	updated_by      *uint32
+	addupdated_by   *int32
 	clearedFields   map[string]struct{}
 	testcase        map[int64]struct{}
 	removedtestcase map[int64]struct{}
@@ -12908,6 +12911,125 @@ func (m *TestcaseSuiteMutation) ResetCreatedBy() {
 	m.addcreated_by = nil
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (m *TestcaseSuiteMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *TestcaseSuiteMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the TestcaseSuite entity.
+// If the TestcaseSuite object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TestcaseSuiteMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *TestcaseSuiteMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[testcasesuite.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *TestcaseSuiteMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[testcasesuite.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *TestcaseSuiteMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, testcasesuite.FieldUpdatedAt)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *TestcaseSuiteMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *TestcaseSuiteMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the TestcaseSuite entity.
+// If the TestcaseSuite object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TestcaseSuiteMutation) OldUpdatedBy(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *TestcaseSuiteMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *TestcaseSuiteMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *TestcaseSuiteMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[testcasesuite.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *TestcaseSuiteMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[testcasesuite.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *TestcaseSuiteMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, testcasesuite.FieldUpdatedBy)
+}
+
 // AddTestcaseIDs adds the "testcase" edge to the Testcase entity by ids.
 func (m *TestcaseSuiteMutation) AddTestcaseIDs(ids ...int64) {
 	if m.testcase == nil {
@@ -12996,7 +13118,7 @@ func (m *TestcaseSuiteMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TestcaseSuiteMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 5)
 	if m.name != nil {
 		fields = append(fields, testcasesuite.FieldName)
 	}
@@ -13005,6 +13127,12 @@ func (m *TestcaseSuiteMutation) Fields() []string {
 	}
 	if m.created_by != nil {
 		fields = append(fields, testcasesuite.FieldCreatedBy)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, testcasesuite.FieldUpdatedAt)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, testcasesuite.FieldUpdatedBy)
 	}
 	return fields
 }
@@ -13020,6 +13148,10 @@ func (m *TestcaseSuiteMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case testcasesuite.FieldCreatedBy:
 		return m.CreatedBy()
+	case testcasesuite.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case testcasesuite.FieldUpdatedBy:
+		return m.UpdatedBy()
 	}
 	return nil, false
 }
@@ -13035,6 +13167,10 @@ func (m *TestcaseSuiteMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldCreatedAt(ctx)
 	case testcasesuite.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
+	case testcasesuite.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case testcasesuite.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
 	}
 	return nil, fmt.Errorf("unknown TestcaseSuite field %s", name)
 }
@@ -13065,6 +13201,20 @@ func (m *TestcaseSuiteMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCreatedBy(v)
 		return nil
+	case testcasesuite.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case testcasesuite.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
 	}
 	return fmt.Errorf("unknown TestcaseSuite field %s", name)
 }
@@ -13076,6 +13226,9 @@ func (m *TestcaseSuiteMutation) AddedFields() []string {
 	if m.addcreated_by != nil {
 		fields = append(fields, testcasesuite.FieldCreatedBy)
 	}
+	if m.addupdated_by != nil {
+		fields = append(fields, testcasesuite.FieldUpdatedBy)
+	}
 	return fields
 }
 
@@ -13086,6 +13239,8 @@ func (m *TestcaseSuiteMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case testcasesuite.FieldCreatedBy:
 		return m.AddedCreatedBy()
+	case testcasesuite.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
 	}
 	return nil, false
 }
@@ -13102,6 +13257,13 @@ func (m *TestcaseSuiteMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddCreatedBy(v)
 		return nil
+	case testcasesuite.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
 	}
 	return fmt.Errorf("unknown TestcaseSuite numeric field %s", name)
 }
@@ -13109,7 +13271,14 @@ func (m *TestcaseSuiteMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *TestcaseSuiteMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(testcasesuite.FieldUpdatedAt) {
+		fields = append(fields, testcasesuite.FieldUpdatedAt)
+	}
+	if m.FieldCleared(testcasesuite.FieldUpdatedBy) {
+		fields = append(fields, testcasesuite.FieldUpdatedBy)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -13122,6 +13291,14 @@ func (m *TestcaseSuiteMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *TestcaseSuiteMutation) ClearField(name string) error {
+	switch name {
+	case testcasesuite.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case testcasesuite.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	}
 	return fmt.Errorf("unknown TestcaseSuite nullable field %s", name)
 }
 
@@ -13137,6 +13314,12 @@ func (m *TestcaseSuiteMutation) ResetField(name string) error {
 		return nil
 	case testcasesuite.FieldCreatedBy:
 		m.ResetCreatedBy()
+		return nil
+	case testcasesuite.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case testcasesuite.FieldUpdatedBy:
+		m.ResetUpdatedBy()
 		return nil
 	}
 	return fmt.Errorf("unknown TestcaseSuite field %s", name)

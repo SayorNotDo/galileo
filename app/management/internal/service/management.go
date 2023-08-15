@@ -4,6 +4,7 @@ import (
 	"context"
 	v1 "galileo/api/management/v1"
 	"galileo/app/management/internal/biz"
+	"galileo/pkg/ctxdata"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -22,8 +23,8 @@ func (s *ManagementService) BaseInformation(ctx context.Context, empty *empty.Em
 }
 
 func (s *ManagementService) CreateTestPlan(ctx context.Context, req *v1.CreateTestPlanRequest) (*v1.CreateTestPlanReply, error) {
-	userId := ctx.Value("x-md-global-userId")
-	createTestPlan, err := biz.NewTestPlan(userId.(uint32), req.Name, req.Description, req.StartTime, req.Deadline)
+	userId := ctxdata.GetUserId(ctx)
+	createTestPlan, err := biz.NewTestPlan(userId, req.Name, req.Description, req.StartTime, req.Deadline)
 	if err != nil {
 		return nil, err
 	}
@@ -39,8 +40,8 @@ func (s *ManagementService) CreateTestPlan(ctx context.Context, req *v1.CreateTe
 }
 
 func (s *ManagementService) UpdateTestPlan(ctx context.Context, req *v1.UpdateTestPlanRequest) (*empty.Empty, error) {
-	userId := ctx.Value("x-md-global-userId")
-	updateTestPlan, err := biz.NewTestPlan(userId.(uint32), req.Name, req.Description, req.StartTime, req.Deadline)
+	userId := ctxdata.GetUserId(ctx)
+	updateTestPlan, err := biz.NewTestPlan(userId, req.Name, req.Description, req.StartTime, req.Deadline)
 	updateTestPlan.Tasks = req.Tasks
 	if err != nil {
 		return nil, err

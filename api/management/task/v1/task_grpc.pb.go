@@ -27,7 +27,7 @@ const (
 	Task_TaskByName_FullMethodName       = "/api.task.v1.Task/TaskByName"
 	Task_ListTimingTask_FullMethodName   = "/api.task.v1.Task/ListTimingTask"
 	Task_UpdateTaskStatus_FullMethodName = "/api.task.v1.Task/UpdateTaskStatus"
-	Task_TaskProgress_FullMethodName     = "/api.task.v1.Task/TaskProgress"
+	Task_GetTaskProgress_FullMethodName  = "/api.task.v1.Task/GetTaskProgress"
 )
 
 // TaskClient is the client API for Task service.
@@ -41,7 +41,7 @@ type TaskClient interface {
 	TaskByName(ctx context.Context, in *TaskByNameRequest, opts ...grpc.CallOption) (*GetTaskReply, error)
 	ListTimingTask(ctx context.Context, in *ListTimingTaskRequest, opts ...grpc.CallOption) (*ListTimingTaskReply, error)
 	UpdateTaskStatus(ctx context.Context, in *UpdateTaskStatusRequest, opts ...grpc.CallOption) (*UpdateTaskStatusReply, error)
-	TaskProgress(ctx context.Context, in *TaskProgressRequest, opts ...grpc.CallOption) (*TaskProgressReply, error)
+	GetTaskProgress(ctx context.Context, in *TaskProgressRequest, opts ...grpc.CallOption) (*TaskProgressReply, error)
 }
 
 type taskClient struct {
@@ -115,9 +115,9 @@ func (c *taskClient) UpdateTaskStatus(ctx context.Context, in *UpdateTaskStatusR
 	return out, nil
 }
 
-func (c *taskClient) TaskProgress(ctx context.Context, in *TaskProgressRequest, opts ...grpc.CallOption) (*TaskProgressReply, error) {
+func (c *taskClient) GetTaskProgress(ctx context.Context, in *TaskProgressRequest, opts ...grpc.CallOption) (*TaskProgressReply, error) {
 	out := new(TaskProgressReply)
-	err := c.cc.Invoke(ctx, Task_TaskProgress_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Task_GetTaskProgress_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +135,7 @@ type TaskServer interface {
 	TaskByName(context.Context, *TaskByNameRequest) (*GetTaskReply, error)
 	ListTimingTask(context.Context, *ListTimingTaskRequest) (*ListTimingTaskReply, error)
 	UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error)
-	TaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error)
+	GetTaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error)
 	mustEmbedUnimplementedTaskServer()
 }
 
@@ -164,8 +164,8 @@ func (UnimplementedTaskServer) ListTimingTask(context.Context, *ListTimingTaskRe
 func (UnimplementedTaskServer) UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTaskStatus not implemented")
 }
-func (UnimplementedTaskServer) TaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TaskProgress not implemented")
+func (UnimplementedTaskServer) GetTaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTaskProgress not implemented")
 }
 func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
 
@@ -306,20 +306,20 @@ func _Task_UpdateTaskStatus_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Task_TaskProgress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Task_GetTaskProgress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TaskProgressRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TaskServer).TaskProgress(ctx, in)
+		return srv.(TaskServer).GetTaskProgress(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Task_TaskProgress_FullMethodName,
+		FullMethod: Task_GetTaskProgress_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TaskServer).TaskProgress(ctx, req.(*TaskProgressRequest))
+		return srv.(TaskServer).GetTaskProgress(ctx, req.(*TaskProgressRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -360,8 +360,8 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Task_UpdateTaskStatus_Handler,
 		},
 		{
-			MethodName: "TaskProgress",
-			Handler:    _Task_TaskProgress_Handler,
+			MethodName: "GetTaskProgress",
+			Handler:    _Task_GetTaskProgress_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

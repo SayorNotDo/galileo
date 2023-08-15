@@ -41,7 +41,7 @@ service Task {
       body: "*"
     };
   };
-  rpc TaskProgress (TaskProgressRequest) returns (TaskProgressReply) {
+  rpc GetTaskProgress (TaskProgressRequest) returns (TaskProgressReply) {
     option(google.api.http) = {
       get: "v1/api/management/task/{id}/progress"
     };

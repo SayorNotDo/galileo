@@ -17,6 +17,10 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldCreatedBy holds the string denoting the created_by field in the database.
 	FieldCreatedBy = "created_by"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
+	FieldUpdatedBy = "updated_by"
 	// EdgeTestcase holds the string denoting the testcase edge name in mutations.
 	EdgeTestcase = "testcase"
 	// Table holds the table name of the testcasesuite in the database.
@@ -34,6 +38,8 @@ var Columns = []string{
 	FieldName,
 	FieldCreatedAt,
 	FieldCreatedBy,
+	FieldUpdatedAt,
+	FieldUpdatedBy,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "testcase_suite"
@@ -68,4 +74,6 @@ var (
 	NameValidator func(string) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
 )

@@ -217,15 +217,15 @@ func (s *ManagementService) UpdateTaskStatus(ctx context.Context, req *v1.Update
 	}, nil
 }
 
-// TaskProgress returns the progress of a task
+// GetTaskProgress returns the progress of a task
 /* TODO: 基于redis实现任务进度的同步管理 */
-func (s *ManagementService) TaskProgress(ctx context.Context, req *v1.TaskProgressRequest) (*v1.TaskProgressReply, error) {
+func (s *ManagementService) GetTaskProgress(ctx context.Context, req *v1.TaskProgressRequest) (*v1.TaskProgressReply, error) {
 	/* 接口参数获取指定任务信息 */
 	task, err := s.sc.TaskByID(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
-	/* 基于任务信息构建key(规则: taskProgress:taskName:startTime)，查询redis数据库中的缓存 */
+	/* 基于任务信息构建key(规则: taskProgress:taskName:ExecuteId)，查询redis数据库中的缓存 */
 	taskKey := NewTaskProgressKey(task.Name, task.ExecuteId)
 	ret, err := s.sc.RedisLRangeTask(ctx, taskKey)
 	if err != nil {

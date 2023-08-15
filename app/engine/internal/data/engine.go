@@ -49,9 +49,15 @@ func (r *engineRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) 
 
 func (r *engineRepo) AddCronJob(ctx context.Context, task *biz.Task) (cron.EntryID, error) {
 	t := task.ScheduleTime
+	/* 判断调度时间是否有效 */
 	if delay := t.Sub(time.Now()); delay < 0 {
 		return 0, errResponse.SetCustomizeErrMsg(errResponse.ReasonParamsError, "Invalid schedule time")
 	}
+	/* 检查是否已存在定时任务，避免出现重复调度 */
+	if _, err := r.GetCronJobByTaskId(ctx, task.Id); err != nil {
+		return 0, err
+	}
+	/* 构建定时任务调度时间表达式 */
 	cronExpression := fmt.Sprintf("%d %d %d %d %d *", t.Second(), t.Minute(), t.Hour(), t.Day(), t.Month())
 	entryId, err := r.data.cron.AddJob(cronExpression, &biz.CronJob{
 		TaskId:  task.Id,
@@ -105,15 +111,23 @@ func (r *engineRepo) GetCronJobList(ctx context.Context) []*biz.CronJob {
 	return rv
 }
 
-func (r *engineRepo) RemoveCronJob(ctx context.Context, taskId int64) error {
+func (r *engineRepo) GetCronJobByTaskId(ctx context.Context, taskId int64) (cron.Entry, error) {
 	entries := r.data.cron.Entries()
 	for _, entry := range entries {
 		if entry.Job.(*biz.CronJob).TaskId == taskId {
-			r.data.cron.Remove(entry.ID)
-			return nil
+			return entry, nil
 		}
 	}
-	return errResponse.SetCustomizeErrMsg(errResponse.ReasonRecordNotFound, "entry not found")
+	return cron.Entry{}, errResponse.SetCustomizeErrMsg(errResponse.ReasonRecordNotFound, "entry not found")
+}
+
+func (r *engineRepo) RemoveCronJob(ctx context.Context, taskId int64) error {
+	entry, err := r.GetCronJobByTaskId(ctx, taskId)
+	if err != nil {
+		return err
+	}
+	r.data.cron.Remove(entry.ID)
+	return nil
 }
 
 func (r *engineRepo) BuildContainer(ctx context.Context, b *biz.Container) (*biz.Container, error) {

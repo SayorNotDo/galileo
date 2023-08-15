@@ -50,6 +50,21 @@ service Testcase {
       body: "*"
     };
   }
+  rpc GetTestcaseSuite (GetTestcaseSuiteRequest) returns (GetTestcaseSuiteReply) {}
+}
+
+message GetTestcaseSuiteRequest {
+  int64 id = 1;
+}
+
+message GetTestcaseSuiteReply {
+  int64 id = 1;
+  string name = 2;
+  google.protobuf.Timestamp createdAt = 3;
+  uint32 createdBy = 4;
+  google.protobuf.Timestamp updatedAt = 5;
+  uint32 updatedBy = 6;
+  repeated TestcaseInfo testcaseInfo = 7;
 }
 
 message CreateTestcaseSuiteRequest {
@@ -131,7 +146,8 @@ message DeleteTestcaseReply {}
 message GetTestcaseRequest {
   int64 id = 1;
 }
-message GetTestcaseReply {
+
+message TestcaseInfo {
   string name = 1;
   google.protobuf.Timestamp createdAt = 2;
   uint32 createdBy = 3;
@@ -142,6 +158,11 @@ message GetTestcaseReply {
   int32 status = 8;
   string url = 9;
   string description = 10;
+}
+
+
+message GetTestcaseReply {
+  TestcaseInfo testcaseInfo = 1;
 }
 
 message ListTestcaseRequest {}

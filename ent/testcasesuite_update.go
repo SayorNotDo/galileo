@@ -9,6 +9,7 @@ import (
 	"galileo/ent/predicate"
 	"galileo/ent/testcase"
 	"galileo/ent/testcasesuite"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -31,6 +32,45 @@ func (tsu *TestcaseSuiteUpdate) Where(ps ...predicate.TestcaseSuite) *TestcaseSu
 // SetName sets the "name" field.
 func (tsu *TestcaseSuiteUpdate) SetName(s string) *TestcaseSuiteUpdate {
 	tsu.mutation.SetName(s)
+	return tsu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (tsu *TestcaseSuiteUpdate) SetUpdatedAt(t time.Time) *TestcaseSuiteUpdate {
+	tsu.mutation.SetUpdatedAt(t)
+	return tsu
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (tsu *TestcaseSuiteUpdate) ClearUpdatedAt() *TestcaseSuiteUpdate {
+	tsu.mutation.ClearUpdatedAt()
+	return tsu
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (tsu *TestcaseSuiteUpdate) SetUpdatedBy(u uint32) *TestcaseSuiteUpdate {
+	tsu.mutation.ResetUpdatedBy()
+	tsu.mutation.SetUpdatedBy(u)
+	return tsu
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (tsu *TestcaseSuiteUpdate) SetNillableUpdatedBy(u *uint32) *TestcaseSuiteUpdate {
+	if u != nil {
+		tsu.SetUpdatedBy(*u)
+	}
+	return tsu
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (tsu *TestcaseSuiteUpdate) AddUpdatedBy(u int32) *TestcaseSuiteUpdate {
+	tsu.mutation.AddUpdatedBy(u)
+	return tsu
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (tsu *TestcaseSuiteUpdate) ClearUpdatedBy() *TestcaseSuiteUpdate {
+	tsu.mutation.ClearUpdatedBy()
 	return tsu
 }
 
@@ -77,6 +117,7 @@ func (tsu *TestcaseSuiteUpdate) RemoveTestcase(t ...*Testcase) *TestcaseSuiteUpd
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (tsu *TestcaseSuiteUpdate) Save(ctx context.Context) (int, error) {
+	tsu.defaults()
 	return withHooks[int, TestcaseSuiteMutation](ctx, tsu.sqlSave, tsu.mutation, tsu.hooks)
 }
 
@@ -99,6 +140,14 @@ func (tsu *TestcaseSuiteUpdate) Exec(ctx context.Context) error {
 func (tsu *TestcaseSuiteUpdate) ExecX(ctx context.Context) {
 	if err := tsu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (tsu *TestcaseSuiteUpdate) defaults() {
+	if _, ok := tsu.mutation.UpdatedAt(); !ok && !tsu.mutation.UpdatedAtCleared() {
+		v := testcasesuite.UpdateDefaultUpdatedAt()
+		tsu.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -126,6 +175,21 @@ func (tsu *TestcaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := tsu.mutation.Name(); ok {
 		_spec.SetField(testcasesuite.FieldName, field.TypeString, value)
+	}
+	if value, ok := tsu.mutation.UpdatedAt(); ok {
+		_spec.SetField(testcasesuite.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if tsu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(testcasesuite.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := tsu.mutation.UpdatedBy(); ok {
+		_spec.SetField(testcasesuite.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if value, ok := tsu.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(testcasesuite.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if tsu.mutation.UpdatedByCleared() {
+		_spec.ClearField(testcasesuite.FieldUpdatedBy, field.TypeUint32)
 	}
 	if tsu.mutation.TestcaseCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -198,6 +262,45 @@ func (tsuo *TestcaseSuiteUpdateOne) SetName(s string) *TestcaseSuiteUpdateOne {
 	return tsuo
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (tsuo *TestcaseSuiteUpdateOne) SetUpdatedAt(t time.Time) *TestcaseSuiteUpdateOne {
+	tsuo.mutation.SetUpdatedAt(t)
+	return tsuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (tsuo *TestcaseSuiteUpdateOne) ClearUpdatedAt() *TestcaseSuiteUpdateOne {
+	tsuo.mutation.ClearUpdatedAt()
+	return tsuo
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (tsuo *TestcaseSuiteUpdateOne) SetUpdatedBy(u uint32) *TestcaseSuiteUpdateOne {
+	tsuo.mutation.ResetUpdatedBy()
+	tsuo.mutation.SetUpdatedBy(u)
+	return tsuo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (tsuo *TestcaseSuiteUpdateOne) SetNillableUpdatedBy(u *uint32) *TestcaseSuiteUpdateOne {
+	if u != nil {
+		tsuo.SetUpdatedBy(*u)
+	}
+	return tsuo
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (tsuo *TestcaseSuiteUpdateOne) AddUpdatedBy(u int32) *TestcaseSuiteUpdateOne {
+	tsuo.mutation.AddUpdatedBy(u)
+	return tsuo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (tsuo *TestcaseSuiteUpdateOne) ClearUpdatedBy() *TestcaseSuiteUpdateOne {
+	tsuo.mutation.ClearUpdatedBy()
+	return tsuo
+}
+
 // AddTestcaseIDs adds the "testcase" edge to the Testcase entity by IDs.
 func (tsuo *TestcaseSuiteUpdateOne) AddTestcaseIDs(ids ...int64) *TestcaseSuiteUpdateOne {
 	tsuo.mutation.AddTestcaseIDs(ids...)
@@ -254,6 +357,7 @@ func (tsuo *TestcaseSuiteUpdateOne) Select(field string, fields ...string) *Test
 
 // Save executes the query and returns the updated TestcaseSuite entity.
 func (tsuo *TestcaseSuiteUpdateOne) Save(ctx context.Context) (*TestcaseSuite, error) {
+	tsuo.defaults()
 	return withHooks[*TestcaseSuite, TestcaseSuiteMutation](ctx, tsuo.sqlSave, tsuo.mutation, tsuo.hooks)
 }
 
@@ -276,6 +380,14 @@ func (tsuo *TestcaseSuiteUpdateOne) Exec(ctx context.Context) error {
 func (tsuo *TestcaseSuiteUpdateOne) ExecX(ctx context.Context) {
 	if err := tsuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (tsuo *TestcaseSuiteUpdateOne) defaults() {
+	if _, ok := tsuo.mutation.UpdatedAt(); !ok && !tsuo.mutation.UpdatedAtCleared() {
+		v := testcasesuite.UpdateDefaultUpdatedAt()
+		tsuo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -320,6 +432,21 @@ func (tsuo *TestcaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *Testcas
 	}
 	if value, ok := tsuo.mutation.Name(); ok {
 		_spec.SetField(testcasesuite.FieldName, field.TypeString, value)
+	}
+	if value, ok := tsuo.mutation.UpdatedAt(); ok {
+		_spec.SetField(testcasesuite.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if tsuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(testcasesuite.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := tsuo.mutation.UpdatedBy(); ok {
+		_spec.SetField(testcasesuite.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if value, ok := tsuo.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(testcasesuite.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if tsuo.mutation.UpdatedByCleared() {
+		_spec.ClearField(testcasesuite.FieldUpdatedBy, field.TypeUint32)
 	}
 	if tsuo.mutation.TestcaseCleared() {
 		edge := &sqlgraph.EdgeSpec{

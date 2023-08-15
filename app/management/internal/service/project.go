@@ -36,7 +36,7 @@ func (s *ManagementService) GetProject(ctx context.Context, req *v1.GetProjectRe
 		Id:          ret.ID,
 		Name:        ret.Name,
 		Identifier:  ret.Identifier,
-		Status:      v1.ProjectStatus(ret.Status),
+		Status:      ret.Status,
 		CreatedAt:   timestamppb.New(ret.CreatedAt),
 		CreatedBy:   ret.CreatedBy,
 		UpdatedAt:   timestamppb.New(ret.UpdatedAt),

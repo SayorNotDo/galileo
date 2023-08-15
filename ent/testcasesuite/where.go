@@ -70,6 +70,16 @@ func CreatedBy(v uint32) predicate.TestcaseSuite {
 	return predicate.TestcaseSuite(sql.FieldEQ(FieldCreatedBy, v))
 }
 
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
+func UpdatedBy(v uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldEQ(FieldUpdatedBy, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.TestcaseSuite {
 	return predicate.TestcaseSuite(sql.FieldEQ(FieldName, v))
@@ -213,6 +223,106 @@ func CreatedByLT(v uint32) predicate.TestcaseSuite {
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
 func CreatedByLTE(v uint32) predicate.TestcaseSuite {
 	return predicate.TestcaseSuite(sql.FieldLTE(FieldCreatedBy, v))
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldNEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldNotIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldGT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldGTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldLT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldNotNull(FieldUpdatedAt))
+}
+
+// UpdatedByEQ applies the EQ predicate on the "updated_by" field.
+func UpdatedByEQ(v uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldEQ(FieldUpdatedBy, v))
+}
+
+// UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
+func UpdatedByNEQ(v uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldNEQ(FieldUpdatedBy, v))
+}
+
+// UpdatedByIn applies the In predicate on the "updated_by" field.
+func UpdatedByIn(vs ...uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldIn(FieldUpdatedBy, vs...))
+}
+
+// UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
+func UpdatedByNotIn(vs ...uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldNotIn(FieldUpdatedBy, vs...))
+}
+
+// UpdatedByGT applies the GT predicate on the "updated_by" field.
+func UpdatedByGT(v uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldGT(FieldUpdatedBy, v))
+}
+
+// UpdatedByGTE applies the GTE predicate on the "updated_by" field.
+func UpdatedByGTE(v uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldGTE(FieldUpdatedBy, v))
+}
+
+// UpdatedByLT applies the LT predicate on the "updated_by" field.
+func UpdatedByLT(v uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldLT(FieldUpdatedBy, v))
+}
+
+// UpdatedByLTE applies the LTE predicate on the "updated_by" field.
+func UpdatedByLTE(v uint32) predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldLTE(FieldUpdatedBy, v))
+}
+
+// UpdatedByIsNil applies the IsNil predicate on the "updated_by" field.
+func UpdatedByIsNil() predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldIsNull(FieldUpdatedBy))
+}
+
+// UpdatedByNotNil applies the NotNil predicate on the "updated_by" field.
+func UpdatedByNotNil() predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldNotNull(FieldUpdatedBy))
 }
 
 // HasTestcase applies the HasEdge predicate on the "testcase" edge.

@@ -3,19 +3,19 @@
 
 openapi: 3.0.3
 info:
-    title: Analytics API
+    title: Testcase API
     version: 0.0.1
 paths:
-    v1/api/analytics/event:
+    v1/api/management/case-suite:
         post:
             tags:
-                - Analytics
-            operationId: Analytics_EventAnalytics
+                - Testcase
+            operationId: Testcase_CreateTestcaseSuite
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/EventAnalyticsRequest'
+                            $ref: '#/components/schemas/CreateTestcaseSuiteRequest'
                 required: true
             responses:
                 "200":
@@ -23,7 +23,127 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/EventAnalyticReply'
+                                $ref: '#/components/schemas/CreateTestcaseSuiteReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/testcase:
+        put:
+            tags:
+                - Testcase
+            operationId: Testcase_UpdateTestcase
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateTestcaseRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateTestcaseReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - Testcase
+            operationId: Testcase_CreateTestcase
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateTestcaseRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateTestcaseReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/testcase/debug:
+        post:
+            tags:
+                - Testcase
+            operationId: Testcase_DebugTestcase
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/DebugTestcaseRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DebugTestcaseReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/testcase/loadFramework:
+        post:
+            tags:
+                - Testcase
+            operationId: Testcase_LoadFramework
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoadFrameworkRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LoadFrameworkReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/testcase/{id}:
+        get:
+            tags:
+                - Testcase
+            operationId: Testcase_GetTestcaseById
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetTestcaseReply'
                 default:
                     description: Default error response
                     content:
@@ -32,77 +152,71 @@ paths:
                                 $ref: '#/components/schemas/Status'
 components:
     schemas:
-        EventAnalyticReply:
+        CreateTestcaseReply:
             type: object
             properties:
-                xAxis:
-                    type: array
-                    items:
-                        type: string
-                yAxis:
-                    type: array
-                    items:
-                        type: string
-        EventAnalyticsRequest:
+                id:
+                    type: integer
+                    format: int64
+                createdAt:
+                    type: string
+                    format: date-time
+        CreateTestcaseRequest:
             type: object
             properties:
-                events:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/EventAnalyticsRequest_Event'
-                eventsView:
-                    $ref: '#/components/schemas/EventAnalyticsRequest_EventsView'
-                origin:
+                name:
                     type: string
-        EventAnalyticsRequest_Event:
-            type: object
-            properties:
-                analysis:
-                    type: string
-                analysisDesc:
-                    type: string
-                eventId:
-                    type: string
-                eventName:
-                    type: string
-                eventNameDisplay:
-                    type: string
-                eventType:
-                    type: string
-                relation:
+                status:
                     type: integer
                     format: int32
                 type:
                     type: integer
                     format: int32
-                filters:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/EventAnalyticsRequest_Filter'
-        EventAnalyticsRequest_EventsView:
+                priority:
+                    type: integer
+                    format: int32
+                url:
+                    type: string
+                description:
+                    type: string
+        CreateTestcaseSuiteReply:
             type: object
             properties:
-                groupBy:
-                    type: array
-                    items:
-                        type: string
-                timeParticleSize:
+                id:
+                    type: integer
+                    format: int64
+                createdAt:
                     type: string
-                tableSorts:
-                    type: array
-                    items:
-                        type: string
-                byType:
-                    type: string
-                filters:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/EventAnalyticsRequest_Filter'
-                recentDay:
-                    type: string
-        EventAnalyticsRequest_Filter:
+                    format: date-time
+        CreateTestcaseSuiteRequest:
             type: object
-            properties: {}
+            properties:
+                name:
+                    type: string
+                testcaseList:
+                    type: array
+                    items:
+                        type: integer
+                        format: int64
+        DebugTestcaseReply:
+            type: object
+            properties:
+                result:
+                    type: string
+        DebugTestcaseRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                type:
+                    type: string
+                content:
+                    type: string
+        GetTestcaseReply:
+            type: object
+            properties:
+                testcaseInfo:
+                    $ref: '#/components/schemas/TestcaseInfo'
         GoogleProtobufAny:
             type: object
             properties:
@@ -111,6 +225,24 @@ components:
                     description: The type of the serialized message.
             additionalProperties: true
             description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        LoadFrameworkReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+                worker:
+                    type: string
+        LoadFrameworkRequest:
+            type: object
+            properties:
+                path:
+                    type: string
+                lang:
+                    type: integer
+                    format: enum
+                config:
+                    type: string
+                    format: bytes
         Status:
             type: object
             properties:
@@ -127,5 +259,58 @@ components:
                         $ref: '#/components/schemas/GoogleProtobufAny'
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+        TestcaseInfo:
+            type: object
+            properties:
+                name:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                createdBy:
+                    type: integer
+                    format: uint32
+                updatedAt:
+                    type: string
+                    format: date-time
+                updatedBy:
+                    type: integer
+                    format: uint32
+                type:
+                    type: integer
+                    format: int32
+                priority:
+                    type: integer
+                    format: int32
+                status:
+                    type: integer
+                    format: int32
+                url:
+                    type: string
+                description:
+                    type: string
+        UpdateTestcaseReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+        UpdateTestcaseRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                name:
+                    type: string
+                type:
+                    type: integer
+                    format: int32
+                priority:
+                    type: integer
+                    format: int32
+                url:
+                    type: string
+                description:
+                    type: string
 tags:
-    - name: Analytics
+    - name: Testcase

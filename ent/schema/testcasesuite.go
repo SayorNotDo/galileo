@@ -27,6 +27,8 @@ func (TestcaseSuite) Fields() []ent.Field {
 		field.String("name").Unique().NotEmpty(),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("created_by").Immutable(),
+		field.Time("updated_at").UpdateDefault(time.Now).Optional(),
+		field.Uint32("updated_by").Optional(),
 	}
 }
 

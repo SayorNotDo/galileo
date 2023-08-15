@@ -47,6 +47,34 @@ func (tsc *TestcaseSuiteCreate) SetCreatedBy(u uint32) *TestcaseSuiteCreate {
 	return tsc
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (tsc *TestcaseSuiteCreate) SetUpdatedAt(t time.Time) *TestcaseSuiteCreate {
+	tsc.mutation.SetUpdatedAt(t)
+	return tsc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (tsc *TestcaseSuiteCreate) SetNillableUpdatedAt(t *time.Time) *TestcaseSuiteCreate {
+	if t != nil {
+		tsc.SetUpdatedAt(*t)
+	}
+	return tsc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (tsc *TestcaseSuiteCreate) SetUpdatedBy(u uint32) *TestcaseSuiteCreate {
+	tsc.mutation.SetUpdatedBy(u)
+	return tsc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (tsc *TestcaseSuiteCreate) SetNillableUpdatedBy(u *uint32) *TestcaseSuiteCreate {
+	if u != nil {
+		tsc.SetUpdatedBy(*u)
+	}
+	return tsc
+}
+
 // SetID sets the "id" field.
 func (tsc *TestcaseSuiteCreate) SetID(i int64) *TestcaseSuiteCreate {
 	tsc.mutation.SetID(i)
@@ -168,6 +196,14 @@ func (tsc *TestcaseSuiteCreate) createSpec() (*TestcaseSuite, *sqlgraph.CreateSp
 	if value, ok := tsc.mutation.CreatedBy(); ok {
 		_spec.SetField(testcasesuite.FieldCreatedBy, field.TypeUint32, value)
 		_node.CreatedBy = value
+	}
+	if value, ok := tsc.mutation.UpdatedAt(); ok {
+		_spec.SetField(testcasesuite.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := tsc.mutation.UpdatedBy(); ok {
+		_spec.SetField(testcasesuite.FieldUpdatedBy, field.TypeUint32, value)
+		_node.UpdatedBy = value
 	}
 	if nodes := tsc.mutation.TestcaseIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
