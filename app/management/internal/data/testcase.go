@@ -4,7 +4,9 @@ import (
 	"context"
 	fileService "galileo/api/file/v1"
 	"galileo/app/management/internal/biz"
+	"galileo/ent"
 	"galileo/ent/testcase"
+	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
@@ -104,7 +106,7 @@ func (r *testcaseRepo) UploadTestcaseFile(ctx context.Context, fileName, fileTyp
 func (r *testcaseRepo) CreateTestcaseSuite(ctx context.Context, suiteName string, testcaseList []int64) (*biz.TestcaseSuite, error) {
 	ret, err := r.data.entDB.TestcaseSuite.Create().
 		SetName(suiteName).
-		AddTestcaseIDs(testcaseList...).
+		SetTestcases(testcaseList).
 		Save(ctx)
 	if err != nil {
 		return nil, err
@@ -112,6 +114,35 @@ func (r *testcaseRepo) CreateTestcaseSuite(ctx context.Context, suiteName string
 	return &biz.TestcaseSuite{
 		Id:        ret.ID,
 		CreatedAt: ret.CreatedAt,
+	}, nil
+}
+
+func (r *testcaseRepo) GetTestcaseSuiteById(ctx context.Context, suiteId int64) (*biz.TestcaseSuite, error) {
+	var testcaseList []*biz.Testcase
+	ret, err := r.data.entDB.TestcaseSuite.Query().First(ctx)
+	switch {
+	case ent.IsNotFound(err):
+		return nil, SetCustomizeErrMsg(ReasonRecordNotFound, "testcase suite not found")
+	case err != nil:
+		return nil, err
+	}
+	/* 遍历用例集合包含的用例ID，获取用例信息 */
+	for _, v := range ret.Testcases {
+		rep, err := r.TestcaseById(ctx, v)
+		/* 存在一条用例获取失败时，返回错误响应以保证用例集合完备性 */
+		if err != nil {
+			return nil, err
+		}
+		testcaseList = append(testcaseList, rep)
+	}
+	return &biz.TestcaseSuite{
+		Id:           ret.ID,
+		Name:         ret.Name,
+		CreatedAt:    ret.CreatedAt,
+		CreatedBy:    ret.CreatedBy,
+		UpdatedBy:    ret.UpdatedBy,
+		UpdatedAt:    ret.UpdatedAt,
+		TestcaseList: testcaseList,
 	}, nil
 }
 

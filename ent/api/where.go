@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -1228,33 +1227,6 @@ func DeletedByIsNil() predicate.Api {
 // DeletedByNotNil applies the NotNil predicate on the "deleted_by" field.
 func DeletedByNotNil() predicate.Api {
 	return predicate.Api(sql.FieldNotNull(FieldDeletedBy))
-}
-
-// HasStatistics applies the HasEdge predicate on the "statistics" edge.
-func HasStatistics() predicate.Api {
-	return predicate.Api(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, StatisticsTable, StatisticsColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasStatisticsWith applies the HasEdge predicate on the "statistics" edge with a given conditions (other predicates).
-func HasStatisticsWith(preds ...predicate.ApiStatistics) predicate.Api {
-	return predicate.Api(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(StatisticsInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, StatisticsTable, StatisticsColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
 }
 
 // And groups predicates with the AND operator between them.

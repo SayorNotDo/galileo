@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"regexp"
 	"time"
@@ -26,7 +25,5 @@ func (Group) Fields() []ent.Field {
 
 // Edges of the Group.
 func (Group) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.To("user", User.Type),
-	}
+	return []ent.Edge{}
 }

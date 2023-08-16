@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"galileo/ent/group"
 	"galileo/ent/predicate"
-	"galileo/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -47,45 +46,9 @@ func (gu *GroupUpdate) AddCreatedBy(u int32) *GroupUpdate {
 	return gu
 }
 
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (gu *GroupUpdate) AddUserIDs(ids ...uint32) *GroupUpdate {
-	gu.mutation.AddUserIDs(ids...)
-	return gu
-}
-
-// AddUser adds the "user" edges to the User entity.
-func (gu *GroupUpdate) AddUser(u ...*User) *GroupUpdate {
-	ids := make([]uint32, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return gu.AddUserIDs(ids...)
-}
-
 // Mutation returns the GroupMutation object of the builder.
 func (gu *GroupUpdate) Mutation() *GroupMutation {
 	return gu.mutation
-}
-
-// ClearUser clears all "user" edges to the User entity.
-func (gu *GroupUpdate) ClearUser() *GroupUpdate {
-	gu.mutation.ClearUser()
-	return gu
-}
-
-// RemoveUserIDs removes the "user" edge to User entities by IDs.
-func (gu *GroupUpdate) RemoveUserIDs(ids ...uint32) *GroupUpdate {
-	gu.mutation.RemoveUserIDs(ids...)
-	return gu
-}
-
-// RemoveUser removes "user" edges to User entities.
-func (gu *GroupUpdate) RemoveUser(u ...*User) *GroupUpdate {
-	ids := make([]uint32, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return gu.RemoveUserIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -146,51 +109,6 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := gu.mutation.AddedCreatedBy(); ok {
 		_spec.AddField(group.FieldCreatedBy, field.TypeUint32, value)
 	}
-	if gu.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.UserTable,
-			Columns: []string{group.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint32),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := gu.mutation.RemovedUserIDs(); len(nodes) > 0 && !gu.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.UserTable,
-			Columns: []string{group.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint32),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := gu.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.UserTable,
-			Columns: []string{group.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint32),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, gu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{group.Label}
@@ -230,45 +148,9 @@ func (guo *GroupUpdateOne) AddCreatedBy(u int32) *GroupUpdateOne {
 	return guo
 }
 
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (guo *GroupUpdateOne) AddUserIDs(ids ...uint32) *GroupUpdateOne {
-	guo.mutation.AddUserIDs(ids...)
-	return guo
-}
-
-// AddUser adds the "user" edges to the User entity.
-func (guo *GroupUpdateOne) AddUser(u ...*User) *GroupUpdateOne {
-	ids := make([]uint32, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return guo.AddUserIDs(ids...)
-}
-
 // Mutation returns the GroupMutation object of the builder.
 func (guo *GroupUpdateOne) Mutation() *GroupMutation {
 	return guo.mutation
-}
-
-// ClearUser clears all "user" edges to the User entity.
-func (guo *GroupUpdateOne) ClearUser() *GroupUpdateOne {
-	guo.mutation.ClearUser()
-	return guo
-}
-
-// RemoveUserIDs removes the "user" edge to User entities by IDs.
-func (guo *GroupUpdateOne) RemoveUserIDs(ids ...uint32) *GroupUpdateOne {
-	guo.mutation.RemoveUserIDs(ids...)
-	return guo
-}
-
-// RemoveUser removes "user" edges to User entities.
-func (guo *GroupUpdateOne) RemoveUser(u ...*User) *GroupUpdateOne {
-	ids := make([]uint32, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return guo.RemoveUserIDs(ids...)
 }
 
 // Where appends a list predicates to the GroupUpdate builder.
@@ -358,51 +240,6 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	}
 	if value, ok := guo.mutation.AddedCreatedBy(); ok {
 		_spec.AddField(group.FieldCreatedBy, field.TypeUint32, value)
-	}
-	if guo.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.UserTable,
-			Columns: []string{group.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint32),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := guo.mutation.RemovedUserIDs(); len(nodes) > 0 && !guo.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.UserTable,
-			Columns: []string{group.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint32),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := guo.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.UserTable,
-			Columns: []string{group.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint32),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Group{config: guo.config}
 	_spec.Assign = _node.assignValues

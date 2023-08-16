@@ -191,6 +191,20 @@ func (uc *UserCreate) SetNillableUUID(u *uuid.UUID) *UserCreate {
 	return uc
 }
 
+// SetGroupID sets the "group_id" field.
+func (uc *UserCreate) SetGroupID(i int64) *UserCreate {
+	uc.mutation.SetGroupID(i)
+	return uc
+}
+
+// SetNillableGroupID sets the "group_id" field if the given value is not nil.
+func (uc *UserCreate) SetNillableGroupID(i *int64) *UserCreate {
+	if i != nil {
+		uc.SetGroupID(*i)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(u uint32) *UserCreate {
 	uc.mutation.SetID(u)
@@ -381,6 +395,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.UUID(); ok {
 		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
 		_node.UUID = value
+	}
+	if value, ok := uc.mutation.GroupID(); ok {
+		_spec.SetField(user.FieldGroupID, field.TypeInt64, value)
+		_node.GroupID = value
 	}
 	return _node, _spec
 }

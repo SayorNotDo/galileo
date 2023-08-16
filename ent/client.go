@@ -388,22 +388,6 @@ func (c *APIClient) GetX(ctx context.Context, id int64) *Api {
 	return obj
 }
 
-// QueryStatistics queries the statistics edge of a Api.
-func (c *APIClient) QueryStatistics(a *Api) *ApiStatisticsQuery {
-	query := (&ApiStatisticsClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := a.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(api.Table, api.FieldID, id),
-			sqlgraph.To(apistatistics.Table, apistatistics.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, api.StatisticsTable, api.StatisticsColumn),
-		)
-		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *APIClient) Hooks() []Hook {
 	return c.hooks.Api
@@ -758,22 +742,6 @@ func (c *ApiStatisticsClient) GetX(ctx context.Context, id int64) *ApiStatistics
 	return obj
 }
 
-// QueryAPI queries the api edge of a ApiStatistics.
-func (c *ApiStatisticsClient) QueryAPI(as *ApiStatistics) *APIQuery {
-	query := (&APIClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := as.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(apistatistics.Table, apistatistics.FieldID, id),
-			sqlgraph.To(api.Table, api.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, apistatistics.APITable, apistatistics.APIColumn),
-		)
-		fromV = sqlgraph.Neighbors(as.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *ApiStatisticsClient) Hooks() []Hook {
 	return c.hooks.ApiStatistics
@@ -1126,22 +1094,6 @@ func (c *GroupClient) GetX(ctx context.Context, id int) *Group {
 		panic(err)
 	}
 	return obj
-}
-
-// QueryUser queries the user edge of a Group.
-func (c *GroupClient) QueryUser(gr *Group) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := gr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(group.Table, group.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, group.UserTable, group.UserColumn),
-		)
-		fromV = sqlgraph.Neighbors(gr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
 }
 
 // Hooks returns the client hooks.
@@ -1632,22 +1584,6 @@ func (c *TestcaseClient) GetX(ctx context.Context, id int64) *Testcase {
 	return obj
 }
 
-// QueryTestcaseSuite queries the testcase_suite edge of a Testcase.
-func (c *TestcaseClient) QueryTestcaseSuite(t *Testcase) *TestcaseSuiteQuery {
-	query := (&TestcaseSuiteClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := t.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(testcase.Table, testcase.FieldID, id),
-			sqlgraph.To(testcasesuite.Table, testcasesuite.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, testcase.TestcaseSuiteTable, testcase.TestcaseSuitePrimaryKey...),
-		)
-		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *TestcaseClient) Hooks() []Hook {
 	return c.hooks.Testcase
@@ -1764,22 +1700,6 @@ func (c *TestcaseSuiteClient) GetX(ctx context.Context, id int64) *TestcaseSuite
 		panic(err)
 	}
 	return obj
-}
-
-// QueryTestcase queries the testcase edge of a TestcaseSuite.
-func (c *TestcaseSuiteClient) QueryTestcase(ts *TestcaseSuite) *TestcaseQuery {
-	query := (&TestcaseClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := ts.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(testcasesuite.Table, testcasesuite.FieldID, id),
-			sqlgraph.To(testcase.Table, testcase.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, testcasesuite.TestcaseTable, testcasesuite.TestcasePrimaryKey...),
-		)
-		fromV = sqlgraph.Neighbors(ts.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
 }
 
 // Hooks returns the client hooks.

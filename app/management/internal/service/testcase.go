@@ -3,12 +3,13 @@ package service
 import (
 	"bytes"
 	"context"
-	pb "galileo/api/management/testcase/v1"
+	v1 "galileo/api/management/testcase/v1"
 	"galileo/app/management/internal/biz"
 	"galileo/pkg/ctxdata"
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"io"
 	"mime/multipart"
@@ -68,7 +69,7 @@ func (s *ManagementService) UploadTestcaseFile(ctx http.Context) (err error) {
 }
 
 // CreateTestcase creates a new Testcase, returns id, create time
-func (s *ManagementService) CreateTestcase(ctx context.Context, req *pb.CreateTestcaseRequest) (*pb.CreateTestcaseReply, error) {
+func (s *ManagementService) CreateTestcase(ctx context.Context, req *v1.CreateTestcaseRequest) (*v1.CreateTestcaseReply, error) {
 	newTestcase, err := NewTestcase(req.Name, int8(req.Type), int8(req.Priority), req.Description, req.Url)
 	if err != nil {
 		return nil, err
@@ -82,10 +83,10 @@ func (s *ManagementService) CreateTestcase(ctx context.Context, req *pb.CreateTe
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonUnknownError, err.Error())
 	}
-	return &pb.CreateTestcaseReply{Id: res.Id, CreatedAt: timestamppb.New(res.CreatedAt)}, nil
+	return &v1.CreateTestcaseReply{Id: res.Id, CreatedAt: timestamppb.New(res.CreatedAt)}, nil
 }
 
-func (s *ManagementService) UpdateTestcase(ctx context.Context, req *pb.UpdateTestcaseRequest) (*pb.UpdateTestcaseReply, error) {
+func (s *ManagementService) UpdateTestcase(ctx context.Context, req *v1.UpdateTestcaseRequest) (*v1.UpdateTestcaseReply, error) {
 	if _, err := s.tc.TestcaseById(ctx, req.Id); err != nil {
 		return nil, SetCustomizeErrMsg(ReasonRecordNotFound, err.Error())
 	}
@@ -103,47 +104,49 @@ func (s *ManagementService) UpdateTestcase(ctx context.Context, req *pb.UpdateTe
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonUnknownError, err.Error())
 	}
-	return &pb.UpdateTestcaseReply{
+	return &v1.UpdateTestcaseReply{
 		Success: ok,
 	}, nil
 }
 
-func (s *ManagementService) DeleteTestcase(ctx context.Context, req *pb.DeleteTestcaseRequest) (*pb.DeleteTestcaseReply, error) {
-	return &pb.DeleteTestcaseReply{}, nil
+func (s *ManagementService) DeleteTestcase(ctx context.Context, req *v1.DeleteTestcaseRequest) (*v1.DeleteTestcaseReply, error) {
+	return &v1.DeleteTestcaseReply{}, nil
 }
 
-func (s *ManagementService) GetTestcaseById(ctx context.Context, req *pb.GetTestcaseRequest) (*pb.GetTestcaseReply, error) {
+func (s *ManagementService) GetTestcaseById(ctx context.Context, req *v1.GetTestcaseRequest) (*v1.GetTestcaseReply, error) {
 	queryTestcase, err := s.tc.TestcaseById(ctx, req.Id)
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonRecordNotFound, err.Error())
 	}
-	return &pb.GetTestcaseReply{
-		Name:        queryTestcase.Name,
-		CreatedBy:   queryTestcase.CreatedBy,
-		CreatedAt:   timestamppb.New(queryTestcase.CreatedAt),
-		UpdatedAt:   timestamppb.New(queryTestcase.UpdatedAt),
-		UpdatedBy:   queryTestcase.UpdatedBy,
-		Type:        int32(queryTestcase.Type),
-		Priority:    int32(queryTestcase.Priority),
-		Status:      int32(queryTestcase.Status),
-		Url:         queryTestcase.Url,
-		Description: queryTestcase.Description,
+	return &v1.GetTestcaseReply{
+		TestcaseInfo: &v1.TestcaseInfo{
+			Name:        queryTestcase.Name,
+			CreatedBy:   queryTestcase.CreatedBy,
+			CreatedAt:   timestamppb.New(queryTestcase.CreatedAt),
+			UpdatedAt:   timestamppb.New(queryTestcase.UpdatedAt),
+			UpdatedBy:   queryTestcase.UpdatedBy,
+			Type:        int32(queryTestcase.Type),
+			Priority:    int32(queryTestcase.Priority),
+			Status:      int32(queryTestcase.Status),
+			Url:         queryTestcase.Url,
+			Description: queryTestcase.Description,
+		},
 	}, nil
 }
 
-func (s *ManagementService) ListTestcase(ctx context.Context, req *pb.ListTestcaseRequest) (*pb.ListTestcaseReply, error) {
-	return &pb.ListTestcaseReply{}, nil
+func (s *ManagementService) ListTestcase(ctx context.Context, req *v1.ListTestcaseRequest) (*v1.ListTestcaseReply, error) {
+	return &v1.ListTestcaseReply{}, nil
 }
 
-func (s *ManagementService) LoadFramework(ctx context.Context, req *pb.LoadFrameworkRequest) (*pb.LoadFrameworkReply, error) {
+func (s *ManagementService) LoadFramework(ctx context.Context, req *v1.LoadFrameworkRequest) (*v1.LoadFrameworkReply, error) {
 	fpath, lang, config := req.Path, req.Lang, req.Config
 	log.Debugf("LoadFrameWork request path: %s, lang: %d, config: %s", fpath, lang, string(config))
 	// run docker return container-id
 	// initialize container based on request param: config & language
-	return &pb.LoadFrameworkReply{Success: true, Worker: "docker-container-id"}, nil
+	return &v1.LoadFrameworkReply{Success: true, Worker: "docker-container-id"}, nil
 }
 
-func (s *ManagementService) CreateTestcaseSuite(ctx context.Context, req *pb.CreateTestcaseSuiteRequest) (*pb.CreateTestcaseSuiteReply, error) {
+func (s *ManagementService) CreateTestcaseSuite(ctx context.Context, req *v1.CreateTestcaseSuiteRequest) (*v1.CreateTestcaseSuiteReply, error) {
 	if len(req.Name) <= 0 {
 		return nil, SetCustomizeErrMsg(ReasonParamsError, "suite name cannot be empty")
 	}
@@ -151,13 +154,45 @@ func (s *ManagementService) CreateTestcaseSuite(ctx context.Context, req *pb.Cre
 	if err != nil {
 		return nil, err
 	}
-	return &pb.CreateTestcaseSuiteReply{
+	return &v1.CreateTestcaseSuiteReply{
 		Id:        res.Id,
 		CreatedAt: timestamppb.New(res.CreatedAt),
 	}, nil
 }
 
-func (s *ManagementService) DebugTestcase(ctx context.Context, req *pb.DebugTestcaseRequest) (*pb.DebugTestcaseReply, error) {
+func (s *ManagementService) GetTestcaseSuiteById(ctx context.Context, req *v1.GetTestcaseSuiteRequest) (*v1.GetTestcaseSuiteReply, error) {
+	ret, err := s.tc.GetTestcaseSuiteById(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	rv := make([]*v1.TestcaseInfo, 0)
+	lo.ForEach(ret.TestcaseList, func(item *biz.Testcase, _ int) {
+		rv = append(rv, &v1.TestcaseInfo{
+			Id:          item.Id,
+			Name:        item.Name,
+			CreatedAt:   timestamppb.New(item.CreatedAt),
+			CreatedBy:   item.CreatedBy,
+			UpdatedAt:   timestamppb.New(ret.UpdatedAt),
+			UpdatedBy:   item.UpdatedBy,
+			Type:        int32(item.Type),
+			Priority:    int32(item.Priority),
+			Status:      int32(item.Status),
+			Url:         item.Url,
+			Description: item.Description,
+		})
+	})
+	return &v1.GetTestcaseSuiteReply{
+		Id:           ret.Id,
+		Name:         ret.Name,
+		CreatedAt:    timestamppb.New(ret.CreatedAt),
+		CreatedBy:    ret.CreatedBy,
+		UpdatedAt:    timestamppb.New(ret.UpdatedAt),
+		UpdatedBy:    ret.UpdatedBy,
+		TestcaseInfo: rv,
+	}, nil
+}
+
+func (s *ManagementService) DebugTestcase(ctx context.Context, req *v1.DebugTestcaseRequest) (*v1.DebugTestcaseReply, error) {
 	/* 1.调用TestcaseValidator */
 	if err := s.tc.TestcaseValidator(".json", req.Content); err != nil {
 		return nil, err
@@ -168,7 +203,7 @@ func (s *ManagementService) DebugTestcase(ctx context.Context, req *pb.DebugTest
 		return nil, err
 	}
 	/* 3.返回调试结果 */
-	return &pb.DebugTestcaseReply{
+	return &v1.DebugTestcaseReply{
 		Result: ret,
 	}, nil
 }

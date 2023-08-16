@@ -4,11 +4,9 @@ package ent
 
 import (
 	"context"
-	"database/sql/driver"
 	"fmt"
 	"galileo/ent/predicate"
 	"galileo/ent/testcase"
-	"galileo/ent/testcasesuite"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
@@ -19,11 +17,10 @@ import (
 // TestcaseQuery is the builder for querying Testcase entities.
 type TestcaseQuery struct {
 	config
-	ctx               *QueryContext
-	order             []OrderFunc
-	inters            []Interceptor
-	predicates        []predicate.Testcase
-	withTestcaseSuite *TestcaseSuiteQuery
+	ctx        *QueryContext
+	order      []OrderFunc
+	inters     []Interceptor
+	predicates []predicate.Testcase
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -58,28 +55,6 @@ func (tq *TestcaseQuery) Unique(unique bool) *TestcaseQuery {
 func (tq *TestcaseQuery) Order(o ...OrderFunc) *TestcaseQuery {
 	tq.order = append(tq.order, o...)
 	return tq
-}
-
-// QueryTestcaseSuite chains the current query on the "testcase_suite" edge.
-func (tq *TestcaseQuery) QueryTestcaseSuite() *TestcaseSuiteQuery {
-	query := (&TestcaseSuiteClient{config: tq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := tq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := tq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(testcase.Table, testcase.FieldID, selector),
-			sqlgraph.To(testcasesuite.Table, testcasesuite.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, testcase.TestcaseSuiteTable, testcase.TestcaseSuitePrimaryKey...),
-		)
-		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
 }
 
 // First returns the first Testcase entity from the query.
@@ -269,27 +244,15 @@ func (tq *TestcaseQuery) Clone() *TestcaseQuery {
 		return nil
 	}
 	return &TestcaseQuery{
-		config:            tq.config,
-		ctx:               tq.ctx.Clone(),
-		order:             append([]OrderFunc{}, tq.order...),
-		inters:            append([]Interceptor{}, tq.inters...),
-		predicates:        append([]predicate.Testcase{}, tq.predicates...),
-		withTestcaseSuite: tq.withTestcaseSuite.Clone(),
+		config:     tq.config,
+		ctx:        tq.ctx.Clone(),
+		order:      append([]OrderFunc{}, tq.order...),
+		inters:     append([]Interceptor{}, tq.inters...),
+		predicates: append([]predicate.Testcase{}, tq.predicates...),
 		// clone intermediate query.
 		sql:  tq.sql.Clone(),
 		path: tq.path,
 	}
-}
-
-// WithTestcaseSuite tells the query-builder to eager-load the nodes that are connected to
-// the "testcase_suite" edge. The optional arguments are used to configure the query builder of the edge.
-func (tq *TestcaseQuery) WithTestcaseSuite(opts ...func(*TestcaseSuiteQuery)) *TestcaseQuery {
-	query := (&TestcaseSuiteClient{config: tq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	tq.withTestcaseSuite = query
-	return tq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -368,11 +331,8 @@ func (tq *TestcaseQuery) prepareQuery(ctx context.Context) error {
 
 func (tq *TestcaseQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Testcase, error) {
 	var (
-		nodes       = []*Testcase{}
-		_spec       = tq.querySpec()
-		loadedTypes = [1]bool{
-			tq.withTestcaseSuite != nil,
-		}
+		nodes = []*Testcase{}
+		_spec = tq.querySpec()
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Testcase).scanValues(nil, columns)
@@ -380,7 +340,6 @@ func (tq *TestcaseQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tes
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Testcase{config: tq.config}
 		nodes = append(nodes, node)
-		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -392,76 +351,7 @@ func (tq *TestcaseQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tes
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := tq.withTestcaseSuite; query != nil {
-		if err := tq.loadTestcaseSuite(ctx, query, nodes,
-			func(n *Testcase) { n.Edges.TestcaseSuite = []*TestcaseSuite{} },
-			func(n *Testcase, e *TestcaseSuite) { n.Edges.TestcaseSuite = append(n.Edges.TestcaseSuite, e) }); err != nil {
-			return nil, err
-		}
-	}
 	return nodes, nil
-}
-
-func (tq *TestcaseQuery) loadTestcaseSuite(ctx context.Context, query *TestcaseSuiteQuery, nodes []*Testcase, init func(*Testcase), assign func(*Testcase, *TestcaseSuite)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int64]*Testcase)
-	nids := make(map[int64]map[*Testcase]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
-		if init != nil {
-			init(node)
-		}
-	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(testcase.TestcaseSuiteTable)
-		s.Join(joinT).On(s.C(testcasesuite.FieldID), joinT.C(testcase.TestcaseSuitePrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(testcase.TestcaseSuitePrimaryKey[1]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(testcase.TestcaseSuitePrimaryKey[1]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
-	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := values[0].(*sql.NullInt64).Int64
-				inValue := values[1].(*sql.NullInt64).Int64
-				if nids[inValue] == nil {
-					nids[inValue] = map[*Testcase]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*TestcaseSuite](ctx, query, qr, query.inters)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected "testcase_suite" node returned %v`, n.ID)
-		}
-		for kn := range nodes {
-			assign(kn, n)
-		}
-	}
-	return nil
 }
 
 func (tq *TestcaseQuery) sqlCount(ctx context.Context) (int, error) {

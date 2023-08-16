@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"galileo/ent/testcasesuite"
 	"strings"
@@ -26,28 +27,9 @@ type TestcaseSuite struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy uint32 `json:"updated_by,omitempty"`
-	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the TestcaseSuiteQuery when eager-loading is set.
-	Edges               TestcaseSuiteEdges `json:"edges"`
+	// Testcases holds the value of the "testcases" field.
+	Testcases           []int64 `json:"testcases,omitempty"`
 	task_testcase_suite *int64
-}
-
-// TestcaseSuiteEdges holds the relations/edges for other nodes in the graph.
-type TestcaseSuiteEdges struct {
-	// Testcase holds the value of the testcase edge.
-	Testcase []*Testcase `json:"testcase,omitempty"`
-	// loadedTypes holds the information for reporting if a
-	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
-}
-
-// TestcaseOrErr returns the Testcase value or an error if the edge
-// was not loaded in eager-loading.
-func (e TestcaseSuiteEdges) TestcaseOrErr() ([]*Testcase, error) {
-	if e.loadedTypes[0] {
-		return e.Testcase, nil
-	}
-	return nil, &NotLoadedError{edge: "testcase"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -55,6 +37,8 @@ func (*TestcaseSuite) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case testcasesuite.FieldTestcases:
+			values[i] = new([]byte)
 		case testcasesuite.FieldID, testcasesuite.FieldCreatedBy, testcasesuite.FieldUpdatedBy:
 			values[i] = new(sql.NullInt64)
 		case testcasesuite.FieldName:
@@ -114,6 +98,14 @@ func (ts *TestcaseSuite) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ts.UpdatedBy = uint32(value.Int64)
 			}
+		case testcasesuite.FieldTestcases:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field testcases", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &ts.Testcases); err != nil {
+					return fmt.Errorf("unmarshal field testcases: %w", err)
+				}
+			}
 		case testcasesuite.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field task_testcase_suite", value)
@@ -124,11 +116,6 @@ func (ts *TestcaseSuite) assignValues(columns []string, values []any) error {
 		}
 	}
 	return nil
-}
-
-// QueryTestcase queries the "testcase" edge of the TestcaseSuite entity.
-func (ts *TestcaseSuite) QueryTestcase() *TestcaseQuery {
-	return NewTestcaseSuiteClient(ts.config).QueryTestcase(ts)
 }
 
 // Update returns a builder for updating this TestcaseSuite.
@@ -168,6 +155,9 @@ func (ts *TestcaseSuite) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
 	builder.WriteString(fmt.Sprintf("%v", ts.UpdatedBy))
+	builder.WriteString(", ")
+	builder.WriteString("testcases=")
+	builder.WriteString(fmt.Sprintf("%v", ts.Testcases))
 	builder.WriteByte(')')
 	return builder.String()
 }

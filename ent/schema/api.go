@@ -4,7 +4,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	"time"
@@ -56,8 +55,5 @@ func (Api) Fields() []ent.Field {
 
 // Edges of the Api.
 func (Api) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.To("statistics", ApiStatistics.Type).
-			Unique(),
-	}
+	return []ent.Edge{}
 }

@@ -37,15 +37,8 @@ const (
 	FieldLabel = "label"
 	// FieldURL holds the string denoting the url field in the database.
 	FieldURL = "url"
-	// EdgeTestcaseSuite holds the string denoting the testcase_suite edge name in mutations.
-	EdgeTestcaseSuite = "testcase_suite"
 	// Table holds the table name of the testcase in the database.
 	Table = "testcase"
-	// TestcaseSuiteTable is the table that holds the testcase_suite relation/edge. The primary key declared below.
-	TestcaseSuiteTable = "testcase_suite_testcase"
-	// TestcaseSuiteInverseTable is the table name for the TestcaseSuite entity.
-	// It exists in this package in order to avoid circular dependency with the "testcasesuite" package.
-	TestcaseSuiteInverseTable = "testcase_suite"
 )
 
 // Columns holds all SQL columns for testcase fields.
@@ -65,12 +58,6 @@ var Columns = []string{
 	FieldLabel,
 	FieldURL,
 }
-
-var (
-	// TestcaseSuitePrimaryKey and TestcaseSuiteColumn2 are the table columns denoting the
-	// primary key for the testcase_suite relation (M2M).
-	TestcaseSuitePrimaryKey = []string{"testcase_suite_id", "testcase_id"}
-)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {

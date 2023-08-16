@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -325,31 +324,14 @@ func UpdatedByNotNil() predicate.TestcaseSuite {
 	return predicate.TestcaseSuite(sql.FieldNotNull(FieldUpdatedBy))
 }
 
-// HasTestcase applies the HasEdge predicate on the "testcase" edge.
-func HasTestcase() predicate.TestcaseSuite {
-	return predicate.TestcaseSuite(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, TestcaseTable, TestcasePrimaryKey...),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
+// TestcasesIsNil applies the IsNil predicate on the "testcases" field.
+func TestcasesIsNil() predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldIsNull(FieldTestcases))
 }
 
-// HasTestcaseWith applies the HasEdge predicate on the "testcase" edge with a given conditions (other predicates).
-func HasTestcaseWith(preds ...predicate.Testcase) predicate.TestcaseSuite {
-	return predicate.TestcaseSuite(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(TestcaseInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, TestcaseTable, TestcasePrimaryKey...),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
+// TestcasesNotNil applies the NotNil predicate on the "testcases" field.
+func TestcasesNotNil() predicate.TestcaseSuite {
+	return predicate.TestcaseSuite(sql.FieldNotNull(FieldTestcases))
 }
 
 // And groups predicates with the AND operator between them.

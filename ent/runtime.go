@@ -4,6 +4,7 @@ package ent
 
 import (
 	"galileo/ent/api"
+	"galileo/ent/apistatistics"
 	"galileo/ent/container"
 	"galileo/ent/group"
 	"galileo/ent/project"
@@ -48,6 +49,12 @@ func init() {
 	apiDescUpdateAt := apiFields[15].Descriptor()
 	// api.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
 	api.UpdateDefaultUpdateAt = apiDescUpdateAt.UpdateDefault.(func() time.Time)
+	apistatisticsFields := schema.ApiStatistics{}.Fields()
+	_ = apistatisticsFields
+	// apistatisticsDescAPIID is the schema descriptor for api_id field.
+	apistatisticsDescAPIID := apistatisticsFields[13].Descriptor()
+	// apistatistics.APIIDValidator is a validator for the "api_id" field. It is called by the builders before save.
+	apistatistics.APIIDValidator = apistatisticsDescAPIID.Validators[0].(func(int64) error)
 	containerFields := schema.Container{}.Fields()
 	_ = containerFields
 	// containerDescHostname is the schema descriptor for hostname field.

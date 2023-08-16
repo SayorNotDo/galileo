@@ -4,7 +4,6 @@ package ent
 
 import (
 	"fmt"
-	"galileo/ent/api"
 	"galileo/ent/apistatistics"
 	"strings"
 	"time"
@@ -41,32 +40,8 @@ type ApiStatistics struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdateAt holds the value of the "update_at" field.
 	UpdateAt time.Time `json:"update_at,omitempty"`
-	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ApiStatisticsQuery when eager-loading is set.
-	Edges          ApiStatisticsEdges `json:"edges"`
-	api_statistics *int64
-}
-
-// ApiStatisticsEdges holds the relations/edges for other nodes in the graph.
-type ApiStatisticsEdges struct {
-	// API holds the value of the api edge.
-	API *Api `json:"api,omitempty"`
-	// loadedTypes holds the information for reporting if a
-	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
-}
-
-// APIOrErr returns the API value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e ApiStatisticsEdges) APIOrErr() (*Api, error) {
-	if e.loadedTypes[0] {
-		if e.API == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: api.Label}
-		}
-		return e.API, nil
-	}
-	return nil, &NotLoadedError{edge: "api"}
+	// APIID holds the value of the "api_id" field.
+	APIID int64 `json:"api_id,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -76,14 +51,12 @@ func (*ApiStatistics) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case apistatistics.FieldAvgResponseTime, apistatistics.FieldMaxResponseTime, apistatistics.FieldMinResponseTime, apistatistics.FieldAvgTraffic, apistatistics.FieldMaxTraffic, apistatistics.FieldMinTraffic:
 			values[i] = new(sql.NullFloat64)
-		case apistatistics.FieldID, apistatistics.FieldCallCount, apistatistics.FieldSuccessCount, apistatistics.FieldFailureCount:
+		case apistatistics.FieldID, apistatistics.FieldCallCount, apistatistics.FieldSuccessCount, apistatistics.FieldFailureCount, apistatistics.FieldAPIID:
 			values[i] = new(sql.NullInt64)
 		case apistatistics.FieldDescription:
 			values[i] = new(sql.NullString)
 		case apistatistics.FieldCreatedAt, apistatistics.FieldUpdateAt:
 			values[i] = new(sql.NullTime)
-		case apistatistics.ForeignKeys[0]: // api_statistics
-			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type ApiStatistics", columns[i])
 		}
@@ -177,21 +150,15 @@ func (as *ApiStatistics) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				as.UpdateAt = value.Time
 			}
-		case apistatistics.ForeignKeys[0]:
+		case apistatistics.FieldAPIID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field api_statistics", value)
+				return fmt.Errorf("unexpected type %T for field api_id", values[i])
 			} else if value.Valid {
-				as.api_statistics = new(int64)
-				*as.api_statistics = int64(value.Int64)
+				as.APIID = value.Int64
 			}
 		}
 	}
 	return nil
-}
-
-// QueryAPI queries the "api" edge of the ApiStatistics entity.
-func (as *ApiStatistics) QueryAPI() *APIQuery {
-	return NewApiStatisticsClient(as.config).QueryAPI(as)
 }
 
 // Update returns a builder for updating this ApiStatistics.
@@ -252,6 +219,9 @@ func (as *ApiStatistics) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("update_at=")
 	builder.WriteString(as.UpdateAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("api_id=")
+	builder.WriteString(fmt.Sprintf("%v", as.APIID))
 	builder.WriteByte(')')
 	return builder.String()
 }

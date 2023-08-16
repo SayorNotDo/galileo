@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"galileo/ent/testcase"
-	"galileo/ent/testcasesuite"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -193,21 +192,6 @@ func (tc *TestcaseCreate) SetID(i int64) *TestcaseCreate {
 	return tc
 }
 
-// AddTestcaseSuiteIDs adds the "testcase_suite" edge to the TestcaseSuite entity by IDs.
-func (tc *TestcaseCreate) AddTestcaseSuiteIDs(ids ...int64) *TestcaseCreate {
-	tc.mutation.AddTestcaseSuiteIDs(ids...)
-	return tc
-}
-
-// AddTestcaseSuite adds the "testcase_suite" edges to the TestcaseSuite entity.
-func (tc *TestcaseCreate) AddTestcaseSuite(t ...*TestcaseSuite) *TestcaseCreate {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return tc.AddTestcaseSuiteIDs(ids...)
-}
-
 // Mutation returns the TestcaseMutation object of the builder.
 func (tc *TestcaseCreate) Mutation() *TestcaseMutation {
 	return tc.mutation
@@ -369,22 +353,6 @@ func (tc *TestcaseCreate) createSpec() (*Testcase, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.URL(); ok {
 		_spec.SetField(testcase.FieldURL, field.TypeString, value)
 		_node.URL = value
-	}
-	if nodes := tc.mutation.TestcaseSuiteIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   testcase.TestcaseSuiteTable,
-			Columns: testcase.TestcaseSuitePrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

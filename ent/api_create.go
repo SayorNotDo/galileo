@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"galileo/ent/api"
-	"galileo/ent/apistatistics"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -247,25 +246,6 @@ func (ac *APICreate) SetID(i int64) *APICreate {
 	return ac
 }
 
-// SetStatisticsID sets the "statistics" edge to the ApiStatistics entity by ID.
-func (ac *APICreate) SetStatisticsID(id int64) *APICreate {
-	ac.mutation.SetStatisticsID(id)
-	return ac
-}
-
-// SetNillableStatisticsID sets the "statistics" edge to the ApiStatistics entity by ID if the given value is not nil.
-func (ac *APICreate) SetNillableStatisticsID(id *int64) *APICreate {
-	if id != nil {
-		ac = ac.SetStatisticsID(*id)
-	}
-	return ac
-}
-
-// SetStatistics sets the "statistics" edge to the ApiStatistics entity.
-func (ac *APICreate) SetStatistics(a *ApiStatistics) *APICreate {
-	return ac.SetStatisticsID(a.ID)
-}
-
 // Mutation returns the APIMutation object of the builder.
 func (ac *APICreate) Mutation() *APIMutation {
 	return ac.mutation
@@ -449,22 +429,6 @@ func (ac *APICreate) createSpec() (*Api, *sqlgraph.CreateSpec) {
 	if value, ok := ac.mutation.DeletedBy(); ok {
 		_spec.SetField(api.FieldDeletedBy, field.TypeUint32, value)
 		_node.DeletedBy = value
-	}
-	if nodes := ac.mutation.StatisticsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   api.StatisticsTable,
-			Columns: []string{api.StatisticsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

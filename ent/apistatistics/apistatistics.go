@@ -31,17 +31,10 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdateAt holds the string denoting the update_at field in the database.
 	FieldUpdateAt = "update_at"
-	// EdgeAPI holds the string denoting the api edge name in mutations.
-	EdgeAPI = "api"
+	// FieldAPIID holds the string denoting the api_id field in the database.
+	FieldAPIID = "api_id"
 	// Table holds the table name of the apistatistics in the database.
 	Table = "api_statistics"
-	// APITable is the table that holds the api relation/edge.
-	APITable = "api_statistics"
-	// APIInverseTable is the table name for the Api entity.
-	// It exists in this package in order to avoid circular dependency with the "api" package.
-	APIInverseTable = "api"
-	// APIColumn is the table column denoting the api relation/edge.
-	APIColumn = "api_statistics"
 )
 
 // Columns holds all SQL columns for apistatistics fields.
@@ -59,12 +52,7 @@ var Columns = []string{
 	FieldDescription,
 	FieldCreatedAt,
 	FieldUpdateAt,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "api_statistics"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"api_statistics",
+	FieldAPIID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -74,10 +62,10 @@ func ValidColumn(column string) bool {
 			return true
 		}
 	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
-			return true
-		}
-	}
 	return false
 }
+
+var (
+	// APIIDValidator is a validator for the "api_id" field. It is called by the builders before save.
+	APIIDValidator func(int64) error
+)

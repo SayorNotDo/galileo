@@ -5,7 +5,6 @@ package ent
 import (
 	"context"
 	"fmt"
-	"galileo/ent/api"
 	"galileo/ent/apistatistics"
 	"galileo/ent/predicate"
 	"math"
@@ -22,8 +21,6 @@ type ApiStatisticsQuery struct {
 	order      []OrderFunc
 	inters     []Interceptor
 	predicates []predicate.ApiStatistics
-	withAPI    *APIQuery
-	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -58,28 +55,6 @@ func (asq *ApiStatisticsQuery) Unique(unique bool) *ApiStatisticsQuery {
 func (asq *ApiStatisticsQuery) Order(o ...OrderFunc) *ApiStatisticsQuery {
 	asq.order = append(asq.order, o...)
 	return asq
-}
-
-// QueryAPI chains the current query on the "api" edge.
-func (asq *ApiStatisticsQuery) QueryAPI() *APIQuery {
-	query := (&APIClient{config: asq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := asq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := asq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(apistatistics.Table, apistatistics.FieldID, selector),
-			sqlgraph.To(api.Table, api.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, apistatistics.APITable, apistatistics.APIColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(asq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
 }
 
 // First returns the first ApiStatistics entity from the query.
@@ -274,22 +249,10 @@ func (asq *ApiStatisticsQuery) Clone() *ApiStatisticsQuery {
 		order:      append([]OrderFunc{}, asq.order...),
 		inters:     append([]Interceptor{}, asq.inters...),
 		predicates: append([]predicate.ApiStatistics{}, asq.predicates...),
-		withAPI:    asq.withAPI.Clone(),
 		// clone intermediate query.
 		sql:  asq.sql.Clone(),
 		path: asq.path,
 	}
-}
-
-// WithAPI tells the query-builder to eager-load the nodes that are connected to
-// the "api" edge. The optional arguments are used to configure the query builder of the edge.
-func (asq *ApiStatisticsQuery) WithAPI(opts ...func(*APIQuery)) *ApiStatisticsQuery {
-	query := (&APIClient{config: asq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	asq.withAPI = query
-	return asq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -368,26 +331,15 @@ func (asq *ApiStatisticsQuery) prepareQuery(ctx context.Context) error {
 
 func (asq *ApiStatisticsQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*ApiStatistics, error) {
 	var (
-		nodes       = []*ApiStatistics{}
-		withFKs     = asq.withFKs
-		_spec       = asq.querySpec()
-		loadedTypes = [1]bool{
-			asq.withAPI != nil,
-		}
+		nodes = []*ApiStatistics{}
+		_spec = asq.querySpec()
 	)
-	if asq.withAPI != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, apistatistics.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*ApiStatistics).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &ApiStatistics{config: asq.config}
 		nodes = append(nodes, node)
-		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -399,46 +351,7 @@ func (asq *ApiStatisticsQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := asq.withAPI; query != nil {
-		if err := asq.loadAPI(ctx, query, nodes, nil,
-			func(n *ApiStatistics, e *Api) { n.Edges.API = e }); err != nil {
-			return nil, err
-		}
-	}
 	return nodes, nil
-}
-
-func (asq *ApiStatisticsQuery) loadAPI(ctx context.Context, query *APIQuery, nodes []*ApiStatistics, init func(*ApiStatistics), assign func(*ApiStatistics, *Api)) error {
-	ids := make([]int64, 0, len(nodes))
-	nodeids := make(map[int64][]*ApiStatistics)
-	for i := range nodes {
-		if nodes[i].api_statistics == nil {
-			continue
-		}
-		fk := *nodes[i].api_statistics
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(api.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "api_statistics" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
 }
 
 func (asq *ApiStatisticsQuery) sqlCount(ctx context.Context) (int, error) {

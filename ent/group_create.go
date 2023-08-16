@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"galileo/ent/group"
-	"galileo/ent/user"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -45,21 +44,6 @@ func (gc *GroupCreate) SetNillableCreatedAt(t *time.Time) *GroupCreate {
 		gc.SetCreatedAt(*t)
 	}
 	return gc
-}
-
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (gc *GroupCreate) AddUserIDs(ids ...uint32) *GroupCreate {
-	gc.mutation.AddUserIDs(ids...)
-	return gc
-}
-
-// AddUser adds the "user" edges to the User entity.
-func (gc *GroupCreate) AddUser(u ...*User) *GroupCreate {
-	ids := make([]uint32, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return gc.AddUserIDs(ids...)
 }
 
 // Mutation returns the GroupMutation object of the builder.
@@ -156,22 +140,6 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if value, ok := gc.mutation.CreatedAt(); ok {
 		_spec.SetField(group.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
-	}
-	if nodes := gc.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.UserTable,
-			Columns: []string{group.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint32),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

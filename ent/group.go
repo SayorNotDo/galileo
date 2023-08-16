@@ -22,27 +22,6 @@ type Group struct {
 	CreatedBy uint32 `json:"created_by,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
-	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the GroupQuery when eager-loading is set.
-	Edges GroupEdges `json:"edges"`
-}
-
-// GroupEdges holds the relations/edges for other nodes in the graph.
-type GroupEdges struct {
-	// User holds the value of the user edge.
-	User []*User `json:"user,omitempty"`
-	// loadedTypes holds the information for reporting if a
-	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
-}
-
-// UserOrErr returns the User value or an error if the edge
-// was not loaded in eager-loading.
-func (e GroupEdges) UserOrErr() ([]*User, error) {
-	if e.loadedTypes[0] {
-		return e.User, nil
-	}
-	return nil, &NotLoadedError{edge: "user"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -98,11 +77,6 @@ func (gr *Group) assignValues(columns []string, values []any) error {
 		}
 	}
 	return nil
-}
-
-// QueryUser queries the "user" edge of the Group entity.
-func (gr *Group) QueryUser() *UserQuery {
-	return NewGroupClient(gr.config).QueryUser(gr)
 }
 
 // Update returns a builder for updating this Group.

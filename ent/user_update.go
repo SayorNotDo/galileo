@@ -221,6 +221,33 @@ func (uu *UserUpdate) SetNillableUUID(u *uuid.UUID) *UserUpdate {
 	return uu
 }
 
+// SetGroupID sets the "group_id" field.
+func (uu *UserUpdate) SetGroupID(i int64) *UserUpdate {
+	uu.mutation.ResetGroupID()
+	uu.mutation.SetGroupID(i)
+	return uu
+}
+
+// SetNillableGroupID sets the "group_id" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableGroupID(i *int64) *UserUpdate {
+	if i != nil {
+		uu.SetGroupID(*i)
+	}
+	return uu
+}
+
+// AddGroupID adds i to the "group_id" field.
+func (uu *UserUpdate) AddGroupID(i int64) *UserUpdate {
+	uu.mutation.AddGroupID(i)
+	return uu
+}
+
+// ClearGroupID clears the value of the "group_id" field.
+func (uu *UserUpdate) ClearGroupID() *UserUpdate {
+	uu.mutation.ClearGroupID()
+	return uu
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -333,6 +360,15 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.UUID(); ok {
 		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
+	}
+	if value, ok := uu.mutation.GroupID(); ok {
+		_spec.SetField(user.FieldGroupID, field.TypeInt64, value)
+	}
+	if value, ok := uu.mutation.AddedGroupID(); ok {
+		_spec.AddField(user.FieldGroupID, field.TypeInt64, value)
+	}
+	if uu.mutation.GroupIDCleared() {
+		_spec.ClearField(user.FieldGroupID, field.TypeInt64)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -546,6 +582,33 @@ func (uuo *UserUpdateOne) SetNillableUUID(u *uuid.UUID) *UserUpdateOne {
 	return uuo
 }
 
+// SetGroupID sets the "group_id" field.
+func (uuo *UserUpdateOne) SetGroupID(i int64) *UserUpdateOne {
+	uuo.mutation.ResetGroupID()
+	uuo.mutation.SetGroupID(i)
+	return uuo
+}
+
+// SetNillableGroupID sets the "group_id" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableGroupID(i *int64) *UserUpdateOne {
+	if i != nil {
+		uuo.SetGroupID(*i)
+	}
+	return uuo
+}
+
+// AddGroupID adds i to the "group_id" field.
+func (uuo *UserUpdateOne) AddGroupID(i int64) *UserUpdateOne {
+	uuo.mutation.AddGroupID(i)
+	return uuo
+}
+
+// ClearGroupID clears the value of the "group_id" field.
+func (uuo *UserUpdateOne) ClearGroupID() *UserUpdateOne {
+	uuo.mutation.ClearGroupID()
+	return uuo
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -688,6 +751,15 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.UUID(); ok {
 		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
+	}
+	if value, ok := uuo.mutation.GroupID(); ok {
+		_spec.SetField(user.FieldGroupID, field.TypeInt64, value)
+	}
+	if value, ok := uuo.mutation.AddedGroupID(); ok {
+		_spec.AddField(user.FieldGroupID, field.TypeInt64, value)
+	}
+	if uuo.mutation.GroupIDCleared() {
+		_spec.ClearField(user.FieldGroupID, field.TypeInt64)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

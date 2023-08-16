@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -113,6 +112,11 @@ func CreatedAt(v time.Time) predicate.ApiStatistics {
 // UpdateAt applies equality check predicate on the "update_at" field. It's identical to UpdateAtEQ.
 func UpdateAt(v time.Time) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldEQ(FieldUpdateAt, v))
+}
+
+// APIID applies equality check predicate on the "api_id" field. It's identical to APIIDEQ.
+func APIID(v int64) predicate.ApiStatistics {
+	return predicate.ApiStatistics(sql.FieldEQ(FieldAPIID, v))
 }
 
 // CallCountEQ applies the EQ predicate on the "call_count" field.
@@ -620,31 +624,44 @@ func UpdateAtLTE(v time.Time) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldLTE(FieldUpdateAt, v))
 }
 
-// HasAPI applies the HasEdge predicate on the "api" edge.
-func HasAPI() predicate.ApiStatistics {
-	return predicate.ApiStatistics(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, APITable, APIColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
+// APIIDEQ applies the EQ predicate on the "api_id" field.
+func APIIDEQ(v int64) predicate.ApiStatistics {
+	return predicate.ApiStatistics(sql.FieldEQ(FieldAPIID, v))
 }
 
-// HasAPIWith applies the HasEdge predicate on the "api" edge with a given conditions (other predicates).
-func HasAPIWith(preds ...predicate.Api) predicate.ApiStatistics {
-	return predicate.ApiStatistics(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(APIInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, APITable, APIColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
+// APIIDNEQ applies the NEQ predicate on the "api_id" field.
+func APIIDNEQ(v int64) predicate.ApiStatistics {
+	return predicate.ApiStatistics(sql.FieldNEQ(FieldAPIID, v))
+}
+
+// APIIDIn applies the In predicate on the "api_id" field.
+func APIIDIn(vs ...int64) predicate.ApiStatistics {
+	return predicate.ApiStatistics(sql.FieldIn(FieldAPIID, vs...))
+}
+
+// APIIDNotIn applies the NotIn predicate on the "api_id" field.
+func APIIDNotIn(vs ...int64) predicate.ApiStatistics {
+	return predicate.ApiStatistics(sql.FieldNotIn(FieldAPIID, vs...))
+}
+
+// APIIDGT applies the GT predicate on the "api_id" field.
+func APIIDGT(v int64) predicate.ApiStatistics {
+	return predicate.ApiStatistics(sql.FieldGT(FieldAPIID, v))
+}
+
+// APIIDGTE applies the GTE predicate on the "api_id" field.
+func APIIDGTE(v int64) predicate.ApiStatistics {
+	return predicate.ApiStatistics(sql.FieldGTE(FieldAPIID, v))
+}
+
+// APIIDLT applies the LT predicate on the "api_id" field.
+func APIIDLT(v int64) predicate.ApiStatistics {
+	return predicate.ApiStatistics(sql.FieldLT(FieldAPIID, v))
+}
+
+// APIIDLTE applies the LTE predicate on the "api_id" field.
+func APIIDLTE(v int64) predicate.ApiStatistics {
+	return predicate.ApiStatistics(sql.FieldLTE(FieldAPIID, v))
 }
 
 // And groups predicates with the AND operator between them.

@@ -5,7 +5,6 @@ package ent
 import (
 	"fmt"
 	"galileo/ent/api"
-	"galileo/ent/apistatistics"
 	"strings"
 	"time"
 
@@ -53,31 +52,6 @@ type Api struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy uint32 `json:"deleted_by,omitempty"`
-	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ApiQuery when eager-loading is set.
-	Edges ApiEdges `json:"edges"`
-}
-
-// ApiEdges holds the relations/edges for other nodes in the graph.
-type ApiEdges struct {
-	// Statistics holds the value of the statistics edge.
-	Statistics *ApiStatistics `json:"statistics,omitempty"`
-	// loadedTypes holds the information for reporting if a
-	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
-}
-
-// StatisticsOrErr returns the Statistics value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e ApiEdges) StatisticsOrErr() (*ApiStatistics, error) {
-	if e.loadedTypes[0] {
-		if e.Statistics == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: apistatistics.Label}
-		}
-		return e.Statistics, nil
-	}
-	return nil, &NotLoadedError{edge: "statistics"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -223,11 +197,6 @@ func (a *Api) assignValues(columns []string, values []any) error {
 		}
 	}
 	return nil
-}
-
-// QueryStatistics queries the "statistics" edge of the Api entity.
-func (a *Api) QueryStatistics() *ApiStatisticsQuery {
-	return NewAPIClient(a.config).QueryStatistics(a)
 }
 
 // Update returns a builder for updating this Api.

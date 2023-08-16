@@ -4,7 +4,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -35,15 +34,11 @@ func (ApiStatistics) Fields() []ent.Field {
 		field.String("description"),
 		field.Time("created_at"),
 		field.Time("update_at"),
+		field.Int64("api_id").Positive(),
 	}
 }
 
 // Edges of the ApiStatistics.
 func (ApiStatistics) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.From("api", Api.Type).
-			Ref("statistics").
-			Unique().
-			Required(),
-	}
+	return []ent.Edge{}
 }

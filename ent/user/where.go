@@ -130,6 +130,11 @@ func UUID(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldUUID, v))
 }
 
+// GroupID applies equality check predicate on the "group_id" field. It's identical to GroupIDEQ.
+func GroupID(v int64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldGroupID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -893,6 +898,56 @@ func UUIDLT(v uuid.UUID) predicate.User {
 // UUIDLTE applies the LTE predicate on the "uuid" field.
 func UUIDLTE(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldUUID, v))
+}
+
+// GroupIDEQ applies the EQ predicate on the "group_id" field.
+func GroupIDEQ(v int64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldGroupID, v))
+}
+
+// GroupIDNEQ applies the NEQ predicate on the "group_id" field.
+func GroupIDNEQ(v int64) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldGroupID, v))
+}
+
+// GroupIDIn applies the In predicate on the "group_id" field.
+func GroupIDIn(vs ...int64) predicate.User {
+	return predicate.User(sql.FieldIn(FieldGroupID, vs...))
+}
+
+// GroupIDNotIn applies the NotIn predicate on the "group_id" field.
+func GroupIDNotIn(vs ...int64) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldGroupID, vs...))
+}
+
+// GroupIDGT applies the GT predicate on the "group_id" field.
+func GroupIDGT(v int64) predicate.User {
+	return predicate.User(sql.FieldGT(FieldGroupID, v))
+}
+
+// GroupIDGTE applies the GTE predicate on the "group_id" field.
+func GroupIDGTE(v int64) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldGroupID, v))
+}
+
+// GroupIDLT applies the LT predicate on the "group_id" field.
+func GroupIDLT(v int64) predicate.User {
+	return predicate.User(sql.FieldLT(FieldGroupID, v))
+}
+
+// GroupIDLTE applies the LTE predicate on the "group_id" field.
+func GroupIDLTE(v int64) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldGroupID, v))
+}
+
+// GroupIDIsNil applies the IsNil predicate on the "group_id" field.
+func GroupIDIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldGroupID))
+}
+
+// GroupIDNotNil applies the NotNil predicate on the "group_id" field.
+func GroupIDNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldGroupID))
 }
 
 // And groups predicates with the AND operator between them.

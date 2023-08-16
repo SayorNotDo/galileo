@@ -42,27 +42,6 @@ type Testcase struct {
 	Label string `json:"label,omitempty"`
 	// URL holds the value of the "url" field.
 	URL string `json:"url,omitempty"`
-	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the TestcaseQuery when eager-loading is set.
-	Edges TestcaseEdges `json:"edges"`
-}
-
-// TestcaseEdges holds the relations/edges for other nodes in the graph.
-type TestcaseEdges struct {
-	// TestcaseSuite holds the value of the testcase_suite edge.
-	TestcaseSuite []*TestcaseSuite `json:"testcase_suite,omitempty"`
-	// loadedTypes holds the information for reporting if a
-	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
-}
-
-// TestcaseSuiteOrErr returns the TestcaseSuite value or an error if the edge
-// was not loaded in eager-loading.
-func (e TestcaseEdges) TestcaseSuiteOrErr() ([]*TestcaseSuite, error) {
-	if e.loadedTypes[0] {
-		return e.TestcaseSuite, nil
-	}
-	return nil, &NotLoadedError{edge: "testcase_suite"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -178,11 +157,6 @@ func (t *Testcase) assignValues(columns []string, values []any) error {
 		}
 	}
 	return nil
-}
-
-// QueryTestcaseSuite queries the "testcase_suite" edge of the Testcase entity.
-func (t *Testcase) QueryTestcaseSuite() *TestcaseSuiteQuery {
-	return NewTestcaseClient(t.config).QueryTestcaseSuite(t)
 }
 
 // Update returns a builder for updating this Testcase.

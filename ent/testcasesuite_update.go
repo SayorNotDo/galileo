@@ -7,12 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"galileo/ent/predicate"
-	"galileo/ent/testcase"
 	"galileo/ent/testcasesuite"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
@@ -74,45 +74,27 @@ func (tsu *TestcaseSuiteUpdate) ClearUpdatedBy() *TestcaseSuiteUpdate {
 	return tsu
 }
 
-// AddTestcaseIDs adds the "testcase" edge to the Testcase entity by IDs.
-func (tsu *TestcaseSuiteUpdate) AddTestcaseIDs(ids ...int64) *TestcaseSuiteUpdate {
-	tsu.mutation.AddTestcaseIDs(ids...)
+// SetTestcases sets the "testcases" field.
+func (tsu *TestcaseSuiteUpdate) SetTestcases(i []int64) *TestcaseSuiteUpdate {
+	tsu.mutation.SetTestcases(i)
 	return tsu
 }
 
-// AddTestcase adds the "testcase" edges to the Testcase entity.
-func (tsu *TestcaseSuiteUpdate) AddTestcase(t ...*Testcase) *TestcaseSuiteUpdate {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return tsu.AddTestcaseIDs(ids...)
+// AppendTestcases appends i to the "testcases" field.
+func (tsu *TestcaseSuiteUpdate) AppendTestcases(i []int64) *TestcaseSuiteUpdate {
+	tsu.mutation.AppendTestcases(i)
+	return tsu
+}
+
+// ClearTestcases clears the value of the "testcases" field.
+func (tsu *TestcaseSuiteUpdate) ClearTestcases() *TestcaseSuiteUpdate {
+	tsu.mutation.ClearTestcases()
+	return tsu
 }
 
 // Mutation returns the TestcaseSuiteMutation object of the builder.
 func (tsu *TestcaseSuiteUpdate) Mutation() *TestcaseSuiteMutation {
 	return tsu.mutation
-}
-
-// ClearTestcase clears all "testcase" edges to the Testcase entity.
-func (tsu *TestcaseSuiteUpdate) ClearTestcase() *TestcaseSuiteUpdate {
-	tsu.mutation.ClearTestcase()
-	return tsu
-}
-
-// RemoveTestcaseIDs removes the "testcase" edge to Testcase entities by IDs.
-func (tsu *TestcaseSuiteUpdate) RemoveTestcaseIDs(ids ...int64) *TestcaseSuiteUpdate {
-	tsu.mutation.RemoveTestcaseIDs(ids...)
-	return tsu
-}
-
-// RemoveTestcase removes "testcase" edges to Testcase entities.
-func (tsu *TestcaseSuiteUpdate) RemoveTestcase(t ...*Testcase) *TestcaseSuiteUpdate {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return tsu.RemoveTestcaseIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -191,50 +173,16 @@ func (tsu *TestcaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if tsu.mutation.UpdatedByCleared() {
 		_spec.ClearField(testcasesuite.FieldUpdatedBy, field.TypeUint32)
 	}
-	if tsu.mutation.TestcaseCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   testcasesuite.TestcaseTable,
-			Columns: testcasesuite.TestcasePrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if value, ok := tsu.mutation.Testcases(); ok {
+		_spec.SetField(testcasesuite.FieldTestcases, field.TypeJSON, value)
 	}
-	if nodes := tsu.mutation.RemovedTestcaseIDs(); len(nodes) > 0 && !tsu.mutation.TestcaseCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   testcasesuite.TestcaseTable,
-			Columns: testcasesuite.TestcasePrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if value, ok := tsu.mutation.AppendedTestcases(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, testcasesuite.FieldTestcases, value)
+		})
 	}
-	if nodes := tsu.mutation.TestcaseIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   testcasesuite.TestcaseTable,
-			Columns: testcasesuite.TestcasePrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	if tsu.mutation.TestcasesCleared() {
+		_spec.ClearField(testcasesuite.FieldTestcases, field.TypeJSON)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tsu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -301,45 +249,27 @@ func (tsuo *TestcaseSuiteUpdateOne) ClearUpdatedBy() *TestcaseSuiteUpdateOne {
 	return tsuo
 }
 
-// AddTestcaseIDs adds the "testcase" edge to the Testcase entity by IDs.
-func (tsuo *TestcaseSuiteUpdateOne) AddTestcaseIDs(ids ...int64) *TestcaseSuiteUpdateOne {
-	tsuo.mutation.AddTestcaseIDs(ids...)
+// SetTestcases sets the "testcases" field.
+func (tsuo *TestcaseSuiteUpdateOne) SetTestcases(i []int64) *TestcaseSuiteUpdateOne {
+	tsuo.mutation.SetTestcases(i)
 	return tsuo
 }
 
-// AddTestcase adds the "testcase" edges to the Testcase entity.
-func (tsuo *TestcaseSuiteUpdateOne) AddTestcase(t ...*Testcase) *TestcaseSuiteUpdateOne {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return tsuo.AddTestcaseIDs(ids...)
+// AppendTestcases appends i to the "testcases" field.
+func (tsuo *TestcaseSuiteUpdateOne) AppendTestcases(i []int64) *TestcaseSuiteUpdateOne {
+	tsuo.mutation.AppendTestcases(i)
+	return tsuo
+}
+
+// ClearTestcases clears the value of the "testcases" field.
+func (tsuo *TestcaseSuiteUpdateOne) ClearTestcases() *TestcaseSuiteUpdateOne {
+	tsuo.mutation.ClearTestcases()
+	return tsuo
 }
 
 // Mutation returns the TestcaseSuiteMutation object of the builder.
 func (tsuo *TestcaseSuiteUpdateOne) Mutation() *TestcaseSuiteMutation {
 	return tsuo.mutation
-}
-
-// ClearTestcase clears all "testcase" edges to the Testcase entity.
-func (tsuo *TestcaseSuiteUpdateOne) ClearTestcase() *TestcaseSuiteUpdateOne {
-	tsuo.mutation.ClearTestcase()
-	return tsuo
-}
-
-// RemoveTestcaseIDs removes the "testcase" edge to Testcase entities by IDs.
-func (tsuo *TestcaseSuiteUpdateOne) RemoveTestcaseIDs(ids ...int64) *TestcaseSuiteUpdateOne {
-	tsuo.mutation.RemoveTestcaseIDs(ids...)
-	return tsuo
-}
-
-// RemoveTestcase removes "testcase" edges to Testcase entities.
-func (tsuo *TestcaseSuiteUpdateOne) RemoveTestcase(t ...*Testcase) *TestcaseSuiteUpdateOne {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return tsuo.RemoveTestcaseIDs(ids...)
 }
 
 // Where appends a list predicates to the TestcaseSuiteUpdate builder.
@@ -448,50 +378,16 @@ func (tsuo *TestcaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *Testcas
 	if tsuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(testcasesuite.FieldUpdatedBy, field.TypeUint32)
 	}
-	if tsuo.mutation.TestcaseCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   testcasesuite.TestcaseTable,
-			Columns: testcasesuite.TestcasePrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if value, ok := tsuo.mutation.Testcases(); ok {
+		_spec.SetField(testcasesuite.FieldTestcases, field.TypeJSON, value)
 	}
-	if nodes := tsuo.mutation.RemovedTestcaseIDs(); len(nodes) > 0 && !tsuo.mutation.TestcaseCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   testcasesuite.TestcaseTable,
-			Columns: testcasesuite.TestcasePrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if value, ok := tsuo.mutation.AppendedTestcases(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, testcasesuite.FieldTestcases, value)
+		})
 	}
-	if nodes := tsuo.mutation.TestcaseIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   testcasesuite.TestcaseTable,
-			Columns: testcasesuite.TestcasePrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	if tsuo.mutation.TestcasesCleared() {
+		_spec.ClearField(testcasesuite.FieldTestcases, field.TypeJSON)
 	}
 	_node = &TestcaseSuite{config: tsuo.config}
 	_spec.Assign = _node.assignValues

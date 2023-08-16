@@ -46,8 +46,9 @@ type User struct {
 	// IsDeleted holds the value of the "is_deleted" field.
 	IsDeleted *bool `json:"is_deleted,omitempty"`
 	// UUID holds the value of the "uuid" field.
-	UUID       uuid.UUID `json:"uuid,omitempty"`
-	group_user *int
+	UUID uuid.UUID `json:"uuid,omitempty"`
+	// GroupID holds the value of the "group_id" field.
+	GroupID int64 `json:"group_id,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -57,7 +58,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldActive, user.FieldIsDeleted:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldRole, user.FieldDeletedBy:
+		case user.FieldID, user.FieldRole, user.FieldDeletedBy, user.FieldGroupID:
 			values[i] = new(sql.NullInt64)
 		case user.FieldUsername, user.FieldChineseName, user.FieldNickname, user.FieldPassword, user.FieldPhone, user.FieldEmail, user.FieldAvatar:
 			values[i] = new(sql.NullString)
@@ -65,8 +66,6 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullTime)
 		case user.FieldUUID:
 			values[i] = new(uuid.UUID)
-		case user.ForeignKeys[0]: // group_user
-			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type User", columns[i])
 		}
@@ -181,12 +180,11 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				u.UUID = *value
 			}
-		case user.ForeignKeys[0]:
+		case user.FieldGroupID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field group_user", value)
+				return fmt.Errorf("unexpected type %T for field group_id", values[i])
 			} else if value.Valid {
-				u.group_user = new(int)
-				*u.group_user = int(value.Int64)
+				u.GroupID = value.Int64
 			}
 		}
 	}
@@ -266,6 +264,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("uuid=")
 	builder.WriteString(fmt.Sprintf("%v", u.UUID))
+	builder.WriteString(", ")
+	builder.WriteString("group_id=")
+	builder.WriteString(fmt.Sprintf("%v", u.GroupID))
 	builder.WriteByte(')')
 	return builder.String()
 }

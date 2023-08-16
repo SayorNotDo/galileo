@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"galileo/ent/testcase"
 	"galileo/ent/testcasesuite"
 	"time"
 
@@ -75,25 +74,16 @@ func (tsc *TestcaseSuiteCreate) SetNillableUpdatedBy(u *uint32) *TestcaseSuiteCr
 	return tsc
 }
 
+// SetTestcases sets the "testcases" field.
+func (tsc *TestcaseSuiteCreate) SetTestcases(i []int64) *TestcaseSuiteCreate {
+	tsc.mutation.SetTestcases(i)
+	return tsc
+}
+
 // SetID sets the "id" field.
 func (tsc *TestcaseSuiteCreate) SetID(i int64) *TestcaseSuiteCreate {
 	tsc.mutation.SetID(i)
 	return tsc
-}
-
-// AddTestcaseIDs adds the "testcase" edge to the Testcase entity by IDs.
-func (tsc *TestcaseSuiteCreate) AddTestcaseIDs(ids ...int64) *TestcaseSuiteCreate {
-	tsc.mutation.AddTestcaseIDs(ids...)
-	return tsc
-}
-
-// AddTestcase adds the "testcase" edges to the Testcase entity.
-func (tsc *TestcaseSuiteCreate) AddTestcase(t ...*Testcase) *TestcaseSuiteCreate {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return tsc.AddTestcaseIDs(ids...)
 }
 
 // Mutation returns the TestcaseSuiteMutation object of the builder.
@@ -205,21 +195,9 @@ func (tsc *TestcaseSuiteCreate) createSpec() (*TestcaseSuite, *sqlgraph.CreateSp
 		_spec.SetField(testcasesuite.FieldUpdatedBy, field.TypeUint32, value)
 		_node.UpdatedBy = value
 	}
-	if nodes := tsc.mutation.TestcaseIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   testcasesuite.TestcaseTable,
-			Columns: testcasesuite.TestcasePrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
+	if value, ok := tsc.mutation.Testcases(); ok {
+		_spec.SetField(testcasesuite.FieldTestcases, field.TypeJSON, value)
+		_node.Testcases = value
 	}
 	return _node, _spec
 }

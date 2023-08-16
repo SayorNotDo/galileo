@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"galileo/ent/api"
-	"galileo/ent/apistatistics"
 	"galileo/ent/predicate"
 	"time"
 
@@ -321,34 +320,9 @@ func (au *APIUpdate) ClearDeletedBy() *APIUpdate {
 	return au
 }
 
-// SetStatisticsID sets the "statistics" edge to the ApiStatistics entity by ID.
-func (au *APIUpdate) SetStatisticsID(id int64) *APIUpdate {
-	au.mutation.SetStatisticsID(id)
-	return au
-}
-
-// SetNillableStatisticsID sets the "statistics" edge to the ApiStatistics entity by ID if the given value is not nil.
-func (au *APIUpdate) SetNillableStatisticsID(id *int64) *APIUpdate {
-	if id != nil {
-		au = au.SetStatisticsID(*id)
-	}
-	return au
-}
-
-// SetStatistics sets the "statistics" edge to the ApiStatistics entity.
-func (au *APIUpdate) SetStatistics(a *ApiStatistics) *APIUpdate {
-	return au.SetStatisticsID(a.ID)
-}
-
 // Mutation returns the APIMutation object of the builder.
 func (au *APIUpdate) Mutation() *APIMutation {
 	return au.mutation
-}
-
-// ClearStatistics clears the "statistics" edge to the ApiStatistics entity.
-func (au *APIUpdate) ClearStatistics() *APIUpdate {
-	au.mutation.ClearStatistics()
-	return au
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -514,35 +488,6 @@ func (au *APIUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if au.mutation.DeletedByCleared() {
 		_spec.ClearField(api.FieldDeletedBy, field.TypeUint32)
-	}
-	if au.mutation.StatisticsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   api.StatisticsTable,
-			Columns: []string{api.StatisticsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := au.mutation.StatisticsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   api.StatisticsTable,
-			Columns: []string{api.StatisticsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -856,34 +801,9 @@ func (auo *APIUpdateOne) ClearDeletedBy() *APIUpdateOne {
 	return auo
 }
 
-// SetStatisticsID sets the "statistics" edge to the ApiStatistics entity by ID.
-func (auo *APIUpdateOne) SetStatisticsID(id int64) *APIUpdateOne {
-	auo.mutation.SetStatisticsID(id)
-	return auo
-}
-
-// SetNillableStatisticsID sets the "statistics" edge to the ApiStatistics entity by ID if the given value is not nil.
-func (auo *APIUpdateOne) SetNillableStatisticsID(id *int64) *APIUpdateOne {
-	if id != nil {
-		auo = auo.SetStatisticsID(*id)
-	}
-	return auo
-}
-
-// SetStatistics sets the "statistics" edge to the ApiStatistics entity.
-func (auo *APIUpdateOne) SetStatistics(a *ApiStatistics) *APIUpdateOne {
-	return auo.SetStatisticsID(a.ID)
-}
-
 // Mutation returns the APIMutation object of the builder.
 func (auo *APIUpdateOne) Mutation() *APIMutation {
 	return auo.mutation
-}
-
-// ClearStatistics clears the "statistics" edge to the ApiStatistics entity.
-func (auo *APIUpdateOne) ClearStatistics() *APIUpdateOne {
-	auo.mutation.ClearStatistics()
-	return auo
 }
 
 // Where appends a list predicates to the APIUpdate builder.
@@ -1079,35 +999,6 @@ func (auo *APIUpdateOne) sqlSave(ctx context.Context) (_node *Api, err error) {
 	}
 	if auo.mutation.DeletedByCleared() {
 		_spec.ClearField(api.FieldDeletedBy, field.TypeUint32)
-	}
-	if auo.mutation.StatisticsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   api.StatisticsTable,
-			Columns: []string{api.StatisticsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := auo.mutation.StatisticsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   api.StatisticsTable,
-			Columns: []string{api.StatisticsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Api{config: auo.config}
 	_spec.Assign = _node.assignValues

@@ -26,13 +26,13 @@ type Testcase struct {
 }
 
 type TestcaseSuite struct {
-	Id           int64      `json:"id"`
-	Name         string     `json:"name"`
-	CreatedAt    time.Time  `json:"created_at,omitempty"`
-	CreatedBy    uint32     `json:"created_by,omitempty"`
-	UpdatedAt    time.Time  `json:"update_at,omitempty"`
-	UpdatedBy    uint32     `json:"updated_by,omitempty"`
-	TestcaseList []Testcase `json:"case_list,omitempty"`
+	Id           int64       `json:"id"`
+	Name         string      `json:"name"`
+	CreatedAt    time.Time   `json:"created_at,omitempty"`
+	CreatedBy    uint32      `json:"created_by,omitempty"`
+	UpdatedAt    time.Time   `json:"update_at,omitempty"`
+	UpdatedBy    uint32      `json:"updated_by,omitempty"`
+	TestcaseList []*Testcase `json:"case_list,omitempty"`
 }
 
 type TestcaseRepo interface {
@@ -42,6 +42,7 @@ type TestcaseRepo interface {
 	TestcaseByName(ctx context.Context, name string) (*Testcase, error)
 	UploadTestcaseFile(ctx context.Context, fileName string, fileType string, content []byte) (string, error)
 	CreateTestcaseSuite(ctx context.Context, suiteName string, caseIdList []int64) (*TestcaseSuite, error)
+	GetTestcaseSuiteById(ctx context.Context, suiteId int64) (*TestcaseSuite, error)
 	DebugTestcase(ctx context.Context, content string) (err error, result string)
 }
 
@@ -81,12 +82,12 @@ func (uc *TestcaseUseCase) UploadTestcaseFile(ctx context.Context, fileName stri
 	return uc.repo.UploadTestcaseFile(ctx, fileName, fileType, content)
 }
 
-func (uc *TestcaseUseCase) LoadFramework(ctx context.Context) {
-
-}
-
 func (uc *TestcaseUseCase) CreateTestcaseSuite(ctx context.Context, name string, testcaseList []int64) (*TestcaseSuite, error) {
 	return uc.repo.CreateTestcaseSuite(ctx, name, testcaseList)
+}
+
+func (uc *TestcaseUseCase) GetTestcaseSuiteById(ctx context.Context, suiteId int64) (*TestcaseSuite, error) {
+	return uc.repo.GetTestcaseSuiteById(ctx, suiteId)
 }
 
 func (uc *TestcaseUseCase) TestcaseValidator(fileType, content string) error {

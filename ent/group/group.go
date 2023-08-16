@@ -17,17 +17,8 @@ const (
 	FieldCreatedBy = "created_by"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
-	// EdgeUser holds the string denoting the user edge name in mutations.
-	EdgeUser = "user"
 	// Table holds the table name of the group in the database.
 	Table = "groups"
-	// UserTable is the table that holds the user relation/edge.
-	UserTable = "user"
-	// UserInverseTable is the table name for the User entity.
-	// It exists in this package in order to avoid circular dependency with the "user" package.
-	UserInverseTable = "user"
-	// UserColumn is the table column denoting the user relation/edge.
-	UserColumn = "group_user"
 )
 
 // Columns holds all SQL columns for group fields.

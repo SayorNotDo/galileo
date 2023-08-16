@@ -4,7 +4,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"time"
 )
@@ -42,7 +41,5 @@ func (Testcase) Fields() []ent.Field {
 
 // Edges of the TestCase.
 func (Testcase) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.From("testcase_suite", TestcaseSuite.Type).Ref("testcase"),
-	}
+	return []ent.Edge{}
 }

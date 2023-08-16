@@ -84,21 +84,13 @@ var (
 		{Name: "description", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "update_at", Type: field.TypeTime},
-		{Name: "api_statistics", Type: field.TypeInt64, Unique: true},
+		{Name: "api_id", Type: field.TypeInt64},
 	}
 	// APIStatisticsTable holds the schema information for the "api_statistics" table.
 	APIStatisticsTable = &schema.Table{
 		Name:       "api_statistics",
 		Columns:    APIStatisticsColumns,
 		PrimaryKey: []*schema.Column{APIStatisticsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "api_statistics_api_statistics",
-				Columns:    []*schema.Column{APIStatisticsColumns[13]},
-				RefColumns: []*schema.Column{APIColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-		},
 	}
 	// APITagColumns holds the columns for the "api_tag" table.
 	APITagColumns = []*schema.Column{
@@ -262,6 +254,7 @@ var (
 		{Name: "created_by", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true},
+		{Name: "testcases", Type: field.TypeJSON, Nullable: true},
 		{Name: "task_testcase_suite", Type: field.TypeInt64, Nullable: true},
 	}
 	// TestcaseSuiteTable holds the schema information for the "testcase_suite" table.
@@ -272,7 +265,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "testcase_suite_task_testcase_suite",
-				Columns:    []*schema.Column{TestcaseSuiteColumns[6]},
+				Columns:    []*schema.Column{TestcaseSuiteColumns[7]},
 				RefColumns: []*schema.Column{TaskColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -296,46 +289,13 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "is_deleted", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "uuid", Type: field.TypeUUID},
-		{Name: "group_user", Type: field.TypeInt, Nullable: true},
+		{Name: "group_id", Type: field.TypeInt64, Nullable: true},
 	}
 	// UserTable holds the schema information for the "user" table.
 	UserTable = &schema.Table{
 		Name:       "user",
 		Columns:    UserColumns,
 		PrimaryKey: []*schema.Column{UserColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "user_groups_user",
-				Columns:    []*schema.Column{UserColumns[16]},
-				RefColumns: []*schema.Column{GroupsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-	}
-	// TestcaseSuiteTestcaseColumns holds the columns for the "testcase_suite_testcase" table.
-	TestcaseSuiteTestcaseColumns = []*schema.Column{
-		{Name: "testcase_suite_id", Type: field.TypeInt64},
-		{Name: "testcase_id", Type: field.TypeInt64},
-	}
-	// TestcaseSuiteTestcaseTable holds the schema information for the "testcase_suite_testcase" table.
-	TestcaseSuiteTestcaseTable = &schema.Table{
-		Name:       "testcase_suite_testcase",
-		Columns:    TestcaseSuiteTestcaseColumns,
-		PrimaryKey: []*schema.Column{TestcaseSuiteTestcaseColumns[0], TestcaseSuiteTestcaseColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "testcase_suite_testcase_testcase_suite_id",
-				Columns:    []*schema.Column{TestcaseSuiteTestcaseColumns[0]},
-				RefColumns: []*schema.Column{TestcaseSuiteColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "testcase_suite_testcase_testcase_id",
-				Columns:    []*schema.Column{TestcaseSuiteTestcaseColumns[1]},
-				RefColumns: []*schema.Column{TestcaseColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
@@ -352,7 +312,6 @@ var (
 		TestcaseTable,
 		TestcaseSuiteTable,
 		UserTable,
-		TestcaseSuiteTestcaseTable,
 	}
 )
 
@@ -366,7 +325,6 @@ func init() {
 	APIHistoryTable.Annotation = &entsql.Annotation{
 		Table: "api_history",
 	}
-	APIStatisticsTable.ForeignKeys[0].RefTable = APITable
 	APIStatisticsTable.Annotation = &entsql.Annotation{
 		Table: "api_statistics",
 	}
@@ -392,10 +350,7 @@ func init() {
 	TestcaseSuiteTable.Annotation = &entsql.Annotation{
 		Table: "testcase_suite",
 	}
-	UserTable.ForeignKeys[0].RefTable = GroupsTable
 	UserTable.Annotation = &entsql.Annotation{
 		Table: "user",
 	}
-	TestcaseSuiteTestcaseTable.ForeignKeys[0].RefTable = TestcaseSuiteTable
-	TestcaseSuiteTestcaseTable.ForeignKeys[1].RefTable = TestcaseTable
 }

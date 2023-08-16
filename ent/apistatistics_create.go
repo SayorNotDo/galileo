@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"galileo/ent/api"
 	"galileo/ent/apistatistics"
 	"time"
 
@@ -93,21 +92,16 @@ func (asc *ApiStatisticsCreate) SetUpdateAt(t time.Time) *ApiStatisticsCreate {
 	return asc
 }
 
+// SetAPIID sets the "api_id" field.
+func (asc *ApiStatisticsCreate) SetAPIID(i int64) *ApiStatisticsCreate {
+	asc.mutation.SetAPIID(i)
+	return asc
+}
+
 // SetID sets the "id" field.
 func (asc *ApiStatisticsCreate) SetID(i int64) *ApiStatisticsCreate {
 	asc.mutation.SetID(i)
 	return asc
-}
-
-// SetAPIID sets the "api" edge to the Api entity by ID.
-func (asc *ApiStatisticsCreate) SetAPIID(id int64) *ApiStatisticsCreate {
-	asc.mutation.SetAPIID(id)
-	return asc
-}
-
-// SetAPI sets the "api" edge to the Api entity.
-func (asc *ApiStatisticsCreate) SetAPI(a *Api) *ApiStatisticsCreate {
-	return asc.SetAPIID(a.ID)
 }
 
 // Mutation returns the ApiStatisticsMutation object of the builder.
@@ -181,7 +175,12 @@ func (asc *ApiStatisticsCreate) check() error {
 		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "ApiStatistics.update_at"`)}
 	}
 	if _, ok := asc.mutation.APIID(); !ok {
-		return &ValidationError{Name: "api", err: errors.New(`ent: missing required edge "ApiStatistics.api"`)}
+		return &ValidationError{Name: "api_id", err: errors.New(`ent: missing required field "ApiStatistics.api_id"`)}
+	}
+	if v, ok := asc.mutation.APIID(); ok {
+		if err := apistatistics.APIIDValidator(v); err != nil {
+			return &ValidationError{Name: "api_id", err: fmt.Errorf(`ent: validator failed for field "ApiStatistics.api_id": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -263,22 +262,9 @@ func (asc *ApiStatisticsCreate) createSpec() (*ApiStatistics, *sqlgraph.CreateSp
 		_spec.SetField(apistatistics.FieldUpdateAt, field.TypeTime, value)
 		_node.UpdateAt = value
 	}
-	if nodes := asc.mutation.APIIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   apistatistics.APITable,
-			Columns: []string{apistatistics.APIColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(api.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.api_statistics = &nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
+	if value, ok := asc.mutation.APIID(); ok {
+		_spec.SetField(apistatistics.FieldAPIID, field.TypeInt64, value)
+		_node.APIID = value
 	}
 	return _node, _spec
 }

@@ -47,17 +47,8 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
 	FieldDeletedBy = "deleted_by"
-	// EdgeStatistics holds the string denoting the statistics edge name in mutations.
-	EdgeStatistics = "statistics"
 	// Table holds the table name of the api in the database.
 	Table = "api"
-	// StatisticsTable is the table that holds the statistics relation/edge.
-	StatisticsTable = "api_statistics"
-	// StatisticsInverseTable is the table name for the ApiStatistics entity.
-	// It exists in this package in order to avoid circular dependency with the "apistatistics" package.
-	StatisticsInverseTable = "api_statistics"
-	// StatisticsColumn is the table column denoting the statistics relation/edge.
-	StatisticsColumn = "api_statistics"
 )
 
 // Columns holds all SQL columns for api fields.

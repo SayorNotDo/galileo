@@ -4,11 +4,9 @@ package ent
 
 import (
 	"context"
-	"database/sql/driver"
 	"fmt"
 	"galileo/ent/group"
 	"galileo/ent/predicate"
-	"galileo/ent/user"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
@@ -23,7 +21,6 @@ type GroupQuery struct {
 	order      []OrderFunc
 	inters     []Interceptor
 	predicates []predicate.Group
-	withUser   *UserQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -58,28 +55,6 @@ func (gq *GroupQuery) Unique(unique bool) *GroupQuery {
 func (gq *GroupQuery) Order(o ...OrderFunc) *GroupQuery {
 	gq.order = append(gq.order, o...)
 	return gq
-}
-
-// QueryUser chains the current query on the "user" edge.
-func (gq *GroupQuery) QueryUser() *UserQuery {
-	query := (&UserClient{config: gq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := gq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := gq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(group.Table, group.FieldID, selector),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, group.UserTable, group.UserColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
 }
 
 // First returns the first Group entity from the query.
@@ -274,22 +249,10 @@ func (gq *GroupQuery) Clone() *GroupQuery {
 		order:      append([]OrderFunc{}, gq.order...),
 		inters:     append([]Interceptor{}, gq.inters...),
 		predicates: append([]predicate.Group{}, gq.predicates...),
-		withUser:   gq.withUser.Clone(),
 		// clone intermediate query.
 		sql:  gq.sql.Clone(),
 		path: gq.path,
 	}
-}
-
-// WithUser tells the query-builder to eager-load the nodes that are connected to
-// the "user" edge. The optional arguments are used to configure the query builder of the edge.
-func (gq *GroupQuery) WithUser(opts ...func(*UserQuery)) *GroupQuery {
-	query := (&UserClient{config: gq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	gq.withUser = query
-	return gq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -368,11 +331,8 @@ func (gq *GroupQuery) prepareQuery(ctx context.Context) error {
 
 func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group, error) {
 	var (
-		nodes       = []*Group{}
-		_spec       = gq.querySpec()
-		loadedTypes = [1]bool{
-			gq.withUser != nil,
-		}
+		nodes = []*Group{}
+		_spec = gq.querySpec()
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Group).scanValues(nil, columns)
@@ -380,7 +340,6 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Group{config: gq.config}
 		nodes = append(nodes, node)
-		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -392,46 +351,7 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := gq.withUser; query != nil {
-		if err := gq.loadUser(ctx, query, nodes,
-			func(n *Group) { n.Edges.User = []*User{} },
-			func(n *Group, e *User) { n.Edges.User = append(n.Edges.User, e) }); err != nil {
-			return nil, err
-		}
-	}
 	return nodes, nil
-}
-
-func (gq *GroupQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*Group, init func(*Group), assign func(*Group, *User)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*Group)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	query.withFKs = true
-	query.Where(predicate.User(func(s *sql.Selector) {
-		s.Where(sql.InValues(group.UserColumn, fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.group_user
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "group_user" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "group_user" returned %v for node %v`, *fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
 }
 
 func (gq *GroupQuery) sqlCount(ctx context.Context) (int, error) {

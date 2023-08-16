@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"galileo/ent/api"
 	"galileo/ent/apistatistics"
 	"galileo/ent/predicate"
 	"time"
@@ -164,26 +163,22 @@ func (asu *ApiStatisticsUpdate) SetUpdateAt(t time.Time) *ApiStatisticsUpdate {
 	return asu
 }
 
-// SetAPIID sets the "api" edge to the Api entity by ID.
-func (asu *ApiStatisticsUpdate) SetAPIID(id int64) *ApiStatisticsUpdate {
-	asu.mutation.SetAPIID(id)
+// SetAPIID sets the "api_id" field.
+func (asu *ApiStatisticsUpdate) SetAPIID(i int64) *ApiStatisticsUpdate {
+	asu.mutation.ResetAPIID()
+	asu.mutation.SetAPIID(i)
 	return asu
 }
 
-// SetAPI sets the "api" edge to the Api entity.
-func (asu *ApiStatisticsUpdate) SetAPI(a *Api) *ApiStatisticsUpdate {
-	return asu.SetAPIID(a.ID)
+// AddAPIID adds i to the "api_id" field.
+func (asu *ApiStatisticsUpdate) AddAPIID(i int64) *ApiStatisticsUpdate {
+	asu.mutation.AddAPIID(i)
+	return asu
 }
 
 // Mutation returns the ApiStatisticsMutation object of the builder.
 func (asu *ApiStatisticsUpdate) Mutation() *ApiStatisticsMutation {
 	return asu.mutation
-}
-
-// ClearAPI clears the "api" edge to the Api entity.
-func (asu *ApiStatisticsUpdate) ClearAPI() *ApiStatisticsUpdate {
-	asu.mutation.ClearAPI()
-	return asu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -215,8 +210,10 @@ func (asu *ApiStatisticsUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (asu *ApiStatisticsUpdate) check() error {
-	if _, ok := asu.mutation.APIID(); asu.mutation.APICleared() && !ok {
-		return errors.New(`ent: clearing a required unique edge "ApiStatistics.api"`)
+	if v, ok := asu.mutation.APIID(); ok {
+		if err := apistatistics.APIIDValidator(v); err != nil {
+			return &ValidationError{Name: "api_id", err: fmt.Errorf(`ent: validator failed for field "ApiStatistics.api_id": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -296,34 +293,11 @@ func (asu *ApiStatisticsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if value, ok := asu.mutation.UpdateAt(); ok {
 		_spec.SetField(apistatistics.FieldUpdateAt, field.TypeTime, value)
 	}
-	if asu.mutation.APICleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   apistatistics.APITable,
-			Columns: []string{apistatistics.APIColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(api.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if value, ok := asu.mutation.APIID(); ok {
+		_spec.SetField(apistatistics.FieldAPIID, field.TypeInt64, value)
 	}
-	if nodes := asu.mutation.APIIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   apistatistics.APITable,
-			Columns: []string{apistatistics.APIColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(api.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	if value, ok := asu.mutation.AddedAPIID(); ok {
+		_spec.AddField(apistatistics.FieldAPIID, field.TypeInt64, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, asu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -480,26 +454,22 @@ func (asuo *ApiStatisticsUpdateOne) SetUpdateAt(t time.Time) *ApiStatisticsUpdat
 	return asuo
 }
 
-// SetAPIID sets the "api" edge to the Api entity by ID.
-func (asuo *ApiStatisticsUpdateOne) SetAPIID(id int64) *ApiStatisticsUpdateOne {
-	asuo.mutation.SetAPIID(id)
+// SetAPIID sets the "api_id" field.
+func (asuo *ApiStatisticsUpdateOne) SetAPIID(i int64) *ApiStatisticsUpdateOne {
+	asuo.mutation.ResetAPIID()
+	asuo.mutation.SetAPIID(i)
 	return asuo
 }
 
-// SetAPI sets the "api" edge to the Api entity.
-func (asuo *ApiStatisticsUpdateOne) SetAPI(a *Api) *ApiStatisticsUpdateOne {
-	return asuo.SetAPIID(a.ID)
+// AddAPIID adds i to the "api_id" field.
+func (asuo *ApiStatisticsUpdateOne) AddAPIID(i int64) *ApiStatisticsUpdateOne {
+	asuo.mutation.AddAPIID(i)
+	return asuo
 }
 
 // Mutation returns the ApiStatisticsMutation object of the builder.
 func (asuo *ApiStatisticsUpdateOne) Mutation() *ApiStatisticsMutation {
 	return asuo.mutation
-}
-
-// ClearAPI clears the "api" edge to the Api entity.
-func (asuo *ApiStatisticsUpdateOne) ClearAPI() *ApiStatisticsUpdateOne {
-	asuo.mutation.ClearAPI()
-	return asuo
 }
 
 // Where appends a list predicates to the ApiStatisticsUpdate builder.
@@ -544,8 +514,10 @@ func (asuo *ApiStatisticsUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (asuo *ApiStatisticsUpdateOne) check() error {
-	if _, ok := asuo.mutation.APIID(); asuo.mutation.APICleared() && !ok {
-		return errors.New(`ent: clearing a required unique edge "ApiStatistics.api"`)
+	if v, ok := asuo.mutation.APIID(); ok {
+		if err := apistatistics.APIIDValidator(v); err != nil {
+			return &ValidationError{Name: "api_id", err: fmt.Errorf(`ent: validator failed for field "ApiStatistics.api_id": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -642,34 +614,11 @@ func (asuo *ApiStatisticsUpdateOne) sqlSave(ctx context.Context) (_node *ApiStat
 	if value, ok := asuo.mutation.UpdateAt(); ok {
 		_spec.SetField(apistatistics.FieldUpdateAt, field.TypeTime, value)
 	}
-	if asuo.mutation.APICleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   apistatistics.APITable,
-			Columns: []string{apistatistics.APIColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(api.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if value, ok := asuo.mutation.APIID(); ok {
+		_spec.SetField(apistatistics.FieldAPIID, field.TypeInt64, value)
 	}
-	if nodes := asuo.mutation.APIIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: true,
-			Table:   apistatistics.APITable,
-			Columns: []string{apistatistics.APIColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(api.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	if value, ok := asuo.mutation.AddedAPIID(); ok {
+		_spec.AddField(apistatistics.FieldAPIID, field.TypeInt64, value)
 	}
 	_node = &ApiStatistics{config: asuo.config}
 	_spec.Assign = _node.assignValues
