@@ -34,7 +34,7 @@ const (
 	User_EmptyToken_FullMethodName        = "/api.user.v1.User/EmptyToken"
 )
 
-// UserClient is the client API for User scheduler.
+// UserClient is the client API for User service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserClient interface {
@@ -168,7 +168,7 @@ func (c *userClient) EmptyToken(ctx context.Context, in *emptypb.Empty, opts ...
 	return out, nil
 }
 
-// UserServer is the server API for User scheduler.
+// UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
 type UserServer interface {
@@ -229,7 +229,7 @@ func (UnimplementedUserServer) EmptyToken(context.Context, *emptypb.Empty) (*Emp
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
-// UnsafeUserServer may be embedded to opt out of forward compatibility for this scheduler.
+// UnsafeUserServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to UserServer will
 // result in compilation errors.
 type UnsafeUserServer interface {
@@ -456,7 +456,7 @@ func _User_EmptyToken_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-// User_ServiceDesc is the grpc.ServiceDesc for User scheduler.
+// User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var User_ServiceDesc = grpc.ServiceDesc{

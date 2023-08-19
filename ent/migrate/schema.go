@@ -290,6 +290,8 @@ var (
 		{Name: "is_deleted", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "uuid", Type: field.TypeUUID},
 		{Name: "group_id", Type: field.TypeInt64, Nullable: true},
+		{Name: "location", Type: field.TypeString, Nullable: true},
+		{Name: "department_id", Type: field.TypeInt64, Nullable: true},
 	}
 	// UserTable holds the schema information for the "user" table.
 	UserTable = &schema.Table{

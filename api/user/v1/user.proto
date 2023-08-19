@@ -105,7 +105,6 @@ message GetUserRequest {
 
 message userInfoReply {
   uint32 id = 1;
-  string password = 2;
   string username = 3;
   string email = 4;
   string nickname = 5;
@@ -113,6 +112,7 @@ message userInfoReply {
   string phone = 7;
   int32 role = 8;
   string chineseName = 9;
+  string password = 2;
   google.protobuf.Timestamp createdAt = 10;
 };
 

@@ -15,10 +15,11 @@ type CoreService struct {
 
 	ec  *biz.EngineUseCase
 	uc  *biz.CoreUseCase
+	uu  *biz.UserUseCase
 	log *log.Helper
 }
 
-func NewCoreService(uc *biz.CoreUseCase, ec *biz.EngineUseCase, logger log.Logger) *CoreService {
+func NewCoreService(uc *biz.CoreUseCase, ec *biz.EngineUseCase, uu *biz.UserUseCase, logger log.Logger) *CoreService {
 	return &CoreService{
 		uc:  uc,
 		ec:  ec,

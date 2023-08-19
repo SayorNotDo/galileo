@@ -46,8 +46,8 @@ func (r *coreRepo) UserByUsername(c context.Context, username string) (*biz.User
 		Phone:    user.Phone,
 		Username: user.Username,
 		Nickname: user.Nickname,
-		Email:    user.Email,
 		Password: user.Password,
+		Email:    user.Email,
 		Role:     user.Role,
 	}, nil
 }

@@ -248,6 +248,53 @@ func (uu *UserUpdate) ClearGroupID() *UserUpdate {
 	return uu
 }
 
+// SetLocation sets the "location" field.
+func (uu *UserUpdate) SetLocation(s string) *UserUpdate {
+	uu.mutation.SetLocation(s)
+	return uu
+}
+
+// SetNillableLocation sets the "location" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableLocation(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetLocation(*s)
+	}
+	return uu
+}
+
+// ClearLocation clears the value of the "location" field.
+func (uu *UserUpdate) ClearLocation() *UserUpdate {
+	uu.mutation.ClearLocation()
+	return uu
+}
+
+// SetDepartmentID sets the "department_id" field.
+func (uu *UserUpdate) SetDepartmentID(i int64) *UserUpdate {
+	uu.mutation.ResetDepartmentID()
+	uu.mutation.SetDepartmentID(i)
+	return uu
+}
+
+// SetNillableDepartmentID sets the "department_id" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableDepartmentID(i *int64) *UserUpdate {
+	if i != nil {
+		uu.SetDepartmentID(*i)
+	}
+	return uu
+}
+
+// AddDepartmentID adds i to the "department_id" field.
+func (uu *UserUpdate) AddDepartmentID(i int64) *UserUpdate {
+	uu.mutation.AddDepartmentID(i)
+	return uu
+}
+
+// ClearDepartmentID clears the value of the "department_id" field.
+func (uu *UserUpdate) ClearDepartmentID() *UserUpdate {
+	uu.mutation.ClearDepartmentID()
+	return uu
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -369,6 +416,21 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.GroupIDCleared() {
 		_spec.ClearField(user.FieldGroupID, field.TypeInt64)
+	}
+	if value, ok := uu.mutation.Location(); ok {
+		_spec.SetField(user.FieldLocation, field.TypeString, value)
+	}
+	if uu.mutation.LocationCleared() {
+		_spec.ClearField(user.FieldLocation, field.TypeString)
+	}
+	if value, ok := uu.mutation.DepartmentID(); ok {
+		_spec.SetField(user.FieldDepartmentID, field.TypeInt64, value)
+	}
+	if value, ok := uu.mutation.AddedDepartmentID(); ok {
+		_spec.AddField(user.FieldDepartmentID, field.TypeInt64, value)
+	}
+	if uu.mutation.DepartmentIDCleared() {
+		_spec.ClearField(user.FieldDepartmentID, field.TypeInt64)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -609,6 +671,53 @@ func (uuo *UserUpdateOne) ClearGroupID() *UserUpdateOne {
 	return uuo
 }
 
+// SetLocation sets the "location" field.
+func (uuo *UserUpdateOne) SetLocation(s string) *UserUpdateOne {
+	uuo.mutation.SetLocation(s)
+	return uuo
+}
+
+// SetNillableLocation sets the "location" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableLocation(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetLocation(*s)
+	}
+	return uuo
+}
+
+// ClearLocation clears the value of the "location" field.
+func (uuo *UserUpdateOne) ClearLocation() *UserUpdateOne {
+	uuo.mutation.ClearLocation()
+	return uuo
+}
+
+// SetDepartmentID sets the "department_id" field.
+func (uuo *UserUpdateOne) SetDepartmentID(i int64) *UserUpdateOne {
+	uuo.mutation.ResetDepartmentID()
+	uuo.mutation.SetDepartmentID(i)
+	return uuo
+}
+
+// SetNillableDepartmentID sets the "department_id" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableDepartmentID(i *int64) *UserUpdateOne {
+	if i != nil {
+		uuo.SetDepartmentID(*i)
+	}
+	return uuo
+}
+
+// AddDepartmentID adds i to the "department_id" field.
+func (uuo *UserUpdateOne) AddDepartmentID(i int64) *UserUpdateOne {
+	uuo.mutation.AddDepartmentID(i)
+	return uuo
+}
+
+// ClearDepartmentID clears the value of the "department_id" field.
+func (uuo *UserUpdateOne) ClearDepartmentID() *UserUpdateOne {
+	uuo.mutation.ClearDepartmentID()
+	return uuo
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -760,6 +869,21 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.GroupIDCleared() {
 		_spec.ClearField(user.FieldGroupID, field.TypeInt64)
+	}
+	if value, ok := uuo.mutation.Location(); ok {
+		_spec.SetField(user.FieldLocation, field.TypeString, value)
+	}
+	if uuo.mutation.LocationCleared() {
+		_spec.ClearField(user.FieldLocation, field.TypeString)
+	}
+	if value, ok := uuo.mutation.DepartmentID(); ok {
+		_spec.SetField(user.FieldDepartmentID, field.TypeInt64, value)
+	}
+	if value, ok := uuo.mutation.AddedDepartmentID(); ok {
+		_spec.AddField(user.FieldDepartmentID, field.TypeInt64, value)
+	}
+	if uuo.mutation.DepartmentIDCleared() {
+		_spec.ClearField(user.FieldDepartmentID, field.TypeInt64)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

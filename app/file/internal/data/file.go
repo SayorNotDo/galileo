@@ -45,8 +45,30 @@ func (r *fileRepo) UploadFile(ctx context.Context, fileName string, fileType str
 	if err != nil {
 		return "", errResponse.SetErrByReason(errResponse.ReasonOssPutObjectFail)
 	}
+	/* TODO: 修改返回内容为 objectName */
 	url := "https://" + r.data.config.Oss.BucketName + "." + r.data.config.Oss.Endpoint + "/" + path
 	return url, nil
+}
+
+func (r *fileRepo) DownloadFile(ctx context.Context, objectName string) error {
+	/* 创建OSSClient实例 */
+	client, err := oss.New(r.data.config.Oss.Endpoint, r.data.config.Oss.AccessKey, r.data.config.Oss.AccessSecret)
+	if err != nil {
+		return err
+	}
+
+	/* 获取存储空间 */
+	bucket, err := client.Bucket(r.data.config.Oss.BucketName)
+	if err != nil {
+		return err
+	}
+
+	/* 下载文件 */
+	err = bucket.GetObjectToFile(objectName, "")
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r *fileRepo) GetOssStsToken(ctx context.Context) (*biz.OssStsToken, error) {

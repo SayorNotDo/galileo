@@ -86,6 +86,21 @@ service Core {
       body: "*"
     };
   }
+  rpc GetUserGroupList(google.protobuf.Empty) returns (UserGroupListReply) {
+    option(google.api.http) = {
+      get: "v1/api/user/group/list"
+    };
+  }
+  rpc GetUserProjectList(google.protobuf.Empty) returns (UserProjectListReply){
+    option(google.api.http) = {
+      get: "v1/api/user/project/list"
+    };
+  }
+  rpc GetUserLatestActivity(google.protobuf.Empty) returns (UserLatestActivityReply) {
+    option(google.api.http) = {
+      get: "v1/api/user/latest-activity"
+    };
+  }
   rpc DataReportTrack(DataReportTrackRequest) returns (google.protobuf.Empty) {
     option(google.api.http) = {
       post: "data/report"
@@ -103,6 +118,31 @@ service Core {
       get: "v1/api/engine/container/{id}",
     };
   }
+}
+
+message UserGroupListReply {}
+
+message UserLatestActivityReply {}
+
+message UserProjectListReply {
+  int64 total = 1;
+  repeated ProjectInfo projectList = 2;
+}
+
+message ProjectInfo {
+  int64 id = 1;
+  string name = 2;
+  string identifier = 3;
+  google.protobuf.Timestamp createdAt = 4;
+  uint32 createdBy = 5;
+  google.protobuf.Timestamp updatedAt = 6;
+  uint32 updatedBy = 7;
+  google.protobuf.Timestamp deletedAt = 8;
+  uint32 deletedBy = 9;
+  google.protobuf.Timestamp startTime = 10;
+  google.protobuf.Timestamp deadline = 11;
+  string description = 12;
+  string remark = 13;
 }
 
 message InspectContainerRequest {

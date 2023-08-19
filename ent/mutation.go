@@ -13176,32 +13176,35 @@ func (m *TestcaseSuiteMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *uint32
-	created_at    *time.Time
-	active        *bool
-	username      *string
-	chineseName   *string
-	nickname      *string
-	password      *string
-	phone         *string
-	email         *string
-	avatar        *string
-	role          *uint8
-	addrole       *int8
-	update_at     *time.Time
-	deleted_at    *time.Time
-	deleted_by    *uint32
-	adddeleted_by *int32
-	is_deleted    *bool
-	uuid          *uuid.UUID
-	group_id      *int64
-	addgroup_id   *int64
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*User, error)
-	predicates    []predicate.User
+	op               Op
+	typ              string
+	id               *uint32
+	created_at       *time.Time
+	active           *bool
+	username         *string
+	chineseName      *string
+	nickname         *string
+	password         *string
+	phone            *string
+	email            *string
+	avatar           *string
+	role             *uint8
+	addrole          *int8
+	update_at        *time.Time
+	deleted_at       *time.Time
+	deleted_by       *uint32
+	adddeleted_by    *int32
+	is_deleted       *bool
+	uuid             *uuid.UUID
+	group_id         *int64
+	addgroup_id      *int64
+	location         *string
+	department_id    *int64
+	adddepartment_id *int64
+	clearedFields    map[string]struct{}
+	done             bool
+	oldValue         func(context.Context) (*User, error)
+	predicates       []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -14024,6 +14027,125 @@ func (m *UserMutation) ResetGroupID() {
 	delete(m.clearedFields, user.FieldGroupID)
 }
 
+// SetLocation sets the "location" field.
+func (m *UserMutation) SetLocation(s string) {
+	m.location = &s
+}
+
+// Location returns the value of the "location" field in the mutation.
+func (m *UserMutation) Location() (r string, exists bool) {
+	v := m.location
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLocation returns the old "location" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldLocation(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLocation is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLocation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLocation: %w", err)
+	}
+	return oldValue.Location, nil
+}
+
+// ClearLocation clears the value of the "location" field.
+func (m *UserMutation) ClearLocation() {
+	m.location = nil
+	m.clearedFields[user.FieldLocation] = struct{}{}
+}
+
+// LocationCleared returns if the "location" field was cleared in this mutation.
+func (m *UserMutation) LocationCleared() bool {
+	_, ok := m.clearedFields[user.FieldLocation]
+	return ok
+}
+
+// ResetLocation resets all changes to the "location" field.
+func (m *UserMutation) ResetLocation() {
+	m.location = nil
+	delete(m.clearedFields, user.FieldLocation)
+}
+
+// SetDepartmentID sets the "department_id" field.
+func (m *UserMutation) SetDepartmentID(i int64) {
+	m.department_id = &i
+	m.adddepartment_id = nil
+}
+
+// DepartmentID returns the value of the "department_id" field in the mutation.
+func (m *UserMutation) DepartmentID() (r int64, exists bool) {
+	v := m.department_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDepartmentID returns the old "department_id" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldDepartmentID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDepartmentID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDepartmentID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDepartmentID: %w", err)
+	}
+	return oldValue.DepartmentID, nil
+}
+
+// AddDepartmentID adds i to the "department_id" field.
+func (m *UserMutation) AddDepartmentID(i int64) {
+	if m.adddepartment_id != nil {
+		*m.adddepartment_id += i
+	} else {
+		m.adddepartment_id = &i
+	}
+}
+
+// AddedDepartmentID returns the value that was added to the "department_id" field in this mutation.
+func (m *UserMutation) AddedDepartmentID() (r int64, exists bool) {
+	v := m.adddepartment_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDepartmentID clears the value of the "department_id" field.
+func (m *UserMutation) ClearDepartmentID() {
+	m.department_id = nil
+	m.adddepartment_id = nil
+	m.clearedFields[user.FieldDepartmentID] = struct{}{}
+}
+
+// DepartmentIDCleared returns if the "department_id" field was cleared in this mutation.
+func (m *UserMutation) DepartmentIDCleared() bool {
+	_, ok := m.clearedFields[user.FieldDepartmentID]
+	return ok
+}
+
+// ResetDepartmentID resets all changes to the "department_id" field.
+func (m *UserMutation) ResetDepartmentID() {
+	m.department_id = nil
+	m.adddepartment_id = nil
+	delete(m.clearedFields, user.FieldDepartmentID)
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -14058,7 +14180,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -14107,6 +14229,12 @@ func (m *UserMutation) Fields() []string {
 	if m.group_id != nil {
 		fields = append(fields, user.FieldGroupID)
 	}
+	if m.location != nil {
+		fields = append(fields, user.FieldLocation)
+	}
+	if m.department_id != nil {
+		fields = append(fields, user.FieldDepartmentID)
+	}
 	return fields
 }
 
@@ -14147,6 +14275,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.UUID()
 	case user.FieldGroupID:
 		return m.GroupID()
+	case user.FieldLocation:
+		return m.Location()
+	case user.FieldDepartmentID:
+		return m.DepartmentID()
 	}
 	return nil, false
 }
@@ -14188,6 +14320,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldUUID(ctx)
 	case user.FieldGroupID:
 		return m.OldGroupID(ctx)
+	case user.FieldLocation:
+		return m.OldLocation(ctx)
+	case user.FieldDepartmentID:
+		return m.OldDepartmentID(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -14309,6 +14445,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetGroupID(v)
 		return nil
+	case user.FieldLocation:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLocation(v)
+		return nil
+	case user.FieldDepartmentID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDepartmentID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -14326,6 +14476,9 @@ func (m *UserMutation) AddedFields() []string {
 	if m.addgroup_id != nil {
 		fields = append(fields, user.FieldGroupID)
 	}
+	if m.adddepartment_id != nil {
+		fields = append(fields, user.FieldDepartmentID)
+	}
 	return fields
 }
 
@@ -14340,6 +14493,8 @@ func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedDeletedBy()
 	case user.FieldGroupID:
 		return m.AddedGroupID()
+	case user.FieldDepartmentID:
+		return m.AddedDepartmentID()
 	}
 	return nil, false
 }
@@ -14370,6 +14525,13 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddGroupID(v)
 		return nil
+	case user.FieldDepartmentID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDepartmentID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User numeric field %s", name)
 }
@@ -14395,6 +14557,12 @@ func (m *UserMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(user.FieldGroupID) {
 		fields = append(fields, user.FieldGroupID)
+	}
+	if m.FieldCleared(user.FieldLocation) {
+		fields = append(fields, user.FieldLocation)
+	}
+	if m.FieldCleared(user.FieldDepartmentID) {
+		fields = append(fields, user.FieldDepartmentID)
 	}
 	return fields
 }
@@ -14427,6 +14595,12 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldGroupID:
 		m.ClearGroupID()
+		return nil
+	case user.FieldLocation:
+		m.ClearLocation()
+		return nil
+	case user.FieldDepartmentID:
+		m.ClearDepartmentID()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -14483,6 +14657,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldGroupID:
 		m.ResetGroupID()
+		return nil
+	case user.FieldLocation:
+		m.ResetLocation()
+		return nil
+	case user.FieldDepartmentID:
+		m.ResetDepartmentID()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

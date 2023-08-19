@@ -49,6 +49,10 @@ type User struct {
 	UUID uuid.UUID `json:"uuid,omitempty"`
 	// GroupID holds the value of the "group_id" field.
 	GroupID int64 `json:"group_id,omitempty"`
+	// Location holds the value of the "location" field.
+	Location string `json:"location,omitempty"`
+	// DepartmentID holds the value of the "department_id" field.
+	DepartmentID int64 `json:"department_id,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -58,9 +62,9 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldActive, user.FieldIsDeleted:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldRole, user.FieldDeletedBy, user.FieldGroupID:
+		case user.FieldID, user.FieldRole, user.FieldDeletedBy, user.FieldGroupID, user.FieldDepartmentID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldUsername, user.FieldChineseName, user.FieldNickname, user.FieldPassword, user.FieldPhone, user.FieldEmail, user.FieldAvatar:
+		case user.FieldUsername, user.FieldChineseName, user.FieldNickname, user.FieldPassword, user.FieldPhone, user.FieldEmail, user.FieldAvatar, user.FieldLocation:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdateAt, user.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -186,6 +190,18 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.GroupID = value.Int64
 			}
+		case user.FieldLocation:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field location", values[i])
+			} else if value.Valid {
+				u.Location = value.String
+			}
+		case user.FieldDepartmentID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field department_id", values[i])
+			} else if value.Valid {
+				u.DepartmentID = value.Int64
+			}
 		}
 	}
 	return nil
@@ -267,6 +283,12 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("group_id=")
 	builder.WriteString(fmt.Sprintf("%v", u.GroupID))
+	builder.WriteString(", ")
+	builder.WriteString("location=")
+	builder.WriteString(u.Location)
+	builder.WriteString(", ")
+	builder.WriteString("department_id=")
+	builder.WriteString(fmt.Sprintf("%v", u.DepartmentID))
 	builder.WriteByte(')')
 	return builder.String()
 }

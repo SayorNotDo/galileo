@@ -52,6 +52,7 @@ func NewCoreUseCase(repo CoreRepo, logger log.Logger, conf *conf.Auth) *CoreUseC
 	helper := log.NewHelper(log.With(logger, "module", "core.useCase"))
 	return &CoreUseCase{repo: repo, log: helper, signingKey: conf.JwtKey}
 }
+
 func (c *CoreUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterReply, error) {
 	newUser, err := NewUser(req.Phone, req.Username, req.Password, req.Email)
 	if err != nil {
@@ -104,6 +105,7 @@ func newReportClaim(machine string) *auth.ReportClaims {
 	}
 }
 
+// Login TODO: 修复逻辑，禁止密码的传递
 func (c *CoreUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginReply, error) {
 	if len(req.Username) <= 0 {
 		return nil, SetErrByReason(ReasonParamsError)

@@ -20,22 +20,25 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Core_Register_FullMethodName         = "/api.core.v1.Core/Register"
-	Core_Login_FullMethodName            = "/api.core.v1.Core/Login"
-	Core_Unregister_FullMethodName       = "/api.core.v1.Core/Unregister"
-	Core_Logout_FullMethodName           = "/api.core.v1.Core/Logout"
-	Core_DeleteUser_FullMethodName       = "/api.core.v1.Core/DeleteUser"
-	Core_UserDetail_FullMethodName       = "/api.core.v1.Core/UserDetail"
-	Core_UpdateUserInfo_FullMethodName   = "/api.core.v1.Core/UpdateUserInfo"
-	Core_UpdatePassword_FullMethodName   = "/api.core.v1.Core/UpdatePassword"
-	Core_UpdateEmail_FullMethodName      = "/api.core.v1.Core/UpdateEmail"
-	Core_UpdatePhone_FullMethodName      = "/api.core.v1.Core/UpdatePhone"
-	Core_ListUser_FullMethodName         = "/api.core.v1.Core/ListUser"
-	Core_CreateGroup_FullMethodName      = "/api.core.v1.Core/CreateGroup"
-	Core_UpdateGroup_FullMethodName      = "/api.core.v1.Core/UpdateGroup"
-	Core_DataReportTrack_FullMethodName  = "/api.core.v1.Core/DataReportTrack"
-	Core_ExecuteToken_FullMethodName     = "/api.core.v1.Core/ExecuteToken"
-	Core_InspectContainer_FullMethodName = "/api.core.v1.Core/InspectContainer"
+	Core_Register_FullMethodName              = "/api.core.v1.Core/Register"
+	Core_Login_FullMethodName                 = "/api.core.v1.Core/Login"
+	Core_Unregister_FullMethodName            = "/api.core.v1.Core/Unregister"
+	Core_Logout_FullMethodName                = "/api.core.v1.Core/Logout"
+	Core_DeleteUser_FullMethodName            = "/api.core.v1.Core/DeleteUser"
+	Core_UserDetail_FullMethodName            = "/api.core.v1.Core/UserDetail"
+	Core_UpdateUserInfo_FullMethodName        = "/api.core.v1.Core/UpdateUserInfo"
+	Core_UpdatePassword_FullMethodName        = "/api.core.v1.Core/UpdatePassword"
+	Core_UpdateEmail_FullMethodName           = "/api.core.v1.Core/UpdateEmail"
+	Core_UpdatePhone_FullMethodName           = "/api.core.v1.Core/UpdatePhone"
+	Core_ListUser_FullMethodName              = "/api.core.v1.Core/ListUser"
+	Core_CreateGroup_FullMethodName           = "/api.core.v1.Core/CreateGroup"
+	Core_UpdateGroup_FullMethodName           = "/api.core.v1.Core/UpdateGroup"
+	Core_GetUserGroupList_FullMethodName      = "/api.core.v1.Core/GetUserGroupList"
+	Core_GetUserProjectList_FullMethodName    = "/api.core.v1.Core/GetUserProjectList"
+	Core_GetUserLatestActivity_FullMethodName = "/api.core.v1.Core/GetUserLatestActivity"
+	Core_DataReportTrack_FullMethodName       = "/api.core.v1.Core/DataReportTrack"
+	Core_ExecuteToken_FullMethodName          = "/api.core.v1.Core/ExecuteToken"
+	Core_InspectContainer_FullMethodName      = "/api.core.v1.Core/InspectContainer"
 )
 
 // CoreClient is the client API for Core service.
@@ -55,6 +58,9 @@ type CoreClient interface {
 	ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
 	CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupReply, error)
 	UpdateGroup(ctx context.Context, in *UpdateGroupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetUserGroupList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserGroupListReply, error)
+	GetUserProjectList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserProjectListReply, error)
+	GetUserLatestActivity(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserLatestActivityReply, error)
 	DataReportTrack(ctx context.Context, in *DataReportTrackRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ExecuteToken(ctx context.Context, in *ExecuteTokenRequest, opts ...grpc.CallOption) (*ExecuteTokenReply, error)
 	InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...grpc.CallOption) (*ContainerInfo, error)
@@ -185,6 +191,33 @@ func (c *coreClient) UpdateGroup(ctx context.Context, in *UpdateGroupRequest, op
 	return out, nil
 }
 
+func (c *coreClient) GetUserGroupList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserGroupListReply, error) {
+	out := new(UserGroupListReply)
+	err := c.cc.Invoke(ctx, Core_GetUserGroupList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) GetUserProjectList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserProjectListReply, error) {
+	out := new(UserProjectListReply)
+	err := c.cc.Invoke(ctx, Core_GetUserProjectList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) GetUserLatestActivity(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserLatestActivityReply, error) {
+	out := new(UserLatestActivityReply)
+	err := c.cc.Invoke(ctx, Core_GetUserLatestActivity_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *coreClient) DataReportTrack(ctx context.Context, in *DataReportTrackRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, Core_DataReportTrack_FullMethodName, in, out, opts...)
@@ -229,6 +262,9 @@ type CoreServer interface {
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupReply, error)
 	UpdateGroup(context.Context, *UpdateGroupRequest) (*emptypb.Empty, error)
+	GetUserGroupList(context.Context, *emptypb.Empty) (*UserGroupListReply, error)
+	GetUserProjectList(context.Context, *emptypb.Empty) (*UserProjectListReply, error)
+	GetUserLatestActivity(context.Context, *emptypb.Empty) (*UserLatestActivityReply, error)
 	DataReportTrack(context.Context, *DataReportTrackRequest) (*emptypb.Empty, error)
 	ExecuteToken(context.Context, *ExecuteTokenRequest) (*ExecuteTokenReply, error)
 	InspectContainer(context.Context, *InspectContainerRequest) (*ContainerInfo, error)
@@ -277,6 +313,15 @@ func (UnimplementedCoreServer) CreateGroup(context.Context, *CreateGroupRequest)
 }
 func (UnimplementedCoreServer) UpdateGroup(context.Context, *UpdateGroupRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateGroup not implemented")
+}
+func (UnimplementedCoreServer) GetUserGroupList(context.Context, *emptypb.Empty) (*UserGroupListReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserGroupList not implemented")
+}
+func (UnimplementedCoreServer) GetUserProjectList(context.Context, *emptypb.Empty) (*UserProjectListReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserProjectList not implemented")
+}
+func (UnimplementedCoreServer) GetUserLatestActivity(context.Context, *emptypb.Empty) (*UserLatestActivityReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserLatestActivity not implemented")
 }
 func (UnimplementedCoreServer) DataReportTrack(context.Context, *DataReportTrackRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DataReportTrack not implemented")
@@ -534,6 +579,60 @@ func _Core_UpdateGroup_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Core_GetUserGroupList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).GetUserGroupList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_GetUserGroupList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).GetUserGroupList(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_GetUserProjectList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).GetUserProjectList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_GetUserProjectList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).GetUserProjectList(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_GetUserLatestActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).GetUserLatestActivity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_GetUserLatestActivity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).GetUserLatestActivity(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Core_DataReportTrack_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DataReportTrackRequest)
 	if err := dec(in); err != nil {
@@ -646,6 +745,18 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateGroup",
 			Handler:    _Core_UpdateGroup_Handler,
+		},
+		{
+			MethodName: "GetUserGroupList",
+			Handler:    _Core_GetUserGroupList_Handler,
+		},
+		{
+			MethodName: "GetUserProjectList",
+			Handler:    _Core_GetUserProjectList_Handler,
+		},
+		{
+			MethodName: "GetUserLatestActivity",
+			Handler:    _Core_GetUserLatestActivity_Handler,
 		},
 		{
 			MethodName: "DataReportTrack",

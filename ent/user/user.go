@@ -45,6 +45,10 @@ const (
 	FieldUUID = "uuid"
 	// FieldGroupID holds the string denoting the group_id field in the database.
 	FieldGroupID = "group_id"
+	// FieldLocation holds the string denoting the location field in the database.
+	FieldLocation = "location"
+	// FieldDepartmentID holds the string denoting the department_id field in the database.
+	FieldDepartmentID = "department_id"
 	// Table holds the table name of the user in the database.
 	Table = "user"
 )
@@ -68,6 +72,8 @@ var Columns = []string{
 	FieldIsDeleted,
 	FieldUUID,
 	FieldGroupID,
+	FieldLocation,
+	FieldDepartmentID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
