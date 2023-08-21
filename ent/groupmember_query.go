@@ -81,8 +81,8 @@ func (gmq *GroupMemberQuery) FirstX(ctx context.Context) *GroupMember {
 
 // FirstID returns the first GroupMember ID from the query.
 // Returns a *NotFoundError when no GroupMember ID was found.
-func (gmq *GroupMemberQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (gmq *GroupMemberQuery) FirstID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = gmq.Limit(1).IDs(setContextOp(ctx, gmq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -94,7 +94,7 @@ func (gmq *GroupMemberQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (gmq *GroupMemberQuery) FirstIDX(ctx context.Context) int {
+func (gmq *GroupMemberQuery) FirstIDX(ctx context.Context) int32 {
 	id, err := gmq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -132,8 +132,8 @@ func (gmq *GroupMemberQuery) OnlyX(ctx context.Context) *GroupMember {
 // OnlyID is like Only, but returns the only GroupMember ID in the query.
 // Returns a *NotSingularError when more than one GroupMember ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (gmq *GroupMemberQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (gmq *GroupMemberQuery) OnlyID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = gmq.Limit(2).IDs(setContextOp(ctx, gmq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -149,7 +149,7 @@ func (gmq *GroupMemberQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (gmq *GroupMemberQuery) OnlyIDX(ctx context.Context) int {
+func (gmq *GroupMemberQuery) OnlyIDX(ctx context.Context) int32 {
 	id, err := gmq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -177,7 +177,7 @@ func (gmq *GroupMemberQuery) AllX(ctx context.Context) []*GroupMember {
 }
 
 // IDs executes the query and returns a list of GroupMember IDs.
-func (gmq *GroupMemberQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (gmq *GroupMemberQuery) IDs(ctx context.Context) (ids []int32, err error) {
 	if gmq.ctx.Unique == nil && gmq.path != nil {
 		gmq.Unique(true)
 	}
@@ -189,7 +189,7 @@ func (gmq *GroupMemberQuery) IDs(ctx context.Context) (ids []int, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (gmq *GroupMemberQuery) IDsX(ctx context.Context) []int {
+func (gmq *GroupMemberQuery) IDsX(ctx context.Context) []int32 {
 	ids, err := gmq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -261,7 +261,7 @@ func (gmq *GroupMemberQuery) Clone() *GroupMemberQuery {
 // Example:
 //
 //	var v []struct {
-//		GroupID int64 `json:"group_id,omitempty"`
+//		GroupID int32 `json:"group_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -284,7 +284,7 @@ func (gmq *GroupMemberQuery) GroupBy(field string, fields ...string) *GroupMembe
 // Example:
 //
 //	var v []struct {
-//		GroupID int64 `json:"group_id,omitempty"`
+//		GroupID int32 `json:"group_id,omitempty"`
 //	}
 //
 //	client.GroupMember.Query().
@@ -364,7 +364,7 @@ func (gmq *GroupMemberQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (gmq *GroupMemberQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(groupmember.Table, groupmember.Columns, sqlgraph.NewFieldSpec(groupmember.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(groupmember.Table, groupmember.Columns, sqlgraph.NewFieldSpec(groupmember.FieldID, field.TypeInt32))
 	_spec.From = gmq.sql
 	if unique := gmq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

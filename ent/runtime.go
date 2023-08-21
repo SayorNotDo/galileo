@@ -56,7 +56,7 @@ func init() {
 	// apistatisticsDescAPIID is the schema descriptor for api_id field.
 	apistatisticsDescAPIID := apistatisticsFields[13].Descriptor()
 	// apistatistics.APIIDValidator is a validator for the "api_id" field. It is called by the builders before save.
-	apistatistics.APIIDValidator = apistatisticsDescAPIID.Validators[0].(func(int64) error)
+	apistatistics.APIIDValidator = apistatisticsDescAPIID.Validators[0].(func(int32) error)
 	containerFields := schema.Container{}.Fields()
 	_ = containerFields
 	// containerDescHostname is the schema descriptor for hostname field.
@@ -82,21 +82,21 @@ func init() {
 	groupFields := schema.Group{}.Fields()
 	_ = groupFields
 	// groupDescName is the schema descriptor for name field.
-	groupDescName := groupFields[0].Descriptor()
+	groupDescName := groupFields[1].Descriptor()
 	// group.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	group.NameValidator = groupDescName.Validators[0].(func(string) error)
 	// groupDescCreatedAt is the schema descriptor for created_at field.
-	groupDescCreatedAt := groupFields[2].Descriptor()
+	groupDescCreatedAt := groupFields[3].Descriptor()
 	// group.DefaultCreatedAt holds the default value on creation for the created_at field.
 	group.DefaultCreatedAt = groupDescCreatedAt.Default.(func() time.Time)
 	groupmemberFields := schema.GroupMember{}.Fields()
 	_ = groupmemberFields
 	// groupmemberDescRole is the schema descriptor for role field.
-	groupmemberDescRole := groupmemberFields[2].Descriptor()
+	groupmemberDescRole := groupmemberFields[3].Descriptor()
 	// groupmember.DefaultRole holds the default value on creation for the role field.
 	groupmember.DefaultRole = groupmemberDescRole.Default.(uint8)
 	// groupmemberDescCreatedAt is the schema descriptor for created_at field.
-	groupmemberDescCreatedAt := groupmemberFields[3].Descriptor()
+	groupmemberDescCreatedAt := groupmemberFields[4].Descriptor()
 	// groupmember.DefaultCreatedAt holds the default value on creation for the created_at field.
 	groupmember.DefaultCreatedAt = groupmemberDescCreatedAt.Default.(func() time.Time)
 	projectFields := schema.Project{}.Fields()
@@ -182,7 +182,7 @@ func init() {
 	// testplanDescProjectID is the schema descriptor for project_id field.
 	testplanDescProjectID := testplanFields[12].Descriptor()
 	// testplan.ProjectIDValidator is a validator for the "project_id" field. It is called by the builders before save.
-	testplan.ProjectIDValidator = testplanDescProjectID.Validators[0].(func(int64) error)
+	testplan.ProjectIDValidator = testplanDescProjectID.Validators[0].(func(int32) error)
 	testcaseFields := schema.Testcase{}.Fields()
 	_ = testcaseFields
 	// testcaseDescName is the schema descriptor for name field.

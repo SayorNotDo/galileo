@@ -21,10 +21,10 @@ func (ApiStatistics) Annotations() []schema.Annotation {
 // Fields of the ApiStatistics.
 func (ApiStatistics) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("id"),
-		field.Int64("call_count"),
-		field.Int64("success_count"),
-		field.Int64("failure_count"),
+		field.Int32("id"),
+		field.Int32("call_count"),
+		field.Int32("success_count"),
+		field.Int32("failure_count"),
 		field.Float("avg_response_time"),
 		field.Float("max_response_time"),
 		field.Float("min_response_time"),
@@ -34,7 +34,7 @@ func (ApiStatistics) Fields() []ent.Field {
 		field.String("description"),
 		field.Time("created_at"),
 		field.Time("update_at"),
-		field.Int64("api_id").Positive(),
+		field.Int32("api_id").Positive(),
 	}
 }
 

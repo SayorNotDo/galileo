@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"galileo/ent/task"
 	"strings"
@@ -15,7 +16,7 @@ import (
 type Task struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
+	ID int32 `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -57,30 +58,11 @@ type Task struct {
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
 	// TestplanID holds the value of the "testplan_id" field.
-	TestplanID int64 `json:"testplan_id,omitempty"`
+	TestplanID int32 `json:"testplan_id,omitempty"`
 	// ExecuteID holds the value of the "execute_id" field.
 	ExecuteID int64 `json:"execute_id,omitempty"`
-	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the TaskQuery when eager-loading is set.
-	Edges TaskEdges `json:"edges"`
-}
-
-// TaskEdges holds the relations/edges for other nodes in the graph.
-type TaskEdges struct {
-	// TestcaseSuite holds the value of the testcase_suite edge.
-	TestcaseSuite []*TestcaseSuite `json:"testcase_suite,omitempty"`
-	// loadedTypes holds the information for reporting if a
-	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
-}
-
-// TestcaseSuiteOrErr returns the TestcaseSuite value or an error if the edge
-// was not loaded in eager-loading.
-func (e TaskEdges) TestcaseSuiteOrErr() ([]*TestcaseSuite, error) {
-	if e.loadedTypes[0] {
-		return e.TestcaseSuite, nil
-	}
-	return nil, &NotLoadedError{edge: "testcase_suite"}
+	// TestcaseSuite holds the value of the "testcase_suite" field.
+	TestcaseSuite []int32 `json:"testcase_suite,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -88,6 +70,8 @@ func (*Task) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case task.FieldTestcaseSuite:
+			values[i] = new([]byte)
 		case task.FieldID, task.FieldCreatedBy, task.FieldAssignee, task.FieldType, task.FieldRank, task.FieldStatus, task.FieldUpdatedBy, task.FieldDeletedBy, task.FieldTestplanID, task.FieldExecuteID:
 			values[i] = new(sql.NullInt64)
 		case task.FieldName, task.FieldFrequency, task.FieldWorker, task.FieldConfig, task.FieldDescription:
@@ -114,7 +98,7 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			t.ID = int64(value.Int64)
+			t.ID = int32(value.Int64)
 		case task.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -239,7 +223,7 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field testplan_id", values[i])
 			} else if value.Valid {
-				t.TestplanID = value.Int64
+				t.TestplanID = int32(value.Int64)
 			}
 		case task.FieldExecuteID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -247,14 +231,17 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.ExecuteID = value.Int64
 			}
+		case task.FieldTestcaseSuite:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field testcase_suite", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &t.TestcaseSuite); err != nil {
+					return fmt.Errorf("unmarshal field testcase_suite: %w", err)
+				}
+			}
 		}
 	}
 	return nil
-}
-
-// QueryTestcaseSuite queries the "testcase_suite" edge of the Task entity.
-func (t *Task) QueryTestcaseSuite() *TestcaseSuiteQuery {
-	return NewTaskClient(t.config).QueryTestcaseSuite(t)
 }
 
 // Update returns a builder for updating this Task.
@@ -345,6 +332,9 @@ func (t *Task) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("execute_id=")
 	builder.WriteString(fmt.Sprintf("%v", t.ExecuteID))
+	builder.WriteString(", ")
+	builder.WriteString("testcase_suite=")
+	builder.WriteString(fmt.Sprintf("%v", t.TestcaseSuite))
 	builder.WriteByte(')')
 	return builder.String()
 }

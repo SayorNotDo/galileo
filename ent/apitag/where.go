@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int64) predicate.ApiTag {
+func ID(id int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int64) predicate.ApiTag {
+func IDEQ(id int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int64) predicate.ApiTag {
+func IDNEQ(id int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int64) predicate.ApiTag {
+func IDIn(ids ...int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int64) predicate.ApiTag {
+func IDNotIn(ids ...int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int64) predicate.ApiTag {
+func IDGT(id int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int64) predicate.ApiTag {
+func IDGTE(id int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int64) predicate.ApiTag {
+func IDLT(id int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int64) predicate.ApiTag {
+func IDLTE(id int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldLTE(FieldID, id))
 }
 
@@ -60,7 +60,7 @@ func Name(v string) predicate.ApiTag {
 }
 
 // Sort applies equality check predicate on the "sort" field. It's identical to SortEQ.
-func Sort(v int64) predicate.ApiTag {
+func Sort(v int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldEQ(FieldSort, v))
 }
 
@@ -155,42 +155,42 @@ func NameContainsFold(v string) predicate.ApiTag {
 }
 
 // SortEQ applies the EQ predicate on the "sort" field.
-func SortEQ(v int64) predicate.ApiTag {
+func SortEQ(v int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldEQ(FieldSort, v))
 }
 
 // SortNEQ applies the NEQ predicate on the "sort" field.
-func SortNEQ(v int64) predicate.ApiTag {
+func SortNEQ(v int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldNEQ(FieldSort, v))
 }
 
 // SortIn applies the In predicate on the "sort" field.
-func SortIn(vs ...int64) predicate.ApiTag {
+func SortIn(vs ...int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldIn(FieldSort, vs...))
 }
 
 // SortNotIn applies the NotIn predicate on the "sort" field.
-func SortNotIn(vs ...int64) predicate.ApiTag {
+func SortNotIn(vs ...int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldNotIn(FieldSort, vs...))
 }
 
 // SortGT applies the GT predicate on the "sort" field.
-func SortGT(v int64) predicate.ApiTag {
+func SortGT(v int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldGT(FieldSort, v))
 }
 
 // SortGTE applies the GTE predicate on the "sort" field.
-func SortGTE(v int64) predicate.ApiTag {
+func SortGTE(v int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldGTE(FieldSort, v))
 }
 
 // SortLT applies the LT predicate on the "sort" field.
-func SortLT(v int64) predicate.ApiTag {
+func SortLT(v int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldLT(FieldSort, v))
 }
 
 // SortLTE applies the LTE predicate on the "sort" field.
-func SortLTE(v int64) predicate.ApiTag {
+func SortLTE(v int32) predicate.ApiTag {
 	return predicate.ApiTag(sql.FieldLTE(FieldSort, v))
 }
 

@@ -21,7 +21,7 @@ type ApiHistoryCreate struct {
 }
 
 // SetVersion sets the "version" field.
-func (ahc *ApiHistoryCreate) SetVersion(i int64) *ApiHistoryCreate {
+func (ahc *ApiHistoryCreate) SetVersion(i int32) *ApiHistoryCreate {
 	ahc.mutation.SetVersion(i)
 	return ahc
 }
@@ -47,6 +47,12 @@ func (ahc *ApiHistoryCreate) SetCreatedBy(u uint32) *ApiHistoryCreate {
 // SetDescription sets the "description" field.
 func (ahc *ApiHistoryCreate) SetDescription(s string) *ApiHistoryCreate {
 	ahc.mutation.SetDescription(s)
+	return ahc
+}
+
+// SetID sets the "id" field.
+func (ahc *ApiHistoryCreate) SetID(i int32) *ApiHistoryCreate {
+	ahc.mutation.SetID(i)
 	return ahc
 }
 
@@ -113,8 +119,10 @@ func (ahc *ApiHistoryCreate) sqlSave(ctx context.Context) (*ApiHistory, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int32(id)
+	}
 	ahc.mutation.id = &_node.ID
 	ahc.mutation.done = true
 	return _node, nil
@@ -123,10 +131,14 @@ func (ahc *ApiHistoryCreate) sqlSave(ctx context.Context) (*ApiHistory, error) {
 func (ahc *ApiHistoryCreate) createSpec() (*ApiHistory, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ApiHistory{config: ahc.config}
-		_spec = sqlgraph.NewCreateSpec(apihistory.Table, sqlgraph.NewFieldSpec(apihistory.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(apihistory.Table, sqlgraph.NewFieldSpec(apihistory.FieldID, field.TypeInt32))
 	)
+	if id, ok := ahc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := ahc.mutation.Version(); ok {
-		_spec.SetField(apihistory.FieldVersion, field.TypeInt64, value)
+		_spec.SetField(apihistory.FieldVersion, field.TypeInt32, value)
 		_node.Version = value
 	}
 	if value, ok := ahc.mutation.QueryParams(); ok {
@@ -188,9 +200,9 @@ func (ahcb *ApiHistoryCreateBulk) Save(ctx context.Context) ([]*ApiHistory, erro
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = int32(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

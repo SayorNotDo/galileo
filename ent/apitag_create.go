@@ -27,7 +27,7 @@ func (atc *ApiTagCreate) SetName(s string) *ApiTagCreate {
 }
 
 // SetSort sets the "sort" field.
-func (atc *ApiTagCreate) SetSort(i int64) *ApiTagCreate {
+func (atc *ApiTagCreate) SetSort(i int32) *ApiTagCreate {
 	atc.mutation.SetSort(i)
 	return atc
 }
@@ -63,7 +63,7 @@ func (atc *ApiTagCreate) SetDescription(s string) *ApiTagCreate {
 }
 
 // SetID sets the "id" field.
-func (atc *ApiTagCreate) SetID(i int64) *ApiTagCreate {
+func (atc *ApiTagCreate) SetID(i int32) *ApiTagCreate {
 	atc.mutation.SetID(i)
 	return atc
 }
@@ -139,7 +139,7 @@ func (atc *ApiTagCreate) sqlSave(ctx context.Context) (*ApiTag, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int64(id)
+		_node.ID = int32(id)
 	}
 	atc.mutation.id = &_node.ID
 	atc.mutation.done = true
@@ -149,7 +149,7 @@ func (atc *ApiTagCreate) sqlSave(ctx context.Context) (*ApiTag, error) {
 func (atc *ApiTagCreate) createSpec() (*ApiTag, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ApiTag{config: atc.config}
-		_spec = sqlgraph.NewCreateSpec(apitag.Table, sqlgraph.NewFieldSpec(apitag.FieldID, field.TypeInt64))
+		_spec = sqlgraph.NewCreateSpec(apitag.Table, sqlgraph.NewFieldSpec(apitag.FieldID, field.TypeInt32))
 	)
 	if id, ok := atc.mutation.ID(); ok {
 		_node.ID = id
@@ -160,7 +160,7 @@ func (atc *ApiTagCreate) createSpec() (*ApiTag, *sqlgraph.CreateSpec) {
 		_node.Name = value
 	}
 	if value, ok := atc.mutation.Sort(); ok {
-		_spec.SetField(apitag.FieldSort, field.TypeInt64, value)
+		_spec.SetField(apitag.FieldSort, field.TypeInt32, value)
 		_node.Sort = value
 	}
 	if value, ok := atc.mutation.CreatedAt(); ok {
@@ -228,7 +228,7 @@ func (atcb *ApiTagCreateBulk) Save(ctx context.Context) ([]*ApiTag, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int64(id)
+					nodes[i].ID = int32(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

@@ -55,17 +55,10 @@ const (
 	FieldTestplanID = "testplan_id"
 	// FieldExecuteID holds the string denoting the execute_id field in the database.
 	FieldExecuteID = "execute_id"
-	// EdgeTestcaseSuite holds the string denoting the testcase_suite edge name in mutations.
-	EdgeTestcaseSuite = "testcase_suite"
+	// FieldTestcaseSuite holds the string denoting the testcase_suite field in the database.
+	FieldTestcaseSuite = "testcase_suite"
 	// Table holds the table name of the task in the database.
 	Table = "task"
-	// TestcaseSuiteTable is the table that holds the testcase_suite relation/edge.
-	TestcaseSuiteTable = "testcase_suite"
-	// TestcaseSuiteInverseTable is the table name for the TestcaseSuite entity.
-	// It exists in this package in order to avoid circular dependency with the "testcasesuite" package.
-	TestcaseSuiteInverseTable = "testcase_suite"
-	// TestcaseSuiteColumn is the table column denoting the testcase_suite relation/edge.
-	TestcaseSuiteColumn = "task_testcase_suite"
 )
 
 // Columns holds all SQL columns for task fields.
@@ -93,6 +86,7 @@ var Columns = []string{
 	FieldDescription,
 	FieldTestplanID,
 	FieldExecuteID,
+	FieldTestcaseSuite,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

@@ -15,11 +15,11 @@ import (
 type ApiTag struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
+	ID int32 `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Sort holds the value of the "sort" field.
-	Sort int64 `json:"sort,omitempty"`
+	Sort int32 `json:"sort,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
@@ -63,7 +63,7 @@ func (at *ApiTag) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			at.ID = int64(value.Int64)
+			at.ID = int32(value.Int64)
 		case apitag.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -74,7 +74,7 @@ func (at *ApiTag) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field sort", values[i])
 			} else if value.Valid {
-				at.Sort = value.Int64
+				at.Sort = int32(value.Int64)
 			}
 		case apitag.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {

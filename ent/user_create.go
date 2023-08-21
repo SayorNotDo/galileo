@@ -192,13 +192,13 @@ func (uc *UserCreate) SetNillableUUID(u *uuid.UUID) *UserCreate {
 }
 
 // SetGroupID sets the "group_id" field.
-func (uc *UserCreate) SetGroupID(i int64) *UserCreate {
+func (uc *UserCreate) SetGroupID(i int32) *UserCreate {
 	uc.mutation.SetGroupID(i)
 	return uc
 }
 
 // SetNillableGroupID sets the "group_id" field if the given value is not nil.
-func (uc *UserCreate) SetNillableGroupID(i *int64) *UserCreate {
+func (uc *UserCreate) SetNillableGroupID(i *int32) *UserCreate {
 	if i != nil {
 		uc.SetGroupID(*i)
 	}
@@ -220,13 +220,13 @@ func (uc *UserCreate) SetNillableLocation(s *string) *UserCreate {
 }
 
 // SetDepartmentID sets the "department_id" field.
-func (uc *UserCreate) SetDepartmentID(i int64) *UserCreate {
+func (uc *UserCreate) SetDepartmentID(i int32) *UserCreate {
 	uc.mutation.SetDepartmentID(i)
 	return uc
 }
 
 // SetNillableDepartmentID sets the "department_id" field if the given value is not nil.
-func (uc *UserCreate) SetNillableDepartmentID(i *int64) *UserCreate {
+func (uc *UserCreate) SetNillableDepartmentID(i *int32) *UserCreate {
 	if i != nil {
 		uc.SetDepartmentID(*i)
 	}
@@ -425,7 +425,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node.UUID = value
 	}
 	if value, ok := uc.mutation.GroupID(); ok {
-		_spec.SetField(user.FieldGroupID, field.TypeInt64, value)
+		_spec.SetField(user.FieldGroupID, field.TypeInt32, value)
 		_node.GroupID = value
 	}
 	if value, ok := uc.mutation.Location(); ok {
@@ -433,7 +433,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node.Location = value
 	}
 	if value, ok := uc.mutation.DepartmentID(); ok {
-		_spec.SetField(user.FieldDepartmentID, field.TypeInt64, value)
+		_spec.SetField(user.FieldDepartmentID, field.TypeInt32, value)
 		_node.DepartmentID = value
 	}
 	return _node, _spec

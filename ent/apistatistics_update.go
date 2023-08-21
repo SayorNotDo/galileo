@@ -29,40 +29,40 @@ func (asu *ApiStatisticsUpdate) Where(ps ...predicate.ApiStatistics) *ApiStatist
 }
 
 // SetCallCount sets the "call_count" field.
-func (asu *ApiStatisticsUpdate) SetCallCount(i int64) *ApiStatisticsUpdate {
+func (asu *ApiStatisticsUpdate) SetCallCount(i int32) *ApiStatisticsUpdate {
 	asu.mutation.ResetCallCount()
 	asu.mutation.SetCallCount(i)
 	return asu
 }
 
 // AddCallCount adds i to the "call_count" field.
-func (asu *ApiStatisticsUpdate) AddCallCount(i int64) *ApiStatisticsUpdate {
+func (asu *ApiStatisticsUpdate) AddCallCount(i int32) *ApiStatisticsUpdate {
 	asu.mutation.AddCallCount(i)
 	return asu
 }
 
 // SetSuccessCount sets the "success_count" field.
-func (asu *ApiStatisticsUpdate) SetSuccessCount(i int64) *ApiStatisticsUpdate {
+func (asu *ApiStatisticsUpdate) SetSuccessCount(i int32) *ApiStatisticsUpdate {
 	asu.mutation.ResetSuccessCount()
 	asu.mutation.SetSuccessCount(i)
 	return asu
 }
 
 // AddSuccessCount adds i to the "success_count" field.
-func (asu *ApiStatisticsUpdate) AddSuccessCount(i int64) *ApiStatisticsUpdate {
+func (asu *ApiStatisticsUpdate) AddSuccessCount(i int32) *ApiStatisticsUpdate {
 	asu.mutation.AddSuccessCount(i)
 	return asu
 }
 
 // SetFailureCount sets the "failure_count" field.
-func (asu *ApiStatisticsUpdate) SetFailureCount(i int64) *ApiStatisticsUpdate {
+func (asu *ApiStatisticsUpdate) SetFailureCount(i int32) *ApiStatisticsUpdate {
 	asu.mutation.ResetFailureCount()
 	asu.mutation.SetFailureCount(i)
 	return asu
 }
 
 // AddFailureCount adds i to the "failure_count" field.
-func (asu *ApiStatisticsUpdate) AddFailureCount(i int64) *ApiStatisticsUpdate {
+func (asu *ApiStatisticsUpdate) AddFailureCount(i int32) *ApiStatisticsUpdate {
 	asu.mutation.AddFailureCount(i)
 	return asu
 }
@@ -164,14 +164,14 @@ func (asu *ApiStatisticsUpdate) SetUpdateAt(t time.Time) *ApiStatisticsUpdate {
 }
 
 // SetAPIID sets the "api_id" field.
-func (asu *ApiStatisticsUpdate) SetAPIID(i int64) *ApiStatisticsUpdate {
+func (asu *ApiStatisticsUpdate) SetAPIID(i int32) *ApiStatisticsUpdate {
 	asu.mutation.ResetAPIID()
 	asu.mutation.SetAPIID(i)
 	return asu
 }
 
 // AddAPIID adds i to the "api_id" field.
-func (asu *ApiStatisticsUpdate) AddAPIID(i int64) *ApiStatisticsUpdate {
+func (asu *ApiStatisticsUpdate) AddAPIID(i int32) *ApiStatisticsUpdate {
 	asu.mutation.AddAPIID(i)
 	return asu
 }
@@ -222,7 +222,7 @@ func (asu *ApiStatisticsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if err := asu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(apistatistics.Table, apistatistics.Columns, sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(apistatistics.Table, apistatistics.Columns, sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt32))
 	if ps := asu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -231,22 +231,22 @@ func (asu *ApiStatisticsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 	}
 	if value, ok := asu.mutation.CallCount(); ok {
-		_spec.SetField(apistatistics.FieldCallCount, field.TypeInt64, value)
+		_spec.SetField(apistatistics.FieldCallCount, field.TypeInt32, value)
 	}
 	if value, ok := asu.mutation.AddedCallCount(); ok {
-		_spec.AddField(apistatistics.FieldCallCount, field.TypeInt64, value)
+		_spec.AddField(apistatistics.FieldCallCount, field.TypeInt32, value)
 	}
 	if value, ok := asu.mutation.SuccessCount(); ok {
-		_spec.SetField(apistatistics.FieldSuccessCount, field.TypeInt64, value)
+		_spec.SetField(apistatistics.FieldSuccessCount, field.TypeInt32, value)
 	}
 	if value, ok := asu.mutation.AddedSuccessCount(); ok {
-		_spec.AddField(apistatistics.FieldSuccessCount, field.TypeInt64, value)
+		_spec.AddField(apistatistics.FieldSuccessCount, field.TypeInt32, value)
 	}
 	if value, ok := asu.mutation.FailureCount(); ok {
-		_spec.SetField(apistatistics.FieldFailureCount, field.TypeInt64, value)
+		_spec.SetField(apistatistics.FieldFailureCount, field.TypeInt32, value)
 	}
 	if value, ok := asu.mutation.AddedFailureCount(); ok {
-		_spec.AddField(apistatistics.FieldFailureCount, field.TypeInt64, value)
+		_spec.AddField(apistatistics.FieldFailureCount, field.TypeInt32, value)
 	}
 	if value, ok := asu.mutation.AvgResponseTime(); ok {
 		_spec.SetField(apistatistics.FieldAvgResponseTime, field.TypeFloat64, value)
@@ -294,10 +294,10 @@ func (asu *ApiStatisticsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		_spec.SetField(apistatistics.FieldUpdateAt, field.TypeTime, value)
 	}
 	if value, ok := asu.mutation.APIID(); ok {
-		_spec.SetField(apistatistics.FieldAPIID, field.TypeInt64, value)
+		_spec.SetField(apistatistics.FieldAPIID, field.TypeInt32, value)
 	}
 	if value, ok := asu.mutation.AddedAPIID(); ok {
-		_spec.AddField(apistatistics.FieldAPIID, field.TypeInt64, value)
+		_spec.AddField(apistatistics.FieldAPIID, field.TypeInt32, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, asu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -320,40 +320,40 @@ type ApiStatisticsUpdateOne struct {
 }
 
 // SetCallCount sets the "call_count" field.
-func (asuo *ApiStatisticsUpdateOne) SetCallCount(i int64) *ApiStatisticsUpdateOne {
+func (asuo *ApiStatisticsUpdateOne) SetCallCount(i int32) *ApiStatisticsUpdateOne {
 	asuo.mutation.ResetCallCount()
 	asuo.mutation.SetCallCount(i)
 	return asuo
 }
 
 // AddCallCount adds i to the "call_count" field.
-func (asuo *ApiStatisticsUpdateOne) AddCallCount(i int64) *ApiStatisticsUpdateOne {
+func (asuo *ApiStatisticsUpdateOne) AddCallCount(i int32) *ApiStatisticsUpdateOne {
 	asuo.mutation.AddCallCount(i)
 	return asuo
 }
 
 // SetSuccessCount sets the "success_count" field.
-func (asuo *ApiStatisticsUpdateOne) SetSuccessCount(i int64) *ApiStatisticsUpdateOne {
+func (asuo *ApiStatisticsUpdateOne) SetSuccessCount(i int32) *ApiStatisticsUpdateOne {
 	asuo.mutation.ResetSuccessCount()
 	asuo.mutation.SetSuccessCount(i)
 	return asuo
 }
 
 // AddSuccessCount adds i to the "success_count" field.
-func (asuo *ApiStatisticsUpdateOne) AddSuccessCount(i int64) *ApiStatisticsUpdateOne {
+func (asuo *ApiStatisticsUpdateOne) AddSuccessCount(i int32) *ApiStatisticsUpdateOne {
 	asuo.mutation.AddSuccessCount(i)
 	return asuo
 }
 
 // SetFailureCount sets the "failure_count" field.
-func (asuo *ApiStatisticsUpdateOne) SetFailureCount(i int64) *ApiStatisticsUpdateOne {
+func (asuo *ApiStatisticsUpdateOne) SetFailureCount(i int32) *ApiStatisticsUpdateOne {
 	asuo.mutation.ResetFailureCount()
 	asuo.mutation.SetFailureCount(i)
 	return asuo
 }
 
 // AddFailureCount adds i to the "failure_count" field.
-func (asuo *ApiStatisticsUpdateOne) AddFailureCount(i int64) *ApiStatisticsUpdateOne {
+func (asuo *ApiStatisticsUpdateOne) AddFailureCount(i int32) *ApiStatisticsUpdateOne {
 	asuo.mutation.AddFailureCount(i)
 	return asuo
 }
@@ -455,14 +455,14 @@ func (asuo *ApiStatisticsUpdateOne) SetUpdateAt(t time.Time) *ApiStatisticsUpdat
 }
 
 // SetAPIID sets the "api_id" field.
-func (asuo *ApiStatisticsUpdateOne) SetAPIID(i int64) *ApiStatisticsUpdateOne {
+func (asuo *ApiStatisticsUpdateOne) SetAPIID(i int32) *ApiStatisticsUpdateOne {
 	asuo.mutation.ResetAPIID()
 	asuo.mutation.SetAPIID(i)
 	return asuo
 }
 
 // AddAPIID adds i to the "api_id" field.
-func (asuo *ApiStatisticsUpdateOne) AddAPIID(i int64) *ApiStatisticsUpdateOne {
+func (asuo *ApiStatisticsUpdateOne) AddAPIID(i int32) *ApiStatisticsUpdateOne {
 	asuo.mutation.AddAPIID(i)
 	return asuo
 }
@@ -526,7 +526,7 @@ func (asuo *ApiStatisticsUpdateOne) sqlSave(ctx context.Context) (_node *ApiStat
 	if err := asuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(apistatistics.Table, apistatistics.Columns, sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(apistatistics.Table, apistatistics.Columns, sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt32))
 	id, ok := asuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ApiStatistics.id" for update`)}
@@ -552,22 +552,22 @@ func (asuo *ApiStatisticsUpdateOne) sqlSave(ctx context.Context) (_node *ApiStat
 		}
 	}
 	if value, ok := asuo.mutation.CallCount(); ok {
-		_spec.SetField(apistatistics.FieldCallCount, field.TypeInt64, value)
+		_spec.SetField(apistatistics.FieldCallCount, field.TypeInt32, value)
 	}
 	if value, ok := asuo.mutation.AddedCallCount(); ok {
-		_spec.AddField(apistatistics.FieldCallCount, field.TypeInt64, value)
+		_spec.AddField(apistatistics.FieldCallCount, field.TypeInt32, value)
 	}
 	if value, ok := asuo.mutation.SuccessCount(); ok {
-		_spec.SetField(apistatistics.FieldSuccessCount, field.TypeInt64, value)
+		_spec.SetField(apistatistics.FieldSuccessCount, field.TypeInt32, value)
 	}
 	if value, ok := asuo.mutation.AddedSuccessCount(); ok {
-		_spec.AddField(apistatistics.FieldSuccessCount, field.TypeInt64, value)
+		_spec.AddField(apistatistics.FieldSuccessCount, field.TypeInt32, value)
 	}
 	if value, ok := asuo.mutation.FailureCount(); ok {
-		_spec.SetField(apistatistics.FieldFailureCount, field.TypeInt64, value)
+		_spec.SetField(apistatistics.FieldFailureCount, field.TypeInt32, value)
 	}
 	if value, ok := asuo.mutation.AddedFailureCount(); ok {
-		_spec.AddField(apistatistics.FieldFailureCount, field.TypeInt64, value)
+		_spec.AddField(apistatistics.FieldFailureCount, field.TypeInt32, value)
 	}
 	if value, ok := asuo.mutation.AvgResponseTime(); ok {
 		_spec.SetField(apistatistics.FieldAvgResponseTime, field.TypeFloat64, value)
@@ -615,10 +615,10 @@ func (asuo *ApiStatisticsUpdateOne) sqlSave(ctx context.Context) (_node *ApiStat
 		_spec.SetField(apistatistics.FieldUpdateAt, field.TypeTime, value)
 	}
 	if value, ok := asuo.mutation.APIID(); ok {
-		_spec.SetField(apistatistics.FieldAPIID, field.TypeInt64, value)
+		_spec.SetField(apistatistics.FieldAPIID, field.TypeInt32, value)
 	}
 	if value, ok := asuo.mutation.AddedAPIID(); ok {
-		_spec.AddField(apistatistics.FieldAPIID, field.TypeInt64, value)
+		_spec.AddField(apistatistics.FieldAPIID, field.TypeInt32, value)
 	}
 	_node = &ApiStatistics{config: asuo.config}
 	_spec.Assign = _node.assignValues

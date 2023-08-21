@@ -12,18 +12,18 @@ import (
 type ManagementRepo interface {
 	CreateTestPlan(context.Context, *TestPlan) (*TestPlan, error)
 	UpdateTestPlan(context.Context, *TestPlan) error
-	GetTestPlanById(ctx context.Context, id int64) (*TestPlan, error)
+	GetTestPlanById(ctx context.Context, id int32) (*TestPlan, error)
 }
 
 type BaseInfo struct {
-	ApiCount       int64
-	ApiCaseCount   int64
-	CronJobCount   int64
-	SceneCaseCount int64
+	ApiCount       int32
+	ApiCaseCount   int32
+	CronJobCount   int32
+	SceneCaseCount int32
 }
 
 type TestPlan struct {
-	Id              int64
+	Id              int32
 	Name            string
 	CreatedAt       time.Time
 	CreatedBy       uint32
@@ -34,8 +34,8 @@ type TestPlan struct {
 	Deadline        time.Time
 	StatusUpdatedAt time.Time
 	Status          v1.Status
-	Tasks           []int64
-	ProjectId       int64
+	Tasks           []int32
+	ProjectId       int32
 }
 
 type ManagementUseCase struct {
@@ -56,7 +56,7 @@ func (uc *ManagementUseCase) CreateTestPlan(ctx context.Context, testPlan *TestP
 	return uc.repo.CreateTestPlan(ctx, testPlan)
 }
 
-func (uc *ManagementUseCase) GetTestPlanById(ctx context.Context, id int64) (*TestPlan, error) {
+func (uc *ManagementUseCase) GetTestPlanById(ctx context.Context, id int32) (*TestPlan, error) {
 	return uc.repo.GetTestPlanById(ctx, id)
 }
 

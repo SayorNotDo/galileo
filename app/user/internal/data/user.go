@@ -13,23 +13,6 @@ import (
 	"time"
 )
 
-type User struct {
-	Id          uint32    `json:"id" gorm:"primaryKey"`
-	Username    string    `json:"name" gorm:"varchar(255)"`
-	ChineseName string    `json:"chinese_name" gorm:"varchar(25)"`
-	Nickname    string    `json:"nickname" gorm:"varchar(25)"`
-	Password    string    `json:"password" gorm:"varchar(255); not null"`
-	Role        int32     `json:"role"`
-	Avatar      string    `json:"avatar"`
-	Email       string    `json:"email"`
-	Phone       string    `json:"phone"`
-	Status      bool      `json:"status" gorm:"default: true"`
-	UpdateAt    time.Time `json:"update_at" gorm:"autoUpdateTime"`
-	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
-	DeletedAt   time.Time `json:"deleted_at"`
-	DeletedBy   uint32    `json:"deleted_by"`
-}
-
 type userRepo struct {
 	data *Data
 	log  *log.Helper

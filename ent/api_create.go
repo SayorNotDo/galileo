@@ -241,7 +241,7 @@ func (ac *APICreate) SetNillableDeletedBy(u *uint32) *APICreate {
 }
 
 // SetID sets the "id" field.
-func (ac *APICreate) SetID(i int64) *APICreate {
+func (ac *APICreate) SetID(i int32) *APICreate {
 	ac.mutation.SetID(i)
 	return ac
 }
@@ -342,7 +342,7 @@ func (ac *APICreate) sqlSave(ctx context.Context) (*Api, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int64(id)
+		_node.ID = int32(id)
 	}
 	ac.mutation.id = &_node.ID
 	ac.mutation.done = true
@@ -352,7 +352,7 @@ func (ac *APICreate) sqlSave(ctx context.Context) (*Api, error) {
 func (ac *APICreate) createSpec() (*Api, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Api{config: ac.config}
-		_spec = sqlgraph.NewCreateSpec(api.Table, sqlgraph.NewFieldSpec(api.FieldID, field.TypeInt64))
+		_spec = sqlgraph.NewCreateSpec(api.Table, sqlgraph.NewFieldSpec(api.FieldID, field.TypeInt32))
 	)
 	if id, ok := ac.mutation.ID(); ok {
 		_node.ID = id
@@ -476,7 +476,7 @@ func (acb *APICreateBulk) Save(ctx context.Context) ([]*Api, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int64(id)
+					nodes[i].ID = int32(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

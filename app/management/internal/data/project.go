@@ -48,7 +48,7 @@ func (repo *projectRepo) CreateProject(ctx context.Context, p *biz.Project) (*bi
 	}, nil
 }
 
-func (repo *projectRepo) GetProjectById(ctx context.Context, id int64) (*biz.Project, error) {
+func (repo *projectRepo) GetProjectById(ctx context.Context, id int32) (*biz.Project, error) {
 	res, err := repo.data.entDB.Project.Query().
 		Where(project.ID(id)).
 		Only(ctx)

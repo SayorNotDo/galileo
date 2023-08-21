@@ -21,7 +21,6 @@ type TestcaseSuiteQuery struct {
 	order      []OrderFunc
 	inters     []Interceptor
 	predicates []predicate.TestcaseSuite
-	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -82,8 +81,8 @@ func (tsq *TestcaseSuiteQuery) FirstX(ctx context.Context) *TestcaseSuite {
 
 // FirstID returns the first TestcaseSuite ID from the query.
 // Returns a *NotFoundError when no TestcaseSuite ID was found.
-func (tsq *TestcaseSuiteQuery) FirstID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (tsq *TestcaseSuiteQuery) FirstID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = tsq.Limit(1).IDs(setContextOp(ctx, tsq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -95,7 +94,7 @@ func (tsq *TestcaseSuiteQuery) FirstID(ctx context.Context) (id int64, err error
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (tsq *TestcaseSuiteQuery) FirstIDX(ctx context.Context) int64 {
+func (tsq *TestcaseSuiteQuery) FirstIDX(ctx context.Context) int32 {
 	id, err := tsq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -133,8 +132,8 @@ func (tsq *TestcaseSuiteQuery) OnlyX(ctx context.Context) *TestcaseSuite {
 // OnlyID is like Only, but returns the only TestcaseSuite ID in the query.
 // Returns a *NotSingularError when more than one TestcaseSuite ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (tsq *TestcaseSuiteQuery) OnlyID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (tsq *TestcaseSuiteQuery) OnlyID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = tsq.Limit(2).IDs(setContextOp(ctx, tsq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -150,7 +149,7 @@ func (tsq *TestcaseSuiteQuery) OnlyID(ctx context.Context) (id int64, err error)
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (tsq *TestcaseSuiteQuery) OnlyIDX(ctx context.Context) int64 {
+func (tsq *TestcaseSuiteQuery) OnlyIDX(ctx context.Context) int32 {
 	id, err := tsq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -178,7 +177,7 @@ func (tsq *TestcaseSuiteQuery) AllX(ctx context.Context) []*TestcaseSuite {
 }
 
 // IDs executes the query and returns a list of TestcaseSuite IDs.
-func (tsq *TestcaseSuiteQuery) IDs(ctx context.Context) (ids []int64, err error) {
+func (tsq *TestcaseSuiteQuery) IDs(ctx context.Context) (ids []int32, err error) {
 	if tsq.ctx.Unique == nil && tsq.path != nil {
 		tsq.Unique(true)
 	}
@@ -190,7 +189,7 @@ func (tsq *TestcaseSuiteQuery) IDs(ctx context.Context) (ids []int64, err error)
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (tsq *TestcaseSuiteQuery) IDsX(ctx context.Context) []int64 {
+func (tsq *TestcaseSuiteQuery) IDsX(ctx context.Context) []int32 {
 	ids, err := tsq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -332,13 +331,9 @@ func (tsq *TestcaseSuiteQuery) prepareQuery(ctx context.Context) error {
 
 func (tsq *TestcaseSuiteQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*TestcaseSuite, error) {
 	var (
-		nodes   = []*TestcaseSuite{}
-		withFKs = tsq.withFKs
-		_spec   = tsq.querySpec()
+		nodes = []*TestcaseSuite{}
+		_spec = tsq.querySpec()
 	)
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, testcasesuite.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*TestcaseSuite).scanValues(nil, columns)
 	}
@@ -369,7 +364,7 @@ func (tsq *TestcaseSuiteQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (tsq *TestcaseSuiteQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(testcasesuite.Table, testcasesuite.Columns, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewQuerySpec(testcasesuite.Table, testcasesuite.Columns, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt32))
 	_spec.From = tsq.sql
 	if unique := tsq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

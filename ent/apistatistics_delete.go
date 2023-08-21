@@ -40,7 +40,7 @@ func (asd *ApiStatisticsDelete) ExecX(ctx context.Context) int {
 }
 
 func (asd *ApiStatisticsDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(apistatistics.Table, sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewDeleteSpec(apistatistics.Table, sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt32))
 	if ps := asd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

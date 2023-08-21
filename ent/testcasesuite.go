@@ -16,7 +16,7 @@ import (
 type TestcaseSuite struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
+	ID int32 `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -28,8 +28,7 @@ type TestcaseSuite struct {
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy uint32 `json:"updated_by,omitempty"`
 	// Testcases holds the value of the "testcases" field.
-	Testcases           []int64 `json:"testcases,omitempty"`
-	task_testcase_suite *int64
+	Testcases []int32 `json:"testcases,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -45,8 +44,6 @@ func (*TestcaseSuite) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case testcasesuite.FieldCreatedAt, testcasesuite.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case testcasesuite.ForeignKeys[0]: // task_testcase_suite
-			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type TestcaseSuite", columns[i])
 		}
@@ -67,7 +64,7 @@ func (ts *TestcaseSuite) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			ts.ID = int64(value.Int64)
+			ts.ID = int32(value.Int64)
 		case testcasesuite.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -105,13 +102,6 @@ func (ts *TestcaseSuite) assignValues(columns []string, values []any) error {
 				if err := json.Unmarshal(*value, &ts.Testcases); err != nil {
 					return fmt.Errorf("unmarshal field testcases: %w", err)
 				}
-			}
-		case testcasesuite.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field task_testcase_suite", value)
-			} else if value.Valid {
-				ts.task_testcase_suite = new(int64)
-				*ts.task_testcase_suite = int64(value.Int64)
 			}
 		}
 	}

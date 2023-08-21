@@ -4,11 +4,9 @@ package ent
 
 import (
 	"context"
-	"database/sql/driver"
 	"fmt"
 	"galileo/ent/predicate"
 	"galileo/ent/task"
-	"galileo/ent/testcasesuite"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
@@ -19,11 +17,10 @@ import (
 // TaskQuery is the builder for querying Task entities.
 type TaskQuery struct {
 	config
-	ctx               *QueryContext
-	order             []OrderFunc
-	inters            []Interceptor
-	predicates        []predicate.Task
-	withTestcaseSuite *TestcaseSuiteQuery
+	ctx        *QueryContext
+	order      []OrderFunc
+	inters     []Interceptor
+	predicates []predicate.Task
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -60,28 +57,6 @@ func (tq *TaskQuery) Order(o ...OrderFunc) *TaskQuery {
 	return tq
 }
 
-// QueryTestcaseSuite chains the current query on the "testcase_suite" edge.
-func (tq *TaskQuery) QueryTestcaseSuite() *TestcaseSuiteQuery {
-	query := (&TestcaseSuiteClient{config: tq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := tq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := tq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(task.Table, task.FieldID, selector),
-			sqlgraph.To(testcasesuite.Table, testcasesuite.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, task.TestcaseSuiteTable, task.TestcaseSuiteColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
 // First returns the first Task entity from the query.
 // Returns a *NotFoundError when no Task was found.
 func (tq *TaskQuery) First(ctx context.Context) (*Task, error) {
@@ -106,8 +81,8 @@ func (tq *TaskQuery) FirstX(ctx context.Context) *Task {
 
 // FirstID returns the first Task ID from the query.
 // Returns a *NotFoundError when no Task ID was found.
-func (tq *TaskQuery) FirstID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (tq *TaskQuery) FirstID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = tq.Limit(1).IDs(setContextOp(ctx, tq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -119,7 +94,7 @@ func (tq *TaskQuery) FirstID(ctx context.Context) (id int64, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (tq *TaskQuery) FirstIDX(ctx context.Context) int64 {
+func (tq *TaskQuery) FirstIDX(ctx context.Context) int32 {
 	id, err := tq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -157,8 +132,8 @@ func (tq *TaskQuery) OnlyX(ctx context.Context) *Task {
 // OnlyID is like Only, but returns the only Task ID in the query.
 // Returns a *NotSingularError when more than one Task ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (tq *TaskQuery) OnlyID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (tq *TaskQuery) OnlyID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = tq.Limit(2).IDs(setContextOp(ctx, tq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -174,7 +149,7 @@ func (tq *TaskQuery) OnlyID(ctx context.Context) (id int64, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (tq *TaskQuery) OnlyIDX(ctx context.Context) int64 {
+func (tq *TaskQuery) OnlyIDX(ctx context.Context) int32 {
 	id, err := tq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -202,7 +177,7 @@ func (tq *TaskQuery) AllX(ctx context.Context) []*Task {
 }
 
 // IDs executes the query and returns a list of Task IDs.
-func (tq *TaskQuery) IDs(ctx context.Context) (ids []int64, err error) {
+func (tq *TaskQuery) IDs(ctx context.Context) (ids []int32, err error) {
 	if tq.ctx.Unique == nil && tq.path != nil {
 		tq.Unique(true)
 	}
@@ -214,7 +189,7 @@ func (tq *TaskQuery) IDs(ctx context.Context) (ids []int64, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (tq *TaskQuery) IDsX(ctx context.Context) []int64 {
+func (tq *TaskQuery) IDsX(ctx context.Context) []int32 {
 	ids, err := tq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -269,27 +244,15 @@ func (tq *TaskQuery) Clone() *TaskQuery {
 		return nil
 	}
 	return &TaskQuery{
-		config:            tq.config,
-		ctx:               tq.ctx.Clone(),
-		order:             append([]OrderFunc{}, tq.order...),
-		inters:            append([]Interceptor{}, tq.inters...),
-		predicates:        append([]predicate.Task{}, tq.predicates...),
-		withTestcaseSuite: tq.withTestcaseSuite.Clone(),
+		config:     tq.config,
+		ctx:        tq.ctx.Clone(),
+		order:      append([]OrderFunc{}, tq.order...),
+		inters:     append([]Interceptor{}, tq.inters...),
+		predicates: append([]predicate.Task{}, tq.predicates...),
 		// clone intermediate query.
 		sql:  tq.sql.Clone(),
 		path: tq.path,
 	}
-}
-
-// WithTestcaseSuite tells the query-builder to eager-load the nodes that are connected to
-// the "testcase_suite" edge. The optional arguments are used to configure the query builder of the edge.
-func (tq *TaskQuery) WithTestcaseSuite(opts ...func(*TestcaseSuiteQuery)) *TaskQuery {
-	query := (&TestcaseSuiteClient{config: tq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	tq.withTestcaseSuite = query
-	return tq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -368,11 +331,8 @@ func (tq *TaskQuery) prepareQuery(ctx context.Context) error {
 
 func (tq *TaskQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Task, error) {
 	var (
-		nodes       = []*Task{}
-		_spec       = tq.querySpec()
-		loadedTypes = [1]bool{
-			tq.withTestcaseSuite != nil,
-		}
+		nodes = []*Task{}
+		_spec = tq.querySpec()
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Task).scanValues(nil, columns)
@@ -380,7 +340,6 @@ func (tq *TaskQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Task, e
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Task{config: tq.config}
 		nodes = append(nodes, node)
-		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -392,46 +351,7 @@ func (tq *TaskQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Task, e
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := tq.withTestcaseSuite; query != nil {
-		if err := tq.loadTestcaseSuite(ctx, query, nodes,
-			func(n *Task) { n.Edges.TestcaseSuite = []*TestcaseSuite{} },
-			func(n *Task, e *TestcaseSuite) { n.Edges.TestcaseSuite = append(n.Edges.TestcaseSuite, e) }); err != nil {
-			return nil, err
-		}
-	}
 	return nodes, nil
-}
-
-func (tq *TaskQuery) loadTestcaseSuite(ctx context.Context, query *TestcaseSuiteQuery, nodes []*Task, init func(*Task), assign func(*Task, *TestcaseSuite)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int64]*Task)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	query.withFKs = true
-	query.Where(predicate.TestcaseSuite(func(s *sql.Selector) {
-		s.Where(sql.InValues(task.TestcaseSuiteColumn, fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.task_testcase_suite
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "task_testcase_suite" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "task_testcase_suite" returned %v for node %v`, *fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
 }
 
 func (tq *TaskQuery) sqlCount(ctx context.Context) (int, error) {
@@ -444,7 +364,7 @@ func (tq *TaskQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (tq *TaskQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewQuerySpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt32))
 	_spec.From = tq.sql
 	if unique := tq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

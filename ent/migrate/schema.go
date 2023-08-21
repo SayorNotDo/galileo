@@ -11,7 +11,7 @@ import (
 var (
 	// APIColumns holds the columns for the "api" table.
 	APIColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "id", Type: field.TypeInt32, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "url", Type: field.TypeString},
 		{Name: "type", Type: field.TypeInt8},
@@ -56,8 +56,8 @@ var (
 	}
 	// APIHistoryColumns holds the columns for the "api_history" table.
 	APIHistoryColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "version", Type: field.TypeInt64},
+		{Name: "id", Type: field.TypeInt32, Increment: true},
+		{Name: "version", Type: field.TypeInt32},
 		{Name: "query_params", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
@@ -71,10 +71,10 @@ var (
 	}
 	// APIStatisticsColumns holds the columns for the "api_statistics" table.
 	APIStatisticsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true},
-		{Name: "call_count", Type: field.TypeInt64},
-		{Name: "success_count", Type: field.TypeInt64},
-		{Name: "failure_count", Type: field.TypeInt64},
+		{Name: "id", Type: field.TypeInt32, Increment: true},
+		{Name: "call_count", Type: field.TypeInt32},
+		{Name: "success_count", Type: field.TypeInt32},
+		{Name: "failure_count", Type: field.TypeInt32},
 		{Name: "avg_response_time", Type: field.TypeFloat64},
 		{Name: "max_response_time", Type: field.TypeFloat64},
 		{Name: "min_response_time", Type: field.TypeFloat64},
@@ -84,7 +84,7 @@ var (
 		{Name: "description", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "update_at", Type: field.TypeTime},
-		{Name: "api_id", Type: field.TypeInt64},
+		{Name: "api_id", Type: field.TypeInt32},
 	}
 	// APIStatisticsTable holds the schema information for the "api_statistics" table.
 	APIStatisticsTable = &schema.Table{
@@ -94,9 +94,9 @@ var (
 	}
 	// APITagColumns holds the columns for the "api_tag" table.
 	APITagColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "id", Type: field.TypeInt32, Increment: true},
 		{Name: "name", Type: field.TypeString},
-		{Name: "sort", Type: field.TypeInt64},
+		{Name: "sort", Type: field.TypeInt32},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
 		{Name: "update_at", Type: field.TypeTime},
@@ -135,7 +135,7 @@ var (
 	}
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "id", Type: field.TypeInt32, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "created_by", Type: field.TypeUint32},
 		{Name: "created_at", Type: field.TypeTime},
@@ -148,9 +148,9 @@ var (
 	}
 	// GroupMemberColumns holds the columns for the "group_member" table.
 	GroupMemberColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "group_id", Type: field.TypeInt64},
-		{Name: "user_id", Type: field.TypeInt64},
+		{Name: "id", Type: field.TypeInt32, Increment: true},
+		{Name: "group_id", Type: field.TypeInt32},
+		{Name: "user_id", Type: field.TypeInt32},
 		{Name: "role", Type: field.TypeUint8, Default: 0},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
@@ -172,7 +172,7 @@ var (
 	}
 	// ProjectColumns holds the columns for the "project" table.
 	ProjectColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "id", Type: field.TypeInt32, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "identifier", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
@@ -196,7 +196,7 @@ var (
 	// ProjectMemberColumns holds the columns for the "project_member" table.
 	ProjectMemberColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "project_id", Type: field.TypeInt64},
+		{Name: "project_id", Type: field.TypeInt32},
 		{Name: "user_id", Type: field.TypeUint32},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
@@ -215,7 +215,7 @@ var (
 	}
 	// TaskColumns holds the columns for the "task" table.
 	TaskColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "id", Type: field.TypeInt32, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
@@ -236,8 +236,9 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "testplan_id", Type: field.TypeInt64, Nullable: true},
+		{Name: "testplan_id", Type: field.TypeInt32, Nullable: true},
 		{Name: "execute_id", Type: field.TypeInt64, Nullable: true},
+		{Name: "testcase_suite", Type: field.TypeJSON},
 	}
 	// TaskTable holds the schema information for the "task" table.
 	TaskTable = &schema.Table{
@@ -247,7 +248,7 @@ var (
 	}
 	// TestPlanColumns holds the columns for the "test_plan" table.
 	TestPlanColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "id", Type: field.TypeInt32, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
@@ -259,7 +260,7 @@ var (
 		{Name: "status_updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "status", Type: field.TypeInt8, Default: 0},
 		{Name: "tasks", Type: field.TypeJSON, Nullable: true},
-		{Name: "project_id", Type: field.TypeInt64},
+		{Name: "project_id", Type: field.TypeInt32},
 	}
 	// TestPlanTable holds the schema information for the "test_plan" table.
 	TestPlanTable = &schema.Table{
@@ -269,7 +270,7 @@ var (
 	}
 	// TestcaseColumns holds the columns for the "testcase" table.
 	TestcaseColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "id", Type: field.TypeInt32, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "created_by", Type: field.TypeUint32},
 		{Name: "created_at", Type: field.TypeTime},
@@ -292,28 +293,19 @@ var (
 	}
 	// TestcaseSuiteColumns holds the columns for the "testcase_suite" table.
 	TestcaseSuiteColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "id", Type: field.TypeInt32, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "testcases", Type: field.TypeJSON, Nullable: true},
-		{Name: "task_testcase_suite", Type: field.TypeInt64, Nullable: true},
 	}
 	// TestcaseSuiteTable holds the schema information for the "testcase_suite" table.
 	TestcaseSuiteTable = &schema.Table{
 		Name:       "testcase_suite",
 		Columns:    TestcaseSuiteColumns,
 		PrimaryKey: []*schema.Column{TestcaseSuiteColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "testcase_suite_task_testcase_suite",
-				Columns:    []*schema.Column{TestcaseSuiteColumns[7]},
-				RefColumns: []*schema.Column{TaskColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
 	}
 	// UserColumns holds the columns for the "user" table.
 	UserColumns = []*schema.Column{
@@ -333,9 +325,9 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "is_deleted", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "uuid", Type: field.TypeUUID},
-		{Name: "group_id", Type: field.TypeInt64, Nullable: true},
+		{Name: "group_id", Type: field.TypeInt32, Nullable: true},
 		{Name: "location", Type: field.TypeString, Nullable: true},
-		{Name: "department_id", Type: field.TypeInt64, Nullable: true},
+		{Name: "department_id", Type: field.TypeInt32, Nullable: true},
 	}
 	// UserTable holds the schema information for the "user" table.
 	UserTable = &schema.Table{
@@ -400,7 +392,6 @@ func init() {
 	TestcaseTable.Annotation = &entsql.Annotation{
 		Table: "testcase",
 	}
-	TestcaseSuiteTable.ForeignKeys[0].RefTable = TaskTable
 	TestcaseSuiteTable.Annotation = &entsql.Annotation{
 		Table: "testcase_suite",
 	}

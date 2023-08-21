@@ -222,14 +222,14 @@ func (uu *UserUpdate) SetNillableUUID(u *uuid.UUID) *UserUpdate {
 }
 
 // SetGroupID sets the "group_id" field.
-func (uu *UserUpdate) SetGroupID(i int64) *UserUpdate {
+func (uu *UserUpdate) SetGroupID(i int32) *UserUpdate {
 	uu.mutation.ResetGroupID()
 	uu.mutation.SetGroupID(i)
 	return uu
 }
 
 // SetNillableGroupID sets the "group_id" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableGroupID(i *int64) *UserUpdate {
+func (uu *UserUpdate) SetNillableGroupID(i *int32) *UserUpdate {
 	if i != nil {
 		uu.SetGroupID(*i)
 	}
@@ -237,7 +237,7 @@ func (uu *UserUpdate) SetNillableGroupID(i *int64) *UserUpdate {
 }
 
 // AddGroupID adds i to the "group_id" field.
-func (uu *UserUpdate) AddGroupID(i int64) *UserUpdate {
+func (uu *UserUpdate) AddGroupID(i int32) *UserUpdate {
 	uu.mutation.AddGroupID(i)
 	return uu
 }
@@ -269,14 +269,14 @@ func (uu *UserUpdate) ClearLocation() *UserUpdate {
 }
 
 // SetDepartmentID sets the "department_id" field.
-func (uu *UserUpdate) SetDepartmentID(i int64) *UserUpdate {
+func (uu *UserUpdate) SetDepartmentID(i int32) *UserUpdate {
 	uu.mutation.ResetDepartmentID()
 	uu.mutation.SetDepartmentID(i)
 	return uu
 }
 
 // SetNillableDepartmentID sets the "department_id" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableDepartmentID(i *int64) *UserUpdate {
+func (uu *UserUpdate) SetNillableDepartmentID(i *int32) *UserUpdate {
 	if i != nil {
 		uu.SetDepartmentID(*i)
 	}
@@ -284,7 +284,7 @@ func (uu *UserUpdate) SetNillableDepartmentID(i *int64) *UserUpdate {
 }
 
 // AddDepartmentID adds i to the "department_id" field.
-func (uu *UserUpdate) AddDepartmentID(i int64) *UserUpdate {
+func (uu *UserUpdate) AddDepartmentID(i int32) *UserUpdate {
 	uu.mutation.AddDepartmentID(i)
 	return uu
 }
@@ -409,13 +409,13 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
 	}
 	if value, ok := uu.mutation.GroupID(); ok {
-		_spec.SetField(user.FieldGroupID, field.TypeInt64, value)
+		_spec.SetField(user.FieldGroupID, field.TypeInt32, value)
 	}
 	if value, ok := uu.mutation.AddedGroupID(); ok {
-		_spec.AddField(user.FieldGroupID, field.TypeInt64, value)
+		_spec.AddField(user.FieldGroupID, field.TypeInt32, value)
 	}
 	if uu.mutation.GroupIDCleared() {
-		_spec.ClearField(user.FieldGroupID, field.TypeInt64)
+		_spec.ClearField(user.FieldGroupID, field.TypeInt32)
 	}
 	if value, ok := uu.mutation.Location(); ok {
 		_spec.SetField(user.FieldLocation, field.TypeString, value)
@@ -424,13 +424,13 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.ClearField(user.FieldLocation, field.TypeString)
 	}
 	if value, ok := uu.mutation.DepartmentID(); ok {
-		_spec.SetField(user.FieldDepartmentID, field.TypeInt64, value)
+		_spec.SetField(user.FieldDepartmentID, field.TypeInt32, value)
 	}
 	if value, ok := uu.mutation.AddedDepartmentID(); ok {
-		_spec.AddField(user.FieldDepartmentID, field.TypeInt64, value)
+		_spec.AddField(user.FieldDepartmentID, field.TypeInt32, value)
 	}
 	if uu.mutation.DepartmentIDCleared() {
-		_spec.ClearField(user.FieldDepartmentID, field.TypeInt64)
+		_spec.ClearField(user.FieldDepartmentID, field.TypeInt32)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -645,14 +645,14 @@ func (uuo *UserUpdateOne) SetNillableUUID(u *uuid.UUID) *UserUpdateOne {
 }
 
 // SetGroupID sets the "group_id" field.
-func (uuo *UserUpdateOne) SetGroupID(i int64) *UserUpdateOne {
+func (uuo *UserUpdateOne) SetGroupID(i int32) *UserUpdateOne {
 	uuo.mutation.ResetGroupID()
 	uuo.mutation.SetGroupID(i)
 	return uuo
 }
 
 // SetNillableGroupID sets the "group_id" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableGroupID(i *int64) *UserUpdateOne {
+func (uuo *UserUpdateOne) SetNillableGroupID(i *int32) *UserUpdateOne {
 	if i != nil {
 		uuo.SetGroupID(*i)
 	}
@@ -660,7 +660,7 @@ func (uuo *UserUpdateOne) SetNillableGroupID(i *int64) *UserUpdateOne {
 }
 
 // AddGroupID adds i to the "group_id" field.
-func (uuo *UserUpdateOne) AddGroupID(i int64) *UserUpdateOne {
+func (uuo *UserUpdateOne) AddGroupID(i int32) *UserUpdateOne {
 	uuo.mutation.AddGroupID(i)
 	return uuo
 }
@@ -692,14 +692,14 @@ func (uuo *UserUpdateOne) ClearLocation() *UserUpdateOne {
 }
 
 // SetDepartmentID sets the "department_id" field.
-func (uuo *UserUpdateOne) SetDepartmentID(i int64) *UserUpdateOne {
+func (uuo *UserUpdateOne) SetDepartmentID(i int32) *UserUpdateOne {
 	uuo.mutation.ResetDepartmentID()
 	uuo.mutation.SetDepartmentID(i)
 	return uuo
 }
 
 // SetNillableDepartmentID sets the "department_id" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableDepartmentID(i *int64) *UserUpdateOne {
+func (uuo *UserUpdateOne) SetNillableDepartmentID(i *int32) *UserUpdateOne {
 	if i != nil {
 		uuo.SetDepartmentID(*i)
 	}
@@ -707,7 +707,7 @@ func (uuo *UserUpdateOne) SetNillableDepartmentID(i *int64) *UserUpdateOne {
 }
 
 // AddDepartmentID adds i to the "department_id" field.
-func (uuo *UserUpdateOne) AddDepartmentID(i int64) *UserUpdateOne {
+func (uuo *UserUpdateOne) AddDepartmentID(i int32) *UserUpdateOne {
 	uuo.mutation.AddDepartmentID(i)
 	return uuo
 }
@@ -862,13 +862,13 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
 	}
 	if value, ok := uuo.mutation.GroupID(); ok {
-		_spec.SetField(user.FieldGroupID, field.TypeInt64, value)
+		_spec.SetField(user.FieldGroupID, field.TypeInt32, value)
 	}
 	if value, ok := uuo.mutation.AddedGroupID(); ok {
-		_spec.AddField(user.FieldGroupID, field.TypeInt64, value)
+		_spec.AddField(user.FieldGroupID, field.TypeInt32, value)
 	}
 	if uuo.mutation.GroupIDCleared() {
-		_spec.ClearField(user.FieldGroupID, field.TypeInt64)
+		_spec.ClearField(user.FieldGroupID, field.TypeInt32)
 	}
 	if value, ok := uuo.mutation.Location(); ok {
 		_spec.SetField(user.FieldLocation, field.TypeString, value)
@@ -877,13 +877,13 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		_spec.ClearField(user.FieldLocation, field.TypeString)
 	}
 	if value, ok := uuo.mutation.DepartmentID(); ok {
-		_spec.SetField(user.FieldDepartmentID, field.TypeInt64, value)
+		_spec.SetField(user.FieldDepartmentID, field.TypeInt32, value)
 	}
 	if value, ok := uuo.mutation.AddedDepartmentID(); ok {
-		_spec.AddField(user.FieldDepartmentID, field.TypeInt64, value)
+		_spec.AddField(user.FieldDepartmentID, field.TypeInt32, value)
 	}
 	if uuo.mutation.DepartmentIDCleared() {
-		_spec.ClearField(user.FieldDepartmentID, field.TypeInt64)
+		_spec.ClearField(user.FieldDepartmentID, field.TypeInt32)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

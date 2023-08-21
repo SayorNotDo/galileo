@@ -21,9 +21,9 @@ func (ApiTag) Annotations() []schema.Annotation {
 // Fields of the ApiTag.
 func (ApiTag) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("id"),
+		field.Int32("id"),
 		field.String("name"),
-		field.Int64("sort"),
+		field.Int32("sort"),
 		field.Time("created_at"),
 		field.Uint32("created_by"),
 		field.Time("update_at"),

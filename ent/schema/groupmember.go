@@ -23,8 +23,9 @@ func (GroupMember) Annotations() []schema.Annotation {
 // Fields of the GroupMember.
 func (GroupMember) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("group_id"),
-		field.Int64("user_id"),
+		field.Int32("id").Unique(),
+		field.Int32("group_id"),
+		field.Int32("user_id"),
 		field.Uint8("role").Default(0),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("created_by"),

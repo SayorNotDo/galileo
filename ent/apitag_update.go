@@ -35,14 +35,14 @@ func (atu *ApiTagUpdate) SetName(s string) *ApiTagUpdate {
 }
 
 // SetSort sets the "sort" field.
-func (atu *ApiTagUpdate) SetSort(i int64) *ApiTagUpdate {
+func (atu *ApiTagUpdate) SetSort(i int32) *ApiTagUpdate {
 	atu.mutation.ResetSort()
 	atu.mutation.SetSort(i)
 	return atu
 }
 
 // AddSort adds i to the "sort" field.
-func (atu *ApiTagUpdate) AddSort(i int64) *ApiTagUpdate {
+func (atu *ApiTagUpdate) AddSort(i int32) *ApiTagUpdate {
 	atu.mutation.AddSort(i)
 	return atu
 }
@@ -124,7 +124,7 @@ func (atu *ApiTagUpdate) ExecX(ctx context.Context) {
 }
 
 func (atu *ApiTagUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(apitag.Table, apitag.Columns, sqlgraph.NewFieldSpec(apitag.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(apitag.Table, apitag.Columns, sqlgraph.NewFieldSpec(apitag.FieldID, field.TypeInt32))
 	if ps := atu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -136,10 +136,10 @@ func (atu *ApiTagUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(apitag.FieldName, field.TypeString, value)
 	}
 	if value, ok := atu.mutation.Sort(); ok {
-		_spec.SetField(apitag.FieldSort, field.TypeInt64, value)
+		_spec.SetField(apitag.FieldSort, field.TypeInt32, value)
 	}
 	if value, ok := atu.mutation.AddedSort(); ok {
-		_spec.AddField(apitag.FieldSort, field.TypeInt64, value)
+		_spec.AddField(apitag.FieldSort, field.TypeInt32, value)
 	}
 	if value, ok := atu.mutation.CreatedAt(); ok {
 		_spec.SetField(apitag.FieldCreatedAt, field.TypeTime, value)
@@ -189,14 +189,14 @@ func (atuo *ApiTagUpdateOne) SetName(s string) *ApiTagUpdateOne {
 }
 
 // SetSort sets the "sort" field.
-func (atuo *ApiTagUpdateOne) SetSort(i int64) *ApiTagUpdateOne {
+func (atuo *ApiTagUpdateOne) SetSort(i int32) *ApiTagUpdateOne {
 	atuo.mutation.ResetSort()
 	atuo.mutation.SetSort(i)
 	return atuo
 }
 
 // AddSort adds i to the "sort" field.
-func (atuo *ApiTagUpdateOne) AddSort(i int64) *ApiTagUpdateOne {
+func (atuo *ApiTagUpdateOne) AddSort(i int32) *ApiTagUpdateOne {
 	atuo.mutation.AddSort(i)
 	return atuo
 }
@@ -291,7 +291,7 @@ func (atuo *ApiTagUpdateOne) ExecX(ctx context.Context) {
 }
 
 func (atuo *ApiTagUpdateOne) sqlSave(ctx context.Context) (_node *ApiTag, err error) {
-	_spec := sqlgraph.NewUpdateSpec(apitag.Table, apitag.Columns, sqlgraph.NewFieldSpec(apitag.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(apitag.Table, apitag.Columns, sqlgraph.NewFieldSpec(apitag.FieldID, field.TypeInt32))
 	id, ok := atuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ApiTag.id" for update`)}
@@ -320,10 +320,10 @@ func (atuo *ApiTagUpdateOne) sqlSave(ctx context.Context) (_node *ApiTag, err er
 		_spec.SetField(apitag.FieldName, field.TypeString, value)
 	}
 	if value, ok := atuo.mutation.Sort(); ok {
-		_spec.SetField(apitag.FieldSort, field.TypeInt64, value)
+		_spec.SetField(apitag.FieldSort, field.TypeInt32, value)
 	}
 	if value, ok := atuo.mutation.AddedSort(); ok {
-		_spec.AddField(apitag.FieldSort, field.TypeInt64, value)
+		_spec.AddField(apitag.FieldSort, field.TypeInt32, value)
 	}
 	if value, ok := atuo.mutation.CreatedAt(); ok {
 		_spec.SetField(apitag.FieldCreatedAt, field.TypeTime, value)

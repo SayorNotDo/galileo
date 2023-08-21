@@ -67,5 +67,5 @@ func ValidColumn(column string) bool {
 
 var (
 	// APIIDValidator is a validator for the "api_id" field. It is called by the builders before save.
-	APIIDValidator func(int64) error
+	APIIDValidator func(int32) error
 )

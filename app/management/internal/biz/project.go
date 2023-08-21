@@ -11,7 +11,7 @@ import (
 
 // Project is a Project model.
 type Project struct {
-	ID          int64     `json:"id,omitempty"`
+	ID          int32     `json:"id,omitempty"`
 	Name        string    `json:"name,omitempty"`
 	Identifier  string    `json:"identifier,omitempty"`
 	CreatedBy   uint32    `json:"created_by,omitempty"`
@@ -28,7 +28,7 @@ type Project struct {
 // ProjectRepo is a Project repo.
 type ProjectRepo interface {
 	CreateProject(context.Context, *Project) (*Project, error)
-	GetProjectById(context.Context, int64) (*Project, error)
+	GetProjectById(context.Context, int32) (*Project, error)
 	UpdateProject(context.Context, *Project) error
 	GetUserProjectList(context.Context, uint32) ([]*v1.ProjectInfo, error)
 }
@@ -53,7 +53,7 @@ func (uc *ProjectUseCase) CreateProject(ctx context.Context, project *Project) (
 }
 
 // GetProjectById returns the Project
-func (uc *ProjectUseCase) GetProjectById(ctx context.Context, id int64) (*Project, error) {
+func (uc *ProjectUseCase) GetProjectById(ctx context.Context, id int32) (*Project, error) {
 	return uc.repo.GetProjectById(ctx, id)
 }
 

@@ -7,7 +7,7 @@ import (
 )
 
 type Api struct {
-	ID          int64     `json:"id"`
+	ID          int32     `json:"id"`
 	Name        string    `json:"name"`
 	Url         string    `json:"url"`
 	Type        int8      `json:"type"`
@@ -31,7 +31,7 @@ type ApiRepo interface {
 	CreateApi(ctx context.Context, api *Api) (*Api, error)
 	UpdateApi(ctx context.Context, api *Api) (bool, error)
 	ApiByName(ctx context.Context, name string) (*Api, error)
-	ApiById(ctx context.Context, id int64) (*Api, error)
+	ApiById(ctx context.Context, id int32) (*Api, error)
 	IsApiDuplicated(ctx context.Context, method int8, url string) (bool, error)
 	UploadApiFile(ctx context.Context, fileName, fileType string, content []byte) (string, error)
 }
@@ -60,7 +60,7 @@ func (uc *ApiUseCase) ApiByName(ctx context.Context, name string) (*Api, error) 
 	return uc.repo.ApiByName(ctx, name)
 }
 
-func (uc *ApiUseCase) ApiById(ctx context.Context, id int64) (*Api, error) {
+func (uc *ApiUseCase) ApiById(ctx context.Context, id int32) (*Api, error) {
 	return uc.repo.ApiById(ctx, id)
 }
 

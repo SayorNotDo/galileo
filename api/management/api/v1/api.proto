@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package api.management.api;
+
+import "google/api/annotations.proto";
+
+option go_package = "galileo/api/management/api;api";
+option java_multiple_files = true;
+option java_package = "api.management.api";
+
+service Api {
+
+}
+

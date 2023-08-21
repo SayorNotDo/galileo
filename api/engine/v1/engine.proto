@@ -86,7 +86,7 @@ message Container {
 
 
 message UpdateCronJobRequest {
-  int64 taskId = 1;
+  int32 taskId = 1;
   int32 type = 2;
   google.protobuf.Timestamp scheduleTime = 3;
   frequency frequency = 4;
@@ -97,7 +97,7 @@ message UpdateCronJobReply {
 }
 
 message AddCronJobRequest {
-  int64 taskId = 1;
+  int32 taskId = 1;
   int32  type = 2;
   google.protobuf.Timestamp scheduleTime = 3;
   frequency frequency = 4;
@@ -121,7 +121,7 @@ message CreateContainerReply {
 }
 
 message RunJobRequest {
-  int64 taskId = 1;
+  int32 taskId = 1;
   string worker = 2;
   string schema = 3;
   int32 type = 4;

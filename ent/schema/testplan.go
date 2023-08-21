@@ -22,7 +22,7 @@ func (TestPlan) Annotations() []schema.Annotation {
 // Fields of the TestPlan.
 func (TestPlan) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("id"),
+		field.Int32("id"),
 		field.String("name").Unique().NotEmpty(),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("created_by").Immutable(),
@@ -33,8 +33,8 @@ func (TestPlan) Fields() []ent.Field {
 		field.Time("deadline").Optional(),
 		field.Time("status_updated_at").Optional(),
 		field.Int8("status").Default(0),
-		field.JSON("tasks", []int64{}).Optional(),
-		field.Int64("project_id").Positive(),
+		field.JSON("tasks", []int32{}).Optional(),
+		field.Int32("project_id").Positive(),
 	}
 }
 

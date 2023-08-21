@@ -81,8 +81,8 @@ func (atq *ApiTagQuery) FirstX(ctx context.Context) *ApiTag {
 
 // FirstID returns the first ApiTag ID from the query.
 // Returns a *NotFoundError when no ApiTag ID was found.
-func (atq *ApiTagQuery) FirstID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (atq *ApiTagQuery) FirstID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = atq.Limit(1).IDs(setContextOp(ctx, atq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -94,7 +94,7 @@ func (atq *ApiTagQuery) FirstID(ctx context.Context) (id int64, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (atq *ApiTagQuery) FirstIDX(ctx context.Context) int64 {
+func (atq *ApiTagQuery) FirstIDX(ctx context.Context) int32 {
 	id, err := atq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -132,8 +132,8 @@ func (atq *ApiTagQuery) OnlyX(ctx context.Context) *ApiTag {
 // OnlyID is like Only, but returns the only ApiTag ID in the query.
 // Returns a *NotSingularError when more than one ApiTag ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (atq *ApiTagQuery) OnlyID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (atq *ApiTagQuery) OnlyID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = atq.Limit(2).IDs(setContextOp(ctx, atq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -149,7 +149,7 @@ func (atq *ApiTagQuery) OnlyID(ctx context.Context) (id int64, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (atq *ApiTagQuery) OnlyIDX(ctx context.Context) int64 {
+func (atq *ApiTagQuery) OnlyIDX(ctx context.Context) int32 {
 	id, err := atq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -177,7 +177,7 @@ func (atq *ApiTagQuery) AllX(ctx context.Context) []*ApiTag {
 }
 
 // IDs executes the query and returns a list of ApiTag IDs.
-func (atq *ApiTagQuery) IDs(ctx context.Context) (ids []int64, err error) {
+func (atq *ApiTagQuery) IDs(ctx context.Context) (ids []int32, err error) {
 	if atq.ctx.Unique == nil && atq.path != nil {
 		atq.Unique(true)
 	}
@@ -189,7 +189,7 @@ func (atq *ApiTagQuery) IDs(ctx context.Context) (ids []int64, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (atq *ApiTagQuery) IDsX(ctx context.Context) []int64 {
+func (atq *ApiTagQuery) IDsX(ctx context.Context) []int32 {
 	ids, err := atq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -364,7 +364,7 @@ func (atq *ApiTagQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (atq *ApiTagQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(apitag.Table, apitag.Columns, sqlgraph.NewFieldSpec(apitag.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewQuerySpec(apitag.Table, apitag.Columns, sqlgraph.NewFieldSpec(apitag.FieldID, field.TypeInt32))
 	_spec.From = atq.sql
 	if unique := atq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

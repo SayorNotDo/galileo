@@ -145,19 +145,19 @@ func (tpc *TestPlanCreate) SetNillableStatus(i *int8) *TestPlanCreate {
 }
 
 // SetTasks sets the "tasks" field.
-func (tpc *TestPlanCreate) SetTasks(i []int64) *TestPlanCreate {
+func (tpc *TestPlanCreate) SetTasks(i []int32) *TestPlanCreate {
 	tpc.mutation.SetTasks(i)
 	return tpc
 }
 
 // SetProjectID sets the "project_id" field.
-func (tpc *TestPlanCreate) SetProjectID(i int64) *TestPlanCreate {
+func (tpc *TestPlanCreate) SetProjectID(i int32) *TestPlanCreate {
 	tpc.mutation.SetProjectID(i)
 	return tpc
 }
 
 // SetID sets the "id" field.
-func (tpc *TestPlanCreate) SetID(i int64) *TestPlanCreate {
+func (tpc *TestPlanCreate) SetID(i int32) *TestPlanCreate {
 	tpc.mutation.SetID(i)
 	return tpc
 }
@@ -250,7 +250,7 @@ func (tpc *TestPlanCreate) sqlSave(ctx context.Context) (*TestPlan, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int64(id)
+		_node.ID = int32(id)
 	}
 	tpc.mutation.id = &_node.ID
 	tpc.mutation.done = true
@@ -260,7 +260,7 @@ func (tpc *TestPlanCreate) sqlSave(ctx context.Context) (*TestPlan, error) {
 func (tpc *TestPlanCreate) createSpec() (*TestPlan, *sqlgraph.CreateSpec) {
 	var (
 		_node = &TestPlan{config: tpc.config}
-		_spec = sqlgraph.NewCreateSpec(testplan.Table, sqlgraph.NewFieldSpec(testplan.FieldID, field.TypeInt64))
+		_spec = sqlgraph.NewCreateSpec(testplan.Table, sqlgraph.NewFieldSpec(testplan.FieldID, field.TypeInt32))
 	)
 	if id, ok := tpc.mutation.ID(); ok {
 		_node.ID = id
@@ -311,7 +311,7 @@ func (tpc *TestPlanCreate) createSpec() (*TestPlan, *sqlgraph.CreateSpec) {
 		_node.Tasks = value
 	}
 	if value, ok := tpc.mutation.ProjectID(); ok {
-		_spec.SetField(testplan.FieldProjectID, field.TypeInt64, value)
+		_spec.SetField(testplan.FieldProjectID, field.TypeInt32, value)
 		_node.ProjectID = value
 	}
 	return _node, _spec
@@ -360,7 +360,7 @@ func (tpcb *TestPlanCreateBulk) Save(ctx context.Context) ([]*TestPlan, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int64(id)
+					nodes[i].ID = int32(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

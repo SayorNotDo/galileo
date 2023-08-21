@@ -75,13 +75,13 @@ func (tsc *TestcaseSuiteCreate) SetNillableUpdatedBy(u *uint32) *TestcaseSuiteCr
 }
 
 // SetTestcases sets the "testcases" field.
-func (tsc *TestcaseSuiteCreate) SetTestcases(i []int64) *TestcaseSuiteCreate {
+func (tsc *TestcaseSuiteCreate) SetTestcases(i []int32) *TestcaseSuiteCreate {
 	tsc.mutation.SetTestcases(i)
 	return tsc
 }
 
 // SetID sets the "id" field.
-func (tsc *TestcaseSuiteCreate) SetID(i int64) *TestcaseSuiteCreate {
+func (tsc *TestcaseSuiteCreate) SetID(i int32) *TestcaseSuiteCreate {
 	tsc.mutation.SetID(i)
 	return tsc
 }
@@ -159,7 +159,7 @@ func (tsc *TestcaseSuiteCreate) sqlSave(ctx context.Context) (*TestcaseSuite, er
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int64(id)
+		_node.ID = int32(id)
 	}
 	tsc.mutation.id = &_node.ID
 	tsc.mutation.done = true
@@ -169,7 +169,7 @@ func (tsc *TestcaseSuiteCreate) sqlSave(ctx context.Context) (*TestcaseSuite, er
 func (tsc *TestcaseSuiteCreate) createSpec() (*TestcaseSuite, *sqlgraph.CreateSpec) {
 	var (
 		_node = &TestcaseSuite{config: tsc.config}
-		_spec = sqlgraph.NewCreateSpec(testcasesuite.Table, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64))
+		_spec = sqlgraph.NewCreateSpec(testcasesuite.Table, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt32))
 	)
 	if id, ok := tsc.mutation.ID(); ok {
 		_node.ID = id
@@ -245,7 +245,7 @@ func (tscb *TestcaseSuiteCreateBulk) Save(ctx context.Context) ([]*TestcaseSuite
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int64(id)
+					nodes[i].ID = int32(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

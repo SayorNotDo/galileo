@@ -22,7 +22,7 @@ func (Testcase) Annotations() []schema.Annotation {
 // Fields of the TestCase.
 func (Testcase) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("id"),                                           // 用例ID
+		field.Int32("id"),                                           // 用例ID
 		field.String("name").Unique().NotEmpty(),                    // 用例名称
 		field.Uint32("created_by").Immutable(),                      // 用例创建人
 		field.Time("created_at").Default(time.Now).Immutable(),      // 用例创建时间

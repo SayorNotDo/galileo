@@ -10,7 +10,7 @@ import (
 )
 
 type Testcase struct {
-	Id          int64     `json:"id"`
+	Id          int32     `json:"id"`
 	Name        string    `json:"name"`
 	CreatedAt   time.Time `json:"created_at,omitempty"`
 	CreatedBy   uint32    `json:"created_by,omitempty"`
@@ -26,7 +26,7 @@ type Testcase struct {
 }
 
 type TestcaseSuite struct {
-	Id           int64       `json:"id"`
+	Id           int32       `json:"id"`
 	Name         string      `json:"name"`
 	CreatedAt    time.Time   `json:"created_at,omitempty"`
 	CreatedBy    uint32      `json:"created_by,omitempty"`
@@ -38,11 +38,11 @@ type TestcaseSuite struct {
 type TestcaseRepo interface {
 	CreateTestcase(ctx context.Context, testcase *Testcase) (*Testcase, error)
 	UpdateTestcase(ctx context.Context, testcase *Testcase) (bool, error)
-	TestcaseById(ctx context.Context, id int64) (*Testcase, error)
+	TestcaseById(ctx context.Context, id int32) (*Testcase, error)
 	TestcaseByName(ctx context.Context, name string) (*Testcase, error)
 	UploadTestcaseFile(ctx context.Context, fileName string, fileType string, content []byte) (string, error)
-	CreateTestcaseSuite(ctx context.Context, suiteName string, caseIdList []int64) (*TestcaseSuite, error)
-	GetTestcaseSuiteById(ctx context.Context, suiteId int64) (*TestcaseSuite, error)
+	CreateTestcaseSuite(ctx context.Context, suiteName string, caseIdList []int32) (*TestcaseSuite, error)
+	GetTestcaseSuiteById(ctx context.Context, suiteId int32) (*TestcaseSuite, error)
 	DebugTestcase(ctx context.Context, content string) (err error, result string)
 }
 
@@ -70,7 +70,7 @@ func (uc *TestcaseUseCase) UpdateTestcase(ctx context.Context, testcase *Testcas
 	return uc.repo.UpdateTestcase(ctx, testcase)
 }
 
-func (uc *TestcaseUseCase) TestcaseById(ctx context.Context, id int64) (*Testcase, error) {
+func (uc *TestcaseUseCase) TestcaseById(ctx context.Context, id int32) (*Testcase, error) {
 	return uc.repo.TestcaseById(ctx, id)
 }
 
@@ -82,11 +82,11 @@ func (uc *TestcaseUseCase) UploadTestcaseFile(ctx context.Context, fileName stri
 	return uc.repo.UploadTestcaseFile(ctx, fileName, fileType, content)
 }
 
-func (uc *TestcaseUseCase) CreateTestcaseSuite(ctx context.Context, name string, testcaseList []int64) (*TestcaseSuite, error) {
+func (uc *TestcaseUseCase) CreateTestcaseSuite(ctx context.Context, name string, testcaseList []int32) (*TestcaseSuite, error) {
 	return uc.repo.CreateTestcaseSuite(ctx, name, testcaseList)
 }
 
-func (uc *TestcaseUseCase) GetTestcaseSuiteById(ctx context.Context, suiteId int64) (*TestcaseSuite, error) {
+func (uc *TestcaseUseCase) GetTestcaseSuiteById(ctx context.Context, suiteId int32) (*TestcaseSuite, error) {
 	return uc.repo.GetTestcaseSuiteById(ctx, suiteId)
 }
 

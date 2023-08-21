@@ -29,14 +29,14 @@ func (ahu *ApiHistoryUpdate) Where(ps ...predicate.ApiHistory) *ApiHistoryUpdate
 }
 
 // SetVersion sets the "version" field.
-func (ahu *ApiHistoryUpdate) SetVersion(i int64) *ApiHistoryUpdate {
+func (ahu *ApiHistoryUpdate) SetVersion(i int32) *ApiHistoryUpdate {
 	ahu.mutation.ResetVersion()
 	ahu.mutation.SetVersion(i)
 	return ahu
 }
 
 // AddVersion adds i to the "version" field.
-func (ahu *ApiHistoryUpdate) AddVersion(i int64) *ApiHistoryUpdate {
+func (ahu *ApiHistoryUpdate) AddVersion(i int32) *ApiHistoryUpdate {
 	ahu.mutation.AddVersion(i)
 	return ahu
 }
@@ -105,7 +105,7 @@ func (ahu *ApiHistoryUpdate) ExecX(ctx context.Context) {
 }
 
 func (ahu *ApiHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(apihistory.Table, apihistory.Columns, sqlgraph.NewFieldSpec(apihistory.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(apihistory.Table, apihistory.Columns, sqlgraph.NewFieldSpec(apihistory.FieldID, field.TypeInt32))
 	if ps := ahu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -114,10 +114,10 @@ func (ahu *ApiHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if value, ok := ahu.mutation.Version(); ok {
-		_spec.SetField(apihistory.FieldVersion, field.TypeInt64, value)
+		_spec.SetField(apihistory.FieldVersion, field.TypeInt32, value)
 	}
 	if value, ok := ahu.mutation.AddedVersion(); ok {
-		_spec.AddField(apihistory.FieldVersion, field.TypeInt64, value)
+		_spec.AddField(apihistory.FieldVersion, field.TypeInt32, value)
 	}
 	if value, ok := ahu.mutation.QueryParams(); ok {
 		_spec.SetField(apihistory.FieldQueryParams, field.TypeString, value)
@@ -155,14 +155,14 @@ type ApiHistoryUpdateOne struct {
 }
 
 // SetVersion sets the "version" field.
-func (ahuo *ApiHistoryUpdateOne) SetVersion(i int64) *ApiHistoryUpdateOne {
+func (ahuo *ApiHistoryUpdateOne) SetVersion(i int32) *ApiHistoryUpdateOne {
 	ahuo.mutation.ResetVersion()
 	ahuo.mutation.SetVersion(i)
 	return ahuo
 }
 
 // AddVersion adds i to the "version" field.
-func (ahuo *ApiHistoryUpdateOne) AddVersion(i int64) *ApiHistoryUpdateOne {
+func (ahuo *ApiHistoryUpdateOne) AddVersion(i int32) *ApiHistoryUpdateOne {
 	ahuo.mutation.AddVersion(i)
 	return ahuo
 }
@@ -244,7 +244,7 @@ func (ahuo *ApiHistoryUpdateOne) ExecX(ctx context.Context) {
 }
 
 func (ahuo *ApiHistoryUpdateOne) sqlSave(ctx context.Context) (_node *ApiHistory, err error) {
-	_spec := sqlgraph.NewUpdateSpec(apihistory.Table, apihistory.Columns, sqlgraph.NewFieldSpec(apihistory.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(apihistory.Table, apihistory.Columns, sqlgraph.NewFieldSpec(apihistory.FieldID, field.TypeInt32))
 	id, ok := ahuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ApiHistory.id" for update`)}
@@ -270,10 +270,10 @@ func (ahuo *ApiHistoryUpdateOne) sqlSave(ctx context.Context) (_node *ApiHistory
 		}
 	}
 	if value, ok := ahuo.mutation.Version(); ok {
-		_spec.SetField(apihistory.FieldVersion, field.TypeInt64, value)
+		_spec.SetField(apihistory.FieldVersion, field.TypeInt32, value)
 	}
 	if value, ok := ahuo.mutation.AddedVersion(); ok {
-		_spec.AddField(apihistory.FieldVersion, field.TypeInt64, value)
+		_spec.AddField(apihistory.FieldVersion, field.TypeInt32, value)
 	}
 	if value, ok := ahuo.mutation.QueryParams(); ok {
 		_spec.SetField(apihistory.FieldQueryParams, field.TypeString, value)

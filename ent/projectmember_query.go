@@ -261,7 +261,7 @@ func (pmq *ProjectMemberQuery) Clone() *ProjectMemberQuery {
 // Example:
 //
 //	var v []struct {
-//		ProjectID int64 `json:"project_id,omitempty"`
+//		ProjectID int32 `json:"project_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -284,7 +284,7 @@ func (pmq *ProjectMemberQuery) GroupBy(field string, fields ...string) *ProjectM
 // Example:
 //
 //	var v []struct {
-//		ProjectID int64 `json:"project_id,omitempty"`
+//		ProjectID int32 `json:"project_id,omitempty"`
 //	}
 //
 //	client.ProjectMember.Query().

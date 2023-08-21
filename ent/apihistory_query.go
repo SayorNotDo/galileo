@@ -81,8 +81,8 @@ func (ahq *ApiHistoryQuery) FirstX(ctx context.Context) *ApiHistory {
 
 // FirstID returns the first ApiHistory ID from the query.
 // Returns a *NotFoundError when no ApiHistory ID was found.
-func (ahq *ApiHistoryQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (ahq *ApiHistoryQuery) FirstID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = ahq.Limit(1).IDs(setContextOp(ctx, ahq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -94,7 +94,7 @@ func (ahq *ApiHistoryQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (ahq *ApiHistoryQuery) FirstIDX(ctx context.Context) int {
+func (ahq *ApiHistoryQuery) FirstIDX(ctx context.Context) int32 {
 	id, err := ahq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -132,8 +132,8 @@ func (ahq *ApiHistoryQuery) OnlyX(ctx context.Context) *ApiHistory {
 // OnlyID is like Only, but returns the only ApiHistory ID in the query.
 // Returns a *NotSingularError when more than one ApiHistory ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (ahq *ApiHistoryQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (ahq *ApiHistoryQuery) OnlyID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = ahq.Limit(2).IDs(setContextOp(ctx, ahq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -149,7 +149,7 @@ func (ahq *ApiHistoryQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (ahq *ApiHistoryQuery) OnlyIDX(ctx context.Context) int {
+func (ahq *ApiHistoryQuery) OnlyIDX(ctx context.Context) int32 {
 	id, err := ahq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -177,7 +177,7 @@ func (ahq *ApiHistoryQuery) AllX(ctx context.Context) []*ApiHistory {
 }
 
 // IDs executes the query and returns a list of ApiHistory IDs.
-func (ahq *ApiHistoryQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (ahq *ApiHistoryQuery) IDs(ctx context.Context) (ids []int32, err error) {
 	if ahq.ctx.Unique == nil && ahq.path != nil {
 		ahq.Unique(true)
 	}
@@ -189,7 +189,7 @@ func (ahq *ApiHistoryQuery) IDs(ctx context.Context) (ids []int, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (ahq *ApiHistoryQuery) IDsX(ctx context.Context) []int {
+func (ahq *ApiHistoryQuery) IDsX(ctx context.Context) []int32 {
 	ids, err := ahq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -261,7 +261,7 @@ func (ahq *ApiHistoryQuery) Clone() *ApiHistoryQuery {
 // Example:
 //
 //	var v []struct {
-//		Version int64 `json:"version,omitempty"`
+//		Version int32 `json:"version,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -284,7 +284,7 @@ func (ahq *ApiHistoryQuery) GroupBy(field string, fields ...string) *ApiHistoryG
 // Example:
 //
 //	var v []struct {
-//		Version int64 `json:"version,omitempty"`
+//		Version int32 `json:"version,omitempty"`
 //	}
 //
 //	client.ApiHistory.Query().
@@ -364,7 +364,7 @@ func (ahq *ApiHistoryQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (ahq *ApiHistoryQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(apihistory.Table, apihistory.Columns, sqlgraph.NewFieldSpec(apihistory.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(apihistory.Table, apihistory.Columns, sqlgraph.NewFieldSpec(apihistory.FieldID, field.TypeInt32))
 	_spec.From = ahq.sql
 	if unique := ahq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

@@ -16,7 +16,7 @@ import (
 type TestPlan struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
+	ID int32 `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -38,9 +38,9 @@ type TestPlan struct {
 	// Status holds the value of the "status" field.
 	Status int8 `json:"status,omitempty"`
 	// Tasks holds the value of the "tasks" field.
-	Tasks []int64 `json:"tasks,omitempty"`
+	Tasks []int32 `json:"tasks,omitempty"`
 	// ProjectID holds the value of the "project_id" field.
-	ProjectID int64 `json:"project_id,omitempty"`
+	ProjectID int32 `json:"project_id,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -76,7 +76,7 @@ func (tp *TestPlan) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			tp.ID = int64(value.Int64)
+			tp.ID = int32(value.Int64)
 		case testplan.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -149,7 +149,7 @@ func (tp *TestPlan) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field project_id", values[i])
 			} else if value.Valid {
-				tp.ProjectID = value.Int64
+				tp.ProjectID = int32(value.Int64)
 			}
 		}
 	}

@@ -12,7 +12,7 @@ func (c *CoreService) GetUserProjectList(ctx context.Context, empty *empty.Empty
 		return nil, err
 	}
 	return &v1.UserProjectListReply{
-		Total:       int64(len(ret)),
+		Total:       int32(len(ret)),
 		ProjectList: ret,
 	}, nil
 }

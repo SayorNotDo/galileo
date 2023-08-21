@@ -11,9 +11,9 @@ import (
 
 // Task is a Task model.
 type Task struct {
-	Id              int64
+	Id              int32
 	Name            string
-	TestPlanId      int64
+	TestPlanId      int32
 	Rank            int8
 	Type            int8
 	Status          v1.TaskStatus
@@ -33,7 +33,7 @@ type Task struct {
 	Deadline        time.Time
 	DeletedBy       uint32
 	Description     string
-	TestcaseSuites  []int64
+	TestcaseSuite   []int32
 	ExecuteId       int64
 }
 
@@ -42,10 +42,10 @@ type TaskRepo interface {
 	ListTimingTask(ctx context.Context, status []v1.TaskStatus) ([]*v1.TaskInfo, error)
 	CreateTask(ctx context.Context, task *Task) (*Task, error)
 	TaskByName(ctx context.Context, name string) (*Task, error)
-	TaskByID(ctx context.Context, id int64) (*Task, error)
+	TaskByID(ctx context.Context, id int32) (*Task, error)
 	UpdateTask(ctx context.Context, task *Task) (bool, error)
 	UpdateTaskStatus(ctx context.Context, updateTask *Task) (*Task, error)
-	TaskDetailById(ctx context.Context, id int64) (*Task, error)
+	TaskDetailById(ctx context.Context, id int32) (*Task, error)
 	RedisLRangeTask(ctx context.Context, key string) ([]string, error)
 	SetTaskInfoExpiration(ctx context.Context, key string, expiration int64) error
 }
@@ -74,7 +74,7 @@ func (uc *TaskUseCase) TaskByName(ctx context.Context, name string) (*Task, erro
 	return uc.repo.TaskByName(ctx, name)
 }
 
-func (uc *TaskUseCase) TaskByID(ctx context.Context, id int64) (*Task, error) {
+func (uc *TaskUseCase) TaskByID(ctx context.Context, id int32) (*Task, error) {
 	return uc.repo.TaskDetailById(ctx, id)
 }
 

@@ -187,7 +187,7 @@ func (tc *TestcaseCreate) SetNillableURL(s *string) *TestcaseCreate {
 }
 
 // SetID sets the "id" field.
-func (tc *TestcaseCreate) SetID(i int64) *TestcaseCreate {
+func (tc *TestcaseCreate) SetID(i int32) *TestcaseCreate {
 	tc.mutation.SetID(i)
 	return tc
 }
@@ -286,7 +286,7 @@ func (tc *TestcaseCreate) sqlSave(ctx context.Context) (*Testcase, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int64(id)
+		_node.ID = int32(id)
 	}
 	tc.mutation.id = &_node.ID
 	tc.mutation.done = true
@@ -296,7 +296,7 @@ func (tc *TestcaseCreate) sqlSave(ctx context.Context) (*Testcase, error) {
 func (tc *TestcaseCreate) createSpec() (*Testcase, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Testcase{config: tc.config}
-		_spec = sqlgraph.NewCreateSpec(testcase.Table, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt64))
+		_spec = sqlgraph.NewCreateSpec(testcase.Table, sqlgraph.NewFieldSpec(testcase.FieldID, field.TypeInt32))
 	)
 	if id, ok := tc.mutation.ID(); ok {
 		_node.ID = id
@@ -400,7 +400,7 @@ func (tcb *TestcaseCreateBulk) Save(ctx context.Context) ([]*Testcase, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int64(id)
+					nodes[i].ID = int32(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

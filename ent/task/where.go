@@ -7,51 +7,50 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int64) predicate.Task {
+func ID(id int32) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int64) predicate.Task {
+func IDEQ(id int32) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int64) predicate.Task {
+func IDNEQ(id int32) predicate.Task {
 	return predicate.Task(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int64) predicate.Task {
+func IDIn(ids ...int32) predicate.Task {
 	return predicate.Task(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int64) predicate.Task {
+func IDNotIn(ids ...int32) predicate.Task {
 	return predicate.Task(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int64) predicate.Task {
+func IDGT(id int32) predicate.Task {
 	return predicate.Task(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int64) predicate.Task {
+func IDGTE(id int32) predicate.Task {
 	return predicate.Task(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int64) predicate.Task {
+func IDLT(id int32) predicate.Task {
 	return predicate.Task(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int64) predicate.Task {
+func IDLTE(id int32) predicate.Task {
 	return predicate.Task(sql.FieldLTE(FieldID, id))
 }
 
@@ -156,7 +155,7 @@ func Description(v string) predicate.Task {
 }
 
 // TestplanID applies equality check predicate on the "testplan_id" field. It's identical to TestplanIDEQ.
-func TestplanID(v int64) predicate.Task {
+func TestplanID(v int32) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldTestplanID, v))
 }
 
@@ -1231,42 +1230,42 @@ func DescriptionContainsFold(v string) predicate.Task {
 }
 
 // TestplanIDEQ applies the EQ predicate on the "testplan_id" field.
-func TestplanIDEQ(v int64) predicate.Task {
+func TestplanIDEQ(v int32) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldTestplanID, v))
 }
 
 // TestplanIDNEQ applies the NEQ predicate on the "testplan_id" field.
-func TestplanIDNEQ(v int64) predicate.Task {
+func TestplanIDNEQ(v int32) predicate.Task {
 	return predicate.Task(sql.FieldNEQ(FieldTestplanID, v))
 }
 
 // TestplanIDIn applies the In predicate on the "testplan_id" field.
-func TestplanIDIn(vs ...int64) predicate.Task {
+func TestplanIDIn(vs ...int32) predicate.Task {
 	return predicate.Task(sql.FieldIn(FieldTestplanID, vs...))
 }
 
 // TestplanIDNotIn applies the NotIn predicate on the "testplan_id" field.
-func TestplanIDNotIn(vs ...int64) predicate.Task {
+func TestplanIDNotIn(vs ...int32) predicate.Task {
 	return predicate.Task(sql.FieldNotIn(FieldTestplanID, vs...))
 }
 
 // TestplanIDGT applies the GT predicate on the "testplan_id" field.
-func TestplanIDGT(v int64) predicate.Task {
+func TestplanIDGT(v int32) predicate.Task {
 	return predicate.Task(sql.FieldGT(FieldTestplanID, v))
 }
 
 // TestplanIDGTE applies the GTE predicate on the "testplan_id" field.
-func TestplanIDGTE(v int64) predicate.Task {
+func TestplanIDGTE(v int32) predicate.Task {
 	return predicate.Task(sql.FieldGTE(FieldTestplanID, v))
 }
 
 // TestplanIDLT applies the LT predicate on the "testplan_id" field.
-func TestplanIDLT(v int64) predicate.Task {
+func TestplanIDLT(v int32) predicate.Task {
 	return predicate.Task(sql.FieldLT(FieldTestplanID, v))
 }
 
 // TestplanIDLTE applies the LTE predicate on the "testplan_id" field.
-func TestplanIDLTE(v int64) predicate.Task {
+func TestplanIDLTE(v int32) predicate.Task {
 	return predicate.Task(sql.FieldLTE(FieldTestplanID, v))
 }
 
@@ -1328,33 +1327,6 @@ func ExecuteIDIsNil() predicate.Task {
 // ExecuteIDNotNil applies the NotNil predicate on the "execute_id" field.
 func ExecuteIDNotNil() predicate.Task {
 	return predicate.Task(sql.FieldNotNull(FieldExecuteID))
-}
-
-// HasTestcaseSuite applies the HasEdge predicate on the "testcase_suite" edge.
-func HasTestcaseSuite() predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, TestcaseSuiteTable, TestcaseSuiteColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasTestcaseSuiteWith applies the HasEdge predicate on the "testcase_suite" edge with a given conditions (other predicates).
-func HasTestcaseSuiteWith(preds ...predicate.TestcaseSuite) predicate.Task {
-	return predicate.Task(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(TestcaseSuiteInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, TestcaseSuiteTable, TestcaseSuiteColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
 }
 
 // And groups predicates with the AND operator between them.

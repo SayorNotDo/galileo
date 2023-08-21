@@ -176,13 +176,13 @@ func (tpu *TestPlanUpdate) AddStatus(i int8) *TestPlanUpdate {
 }
 
 // SetTasks sets the "tasks" field.
-func (tpu *TestPlanUpdate) SetTasks(i []int64) *TestPlanUpdate {
+func (tpu *TestPlanUpdate) SetTasks(i []int32) *TestPlanUpdate {
 	tpu.mutation.SetTasks(i)
 	return tpu
 }
 
 // AppendTasks appends i to the "tasks" field.
-func (tpu *TestPlanUpdate) AppendTasks(i []int64) *TestPlanUpdate {
+func (tpu *TestPlanUpdate) AppendTasks(i []int32) *TestPlanUpdate {
 	tpu.mutation.AppendTasks(i)
 	return tpu
 }
@@ -194,14 +194,14 @@ func (tpu *TestPlanUpdate) ClearTasks() *TestPlanUpdate {
 }
 
 // SetProjectID sets the "project_id" field.
-func (tpu *TestPlanUpdate) SetProjectID(i int64) *TestPlanUpdate {
+func (tpu *TestPlanUpdate) SetProjectID(i int32) *TestPlanUpdate {
 	tpu.mutation.ResetProjectID()
 	tpu.mutation.SetProjectID(i)
 	return tpu
 }
 
 // AddProjectID adds i to the "project_id" field.
-func (tpu *TestPlanUpdate) AddProjectID(i int64) *TestPlanUpdate {
+func (tpu *TestPlanUpdate) AddProjectID(i int32) *TestPlanUpdate {
 	tpu.mutation.AddProjectID(i)
 	return tpu
 }
@@ -266,7 +266,7 @@ func (tpu *TestPlanUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := tpu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(testplan.Table, testplan.Columns, sqlgraph.NewFieldSpec(testplan.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(testplan.Table, testplan.Columns, sqlgraph.NewFieldSpec(testplan.FieldID, field.TypeInt32))
 	if ps := tpu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -334,10 +334,10 @@ func (tpu *TestPlanUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.ClearField(testplan.FieldTasks, field.TypeJSON)
 	}
 	if value, ok := tpu.mutation.ProjectID(); ok {
-		_spec.SetField(testplan.FieldProjectID, field.TypeInt64, value)
+		_spec.SetField(testplan.FieldProjectID, field.TypeInt32, value)
 	}
 	if value, ok := tpu.mutation.AddedProjectID(); ok {
-		_spec.AddField(testplan.FieldProjectID, field.TypeInt64, value)
+		_spec.AddField(testplan.FieldProjectID, field.TypeInt32, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tpu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -506,13 +506,13 @@ func (tpuo *TestPlanUpdateOne) AddStatus(i int8) *TestPlanUpdateOne {
 }
 
 // SetTasks sets the "tasks" field.
-func (tpuo *TestPlanUpdateOne) SetTasks(i []int64) *TestPlanUpdateOne {
+func (tpuo *TestPlanUpdateOne) SetTasks(i []int32) *TestPlanUpdateOne {
 	tpuo.mutation.SetTasks(i)
 	return tpuo
 }
 
 // AppendTasks appends i to the "tasks" field.
-func (tpuo *TestPlanUpdateOne) AppendTasks(i []int64) *TestPlanUpdateOne {
+func (tpuo *TestPlanUpdateOne) AppendTasks(i []int32) *TestPlanUpdateOne {
 	tpuo.mutation.AppendTasks(i)
 	return tpuo
 }
@@ -524,14 +524,14 @@ func (tpuo *TestPlanUpdateOne) ClearTasks() *TestPlanUpdateOne {
 }
 
 // SetProjectID sets the "project_id" field.
-func (tpuo *TestPlanUpdateOne) SetProjectID(i int64) *TestPlanUpdateOne {
+func (tpuo *TestPlanUpdateOne) SetProjectID(i int32) *TestPlanUpdateOne {
 	tpuo.mutation.ResetProjectID()
 	tpuo.mutation.SetProjectID(i)
 	return tpuo
 }
 
 // AddProjectID adds i to the "project_id" field.
-func (tpuo *TestPlanUpdateOne) AddProjectID(i int64) *TestPlanUpdateOne {
+func (tpuo *TestPlanUpdateOne) AddProjectID(i int32) *TestPlanUpdateOne {
 	tpuo.mutation.AddProjectID(i)
 	return tpuo
 }
@@ -609,7 +609,7 @@ func (tpuo *TestPlanUpdateOne) sqlSave(ctx context.Context) (_node *TestPlan, er
 	if err := tpuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(testplan.Table, testplan.Columns, sqlgraph.NewFieldSpec(testplan.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(testplan.Table, testplan.Columns, sqlgraph.NewFieldSpec(testplan.FieldID, field.TypeInt32))
 	id, ok := tpuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TestPlan.id" for update`)}
@@ -694,10 +694,10 @@ func (tpuo *TestPlanUpdateOne) sqlSave(ctx context.Context) (_node *TestPlan, er
 		_spec.ClearField(testplan.FieldTasks, field.TypeJSON)
 	}
 	if value, ok := tpuo.mutation.ProjectID(); ok {
-		_spec.SetField(testplan.FieldProjectID, field.TypeInt64, value)
+		_spec.SetField(testplan.FieldProjectID, field.TypeInt32, value)
 	}
 	if value, ok := tpuo.mutation.AddedProjectID(); ok {
-		_spec.AddField(testplan.FieldProjectID, field.TypeInt64, value)
+		_spec.AddField(testplan.FieldProjectID, field.TypeInt32, value)
 	}
 	_node = &TestPlan{config: tpuo.config}
 	_spec.Assign = _node.assignValues

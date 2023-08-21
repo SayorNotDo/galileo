@@ -81,8 +81,8 @@ func (aq *APIQuery) FirstX(ctx context.Context) *Api {
 
 // FirstID returns the first Api ID from the query.
 // Returns a *NotFoundError when no Api ID was found.
-func (aq *APIQuery) FirstID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (aq *APIQuery) FirstID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = aq.Limit(1).IDs(setContextOp(ctx, aq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -94,7 +94,7 @@ func (aq *APIQuery) FirstID(ctx context.Context) (id int64, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (aq *APIQuery) FirstIDX(ctx context.Context) int64 {
+func (aq *APIQuery) FirstIDX(ctx context.Context) int32 {
 	id, err := aq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -132,8 +132,8 @@ func (aq *APIQuery) OnlyX(ctx context.Context) *Api {
 // OnlyID is like Only, but returns the only Api ID in the query.
 // Returns a *NotSingularError when more than one Api ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (aq *APIQuery) OnlyID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (aq *APIQuery) OnlyID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = aq.Limit(2).IDs(setContextOp(ctx, aq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -149,7 +149,7 @@ func (aq *APIQuery) OnlyID(ctx context.Context) (id int64, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (aq *APIQuery) OnlyIDX(ctx context.Context) int64 {
+func (aq *APIQuery) OnlyIDX(ctx context.Context) int32 {
 	id, err := aq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -177,7 +177,7 @@ func (aq *APIQuery) AllX(ctx context.Context) []*Api {
 }
 
 // IDs executes the query and returns a list of Api IDs.
-func (aq *APIQuery) IDs(ctx context.Context) (ids []int64, err error) {
+func (aq *APIQuery) IDs(ctx context.Context) (ids []int32, err error) {
 	if aq.ctx.Unique == nil && aq.path != nil {
 		aq.Unique(true)
 	}
@@ -189,7 +189,7 @@ func (aq *APIQuery) IDs(ctx context.Context) (ids []int64, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (aq *APIQuery) IDsX(ctx context.Context) []int64 {
+func (aq *APIQuery) IDsX(ctx context.Context) []int32 {
 	ids, err := aq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -364,7 +364,7 @@ func (aq *APIQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (aq *APIQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(api.Table, api.Columns, sqlgraph.NewFieldSpec(api.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewQuerySpec(api.Table, api.Columns, sqlgraph.NewFieldSpec(api.FieldID, field.TypeInt32))
 	_spec.From = aq.sql
 	if unique := aq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

@@ -21,7 +21,8 @@ func (ApiHistory) Annotations() []schema.Annotation {
 // Fields of the ApiHistory.
 func (ApiHistory) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("version"),
+		field.Int32("id"),
+		field.Int32("version"),
 		field.String("query_params"),
 		field.Time("created_at"),
 		field.Uint32("created_by"),

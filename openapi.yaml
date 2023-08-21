@@ -107,13 +107,13 @@ paths:
                   required: true
                   schema:
                     type: integer
-                    format: int64
+                    format: int32
                 - name: pageSize
                   in: path
                   required: true
                   schema:
                     type: integer
-                    format: int64
+                    format: int32
             responses:
                 "200":
                     description: OK
@@ -183,7 +183,7 @@ paths:
                   required: true
                   schema:
                     type: integer
-                    format: int64
+                    format: int32
             responses:
                 "200":
                     description: OK
@@ -277,7 +277,7 @@ paths:
                   required: true
                   schema:
                     type: integer
-                    format: int64
+                    format: int32
             responses:
                 "200":
                     description: OK
@@ -302,7 +302,7 @@ paths:
                   required: true
                   schema:
                     type: integer
-                    format: int64
+                    format: int32
             responses:
                 "200":
                     description: OK
@@ -448,7 +448,7 @@ paths:
                   required: true
                   schema:
                     type: integer
-                    format: int64
+                    format: int32
             responses:
                 "200":
                     description: OK
@@ -517,7 +517,7 @@ paths:
                   required: true
                   schema:
                     type: integer
-                    format: int64
+                    format: int32
             responses:
                 "200":
                     description: OK
@@ -563,22 +563,22 @@ components:
             properties:
                 apiCount:
                     type: integer
-                    format: int64
+                    format: int32
                 sceneCaseCount:
                     type: integer
-                    format: int64
+                    format: int32
                 apiCaseCount:
                     type: integer
-                    format: int64
+                    format: int32
                 cronJobCount:
                     type: integer
-                    format: int64
+                    format: int32
         CreateApiReply:
             type: object
             properties:
                 id:
                     type: integer
-                    format: int64
+                    format: int32
                 createdAt:
                     type: integer
                     format: int64
@@ -592,7 +592,7 @@ components:
             properties:
                 id:
                     type: integer
-                    format: int64
+                    format: int32
         CreateProjectRequest:
             type: object
             properties:
@@ -615,7 +615,7 @@ components:
             properties:
                 id:
                     type: integer
-                    format: int64
+                    format: int32
                 status:
                     type: integer
                     format: enum
@@ -655,16 +655,16 @@ components:
                     type: array
                     items:
                         type: integer
-                        format: int64
+                        format: int32
                 testPlanId:
                     type: integer
-                    format: int64
+                    format: int32
         CreateTestPlanReply:
             type: object
             properties:
                 id:
                     type: integer
-                    format: int64
+                    format: int32
         CreateTestPlanRequest:
             type: object
             properties:
@@ -680,18 +680,18 @@ components:
                     format: date-time
                 projectId:
                     type: integer
-                    format: int64
+                    format: int32
                 tasks:
                     type: array
                     items:
                         type: integer
-                        format: int64
+                        format: int32
         CreateTestcaseReply:
             type: object
             properties:
                 id:
                     type: integer
-                    format: int64
+                    format: int32
                 createdAt:
                     type: string
                     format: date-time
@@ -718,7 +718,7 @@ components:
             properties:
                 id:
                     type: integer
-                    format: int64
+                    format: int32
                 createdAt:
                     type: string
                     format: date-time
@@ -731,7 +731,7 @@ components:
                     type: array
                     items:
                         type: integer
-                        format: int64
+                        format: int32
         DebugTestcaseReply:
             type: object
             properties:
@@ -759,11 +759,11 @@ components:
                     format: int32
                 description:
                     type: string
-                testcaseSuiteId:
+                testcaseSuite:
                     type: array
                     items:
                         type: integer
-                        format: int64
+                        format: int32
                 status:
                     type: integer
                     format: enum
@@ -788,13 +788,13 @@ components:
                     type: string
                 id:
                     type: integer
-                    format: int64
+                    format: int32
         GetTestPlanReply:
             type: object
             properties:
                 id:
                     type: integer
-                    format: int64
+                    format: int32
                 name:
                     type: string
                 createdAt:
@@ -827,10 +827,10 @@ components:
                     type: array
                     items:
                         type: integer
-                        format: int64
+                        format: int32
                 projectId:
                     type: integer
-                    format: int64
+                    format: int32
         GetTestcaseReply:
             type: object
             properties:
@@ -885,7 +885,7 @@ components:
             properties:
                 id:
                     type: integer
-                    format: int64
+                    format: int32
                 name:
                     type: string
                 identifier:
@@ -950,7 +950,7 @@ components:
             properties:
                 id:
                     type: integer
-                    format: int64
+                    format: int32
                 name:
                     type: string
                 createdAt:
@@ -985,13 +985,13 @@ components:
                     type: boolean
                 UpdateAt:
                     type: integer
-                    format: int64
+                    format: int32
         UpdateApiRequest:
             type: object
             properties:
                 id:
                     type: integer
-                    format: int64
+                    format: int32
                 apiInfo:
                     $ref: '#/components/schemas/ApiInfo'
         UpdateProjectRequest:
@@ -999,7 +999,7 @@ components:
             properties:
                 id:
                     type: integer
-                    format: int64
+                    format: int32
                 name:
                     type: string
                 identifier:
@@ -1022,7 +1022,7 @@ components:
             properties:
                 id:
                     type: integer
-                    format: int64
+                    format: int32
                 name:
                     type: string
                 assignee:
@@ -1051,7 +1051,7 @@ components:
                     type: array
                     items:
                         type: integer
-                        format: int64
+                        format: int32
                 worker:
                     type: string
         UpdateTaskStatusReply:
@@ -1068,7 +1068,7 @@ components:
             properties:
                 id:
                     type: integer
-                    format: int64
+                    format: int32
                 status:
                     type: integer
                     format: enum
@@ -1079,7 +1079,7 @@ components:
             properties:
                 id:
                     type: integer
-                    format: int64
+                    format: int32
                 name:
                     type: string
                 description:
@@ -1097,7 +1097,7 @@ components:
                     type: array
                     items:
                         type: integer
-                        format: int64
+                        format: int32
         UpdateTestcaseReply:
             type: object
             properties:
@@ -1108,7 +1108,7 @@ components:
             properties:
                 id:
                     type: integer
-                    format: int64
+                    format: int32
                 name:
                     type: string
                 type:

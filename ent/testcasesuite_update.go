@@ -75,13 +75,13 @@ func (tsu *TestcaseSuiteUpdate) ClearUpdatedBy() *TestcaseSuiteUpdate {
 }
 
 // SetTestcases sets the "testcases" field.
-func (tsu *TestcaseSuiteUpdate) SetTestcases(i []int64) *TestcaseSuiteUpdate {
+func (tsu *TestcaseSuiteUpdate) SetTestcases(i []int32) *TestcaseSuiteUpdate {
 	tsu.mutation.SetTestcases(i)
 	return tsu
 }
 
 // AppendTestcases appends i to the "testcases" field.
-func (tsu *TestcaseSuiteUpdate) AppendTestcases(i []int64) *TestcaseSuiteUpdate {
+func (tsu *TestcaseSuiteUpdate) AppendTestcases(i []int32) *TestcaseSuiteUpdate {
 	tsu.mutation.AppendTestcases(i)
 	return tsu
 }
@@ -147,7 +147,7 @@ func (tsu *TestcaseSuiteUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if err := tsu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(testcasesuite.Table, testcasesuite.Columns, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(testcasesuite.Table, testcasesuite.Columns, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt32))
 	if ps := tsu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -250,13 +250,13 @@ func (tsuo *TestcaseSuiteUpdateOne) ClearUpdatedBy() *TestcaseSuiteUpdateOne {
 }
 
 // SetTestcases sets the "testcases" field.
-func (tsuo *TestcaseSuiteUpdateOne) SetTestcases(i []int64) *TestcaseSuiteUpdateOne {
+func (tsuo *TestcaseSuiteUpdateOne) SetTestcases(i []int32) *TestcaseSuiteUpdateOne {
 	tsuo.mutation.SetTestcases(i)
 	return tsuo
 }
 
 // AppendTestcases appends i to the "testcases" field.
-func (tsuo *TestcaseSuiteUpdateOne) AppendTestcases(i []int64) *TestcaseSuiteUpdateOne {
+func (tsuo *TestcaseSuiteUpdateOne) AppendTestcases(i []int32) *TestcaseSuiteUpdateOne {
 	tsuo.mutation.AppendTestcases(i)
 	return tsuo
 }
@@ -335,7 +335,7 @@ func (tsuo *TestcaseSuiteUpdateOne) sqlSave(ctx context.Context) (_node *Testcas
 	if err := tsuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(testcasesuite.Table, testcasesuite.Columns, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(testcasesuite.Table, testcasesuite.Columns, sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt32))
 	id, ok := tsuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TestcaseSuite.id" for update`)}

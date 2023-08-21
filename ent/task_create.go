@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"galileo/ent/task"
-	"galileo/ent/testcasesuite"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -286,13 +285,13 @@ func (tc *TaskCreate) SetNillableDescription(s *string) *TaskCreate {
 }
 
 // SetTestplanID sets the "testplan_id" field.
-func (tc *TaskCreate) SetTestplanID(i int64) *TaskCreate {
+func (tc *TaskCreate) SetTestplanID(i int32) *TaskCreate {
 	tc.mutation.SetTestplanID(i)
 	return tc
 }
 
 // SetNillableTestplanID sets the "testplan_id" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableTestplanID(i *int64) *TaskCreate {
+func (tc *TaskCreate) SetNillableTestplanID(i *int32) *TaskCreate {
 	if i != nil {
 		tc.SetTestplanID(*i)
 	}
@@ -313,25 +312,16 @@ func (tc *TaskCreate) SetNillableExecuteID(i *int64) *TaskCreate {
 	return tc
 }
 
+// SetTestcaseSuite sets the "testcase_suite" field.
+func (tc *TaskCreate) SetTestcaseSuite(i []int32) *TaskCreate {
+	tc.mutation.SetTestcaseSuite(i)
+	return tc
+}
+
 // SetID sets the "id" field.
-func (tc *TaskCreate) SetID(i int64) *TaskCreate {
+func (tc *TaskCreate) SetID(i int32) *TaskCreate {
 	tc.mutation.SetID(i)
 	return tc
-}
-
-// AddTestcaseSuiteIDs adds the "testcase_suite" edge to the TestcaseSuite entity by IDs.
-func (tc *TaskCreate) AddTestcaseSuiteIDs(ids ...int64) *TaskCreate {
-	tc.mutation.AddTestcaseSuiteIDs(ids...)
-	return tc
-}
-
-// AddTestcaseSuite adds the "testcase_suite" edges to the TestcaseSuite entity.
-func (tc *TaskCreate) AddTestcaseSuite(t ...*TestcaseSuite) *TaskCreate {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return tc.AddTestcaseSuiteIDs(ids...)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -412,6 +402,9 @@ func (tc *TaskCreate) check() error {
 	if _, ok := tc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Task.status"`)}
 	}
+	if _, ok := tc.mutation.TestcaseSuite(); !ok {
+		return &ValidationError{Name: "testcase_suite", err: errors.New(`ent: missing required field "Task.testcase_suite"`)}
+	}
 	return nil
 }
 
@@ -428,7 +421,7 @@ func (tc *TaskCreate) sqlSave(ctx context.Context) (*Task, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int64(id)
+		_node.ID = int32(id)
 	}
 	tc.mutation.id = &_node.ID
 	tc.mutation.done = true
@@ -438,7 +431,7 @@ func (tc *TaskCreate) sqlSave(ctx context.Context) (*Task, error) {
 func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Task{config: tc.config}
-		_spec = sqlgraph.NewCreateSpec(task.Table, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt64))
+		_spec = sqlgraph.NewCreateSpec(task.Table, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt32))
 	)
 	if id, ok := tc.mutation.ID(); ok {
 		_node.ID = id
@@ -525,28 +518,16 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_node.Description = value
 	}
 	if value, ok := tc.mutation.TestplanID(); ok {
-		_spec.SetField(task.FieldTestplanID, field.TypeInt64, value)
+		_spec.SetField(task.FieldTestplanID, field.TypeInt32, value)
 		_node.TestplanID = value
 	}
 	if value, ok := tc.mutation.ExecuteID(); ok {
 		_spec.SetField(task.FieldExecuteID, field.TypeInt64, value)
 		_node.ExecuteID = value
 	}
-	if nodes := tc.mutation.TestcaseSuiteIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   task.TestcaseSuiteTable,
-			Columns: []string{task.TestcaseSuiteColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
+	if value, ok := tc.mutation.TestcaseSuite(); ok {
+		_spec.SetField(task.FieldTestcaseSuite, field.TypeJSON, value)
+		_node.TestcaseSuite = value
 	}
 	return _node, _spec
 }
@@ -594,7 +575,7 @@ func (tcb *TaskCreateBulk) Save(ctx context.Context) ([]*Task, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int64(id)
+					nodes[i].ID = int32(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

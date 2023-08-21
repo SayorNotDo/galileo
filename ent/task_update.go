@@ -8,11 +8,11 @@ import (
 	"fmt"
 	"galileo/ent/predicate"
 	"galileo/ent/task"
-	"galileo/ent/testcasesuite"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
@@ -392,14 +392,14 @@ func (tu *TaskUpdate) ClearDescription() *TaskUpdate {
 }
 
 // SetTestplanID sets the "testplan_id" field.
-func (tu *TaskUpdate) SetTestplanID(i int64) *TaskUpdate {
+func (tu *TaskUpdate) SetTestplanID(i int32) *TaskUpdate {
 	tu.mutation.ResetTestplanID()
 	tu.mutation.SetTestplanID(i)
 	return tu
 }
 
 // SetNillableTestplanID sets the "testplan_id" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableTestplanID(i *int64) *TaskUpdate {
+func (tu *TaskUpdate) SetNillableTestplanID(i *int32) *TaskUpdate {
 	if i != nil {
 		tu.SetTestplanID(*i)
 	}
@@ -407,7 +407,7 @@ func (tu *TaskUpdate) SetNillableTestplanID(i *int64) *TaskUpdate {
 }
 
 // AddTestplanID adds i to the "testplan_id" field.
-func (tu *TaskUpdate) AddTestplanID(i int64) *TaskUpdate {
+func (tu *TaskUpdate) AddTestplanID(i int32) *TaskUpdate {
 	tu.mutation.AddTestplanID(i)
 	return tu
 }
@@ -445,45 +445,21 @@ func (tu *TaskUpdate) ClearExecuteID() *TaskUpdate {
 	return tu
 }
 
-// AddTestcaseSuiteIDs adds the "testcase_suite" edge to the TestcaseSuite entity by IDs.
-func (tu *TaskUpdate) AddTestcaseSuiteIDs(ids ...int64) *TaskUpdate {
-	tu.mutation.AddTestcaseSuiteIDs(ids...)
+// SetTestcaseSuite sets the "testcase_suite" field.
+func (tu *TaskUpdate) SetTestcaseSuite(i []int32) *TaskUpdate {
+	tu.mutation.SetTestcaseSuite(i)
 	return tu
 }
 
-// AddTestcaseSuite adds the "testcase_suite" edges to the TestcaseSuite entity.
-func (tu *TaskUpdate) AddTestcaseSuite(t ...*TestcaseSuite) *TaskUpdate {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return tu.AddTestcaseSuiteIDs(ids...)
+// AppendTestcaseSuite appends i to the "testcase_suite" field.
+func (tu *TaskUpdate) AppendTestcaseSuite(i []int32) *TaskUpdate {
+	tu.mutation.AppendTestcaseSuite(i)
+	return tu
 }
 
 // Mutation returns the TaskMutation object of the builder.
 func (tu *TaskUpdate) Mutation() *TaskMutation {
 	return tu.mutation
-}
-
-// ClearTestcaseSuite clears all "testcase_suite" edges to the TestcaseSuite entity.
-func (tu *TaskUpdate) ClearTestcaseSuite() *TaskUpdate {
-	tu.mutation.ClearTestcaseSuite()
-	return tu
-}
-
-// RemoveTestcaseSuiteIDs removes the "testcase_suite" edge to TestcaseSuite entities by IDs.
-func (tu *TaskUpdate) RemoveTestcaseSuiteIDs(ids ...int64) *TaskUpdate {
-	tu.mutation.RemoveTestcaseSuiteIDs(ids...)
-	return tu
-}
-
-// RemoveTestcaseSuite removes "testcase_suite" edges to TestcaseSuite entities.
-func (tu *TaskUpdate) RemoveTestcaseSuite(t ...*TestcaseSuite) *TaskUpdate {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return tu.RemoveTestcaseSuiteIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -536,7 +512,7 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := tu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt32))
 	if ps := tu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -659,13 +635,13 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.ClearField(task.FieldDescription, field.TypeString)
 	}
 	if value, ok := tu.mutation.TestplanID(); ok {
-		_spec.SetField(task.FieldTestplanID, field.TypeInt64, value)
+		_spec.SetField(task.FieldTestplanID, field.TypeInt32, value)
 	}
 	if value, ok := tu.mutation.AddedTestplanID(); ok {
-		_spec.AddField(task.FieldTestplanID, field.TypeInt64, value)
+		_spec.AddField(task.FieldTestplanID, field.TypeInt32, value)
 	}
 	if tu.mutation.TestplanIDCleared() {
-		_spec.ClearField(task.FieldTestplanID, field.TypeInt64)
+		_spec.ClearField(task.FieldTestplanID, field.TypeInt32)
 	}
 	if value, ok := tu.mutation.ExecuteID(); ok {
 		_spec.SetField(task.FieldExecuteID, field.TypeInt64, value)
@@ -676,50 +652,13 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if tu.mutation.ExecuteIDCleared() {
 		_spec.ClearField(task.FieldExecuteID, field.TypeInt64)
 	}
-	if tu.mutation.TestcaseSuiteCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   task.TestcaseSuiteTable,
-			Columns: []string{task.TestcaseSuiteColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if value, ok := tu.mutation.TestcaseSuite(); ok {
+		_spec.SetField(task.FieldTestcaseSuite, field.TypeJSON, value)
 	}
-	if nodes := tu.mutation.RemovedTestcaseSuiteIDs(); len(nodes) > 0 && !tu.mutation.TestcaseSuiteCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   task.TestcaseSuiteTable,
-			Columns: []string{task.TestcaseSuiteColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tu.mutation.TestcaseSuiteIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   task.TestcaseSuiteTable,
-			Columns: []string{task.TestcaseSuiteColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	if value, ok := tu.mutation.AppendedTestcaseSuite(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, task.FieldTestcaseSuite, value)
+		})
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -1104,14 +1043,14 @@ func (tuo *TaskUpdateOne) ClearDescription() *TaskUpdateOne {
 }
 
 // SetTestplanID sets the "testplan_id" field.
-func (tuo *TaskUpdateOne) SetTestplanID(i int64) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) SetTestplanID(i int32) *TaskUpdateOne {
 	tuo.mutation.ResetTestplanID()
 	tuo.mutation.SetTestplanID(i)
 	return tuo
 }
 
 // SetNillableTestplanID sets the "testplan_id" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableTestplanID(i *int64) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) SetNillableTestplanID(i *int32) *TaskUpdateOne {
 	if i != nil {
 		tuo.SetTestplanID(*i)
 	}
@@ -1119,7 +1058,7 @@ func (tuo *TaskUpdateOne) SetNillableTestplanID(i *int64) *TaskUpdateOne {
 }
 
 // AddTestplanID adds i to the "testplan_id" field.
-func (tuo *TaskUpdateOne) AddTestplanID(i int64) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) AddTestplanID(i int32) *TaskUpdateOne {
 	tuo.mutation.AddTestplanID(i)
 	return tuo
 }
@@ -1157,45 +1096,21 @@ func (tuo *TaskUpdateOne) ClearExecuteID() *TaskUpdateOne {
 	return tuo
 }
 
-// AddTestcaseSuiteIDs adds the "testcase_suite" edge to the TestcaseSuite entity by IDs.
-func (tuo *TaskUpdateOne) AddTestcaseSuiteIDs(ids ...int64) *TaskUpdateOne {
-	tuo.mutation.AddTestcaseSuiteIDs(ids...)
+// SetTestcaseSuite sets the "testcase_suite" field.
+func (tuo *TaskUpdateOne) SetTestcaseSuite(i []int32) *TaskUpdateOne {
+	tuo.mutation.SetTestcaseSuite(i)
 	return tuo
 }
 
-// AddTestcaseSuite adds the "testcase_suite" edges to the TestcaseSuite entity.
-func (tuo *TaskUpdateOne) AddTestcaseSuite(t ...*TestcaseSuite) *TaskUpdateOne {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return tuo.AddTestcaseSuiteIDs(ids...)
+// AppendTestcaseSuite appends i to the "testcase_suite" field.
+func (tuo *TaskUpdateOne) AppendTestcaseSuite(i []int32) *TaskUpdateOne {
+	tuo.mutation.AppendTestcaseSuite(i)
+	return tuo
 }
 
 // Mutation returns the TaskMutation object of the builder.
 func (tuo *TaskUpdateOne) Mutation() *TaskMutation {
 	return tuo.mutation
-}
-
-// ClearTestcaseSuite clears all "testcase_suite" edges to the TestcaseSuite entity.
-func (tuo *TaskUpdateOne) ClearTestcaseSuite() *TaskUpdateOne {
-	tuo.mutation.ClearTestcaseSuite()
-	return tuo
-}
-
-// RemoveTestcaseSuiteIDs removes the "testcase_suite" edge to TestcaseSuite entities by IDs.
-func (tuo *TaskUpdateOne) RemoveTestcaseSuiteIDs(ids ...int64) *TaskUpdateOne {
-	tuo.mutation.RemoveTestcaseSuiteIDs(ids...)
-	return tuo
-}
-
-// RemoveTestcaseSuite removes "testcase_suite" edges to TestcaseSuite entities.
-func (tuo *TaskUpdateOne) RemoveTestcaseSuite(t ...*TestcaseSuite) *TaskUpdateOne {
-	ids := make([]int64, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return tuo.RemoveTestcaseSuiteIDs(ids...)
 }
 
 // Where appends a list predicates to the TaskUpdate builder.
@@ -1261,7 +1176,7 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if err := tuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt32))
 	id, ok := tuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Task.id" for update`)}
@@ -1401,13 +1316,13 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 		_spec.ClearField(task.FieldDescription, field.TypeString)
 	}
 	if value, ok := tuo.mutation.TestplanID(); ok {
-		_spec.SetField(task.FieldTestplanID, field.TypeInt64, value)
+		_spec.SetField(task.FieldTestplanID, field.TypeInt32, value)
 	}
 	if value, ok := tuo.mutation.AddedTestplanID(); ok {
-		_spec.AddField(task.FieldTestplanID, field.TypeInt64, value)
+		_spec.AddField(task.FieldTestplanID, field.TypeInt32, value)
 	}
 	if tuo.mutation.TestplanIDCleared() {
-		_spec.ClearField(task.FieldTestplanID, field.TypeInt64)
+		_spec.ClearField(task.FieldTestplanID, field.TypeInt32)
 	}
 	if value, ok := tuo.mutation.ExecuteID(); ok {
 		_spec.SetField(task.FieldExecuteID, field.TypeInt64, value)
@@ -1418,50 +1333,13 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if tuo.mutation.ExecuteIDCleared() {
 		_spec.ClearField(task.FieldExecuteID, field.TypeInt64)
 	}
-	if tuo.mutation.TestcaseSuiteCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   task.TestcaseSuiteTable,
-			Columns: []string{task.TestcaseSuiteColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	if value, ok := tuo.mutation.TestcaseSuite(); ok {
+		_spec.SetField(task.FieldTestcaseSuite, field.TypeJSON, value)
 	}
-	if nodes := tuo.mutation.RemovedTestcaseSuiteIDs(); len(nodes) > 0 && !tuo.mutation.TestcaseSuiteCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   task.TestcaseSuiteTable,
-			Columns: []string{task.TestcaseSuiteColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tuo.mutation.TestcaseSuiteIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   task.TestcaseSuiteTable,
-			Columns: []string{task.TestcaseSuiteColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(testcasesuite.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	if value, ok := tuo.mutation.AppendedTestcaseSuite(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, task.FieldTestcaseSuite, value)
+		})
 	}
 	_node = &Task{config: tuo.config}
 	_spec.Assign = _node.assignValues

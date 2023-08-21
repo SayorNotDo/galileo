@@ -15,13 +15,13 @@ import (
 type ApiStatistics struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
+	ID int32 `json:"id,omitempty"`
 	// CallCount holds the value of the "call_count" field.
-	CallCount int64 `json:"call_count,omitempty"`
+	CallCount int32 `json:"call_count,omitempty"`
 	// SuccessCount holds the value of the "success_count" field.
-	SuccessCount int64 `json:"success_count,omitempty"`
+	SuccessCount int32 `json:"success_count,omitempty"`
 	// FailureCount holds the value of the "failure_count" field.
-	FailureCount int64 `json:"failure_count,omitempty"`
+	FailureCount int32 `json:"failure_count,omitempty"`
 	// AvgResponseTime holds the value of the "avg_response_time" field.
 	AvgResponseTime float64 `json:"avg_response_time,omitempty"`
 	// MaxResponseTime holds the value of the "max_response_time" field.
@@ -41,7 +41,7 @@ type ApiStatistics struct {
 	// UpdateAt holds the value of the "update_at" field.
 	UpdateAt time.Time `json:"update_at,omitempty"`
 	// APIID holds the value of the "api_id" field.
-	APIID int64 `json:"api_id,omitempty"`
+	APIID int32 `json:"api_id,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -77,24 +77,24 @@ func (as *ApiStatistics) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			as.ID = int64(value.Int64)
+			as.ID = int32(value.Int64)
 		case apistatistics.FieldCallCount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field call_count", values[i])
 			} else if value.Valid {
-				as.CallCount = value.Int64
+				as.CallCount = int32(value.Int64)
 			}
 		case apistatistics.FieldSuccessCount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field success_count", values[i])
 			} else if value.Valid {
-				as.SuccessCount = value.Int64
+				as.SuccessCount = int32(value.Int64)
 			}
 		case apistatistics.FieldFailureCount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field failure_count", values[i])
 			} else if value.Valid {
-				as.FailureCount = value.Int64
+				as.FailureCount = int32(value.Int64)
 			}
 		case apistatistics.FieldAvgResponseTime:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
@@ -154,7 +154,7 @@ func (as *ApiStatistics) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field api_id", values[i])
 			} else if value.Valid {
-				as.APIID = value.Int64
+				as.APIID = int32(value.Int64)
 			}
 		}
 	}

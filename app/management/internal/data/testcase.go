@@ -55,7 +55,7 @@ func (r *testcaseRepo) UpdateTestcase(ctx context.Context, testcase *biz.Testcas
 	return true, nil
 }
 
-func (r *testcaseRepo) TestcaseById(ctx context.Context, id int64) (*biz.Testcase, error) {
+func (r *testcaseRepo) TestcaseById(ctx context.Context, id int32) (*biz.Testcase, error) {
 	queryTestcase, err := r.data.entDB.Testcase.Query().Where(testcase.ID(id)).Only(ctx)
 	if err != nil {
 		return nil, err
@@ -103,7 +103,7 @@ func (r *testcaseRepo) UploadTestcaseFile(ctx context.Context, fileName, fileTyp
 	return ret.Url, nil
 }
 
-func (r *testcaseRepo) CreateTestcaseSuite(ctx context.Context, suiteName string, testcaseList []int64) (*biz.TestcaseSuite, error) {
+func (r *testcaseRepo) CreateTestcaseSuite(ctx context.Context, suiteName string, testcaseList []int32) (*biz.TestcaseSuite, error) {
 	ret, err := r.data.entDB.TestcaseSuite.Create().
 		SetName(suiteName).
 		SetTestcases(testcaseList).
@@ -117,7 +117,7 @@ func (r *testcaseRepo) CreateTestcaseSuite(ctx context.Context, suiteName string
 	}, nil
 }
 
-func (r *testcaseRepo) GetTestcaseSuiteById(ctx context.Context, suiteId int64) (*biz.TestcaseSuite, error) {
+func (r *testcaseRepo) GetTestcaseSuiteById(ctx context.Context, suiteId int32) (*biz.TestcaseSuite, error) {
 	var testcaseList []*biz.Testcase
 	ret, err := r.data.entDB.TestcaseSuite.Query().First(ctx)
 	switch {

@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.ApiHistory {
+func ID(id int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.ApiHistory {
+func IDEQ(id int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.ApiHistory {
+func IDNEQ(id int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.ApiHistory {
+func IDIn(ids ...int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.ApiHistory {
+func IDNotIn(ids ...int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.ApiHistory {
+func IDGT(id int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.ApiHistory {
+func IDGTE(id int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.ApiHistory {
+func IDLT(id int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.ApiHistory {
+func IDLTE(id int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldLTE(FieldID, id))
 }
 
 // Version applies equality check predicate on the "version" field. It's identical to VersionEQ.
-func Version(v int64) predicate.ApiHistory {
+func Version(v int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldEQ(FieldVersion, v))
 }
 
@@ -80,42 +80,42 @@ func Description(v string) predicate.ApiHistory {
 }
 
 // VersionEQ applies the EQ predicate on the "version" field.
-func VersionEQ(v int64) predicate.ApiHistory {
+func VersionEQ(v int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldEQ(FieldVersion, v))
 }
 
 // VersionNEQ applies the NEQ predicate on the "version" field.
-func VersionNEQ(v int64) predicate.ApiHistory {
+func VersionNEQ(v int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldNEQ(FieldVersion, v))
 }
 
 // VersionIn applies the In predicate on the "version" field.
-func VersionIn(vs ...int64) predicate.ApiHistory {
+func VersionIn(vs ...int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldIn(FieldVersion, vs...))
 }
 
 // VersionNotIn applies the NotIn predicate on the "version" field.
-func VersionNotIn(vs ...int64) predicate.ApiHistory {
+func VersionNotIn(vs ...int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldNotIn(FieldVersion, vs...))
 }
 
 // VersionGT applies the GT predicate on the "version" field.
-func VersionGT(v int64) predicate.ApiHistory {
+func VersionGT(v int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldGT(FieldVersion, v))
 }
 
 // VersionGTE applies the GTE predicate on the "version" field.
-func VersionGTE(v int64) predicate.ApiHistory {
+func VersionGTE(v int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldGTE(FieldVersion, v))
 }
 
 // VersionLT applies the LT predicate on the "version" field.
-func VersionLT(v int64) predicate.ApiHistory {
+func VersionLT(v int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldLT(FieldVersion, v))
 }
 
 // VersionLTE applies the LTE predicate on the "version" field.
-func VersionLTE(v int64) predicate.ApiHistory {
+func VersionLTE(v int32) predicate.ApiHistory {
 	return predicate.ApiHistory(sql.FieldLTE(FieldVersion, v))
 }
 

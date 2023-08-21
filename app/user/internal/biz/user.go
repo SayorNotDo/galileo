@@ -20,6 +20,7 @@ type User struct {
 	Phone       string    `json:"phone"`
 	Status      bool      `json:"status"`
 	Role        int32     `json:"role"`
+	UpdateAt    time.Time `json:"update_at"`
 	DeletedAt   time.Time `json:"deleted_at"`
 	DeletedBy   uint32    `json:"deleted_by"`
 	CreatedAt   time.Time `json:"created_at"`

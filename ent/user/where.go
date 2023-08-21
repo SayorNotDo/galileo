@@ -131,7 +131,7 @@ func UUID(v uuid.UUID) predicate.User {
 }
 
 // GroupID applies equality check predicate on the "group_id" field. It's identical to GroupIDEQ.
-func GroupID(v int64) predicate.User {
+func GroupID(v int32) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldGroupID, v))
 }
 
@@ -141,7 +141,7 @@ func Location(v string) predicate.User {
 }
 
 // DepartmentID applies equality check predicate on the "department_id" field. It's identical to DepartmentIDEQ.
-func DepartmentID(v int64) predicate.User {
+func DepartmentID(v int32) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldDepartmentID, v))
 }
 
@@ -911,42 +911,42 @@ func UUIDLTE(v uuid.UUID) predicate.User {
 }
 
 // GroupIDEQ applies the EQ predicate on the "group_id" field.
-func GroupIDEQ(v int64) predicate.User {
+func GroupIDEQ(v int32) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldGroupID, v))
 }
 
 // GroupIDNEQ applies the NEQ predicate on the "group_id" field.
-func GroupIDNEQ(v int64) predicate.User {
+func GroupIDNEQ(v int32) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldGroupID, v))
 }
 
 // GroupIDIn applies the In predicate on the "group_id" field.
-func GroupIDIn(vs ...int64) predicate.User {
+func GroupIDIn(vs ...int32) predicate.User {
 	return predicate.User(sql.FieldIn(FieldGroupID, vs...))
 }
 
 // GroupIDNotIn applies the NotIn predicate on the "group_id" field.
-func GroupIDNotIn(vs ...int64) predicate.User {
+func GroupIDNotIn(vs ...int32) predicate.User {
 	return predicate.User(sql.FieldNotIn(FieldGroupID, vs...))
 }
 
 // GroupIDGT applies the GT predicate on the "group_id" field.
-func GroupIDGT(v int64) predicate.User {
+func GroupIDGT(v int32) predicate.User {
 	return predicate.User(sql.FieldGT(FieldGroupID, v))
 }
 
 // GroupIDGTE applies the GTE predicate on the "group_id" field.
-func GroupIDGTE(v int64) predicate.User {
+func GroupIDGTE(v int32) predicate.User {
 	return predicate.User(sql.FieldGTE(FieldGroupID, v))
 }
 
 // GroupIDLT applies the LT predicate on the "group_id" field.
-func GroupIDLT(v int64) predicate.User {
+func GroupIDLT(v int32) predicate.User {
 	return predicate.User(sql.FieldLT(FieldGroupID, v))
 }
 
 // GroupIDLTE applies the LTE predicate on the "group_id" field.
-func GroupIDLTE(v int64) predicate.User {
+func GroupIDLTE(v int32) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldGroupID, v))
 }
 
@@ -1036,42 +1036,42 @@ func LocationContainsFold(v string) predicate.User {
 }
 
 // DepartmentIDEQ applies the EQ predicate on the "department_id" field.
-func DepartmentIDEQ(v int64) predicate.User {
+func DepartmentIDEQ(v int32) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldDepartmentID, v))
 }
 
 // DepartmentIDNEQ applies the NEQ predicate on the "department_id" field.
-func DepartmentIDNEQ(v int64) predicate.User {
+func DepartmentIDNEQ(v int32) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldDepartmentID, v))
 }
 
 // DepartmentIDIn applies the In predicate on the "department_id" field.
-func DepartmentIDIn(vs ...int64) predicate.User {
+func DepartmentIDIn(vs ...int32) predicate.User {
 	return predicate.User(sql.FieldIn(FieldDepartmentID, vs...))
 }
 
 // DepartmentIDNotIn applies the NotIn predicate on the "department_id" field.
-func DepartmentIDNotIn(vs ...int64) predicate.User {
+func DepartmentIDNotIn(vs ...int32) predicate.User {
 	return predicate.User(sql.FieldNotIn(FieldDepartmentID, vs...))
 }
 
 // DepartmentIDGT applies the GT predicate on the "department_id" field.
-func DepartmentIDGT(v int64) predicate.User {
+func DepartmentIDGT(v int32) predicate.User {
 	return predicate.User(sql.FieldGT(FieldDepartmentID, v))
 }
 
 // DepartmentIDGTE applies the GTE predicate on the "department_id" field.
-func DepartmentIDGTE(v int64) predicate.User {
+func DepartmentIDGTE(v int32) predicate.User {
 	return predicate.User(sql.FieldGTE(FieldDepartmentID, v))
 }
 
 // DepartmentIDLT applies the LT predicate on the "department_id" field.
-func DepartmentIDLT(v int64) predicate.User {
+func DepartmentIDLT(v int32) predicate.User {
 	return predicate.User(sql.FieldLT(FieldDepartmentID, v))
 }
 
 // DepartmentIDLTE applies the LTE predicate on the "department_id" field.
-func DepartmentIDLTE(v int64) predicate.User {
+func DepartmentIDLTE(v int32) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldDepartmentID, v))
 }
 

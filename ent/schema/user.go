@@ -40,9 +40,9 @@ func (User) Fields() []ent.Field {
 		field.Uint32("deleted_by").Optional().Nillable(),
 		field.Bool("is_deleted").Optional().Nillable().Default(false),
 		field.UUID("uuid", uuid.UUID{}).Default(uuid.New),
-		field.Int64("group_id").Optional(),
+		field.Int32("group_id").Optional(),
 		field.String("location").Optional(),
-		field.Int64("department_id").Optional(),
+		field.Int32("department_id").Optional(),
 	}
 }
 

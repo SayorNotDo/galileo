@@ -15,6 +15,7 @@ type Group struct {
 // Fields of the Group.
 func (Group) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int32("id"),
 		field.String("name").Match(regexp.MustCompile("[a-zA-Z_]+$")),
 		field.Uint32("created_by"),
 		field.Time("created_at").

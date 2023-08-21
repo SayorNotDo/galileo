@@ -55,7 +55,7 @@ func IDLTE(id int) predicate.ProjectMember {
 }
 
 // ProjectID applies equality check predicate on the "project_id" field. It's identical to ProjectIDEQ.
-func ProjectID(v int64) predicate.ProjectMember {
+func ProjectID(v int32) predicate.ProjectMember {
 	return predicate.ProjectMember(sql.FieldEQ(FieldProjectID, v))
 }
 
@@ -105,42 +105,42 @@ func Role(v uint8) predicate.ProjectMember {
 }
 
 // ProjectIDEQ applies the EQ predicate on the "project_id" field.
-func ProjectIDEQ(v int64) predicate.ProjectMember {
+func ProjectIDEQ(v int32) predicate.ProjectMember {
 	return predicate.ProjectMember(sql.FieldEQ(FieldProjectID, v))
 }
 
 // ProjectIDNEQ applies the NEQ predicate on the "project_id" field.
-func ProjectIDNEQ(v int64) predicate.ProjectMember {
+func ProjectIDNEQ(v int32) predicate.ProjectMember {
 	return predicate.ProjectMember(sql.FieldNEQ(FieldProjectID, v))
 }
 
 // ProjectIDIn applies the In predicate on the "project_id" field.
-func ProjectIDIn(vs ...int64) predicate.ProjectMember {
+func ProjectIDIn(vs ...int32) predicate.ProjectMember {
 	return predicate.ProjectMember(sql.FieldIn(FieldProjectID, vs...))
 }
 
 // ProjectIDNotIn applies the NotIn predicate on the "project_id" field.
-func ProjectIDNotIn(vs ...int64) predicate.ProjectMember {
+func ProjectIDNotIn(vs ...int32) predicate.ProjectMember {
 	return predicate.ProjectMember(sql.FieldNotIn(FieldProjectID, vs...))
 }
 
 // ProjectIDGT applies the GT predicate on the "project_id" field.
-func ProjectIDGT(v int64) predicate.ProjectMember {
+func ProjectIDGT(v int32) predicate.ProjectMember {
 	return predicate.ProjectMember(sql.FieldGT(FieldProjectID, v))
 }
 
 // ProjectIDGTE applies the GTE predicate on the "project_id" field.
-func ProjectIDGTE(v int64) predicate.ProjectMember {
+func ProjectIDGTE(v int32) predicate.ProjectMember {
 	return predicate.ProjectMember(sql.FieldGTE(FieldProjectID, v))
 }
 
 // ProjectIDLT applies the LT predicate on the "project_id" field.
-func ProjectIDLT(v int64) predicate.ProjectMember {
+func ProjectIDLT(v int32) predicate.ProjectMember {
 	return predicate.ProjectMember(sql.FieldLT(FieldProjectID, v))
 }
 
 // ProjectIDLTE applies the LTE predicate on the "project_id" field.
-func ProjectIDLTE(v int64) predicate.ProjectMember {
+func ProjectIDLTE(v int32) predicate.ProjectMember {
 	return predicate.ProjectMember(sql.FieldLTE(FieldProjectID, v))
 }
 

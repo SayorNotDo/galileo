@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-func NewTask(name string, rank, taskType int32, description string, testcaseSuites []int64, scheduleTime time.Time, worker string, assignee uint32, frequency v1.Frequency, deadline time.Time, config string) (biz.Task, error) {
+func NewTask(name string, rank, taskType int32, description string, testcaseSuite []int32, scheduleTime time.Time, worker string, assignee uint32, frequency v1.Frequency, deadline time.Time, config string) (biz.Task, error) {
 	if len(name) <= 0 {
 		return biz.Task{}, errors.New("task name must not be empty")
 	} else if rank < 0 || taskType < 0 {
@@ -26,17 +26,17 @@ func NewTask(name string, rank, taskType int32, description string, testcaseSuit
 		}
 	}
 	return biz.Task{
-		Name:           name,
-		Rank:           int8(rank),
-		Type:           int8(taskType),
-		Description:    description,
-		TestcaseSuites: testcaseSuites,
-		Worker:         worker,
-		Assignee:       assignee,
-		ScheduleTime:   scheduleTime,
-		Frequency:      frequency.String(),
-		Deadline:       deadline,
-		Config:         config,
+		Name:          name,
+		Rank:          int8(rank),
+		Type:          int8(taskType),
+		Description:   description,
+		TestcaseSuite: testcaseSuite,
+		Worker:        worker,
+		Assignee:      assignee,
+		ScheduleTime:  scheduleTime,
+		Frequency:     frequency.String(),
+		Deadline:      deadline,
+		Config:        config,
 	}, nil
 }
 
@@ -120,19 +120,19 @@ func (s *ManagementService) TaskByID(ctx context.Context, req *v1.TaskByIDReques
 		return nil, err
 	}
 	return &v1.GetTaskReply{
-		Id:              task.Id,
-		Name:            task.Name,
-		Type:            int32(task.Type),
-		Rank:            int32(task.Rank),
-		Description:     task.Description,
-		TestcaseSuiteId: task.TestcaseSuites,
-		Status:          task.Status,
-		Config:          task.Config,
-		Worker:          task.Worker,
-		ScheduleTime:    timestamppb.New(task.ScheduleTime),
-		Deadline:        timestamppb.New(task.Deadline),
-		StartTime:       timestamppb.New(task.StartTime),
-		Assignee:        task.Assignee,
+		Id:            task.Id,
+		Name:          task.Name,
+		Type:          int32(task.Type),
+		Rank:          int32(task.Rank),
+		Description:   task.Description,
+		TestcaseSuite: task.TestcaseSuite,
+		Status:        task.Status,
+		Config:        task.Config,
+		Worker:        task.Worker,
+		ScheduleTime:  timestamppb.New(task.ScheduleTime),
+		Deadline:      timestamppb.New(task.Deadline),
+		StartTime:     timestamppb.New(task.StartTime),
+		Assignee:      task.Assignee,
 	}, nil
 }
 
@@ -142,19 +142,19 @@ func (s *ManagementService) TaskByName(ctx context.Context, req *v1.TaskByNameRe
 		return nil, err
 	}
 	return &v1.GetTaskReply{
-		Id:              task.Id,
-		Name:            task.Name,
-		Type:            int32(task.Type),
-		Rank:            int32(task.Rank),
-		Description:     task.Description,
-		TestcaseSuiteId: task.TestcaseSuites,
-		Status:          task.Status,
-		Config:          task.Config,
-		Worker:          task.Worker,
-		ScheduleTime:    timestamppb.New(task.ScheduleTime),
-		Deadline:        timestamppb.New(task.Deadline),
-		StartTime:       timestamppb.New(task.StartTime),
-		Assignee:        task.Assignee,
+		Id:            task.Id,
+		Name:          task.Name,
+		Type:          int32(task.Type),
+		Rank:          int32(task.Rank),
+		Description:   task.Description,
+		TestcaseSuite: task.TestcaseSuite,
+		Status:        task.Status,
+		Config:        task.Config,
+		Worker:        task.Worker,
+		ScheduleTime:  timestamppb.New(task.ScheduleTime),
+		Deadline:      timestamppb.New(task.Deadline),
+		StartTime:     timestamppb.New(task.StartTime),
+		Assignee:      task.Assignee,
 	}, nil
 }
 

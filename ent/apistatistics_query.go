@@ -81,8 +81,8 @@ func (asq *ApiStatisticsQuery) FirstX(ctx context.Context) *ApiStatistics {
 
 // FirstID returns the first ApiStatistics ID from the query.
 // Returns a *NotFoundError when no ApiStatistics ID was found.
-func (asq *ApiStatisticsQuery) FirstID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (asq *ApiStatisticsQuery) FirstID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = asq.Limit(1).IDs(setContextOp(ctx, asq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -94,7 +94,7 @@ func (asq *ApiStatisticsQuery) FirstID(ctx context.Context) (id int64, err error
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (asq *ApiStatisticsQuery) FirstIDX(ctx context.Context) int64 {
+func (asq *ApiStatisticsQuery) FirstIDX(ctx context.Context) int32 {
 	id, err := asq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -132,8 +132,8 @@ func (asq *ApiStatisticsQuery) OnlyX(ctx context.Context) *ApiStatistics {
 // OnlyID is like Only, but returns the only ApiStatistics ID in the query.
 // Returns a *NotSingularError when more than one ApiStatistics ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (asq *ApiStatisticsQuery) OnlyID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (asq *ApiStatisticsQuery) OnlyID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = asq.Limit(2).IDs(setContextOp(ctx, asq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -149,7 +149,7 @@ func (asq *ApiStatisticsQuery) OnlyID(ctx context.Context) (id int64, err error)
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (asq *ApiStatisticsQuery) OnlyIDX(ctx context.Context) int64 {
+func (asq *ApiStatisticsQuery) OnlyIDX(ctx context.Context) int32 {
 	id, err := asq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -177,7 +177,7 @@ func (asq *ApiStatisticsQuery) AllX(ctx context.Context) []*ApiStatistics {
 }
 
 // IDs executes the query and returns a list of ApiStatistics IDs.
-func (asq *ApiStatisticsQuery) IDs(ctx context.Context) (ids []int64, err error) {
+func (asq *ApiStatisticsQuery) IDs(ctx context.Context) (ids []int32, err error) {
 	if asq.ctx.Unique == nil && asq.path != nil {
 		asq.Unique(true)
 	}
@@ -189,7 +189,7 @@ func (asq *ApiStatisticsQuery) IDs(ctx context.Context) (ids []int64, err error)
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (asq *ApiStatisticsQuery) IDsX(ctx context.Context) []int64 {
+func (asq *ApiStatisticsQuery) IDsX(ctx context.Context) []int32 {
 	ids, err := asq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -261,7 +261,7 @@ func (asq *ApiStatisticsQuery) Clone() *ApiStatisticsQuery {
 // Example:
 //
 //	var v []struct {
-//		CallCount int64 `json:"call_count,omitempty"`
+//		CallCount int32 `json:"call_count,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -284,7 +284,7 @@ func (asq *ApiStatisticsQuery) GroupBy(field string, fields ...string) *ApiStati
 // Example:
 //
 //	var v []struct {
-//		CallCount int64 `json:"call_count,omitempty"`
+//		CallCount int32 `json:"call_count,omitempty"`
 //	}
 //
 //	client.ApiStatistics.Query().
@@ -364,7 +364,7 @@ func (asq *ApiStatisticsQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (asq *ApiStatisticsQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(apistatistics.Table, apistatistics.Columns, sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewQuerySpec(apistatistics.Table, apistatistics.Columns, sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt32))
 	_spec.From = asq.sql
 	if unique := asq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

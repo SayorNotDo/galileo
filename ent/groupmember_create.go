@@ -21,13 +21,13 @@ type GroupMemberCreate struct {
 }
 
 // SetGroupID sets the "group_id" field.
-func (gmc *GroupMemberCreate) SetGroupID(i int64) *GroupMemberCreate {
+func (gmc *GroupMemberCreate) SetGroupID(i int32) *GroupMemberCreate {
 	gmc.mutation.SetGroupID(i)
 	return gmc
 }
 
 // SetUserID sets the "user_id" field.
-func (gmc *GroupMemberCreate) SetUserID(i int64) *GroupMemberCreate {
+func (gmc *GroupMemberCreate) SetUserID(i int32) *GroupMemberCreate {
 	gmc.mutation.SetUserID(i)
 	return gmc
 }
@@ -91,6 +91,12 @@ func (gmc *GroupMemberCreate) SetNillableDeletedBy(u *uint32) *GroupMemberCreate
 	if u != nil {
 		gmc.SetDeletedBy(*u)
 	}
+	return gmc
+}
+
+// SetID sets the "id" field.
+func (gmc *GroupMemberCreate) SetID(i int32) *GroupMemberCreate {
+	gmc.mutation.SetID(i)
 	return gmc
 }
 
@@ -170,8 +176,10 @@ func (gmc *GroupMemberCreate) sqlSave(ctx context.Context) (*GroupMember, error)
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int32(id)
+	}
 	gmc.mutation.id = &_node.ID
 	gmc.mutation.done = true
 	return _node, nil
@@ -180,14 +188,18 @@ func (gmc *GroupMemberCreate) sqlSave(ctx context.Context) (*GroupMember, error)
 func (gmc *GroupMemberCreate) createSpec() (*GroupMember, *sqlgraph.CreateSpec) {
 	var (
 		_node = &GroupMember{config: gmc.config}
-		_spec = sqlgraph.NewCreateSpec(groupmember.Table, sqlgraph.NewFieldSpec(groupmember.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(groupmember.Table, sqlgraph.NewFieldSpec(groupmember.FieldID, field.TypeInt32))
 	)
+	if id, ok := gmc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := gmc.mutation.GroupID(); ok {
-		_spec.SetField(groupmember.FieldGroupID, field.TypeInt64, value)
+		_spec.SetField(groupmember.FieldGroupID, field.TypeInt32, value)
 		_node.GroupID = value
 	}
 	if value, ok := gmc.mutation.UserID(); ok {
-		_spec.SetField(groupmember.FieldUserID, field.TypeInt64, value)
+		_spec.SetField(groupmember.FieldUserID, field.TypeInt32, value)
 		_node.UserID = value
 	}
 	if value, ok := gmc.mutation.Role(); ok {
@@ -254,9 +266,9 @@ func (gmcb *GroupMemberCreateBulk) Save(ctx context.Context) ([]*GroupMember, er
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = int32(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

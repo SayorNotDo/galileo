@@ -85,7 +85,7 @@ func (s *ManagementService) GetUserProjectList(ctx context.Context, empty *empty
 		return nil, err
 	}
 	return &v1.ListProjectReply{
-		Total:       int64(len(ret)),
+		Total:       int32(len(ret)),
 		ProjectList: ret,
 	}, nil
 }

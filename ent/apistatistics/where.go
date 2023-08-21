@@ -10,62 +10,62 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int64) predicate.ApiStatistics {
+func ID(id int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int64) predicate.ApiStatistics {
+func IDEQ(id int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int64) predicate.ApiStatistics {
+func IDNEQ(id int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int64) predicate.ApiStatistics {
+func IDIn(ids ...int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int64) predicate.ApiStatistics {
+func IDNotIn(ids ...int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int64) predicate.ApiStatistics {
+func IDGT(id int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int64) predicate.ApiStatistics {
+func IDGTE(id int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int64) predicate.ApiStatistics {
+func IDLT(id int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int64) predicate.ApiStatistics {
+func IDLTE(id int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldLTE(FieldID, id))
 }
 
 // CallCount applies equality check predicate on the "call_count" field. It's identical to CallCountEQ.
-func CallCount(v int64) predicate.ApiStatistics {
+func CallCount(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldEQ(FieldCallCount, v))
 }
 
 // SuccessCount applies equality check predicate on the "success_count" field. It's identical to SuccessCountEQ.
-func SuccessCount(v int64) predicate.ApiStatistics {
+func SuccessCount(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldEQ(FieldSuccessCount, v))
 }
 
 // FailureCount applies equality check predicate on the "failure_count" field. It's identical to FailureCountEQ.
-func FailureCount(v int64) predicate.ApiStatistics {
+func FailureCount(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldEQ(FieldFailureCount, v))
 }
 
@@ -115,127 +115,127 @@ func UpdateAt(v time.Time) predicate.ApiStatistics {
 }
 
 // APIID applies equality check predicate on the "api_id" field. It's identical to APIIDEQ.
-func APIID(v int64) predicate.ApiStatistics {
+func APIID(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldEQ(FieldAPIID, v))
 }
 
 // CallCountEQ applies the EQ predicate on the "call_count" field.
-func CallCountEQ(v int64) predicate.ApiStatistics {
+func CallCountEQ(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldEQ(FieldCallCount, v))
 }
 
 // CallCountNEQ applies the NEQ predicate on the "call_count" field.
-func CallCountNEQ(v int64) predicate.ApiStatistics {
+func CallCountNEQ(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldNEQ(FieldCallCount, v))
 }
 
 // CallCountIn applies the In predicate on the "call_count" field.
-func CallCountIn(vs ...int64) predicate.ApiStatistics {
+func CallCountIn(vs ...int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldIn(FieldCallCount, vs...))
 }
 
 // CallCountNotIn applies the NotIn predicate on the "call_count" field.
-func CallCountNotIn(vs ...int64) predicate.ApiStatistics {
+func CallCountNotIn(vs ...int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldNotIn(FieldCallCount, vs...))
 }
 
 // CallCountGT applies the GT predicate on the "call_count" field.
-func CallCountGT(v int64) predicate.ApiStatistics {
+func CallCountGT(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldGT(FieldCallCount, v))
 }
 
 // CallCountGTE applies the GTE predicate on the "call_count" field.
-func CallCountGTE(v int64) predicate.ApiStatistics {
+func CallCountGTE(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldGTE(FieldCallCount, v))
 }
 
 // CallCountLT applies the LT predicate on the "call_count" field.
-func CallCountLT(v int64) predicate.ApiStatistics {
+func CallCountLT(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldLT(FieldCallCount, v))
 }
 
 // CallCountLTE applies the LTE predicate on the "call_count" field.
-func CallCountLTE(v int64) predicate.ApiStatistics {
+func CallCountLTE(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldLTE(FieldCallCount, v))
 }
 
 // SuccessCountEQ applies the EQ predicate on the "success_count" field.
-func SuccessCountEQ(v int64) predicate.ApiStatistics {
+func SuccessCountEQ(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldEQ(FieldSuccessCount, v))
 }
 
 // SuccessCountNEQ applies the NEQ predicate on the "success_count" field.
-func SuccessCountNEQ(v int64) predicate.ApiStatistics {
+func SuccessCountNEQ(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldNEQ(FieldSuccessCount, v))
 }
 
 // SuccessCountIn applies the In predicate on the "success_count" field.
-func SuccessCountIn(vs ...int64) predicate.ApiStatistics {
+func SuccessCountIn(vs ...int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldIn(FieldSuccessCount, vs...))
 }
 
 // SuccessCountNotIn applies the NotIn predicate on the "success_count" field.
-func SuccessCountNotIn(vs ...int64) predicate.ApiStatistics {
+func SuccessCountNotIn(vs ...int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldNotIn(FieldSuccessCount, vs...))
 }
 
 // SuccessCountGT applies the GT predicate on the "success_count" field.
-func SuccessCountGT(v int64) predicate.ApiStatistics {
+func SuccessCountGT(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldGT(FieldSuccessCount, v))
 }
 
 // SuccessCountGTE applies the GTE predicate on the "success_count" field.
-func SuccessCountGTE(v int64) predicate.ApiStatistics {
+func SuccessCountGTE(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldGTE(FieldSuccessCount, v))
 }
 
 // SuccessCountLT applies the LT predicate on the "success_count" field.
-func SuccessCountLT(v int64) predicate.ApiStatistics {
+func SuccessCountLT(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldLT(FieldSuccessCount, v))
 }
 
 // SuccessCountLTE applies the LTE predicate on the "success_count" field.
-func SuccessCountLTE(v int64) predicate.ApiStatistics {
+func SuccessCountLTE(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldLTE(FieldSuccessCount, v))
 }
 
 // FailureCountEQ applies the EQ predicate on the "failure_count" field.
-func FailureCountEQ(v int64) predicate.ApiStatistics {
+func FailureCountEQ(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldEQ(FieldFailureCount, v))
 }
 
 // FailureCountNEQ applies the NEQ predicate on the "failure_count" field.
-func FailureCountNEQ(v int64) predicate.ApiStatistics {
+func FailureCountNEQ(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldNEQ(FieldFailureCount, v))
 }
 
 // FailureCountIn applies the In predicate on the "failure_count" field.
-func FailureCountIn(vs ...int64) predicate.ApiStatistics {
+func FailureCountIn(vs ...int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldIn(FieldFailureCount, vs...))
 }
 
 // FailureCountNotIn applies the NotIn predicate on the "failure_count" field.
-func FailureCountNotIn(vs ...int64) predicate.ApiStatistics {
+func FailureCountNotIn(vs ...int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldNotIn(FieldFailureCount, vs...))
 }
 
 // FailureCountGT applies the GT predicate on the "failure_count" field.
-func FailureCountGT(v int64) predicate.ApiStatistics {
+func FailureCountGT(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldGT(FieldFailureCount, v))
 }
 
 // FailureCountGTE applies the GTE predicate on the "failure_count" field.
-func FailureCountGTE(v int64) predicate.ApiStatistics {
+func FailureCountGTE(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldGTE(FieldFailureCount, v))
 }
 
 // FailureCountLT applies the LT predicate on the "failure_count" field.
-func FailureCountLT(v int64) predicate.ApiStatistics {
+func FailureCountLT(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldLT(FieldFailureCount, v))
 }
 
 // FailureCountLTE applies the LTE predicate on the "failure_count" field.
-func FailureCountLTE(v int64) predicate.ApiStatistics {
+func FailureCountLTE(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldLTE(FieldFailureCount, v))
 }
 
@@ -625,42 +625,42 @@ func UpdateAtLTE(v time.Time) predicate.ApiStatistics {
 }
 
 // APIIDEQ applies the EQ predicate on the "api_id" field.
-func APIIDEQ(v int64) predicate.ApiStatistics {
+func APIIDEQ(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldEQ(FieldAPIID, v))
 }
 
 // APIIDNEQ applies the NEQ predicate on the "api_id" field.
-func APIIDNEQ(v int64) predicate.ApiStatistics {
+func APIIDNEQ(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldNEQ(FieldAPIID, v))
 }
 
 // APIIDIn applies the In predicate on the "api_id" field.
-func APIIDIn(vs ...int64) predicate.ApiStatistics {
+func APIIDIn(vs ...int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldIn(FieldAPIID, vs...))
 }
 
 // APIIDNotIn applies the NotIn predicate on the "api_id" field.
-func APIIDNotIn(vs ...int64) predicate.ApiStatistics {
+func APIIDNotIn(vs ...int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldNotIn(FieldAPIID, vs...))
 }
 
 // APIIDGT applies the GT predicate on the "api_id" field.
-func APIIDGT(v int64) predicate.ApiStatistics {
+func APIIDGT(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldGT(FieldAPIID, v))
 }
 
 // APIIDGTE applies the GTE predicate on the "api_id" field.
-func APIIDGTE(v int64) predicate.ApiStatistics {
+func APIIDGTE(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldGTE(FieldAPIID, v))
 }
 
 // APIIDLT applies the LT predicate on the "api_id" field.
-func APIIDLT(v int64) predicate.ApiStatistics {
+func APIIDLT(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldLT(FieldAPIID, v))
 }
 
 // APIIDLTE applies the LTE predicate on the "api_id" field.
-func APIIDLTE(v int64) predicate.ApiStatistics {
+func APIIDLTE(v int32) predicate.ApiStatistics {
 	return predicate.ApiStatistics(sql.FieldLTE(FieldAPIID, v))
 }
 

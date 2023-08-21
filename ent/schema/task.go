@@ -4,7 +4,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"time"
 )
@@ -23,7 +22,7 @@ func (Task) Annotations() []schema.Annotation {
 // Fields of the Task.
 func (Task) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("id"),
+		field.Int32("id"),
 		field.String("name").Unique().NotEmpty(),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("created_by").Immutable(),
@@ -44,14 +43,13 @@ func (Task) Fields() []ent.Field {
 		field.Time("deleted_at").Optional(),                         // 任务删除时间
 		field.Uint32("deleted_by").Optional(),                       // 任务删除人
 		field.Text("description").Optional(),                        // 任务描述
-		field.Int64("testplan_id").Optional(),                       // 任务所属的测试计划,
+		field.Int32("testplan_id").Optional(),                       // 任务所属的测试计划,
 		field.Int64("execute_id").Optional(),                        // 任务执行全局唯一ID，通过雪花算法生成
+		field.JSON("testcase_suite", []int32{}),
 	}
 }
 
 // Edges of the Task.
 func (Task) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.To("testcase_suite", TestcaseSuite.Type),
-	}
+	return []ent.Edge{}
 }

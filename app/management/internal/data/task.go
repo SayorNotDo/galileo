@@ -38,8 +38,7 @@ func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (bool, error)
 		SetType(task.Type).
 		SetDescription(task.Description).
 		SetAssignee(task.Assignee).
-		ClearTestcaseSuite().
-		AddTestcaseSuiteIDs(task.TestcaseSuites...).
+		SetTestcaseSuite(task.TestcaseSuite).
 		SetDeadline(task.Deadline).
 		SetConfig(task.Config).
 		Save(ctx)
@@ -68,25 +67,21 @@ func (r *taskRepo) TaskByName(ctx context.Context, name string) (*biz.Task, erro
 	case err != nil:
 		return nil, err
 	}
-	testcaseSuites := queryTask.Edges.TestcaseSuite
-	suites := make([]int64, 0)
-	for _, o := range testcaseSuites {
-		suites = append(suites, o.ID)
-	}
+	testcaseSuite := queryTask.TestcaseSuite
 	return &biz.Task{
-		Id:             queryTask.ID,
-		Name:           queryTask.Name,
-		Rank:           queryTask.Rank,
-		Status:         taskV1.TaskStatus(queryTask.Status),
-		Type:           queryTask.Type,
-		CreatedAt:      queryTask.CreatedAt,
-		CreatedBy:      queryTask.CreatedBy,
-		StartTime:      queryTask.StartTime,
-		TestcaseSuites: suites,
+		Id:            queryTask.ID,
+		Name:          queryTask.Name,
+		Rank:          queryTask.Rank,
+		Status:        taskV1.TaskStatus(queryTask.Status),
+		Type:          queryTask.Type,
+		CreatedAt:     queryTask.CreatedAt,
+		CreatedBy:     queryTask.CreatedBy,
+		StartTime:     queryTask.StartTime,
+		TestcaseSuite: testcaseSuite,
 	}, nil
 }
 
-func (r *taskRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) {
+func (r *taskRepo) TaskByID(ctx context.Context, id int32) (*biz.Task, error) {
 	queryTask, err := r.data.entDB.Task.Query().Where(task.ID(id)).Only(ctx)
 	switch {
 	case ent.IsNotFound(err):
@@ -94,21 +89,17 @@ func (r *taskRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) {
 	case err != nil:
 		return nil, err
 	}
-	testcaseSuites := queryTask.Edges.TestcaseSuite
-	suites := make([]int64, 0)
-	for _, o := range testcaseSuites {
-		suites = append(suites, o.ID)
-	}
+	testcaseSuite := queryTask.TestcaseSuite
 	return &biz.Task{
-		Id:             queryTask.ID,
-		Name:           queryTask.Name,
-		Rank:           queryTask.Rank,
-		Status:         taskV1.TaskStatus(queryTask.Status),
-		Type:           queryTask.Type,
-		CreatedAt:      queryTask.CreatedAt,
-		CreatedBy:      queryTask.CreatedBy,
-		StartTime:      queryTask.StartTime,
-		TestcaseSuites: suites,
+		Id:            queryTask.ID,
+		Name:          queryTask.Name,
+		Rank:          queryTask.Rank,
+		Status:        taskV1.TaskStatus(queryTask.Status),
+		Type:          queryTask.Type,
+		CreatedAt:     queryTask.CreatedAt,
+		CreatedBy:     queryTask.CreatedBy,
+		StartTime:     queryTask.StartTime,
+		TestcaseSuite: testcaseSuite,
 	}, nil
 }
 
@@ -133,7 +124,7 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, e
 		SetCreatedBy(task.CreatedBy).
 		SetTestplanID(task.TestPlanId).
 		SetDescription(task.Description).
-		AddTestcaseSuiteIDs(task.TestcaseSuites...).
+		SetTestcaseSuite(task.TestcaseSuite).
 		Save(ctx)
 	if err != nil {
 		return nil, rollback(tx, err)
@@ -169,8 +160,8 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, e
 	}, nil
 }
 
-func (r *taskRepo) SoftDeleteTask(ctx context.Context, uid uint32, id int64) (bool, error) {
-	err := r.data.entDB.Task.UpdateOneID(id).
+func (r *taskRepo) SoftDeleteTask(ctx context.Context, uid uint32, taskId int32) (bool, error) {
+	err := r.data.entDB.Task.UpdateOneID(taskId).
 		SetDeletedAt(time.Now()).
 		SetDeletedBy(uid).
 		Exec(ctx)
@@ -180,7 +171,7 @@ func (r *taskRepo) SoftDeleteTask(ctx context.Context, uid uint32, id int64) (bo
 	return true, nil
 }
 
-func (r *taskRepo) TaskDetailById(ctx context.Context, id int64) (*biz.Task, error) {
+func (r *taskRepo) TaskDetailById(ctx context.Context, id int32) (*biz.Task, error) {
 	queryTask, err := r.data.entDB.Task.Query().Where(task.ID(id)).Only(ctx)
 	if err != nil {
 		return nil, err
@@ -211,7 +202,7 @@ func (r *taskRepo) TaskDetailById(ctx context.Context, id int64) (*biz.Task, err
 	}, nil
 }
 
-func (r *taskRepo) IsTaskDeleted(ctx context.Context, id int64) (bool, error) {
+func (r *taskRepo) IsTaskDeleted(ctx context.Context, id int32) (bool, error) {
 	queryTask, err := r.data.entDB.Task.Query().Where(task.ID(id)).Only(ctx)
 	if err != nil {
 		return false, err

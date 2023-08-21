@@ -112,7 +112,7 @@ func (repo *ApiRepo) ApiByName(ctx context.Context, name string) (*biz.Api, erro
 	return ret, nil
 }
 
-func (repo *ApiRepo) ApiById(ctx context.Context, id int64) (*biz.Api, error) {
+func (repo *ApiRepo) ApiById(ctx context.Context, id int32) (*biz.Api, error) {
 	queryApi, err := repo.data.entDB.Api.Query().Where(api.ID(id)).First(ctx)
 	if err != nil {
 		return nil, err

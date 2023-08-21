@@ -81,8 +81,8 @@ func (tpq *TestPlanQuery) FirstX(ctx context.Context) *TestPlan {
 
 // FirstID returns the first TestPlan ID from the query.
 // Returns a *NotFoundError when no TestPlan ID was found.
-func (tpq *TestPlanQuery) FirstID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (tpq *TestPlanQuery) FirstID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = tpq.Limit(1).IDs(setContextOp(ctx, tpq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -94,7 +94,7 @@ func (tpq *TestPlanQuery) FirstID(ctx context.Context) (id int64, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (tpq *TestPlanQuery) FirstIDX(ctx context.Context) int64 {
+func (tpq *TestPlanQuery) FirstIDX(ctx context.Context) int32 {
 	id, err := tpq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -132,8 +132,8 @@ func (tpq *TestPlanQuery) OnlyX(ctx context.Context) *TestPlan {
 // OnlyID is like Only, but returns the only TestPlan ID in the query.
 // Returns a *NotSingularError when more than one TestPlan ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (tpq *TestPlanQuery) OnlyID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (tpq *TestPlanQuery) OnlyID(ctx context.Context) (id int32, err error) {
+	var ids []int32
 	if ids, err = tpq.Limit(2).IDs(setContextOp(ctx, tpq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -149,7 +149,7 @@ func (tpq *TestPlanQuery) OnlyID(ctx context.Context) (id int64, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (tpq *TestPlanQuery) OnlyIDX(ctx context.Context) int64 {
+func (tpq *TestPlanQuery) OnlyIDX(ctx context.Context) int32 {
 	id, err := tpq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -177,7 +177,7 @@ func (tpq *TestPlanQuery) AllX(ctx context.Context) []*TestPlan {
 }
 
 // IDs executes the query and returns a list of TestPlan IDs.
-func (tpq *TestPlanQuery) IDs(ctx context.Context) (ids []int64, err error) {
+func (tpq *TestPlanQuery) IDs(ctx context.Context) (ids []int32, err error) {
 	if tpq.ctx.Unique == nil && tpq.path != nil {
 		tpq.Unique(true)
 	}
@@ -189,7 +189,7 @@ func (tpq *TestPlanQuery) IDs(ctx context.Context) (ids []int64, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (tpq *TestPlanQuery) IDsX(ctx context.Context) []int64 {
+func (tpq *TestPlanQuery) IDsX(ctx context.Context) []int32 {
 	ids, err := tpq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -364,7 +364,7 @@ func (tpq *TestPlanQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (tpq *TestPlanQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(testplan.Table, testplan.Columns, sqlgraph.NewFieldSpec(testplan.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewQuerySpec(testplan.Table, testplan.Columns, sqlgraph.NewFieldSpec(testplan.FieldID, field.TypeInt32))
 	_spec.From = tpq.sql
 	if unique := tpq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

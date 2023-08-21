@@ -21,19 +21,19 @@ type ApiStatisticsCreate struct {
 }
 
 // SetCallCount sets the "call_count" field.
-func (asc *ApiStatisticsCreate) SetCallCount(i int64) *ApiStatisticsCreate {
+func (asc *ApiStatisticsCreate) SetCallCount(i int32) *ApiStatisticsCreate {
 	asc.mutation.SetCallCount(i)
 	return asc
 }
 
 // SetSuccessCount sets the "success_count" field.
-func (asc *ApiStatisticsCreate) SetSuccessCount(i int64) *ApiStatisticsCreate {
+func (asc *ApiStatisticsCreate) SetSuccessCount(i int32) *ApiStatisticsCreate {
 	asc.mutation.SetSuccessCount(i)
 	return asc
 }
 
 // SetFailureCount sets the "failure_count" field.
-func (asc *ApiStatisticsCreate) SetFailureCount(i int64) *ApiStatisticsCreate {
+func (asc *ApiStatisticsCreate) SetFailureCount(i int32) *ApiStatisticsCreate {
 	asc.mutation.SetFailureCount(i)
 	return asc
 }
@@ -93,13 +93,13 @@ func (asc *ApiStatisticsCreate) SetUpdateAt(t time.Time) *ApiStatisticsCreate {
 }
 
 // SetAPIID sets the "api_id" field.
-func (asc *ApiStatisticsCreate) SetAPIID(i int64) *ApiStatisticsCreate {
+func (asc *ApiStatisticsCreate) SetAPIID(i int32) *ApiStatisticsCreate {
 	asc.mutation.SetAPIID(i)
 	return asc
 }
 
 // SetID sets the "id" field.
-func (asc *ApiStatisticsCreate) SetID(i int64) *ApiStatisticsCreate {
+func (asc *ApiStatisticsCreate) SetID(i int32) *ApiStatisticsCreate {
 	asc.mutation.SetID(i)
 	return asc
 }
@@ -198,7 +198,7 @@ func (asc *ApiStatisticsCreate) sqlSave(ctx context.Context) (*ApiStatistics, er
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int64(id)
+		_node.ID = int32(id)
 	}
 	asc.mutation.id = &_node.ID
 	asc.mutation.done = true
@@ -208,22 +208,22 @@ func (asc *ApiStatisticsCreate) sqlSave(ctx context.Context) (*ApiStatistics, er
 func (asc *ApiStatisticsCreate) createSpec() (*ApiStatistics, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ApiStatistics{config: asc.config}
-		_spec = sqlgraph.NewCreateSpec(apistatistics.Table, sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt64))
+		_spec = sqlgraph.NewCreateSpec(apistatistics.Table, sqlgraph.NewFieldSpec(apistatistics.FieldID, field.TypeInt32))
 	)
 	if id, ok := asc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
 	if value, ok := asc.mutation.CallCount(); ok {
-		_spec.SetField(apistatistics.FieldCallCount, field.TypeInt64, value)
+		_spec.SetField(apistatistics.FieldCallCount, field.TypeInt32, value)
 		_node.CallCount = value
 	}
 	if value, ok := asc.mutation.SuccessCount(); ok {
-		_spec.SetField(apistatistics.FieldSuccessCount, field.TypeInt64, value)
+		_spec.SetField(apistatistics.FieldSuccessCount, field.TypeInt32, value)
 		_node.SuccessCount = value
 	}
 	if value, ok := asc.mutation.FailureCount(); ok {
-		_spec.SetField(apistatistics.FieldFailureCount, field.TypeInt64, value)
+		_spec.SetField(apistatistics.FieldFailureCount, field.TypeInt32, value)
 		_node.FailureCount = value
 	}
 	if value, ok := asc.mutation.AvgResponseTime(); ok {
@@ -263,7 +263,7 @@ func (asc *ApiStatisticsCreate) createSpec() (*ApiStatistics, *sqlgraph.CreateSp
 		_node.UpdateAt = value
 	}
 	if value, ok := asc.mutation.APIID(); ok {
-		_spec.SetField(apistatistics.FieldAPIID, field.TypeInt64, value)
+		_spec.SetField(apistatistics.FieldAPIID, field.TypeInt32, value)
 		_node.APIID = value
 	}
 	return _node, _spec
@@ -311,7 +311,7 @@ func (ascb *ApiStatisticsCreateBulk) Save(ctx context.Context) ([]*ApiStatistics
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int64(id)
+					nodes[i].ID = int32(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

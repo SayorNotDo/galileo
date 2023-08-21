@@ -40,7 +40,7 @@ func (ahd *ApiHistoryDelete) ExecX(ctx context.Context) int {
 }
 
 func (ahd *ApiHistoryDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(apihistory.Table, sqlgraph.NewFieldSpec(apihistory.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewDeleteSpec(apihistory.Table, sqlgraph.NewFieldSpec(apihistory.FieldID, field.TypeInt32))
 	if ps := ahd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

@@ -15,9 +15,9 @@ import (
 type ApiHistory struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID int32 `json:"id,omitempty"`
 	// Version holds the value of the "version" field.
-	Version int64 `json:"version,omitempty"`
+	Version int32 `json:"version,omitempty"`
 	// QueryParams holds the value of the "query_params" field.
 	QueryParams string `json:"query_params,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -59,12 +59,12 @@ func (ah *ApiHistory) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			ah.ID = int(value.Int64)
+			ah.ID = int32(value.Int64)
 		case apihistory.FieldVersion:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field version", values[i])
 			} else if value.Valid {
-				ah.Version = value.Int64
+				ah.Version = int32(value.Int64)
 			}
 		case apihistory.FieldQueryParams:
 			if value, ok := values[i].(*sql.NullString); !ok {

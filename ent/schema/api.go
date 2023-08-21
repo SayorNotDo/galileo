@@ -31,7 +31,7 @@ func (Api) Indexes() []ent.Index {
 // Fields of the Api.
 func (Api) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("id"),
+		field.Int32("id"),
 		field.String("name").Unique().NotEmpty(),
 		field.String("url").NotEmpty(),
 		field.Int8("type").NonNegative(),

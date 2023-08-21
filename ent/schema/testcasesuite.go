@@ -22,13 +22,13 @@ func (TestcaseSuite) Annotations() []schema.Annotation {
 // Fields of the TestCaseSuite.
 func (TestcaseSuite) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int64("id"),
+		field.Int32("id"),
 		field.String("name").Unique().NotEmpty(),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("created_by").Immutable(),
 		field.Time("updated_at").UpdateDefault(time.Now).Optional(),
 		field.Uint32("updated_by").Optional(),
-		field.JSON("testcases", []int64{}).Optional(),
+		field.JSON("testcases", []int32{}).Optional(),
 	}
 }
 
