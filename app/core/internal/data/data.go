@@ -4,6 +4,7 @@ import (
 	"context"
 	engineV1 "galileo/api/engine/v1"
 	fileV1 "galileo/api/file/v1"
+	projectV1 "galileo/api/management/project/v1"
 	taskV1 "galileo/api/management/task/v1"
 	userV1 "galileo/api/user/v1"
 	"galileo/app/core/internal/conf"
@@ -29,6 +30,7 @@ var ProviderSet = wire.NewSet(
 	NewCoreRepo,
 	NewEngineRepo,
 	NewUserRepo,
+	NewProjectServiceClient,
 	NewUserServiceClient,
 	NewTaskServiceClient,
 	NewFileServiceClient,
@@ -46,6 +48,7 @@ type Data struct {
 	log           *log.Helper
 	uc            userV1.UserClient
 	taskCli       taskV1.TaskClient
+	projectCli    projectV1.ProjectClient
 	fileCli       fileV1.FileClient
 	redisCli      *redis.Client
 	engineCli     engineV1.EngineClient
@@ -53,9 +56,18 @@ type Data struct {
 }
 
 // NewData .
-func NewData(c *conf.Data, uc userV1.UserClient, logger log.Logger, redisCli *redis.Client, taskCli taskV1.TaskClient, fileCli fileV1.FileClient, engineCli engineV1.EngineClient, kafkaProducer sarama.SyncProducer) (*Data, error) {
+func NewData(c *conf.Data, uc userV1.UserClient, logger log.Logger, redisCli *redis.Client, projectCli projectV1.ProjectClient, taskCli taskV1.TaskClient, fileCli fileV1.FileClient, engineCli engineV1.EngineClient, kafkaProducer sarama.SyncProducer) (*Data, error) {
 	l := log.NewHelper(log.With(logger, "module", "core.DataService"))
-	return &Data{log: l, uc: uc, redisCli: redisCli, taskCli: taskCli, fileCli: fileCli, engineCli: engineCli, kafkaProducer: kafkaProducer}, nil
+	return &Data{
+		log:           l,
+		uc:            uc,
+		redisCli:      redisCli,
+		projectCli:    projectCli,
+		taskCli:       taskCli,
+		fileCli:       fileCli,
+		engineCli:     engineCli,
+		kafkaProducer: kafkaProducer,
+	}, nil
 }
 
 func NewEngineServiceClient(sr *conf.Service, rr registry.Discovery) engineV1.EngineClient {
@@ -114,6 +126,26 @@ func NewTaskServiceClient(ac *conf.Auth, sr *conf.Service, rr registry.Discovery
 		panic(err)
 	}
 	c := taskV1.NewTaskClient(conn)
+	return c
+}
+
+func NewProjectServiceClient(ac *conf.Auth, sr *conf.Service, rr registry.Discovery) projectV1.ProjectClient {
+	conn, err := grpc.DialInsecure(
+		context.Background(),
+		grpc.WithEndpoint(sr.Management.Endpoint),
+		grpc.WithDiscovery(rr),
+		grpc.WithMiddleware(
+			tracing.Client(), // 链路追踪
+			recovery.Recovery(),
+			metadata.Client(),
+		),
+		grpc.WithTimeout(2*time.Second),
+		grpc.WithOptions(grpcx.WithStatsHandler(&tracing.ClientHandler{})),
+	)
+	if err != nil {
+		panic(err)
+	}
+	c := projectV1.NewProjectClient(conn)
 	return c
 }
 

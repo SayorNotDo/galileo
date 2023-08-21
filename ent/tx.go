@@ -26,8 +26,12 @@ type Tx struct {
 	Container *ContainerClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
+	// GroupMember is the client for interacting with the GroupMember builders.
+	GroupMember *GroupMemberClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
+	// ProjectMember is the client for interacting with the ProjectMember builders.
+	ProjectMember *ProjectMemberClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
 	// TestPlan is the client for interacting with the TestPlan builders.
@@ -176,7 +180,9 @@ func (tx *Tx) init() {
 	tx.ApiTag = NewApiTagClient(tx.config)
 	tx.Container = NewContainerClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
+	tx.GroupMember = NewGroupMemberClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
+	tx.ProjectMember = NewProjectMemberClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
 	tx.TestPlan = NewTestPlanClient(tx.config)
 	tx.Testcase = NewTestcaseClient(tx.config)

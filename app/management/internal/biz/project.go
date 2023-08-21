@@ -30,6 +30,7 @@ type ProjectRepo interface {
 	CreateProject(context.Context, *Project) (*Project, error)
 	GetProjectById(context.Context, int64) (*Project, error)
 	UpdateProject(context.Context, *Project) error
+	GetUserProjectList(context.Context, uint32) ([]*v1.ProjectInfo, error)
 }
 
 // ProjectUseCase is a Project use case.
@@ -59,6 +60,10 @@ func (uc *ProjectUseCase) GetProjectById(ctx context.Context, id int64) (*Projec
 // UpdateProject updates the Project
 func (uc *ProjectUseCase) UpdateProject(ctx context.Context, project *Project) error {
 	return uc.repo.UpdateProject(ctx, project)
+}
+
+func (uc *ProjectUseCase) GetUserProjectList(ctx context.Context, uid uint32) ([]*v1.ProjectInfo, error) {
+	return uc.repo.GetUserProjectList(ctx, uid)
 }
 
 func NewProject(name, identifier string, createdBy uint32, startTime *timestamppb.Timestamp, endTime *timestamppb.Timestamp) (Project, error) {

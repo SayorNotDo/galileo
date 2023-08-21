@@ -27,8 +27,14 @@ type Container func(*sql.Selector)
 // Group is the predicate function for group builders.
 type Group func(*sql.Selector)
 
+// GroupMember is the predicate function for groupmember builders.
+type GroupMember func(*sql.Selector)
+
 // Project is the predicate function for project builders.
 type Project func(*sql.Selector)
+
+// ProjectMember is the predicate function for projectmember builders.
+type ProjectMember func(*sql.Selector)
 
 // Task is the predicate function for task builders.
 type Task func(*sql.Selector)

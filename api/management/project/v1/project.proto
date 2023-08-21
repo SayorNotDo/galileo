@@ -30,6 +30,7 @@ service Project {
     };
   };
   rpc ListProject (ListProjectRequest) returns (ListProjectReply);
+  rpc GetUserProjectList (google.protobuf.Empty) returns (ListProjectReply);
 }
 
 message CreateProjectRequest {
@@ -65,6 +66,10 @@ message ProjectInfo {
   uint32 createdBy = 8;
   google.protobuf.Timestamp updatedAt = 9;
   uint32 updatedBy = 10;
+  google.protobuf.Timestamp deletedAt = 11;
+  uint32 deletedBy = 12;
+  google.protobuf.Timestamp startTime = 13;
+  google.protobuf.Timestamp deadline = 14;
 }
 
 message UpdateProjectRequest {
@@ -88,4 +93,8 @@ message GetProjectRequest {
 }
 
 message ListProjectRequest {}
-message ListProjectReply {}
+
+message ListProjectReply {
+  int64 total = 1;
+  repeated ProjectInfo projectList = 2;
+}

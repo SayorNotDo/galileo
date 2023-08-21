@@ -7,7 +7,9 @@ import (
 	"galileo/ent/apistatistics"
 	"galileo/ent/container"
 	"galileo/ent/group"
+	"galileo/ent/groupmember"
 	"galileo/ent/project"
+	"galileo/ent/projectmember"
 	"galileo/ent/schema"
 	"galileo/ent/task"
 	"galileo/ent/testcase"
@@ -87,6 +89,16 @@ func init() {
 	groupDescCreatedAt := groupFields[2].Descriptor()
 	// group.DefaultCreatedAt holds the default value on creation for the created_at field.
 	group.DefaultCreatedAt = groupDescCreatedAt.Default.(func() time.Time)
+	groupmemberFields := schema.GroupMember{}.Fields()
+	_ = groupmemberFields
+	// groupmemberDescRole is the schema descriptor for role field.
+	groupmemberDescRole := groupmemberFields[2].Descriptor()
+	// groupmember.DefaultRole holds the default value on creation for the role field.
+	groupmember.DefaultRole = groupmemberDescRole.Default.(uint8)
+	// groupmemberDescCreatedAt is the schema descriptor for created_at field.
+	groupmemberDescCreatedAt := groupmemberFields[3].Descriptor()
+	// groupmember.DefaultCreatedAt holds the default value on creation for the created_at field.
+	groupmember.DefaultCreatedAt = groupmemberDescCreatedAt.Default.(func() time.Time)
 	projectFields := schema.Project{}.Fields()
 	_ = projectFields
 	// projectDescName is the schema descriptor for name field.
@@ -109,6 +121,20 @@ func init() {
 	projectDescStatus := projectFields[9].Descriptor()
 	// project.DefaultStatus holds the default value on creation for the status field.
 	project.DefaultStatus = projectDescStatus.Default.(int8)
+	projectmemberFields := schema.ProjectMember{}.Fields()
+	_ = projectmemberFields
+	// projectmemberDescCreatedAt is the schema descriptor for created_at field.
+	projectmemberDescCreatedAt := projectmemberFields[2].Descriptor()
+	// projectmember.DefaultCreatedAt holds the default value on creation for the created_at field.
+	projectmember.DefaultCreatedAt = projectmemberDescCreatedAt.Default.(func() time.Time)
+	// projectmemberDescStatus is the schema descriptor for status field.
+	projectmemberDescStatus := projectmemberFields[6].Descriptor()
+	// projectmember.DefaultStatus holds the default value on creation for the status field.
+	projectmember.DefaultStatus = projectmemberDescStatus.Default.(int8)
+	// projectmemberDescRole is the schema descriptor for role field.
+	projectmemberDescRole := projectmemberFields[9].Descriptor()
+	// projectmember.DefaultRole holds the default value on creation for the role field.
+	projectmember.DefaultRole = projectmemberDescRole.Default.(uint8)
 	taskFields := schema.Task{}.Fields()
 	_ = taskFields
 	// taskDescName is the schema descriptor for name field.

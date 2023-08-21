@@ -14,14 +14,15 @@ type CoreService struct {
 	v1.UnimplementedCoreServer
 
 	ec  *biz.EngineUseCase
-	uc  *biz.CoreUseCase
-	uu  *biz.UserUseCase
+	cc  *biz.CoreUseCase
+	uc  *biz.UserUseCase
 	log *log.Helper
 }
 
-func NewCoreService(uc *biz.CoreUseCase, ec *biz.EngineUseCase, uu *biz.UserUseCase, logger log.Logger) *CoreService {
+func NewCoreService(cc *biz.CoreUseCase, ec *biz.EngineUseCase, uc *biz.UserUseCase, logger log.Logger) *CoreService {
 	return &CoreService{
 		uc:  uc,
+		cc:  cc,
 		ec:  ec,
 		log: log.NewHelper(log.With(logger, "module", "core.Service")),
 	}

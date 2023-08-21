@@ -6,9 +6,12 @@ import (
 	"galileo/app/management/internal/biz"
 	"galileo/ent"
 	"galileo/ent/project"
+	"galileo/ent/projectmember"
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/samber/lo"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type projectRepo struct {
@@ -103,4 +106,44 @@ func (repo *projectRepo) UpdateProject(ctx context.Context, p *biz.Project) erro
 		/* 项目阻塞时通知相关人员 */
 	}
 	return nil
+}
+
+func (repo *projectRepo) GetUserProjectList(ctx context.Context, uid uint32) ([]*v1.ProjectInfo, error) {
+	/* 初始化返回值 */
+	var projectList = make([]*v1.ProjectInfo, 0)
+	var err error
+	/* 关系表查询对应uid的记录 */
+	ret, err := repo.data.entDB.ProjectMember.Query().Where(projectmember.UserID(uid)).All(ctx)
+	switch {
+	case ent.IsNotFound(err):
+		return nil, SetCustomizeErrInfoByReason(ReasonRecordNotFound)
+	case err != nil:
+		return nil, err
+	}
+	lo.ForEach(ret, func(item *ent.ProjectMember, _ int) {
+		var queryProject *ent.Project
+		/* 基于获取的记录查询对应的Project信息 */
+		queryProject, err = repo.data.entDB.Project.Query().Where(project.ID(item.ProjectID)).Only(ctx)
+		if err != nil {
+			return
+		}
+		projectList = append(projectList, &v1.ProjectInfo{
+			Id:          queryProject.ID,
+			Name:        queryProject.Name,
+			Identifier:  queryProject.Identifier,
+			CreatedBy:   queryProject.CreatedBy,
+			CreatedAt:   timestamppb.New(queryProject.CreatedAt),
+			UpdatedAt:   timestamppb.New(queryProject.UpdatedAt),
+			UpdatedBy:   queryProject.UpdatedBy,
+			StartTime:   timestamppb.New(queryProject.StartTime),
+			Deadline:    timestamppb.New(queryProject.Deadline),
+			Description: queryProject.Description,
+			Remark:      queryProject.Remark,
+			Status:      v1.ProjectStatus(queryProject.Status),
+		})
+	})
+	if err != nil {
+		return nil, err
+	}
+	return projectList, nil
 }

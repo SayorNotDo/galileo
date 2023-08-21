@@ -13,7 +13,9 @@ import (
 	"galileo/ent/apitag"
 	"galileo/ent/container"
 	"galileo/ent/group"
+	"galileo/ent/groupmember"
 	"galileo/ent/project"
+	"galileo/ent/projectmember"
 	"galileo/ent/task"
 	"galileo/ent/testcase"
 	"galileo/ent/testcasesuite"
@@ -84,7 +86,9 @@ func columnChecker(table string) func(string) error {
 		apitag.Table:        apitag.ValidColumn,
 		container.Table:     container.ValidColumn,
 		group.Table:         group.ValidColumn,
+		groupmember.Table:   groupmember.ValidColumn,
 		project.Table:       project.ValidColumn,
+		projectmember.Table: projectmember.ValidColumn,
 		task.Table:          task.ValidColumn,
 		testplan.Table:      testplan.ValidColumn,
 		testcase.Table:      testcase.ValidColumn,

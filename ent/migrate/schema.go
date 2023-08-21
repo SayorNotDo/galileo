@@ -146,6 +146,30 @@ var (
 		Columns:    GroupsColumns,
 		PrimaryKey: []*schema.Column{GroupsColumns[0]},
 	}
+	// GroupMemberColumns holds the columns for the "group_member" table.
+	GroupMemberColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "group_id", Type: field.TypeInt64},
+		{Name: "user_id", Type: field.TypeInt64},
+		{Name: "role", Type: field.TypeUint8, Default: 0},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
+	}
+	// GroupMemberTable holds the schema information for the "group_member" table.
+	GroupMemberTable = &schema.Table{
+		Name:       "group_member",
+		Columns:    GroupMemberColumns,
+		PrimaryKey: []*schema.Column{GroupMemberColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "groupmember_group_id_user_id",
+				Unique:  true,
+				Columns: []*schema.Column{GroupMemberColumns[1], GroupMemberColumns[2]},
+			},
+		},
+	}
 	// ProjectColumns holds the columns for the "project" table.
 	ProjectColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
@@ -168,6 +192,26 @@ var (
 		Name:       "project",
 		Columns:    ProjectColumns,
 		PrimaryKey: []*schema.Column{ProjectColumns[0]},
+	}
+	// ProjectMemberColumns holds the columns for the "project_member" table.
+	ProjectMemberColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "project_id", Type: field.TypeInt64},
+		{Name: "user_id", Type: field.TypeUint32},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeUint32},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
+		{Name: "status", Type: field.TypeInt8, Default: 0},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "remark", Type: field.TypeString, Nullable: true},
+		{Name: "role", Type: field.TypeUint8, Default: 0},
+	}
+	// ProjectMemberTable holds the schema information for the "project_member" table.
+	ProjectMemberTable = &schema.Table{
+		Name:       "project_member",
+		Columns:    ProjectMemberColumns,
+		PrimaryKey: []*schema.Column{ProjectMemberColumns[0]},
 	}
 	// TaskColumns holds the columns for the "task" table.
 	TaskColumns = []*schema.Column{
@@ -308,7 +352,9 @@ var (
 		APITagTable,
 		ContainerTable,
 		GroupsTable,
+		GroupMemberTable,
 		ProjectTable,
+		ProjectMemberTable,
 		TaskTable,
 		TestPlanTable,
 		TestcaseTable,
@@ -336,8 +382,14 @@ func init() {
 	ContainerTable.Annotation = &entsql.Annotation{
 		Table: "container",
 	}
+	GroupMemberTable.Annotation = &entsql.Annotation{
+		Table: "group_member",
+	}
 	ProjectTable.Annotation = &entsql.Annotation{
 		Table: "project",
+	}
+	ProjectMemberTable.Annotation = &entsql.Annotation{
+		Table: "project_member",
 	}
 	TaskTable.Annotation = &entsql.Annotation{
 		Table: "task",

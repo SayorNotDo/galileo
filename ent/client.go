@@ -17,7 +17,9 @@ import (
 	"galileo/ent/apitag"
 	"galileo/ent/container"
 	"galileo/ent/group"
+	"galileo/ent/groupmember"
 	"galileo/ent/project"
+	"galileo/ent/projectmember"
 	"galileo/ent/task"
 	"galileo/ent/testcase"
 	"galileo/ent/testcasesuite"
@@ -49,8 +51,12 @@ type Client struct {
 	Container *ContainerClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
+	// GroupMember is the client for interacting with the GroupMember builders.
+	GroupMember *GroupMemberClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
+	// ProjectMember is the client for interacting with the ProjectMember builders.
+	ProjectMember *ProjectMemberClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
 	// TestPlan is the client for interacting with the TestPlan builders.
@@ -81,7 +87,9 @@ func (c *Client) init() {
 	c.ApiTag = NewApiTagClient(c.config)
 	c.Container = NewContainerClient(c.config)
 	c.Group = NewGroupClient(c.config)
+	c.GroupMember = NewGroupMemberClient(c.config)
 	c.Project = NewProjectClient(c.config)
+	c.ProjectMember = NewProjectMemberClient(c.config)
 	c.Task = NewTaskClient(c.config)
 	c.TestPlan = NewTestPlanClient(c.config)
 	c.Testcase = NewTestcaseClient(c.config)
@@ -176,7 +184,9 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ApiTag:        NewApiTagClient(cfg),
 		Container:     NewContainerClient(cfg),
 		Group:         NewGroupClient(cfg),
+		GroupMember:   NewGroupMemberClient(cfg),
 		Project:       NewProjectClient(cfg),
+		ProjectMember: NewProjectMemberClient(cfg),
 		Task:          NewTaskClient(cfg),
 		TestPlan:      NewTestPlanClient(cfg),
 		Testcase:      NewTestcaseClient(cfg),
@@ -208,7 +218,9 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ApiTag:        NewApiTagClient(cfg),
 		Container:     NewContainerClient(cfg),
 		Group:         NewGroupClient(cfg),
+		GroupMember:   NewGroupMemberClient(cfg),
 		Project:       NewProjectClient(cfg),
+		ProjectMember: NewProjectMemberClient(cfg),
 		Task:          NewTaskClient(cfg),
 		TestPlan:      NewTestPlanClient(cfg),
 		Testcase:      NewTestcaseClient(cfg),
@@ -244,7 +256,8 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Api, c.ApiCategory, c.ApiHistory, c.ApiStatistics, c.ApiTag, c.Container,
-		c.Group, c.Project, c.Task, c.TestPlan, c.Testcase, c.TestcaseSuite, c.User,
+		c.Group, c.GroupMember, c.Project, c.ProjectMember, c.Task, c.TestPlan,
+		c.Testcase, c.TestcaseSuite, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -255,7 +268,8 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Api, c.ApiCategory, c.ApiHistory, c.ApiStatistics, c.ApiTag, c.Container,
-		c.Group, c.Project, c.Task, c.TestPlan, c.Testcase, c.TestcaseSuite, c.User,
+		c.Group, c.GroupMember, c.Project, c.ProjectMember, c.Task, c.TestPlan,
+		c.Testcase, c.TestcaseSuite, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -278,8 +292,12 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Container.mutate(ctx, m)
 	case *GroupMutation:
 		return c.Group.mutate(ctx, m)
+	case *GroupMemberMutation:
+		return c.GroupMember.mutate(ctx, m)
 	case *ProjectMutation:
 		return c.Project.mutate(ctx, m)
+	case *ProjectMemberMutation:
+		return c.ProjectMember.mutate(ctx, m)
 	case *TaskMutation:
 		return c.Task.mutate(ctx, m)
 	case *TestPlanMutation:
@@ -1121,6 +1139,124 @@ func (c *GroupClient) mutate(ctx context.Context, m *GroupMutation) (Value, erro
 	}
 }
 
+// GroupMemberClient is a client for the GroupMember schema.
+type GroupMemberClient struct {
+	config
+}
+
+// NewGroupMemberClient returns a client for the GroupMember from the given config.
+func NewGroupMemberClient(c config) *GroupMemberClient {
+	return &GroupMemberClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `groupmember.Hooks(f(g(h())))`.
+func (c *GroupMemberClient) Use(hooks ...Hook) {
+	c.hooks.GroupMember = append(c.hooks.GroupMember, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `groupmember.Intercept(f(g(h())))`.
+func (c *GroupMemberClient) Intercept(interceptors ...Interceptor) {
+	c.inters.GroupMember = append(c.inters.GroupMember, interceptors...)
+}
+
+// Create returns a builder for creating a GroupMember entity.
+func (c *GroupMemberClient) Create() *GroupMemberCreate {
+	mutation := newGroupMemberMutation(c.config, OpCreate)
+	return &GroupMemberCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of GroupMember entities.
+func (c *GroupMemberClient) CreateBulk(builders ...*GroupMemberCreate) *GroupMemberCreateBulk {
+	return &GroupMemberCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for GroupMember.
+func (c *GroupMemberClient) Update() *GroupMemberUpdate {
+	mutation := newGroupMemberMutation(c.config, OpUpdate)
+	return &GroupMemberUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *GroupMemberClient) UpdateOne(gm *GroupMember) *GroupMemberUpdateOne {
+	mutation := newGroupMemberMutation(c.config, OpUpdateOne, withGroupMember(gm))
+	return &GroupMemberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *GroupMemberClient) UpdateOneID(id int) *GroupMemberUpdateOne {
+	mutation := newGroupMemberMutation(c.config, OpUpdateOne, withGroupMemberID(id))
+	return &GroupMemberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for GroupMember.
+func (c *GroupMemberClient) Delete() *GroupMemberDelete {
+	mutation := newGroupMemberMutation(c.config, OpDelete)
+	return &GroupMemberDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *GroupMemberClient) DeleteOne(gm *GroupMember) *GroupMemberDeleteOne {
+	return c.DeleteOneID(gm.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *GroupMemberClient) DeleteOneID(id int) *GroupMemberDeleteOne {
+	builder := c.Delete().Where(groupmember.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &GroupMemberDeleteOne{builder}
+}
+
+// Query returns a query builder for GroupMember.
+func (c *GroupMemberClient) Query() *GroupMemberQuery {
+	return &GroupMemberQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeGroupMember},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a GroupMember entity by its id.
+func (c *GroupMemberClient) Get(ctx context.Context, id int) (*GroupMember, error) {
+	return c.Query().Where(groupmember.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *GroupMemberClient) GetX(ctx context.Context, id int) *GroupMember {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *GroupMemberClient) Hooks() []Hook {
+	return c.hooks.GroupMember
+}
+
+// Interceptors returns the client interceptors.
+func (c *GroupMemberClient) Interceptors() []Interceptor {
+	return c.inters.GroupMember
+}
+
+func (c *GroupMemberClient) mutate(ctx context.Context, m *GroupMemberMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&GroupMemberCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&GroupMemberUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&GroupMemberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&GroupMemberDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown GroupMember mutation op: %q", m.Op())
+	}
+}
+
 // ProjectClient is a client for the Project schema.
 type ProjectClient struct {
 	config
@@ -1236,6 +1372,124 @@ func (c *ProjectClient) mutate(ctx context.Context, m *ProjectMutation) (Value, 
 		return (&ProjectDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Project mutation op: %q", m.Op())
+	}
+}
+
+// ProjectMemberClient is a client for the ProjectMember schema.
+type ProjectMemberClient struct {
+	config
+}
+
+// NewProjectMemberClient returns a client for the ProjectMember from the given config.
+func NewProjectMemberClient(c config) *ProjectMemberClient {
+	return &ProjectMemberClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `projectmember.Hooks(f(g(h())))`.
+func (c *ProjectMemberClient) Use(hooks ...Hook) {
+	c.hooks.ProjectMember = append(c.hooks.ProjectMember, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `projectmember.Intercept(f(g(h())))`.
+func (c *ProjectMemberClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ProjectMember = append(c.inters.ProjectMember, interceptors...)
+}
+
+// Create returns a builder for creating a ProjectMember entity.
+func (c *ProjectMemberClient) Create() *ProjectMemberCreate {
+	mutation := newProjectMemberMutation(c.config, OpCreate)
+	return &ProjectMemberCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ProjectMember entities.
+func (c *ProjectMemberClient) CreateBulk(builders ...*ProjectMemberCreate) *ProjectMemberCreateBulk {
+	return &ProjectMemberCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ProjectMember.
+func (c *ProjectMemberClient) Update() *ProjectMemberUpdate {
+	mutation := newProjectMemberMutation(c.config, OpUpdate)
+	return &ProjectMemberUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ProjectMemberClient) UpdateOne(pm *ProjectMember) *ProjectMemberUpdateOne {
+	mutation := newProjectMemberMutation(c.config, OpUpdateOne, withProjectMember(pm))
+	return &ProjectMemberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ProjectMemberClient) UpdateOneID(id int) *ProjectMemberUpdateOne {
+	mutation := newProjectMemberMutation(c.config, OpUpdateOne, withProjectMemberID(id))
+	return &ProjectMemberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ProjectMember.
+func (c *ProjectMemberClient) Delete() *ProjectMemberDelete {
+	mutation := newProjectMemberMutation(c.config, OpDelete)
+	return &ProjectMemberDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ProjectMemberClient) DeleteOne(pm *ProjectMember) *ProjectMemberDeleteOne {
+	return c.DeleteOneID(pm.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ProjectMemberClient) DeleteOneID(id int) *ProjectMemberDeleteOne {
+	builder := c.Delete().Where(projectmember.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ProjectMemberDeleteOne{builder}
+}
+
+// Query returns a query builder for ProjectMember.
+func (c *ProjectMemberClient) Query() *ProjectMemberQuery {
+	return &ProjectMemberQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeProjectMember},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ProjectMember entity by its id.
+func (c *ProjectMemberClient) Get(ctx context.Context, id int) (*ProjectMember, error) {
+	return c.Query().Where(projectmember.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ProjectMemberClient) GetX(ctx context.Context, id int) *ProjectMember {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ProjectMemberClient) Hooks() []Hook {
+	return c.hooks.ProjectMember
+}
+
+// Interceptors returns the client interceptors.
+func (c *ProjectMemberClient) Interceptors() []Interceptor {
+	return c.inters.ProjectMember
+}
+
+func (c *ProjectMemberClient) mutate(ctx context.Context, m *ProjectMemberMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ProjectMemberCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ProjectMemberUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ProjectMemberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ProjectMemberDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ProjectMember mutation op: %q", m.Op())
 	}
 }
 
@@ -1848,11 +2102,13 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Container, Group, Project,
-		Task, TestPlan, Testcase, TestcaseSuite, User []ent.Hook
+		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Container, Group,
+		GroupMember, Project, ProjectMember, Task, TestPlan, Testcase, TestcaseSuite,
+		User []ent.Hook
 	}
 	inters struct {
-		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Container, Group, Project,
-		Task, TestPlan, Testcase, TestcaseSuite, User []ent.Interceptor
+		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Container, Group,
+		GroupMember, Project, ProjectMember, Task, TestPlan, Testcase, TestcaseSuite,
+		User []ent.Interceptor
 	}
 )

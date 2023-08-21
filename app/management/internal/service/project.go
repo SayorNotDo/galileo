@@ -4,9 +4,12 @@ import (
 	"context"
 	v1 "galileo/api/management/project/v1"
 	"galileo/app/management/internal/biz"
+	"galileo/pkg/ctxdata"
 	. "galileo/pkg/errResponse"
+	"github.com/go-kratos/kratos/v2/metadata"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"strconv"
 )
 
 func (s *ManagementService) CreateProject(ctx context.Context, req *v1.CreateProjectRequest) (*v1.CreateProjectReply, error) {
@@ -72,6 +75,17 @@ func (s *ManagementService) UpdateProject(ctx context.Context, req *v1.UpdatePro
 //	return &pb.DeleteProjectReply{}, nil
 //}
 
-//func (s *ProjectService) ListProject(ctx context.Context, req *pb.ListProjectRequest) (*pb.ListProjectReply, errResponse) {
-//	return &pb.ListProjectReply{}, nil
-//}
+func (s *ManagementService) GetUserProjectList(ctx context.Context, empty *empty.Empty) (*v1.ListProjectReply, error) {
+	s.logger.Info("ManagementService.GetUserProjectList")
+	md, _ := metadata.FromServerContext(ctx)
+	uidStr := md.Get(ctxdata.UserIdKey)
+	uid, _ := strconv.ParseInt(uidStr, 10, 64)
+	ret, err := s.pc.GetUserProjectList(ctx, uint32(uid))
+	if err != nil {
+		return nil, err
+	}
+	return &v1.ListProjectReply{
+		Total:       int64(len(ret)),
+		ProjectList: ret,
+	}, nil
+}

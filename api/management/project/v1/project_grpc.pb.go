@@ -20,11 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Project_CreateProject_FullMethodName = "/api.project.v1.Project/CreateProject"
-	Project_UpdateProject_FullMethodName = "/api.project.v1.Project/UpdateProject"
-	Project_DeleteProject_FullMethodName = "/api.project.v1.Project/DeleteProject"
-	Project_GetProject_FullMethodName    = "/api.project.v1.Project/GetProject"
-	Project_ListProject_FullMethodName   = "/api.project.v1.Project/ListProject"
+	Project_CreateProject_FullMethodName      = "/api.project.v1.Project/CreateProject"
+	Project_UpdateProject_FullMethodName      = "/api.project.v1.Project/UpdateProject"
+	Project_DeleteProject_FullMethodName      = "/api.project.v1.Project/DeleteProject"
+	Project_GetProject_FullMethodName         = "/api.project.v1.Project/GetProject"
+	Project_ListProject_FullMethodName        = "/api.project.v1.Project/ListProject"
+	Project_GetUserProjectList_FullMethodName = "/api.project.v1.Project/GetUserProjectList"
 )
 
 // ProjectClient is the client API for Project service.
@@ -36,6 +37,7 @@ type ProjectClient interface {
 	DeleteProject(ctx context.Context, in *DeleteProjectRequest, opts ...grpc.CallOption) (*DeleteProjectReply, error)
 	GetProject(ctx context.Context, in *GetProjectRequest, opts ...grpc.CallOption) (*ProjectInfo, error)
 	ListProject(ctx context.Context, in *ListProjectRequest, opts ...grpc.CallOption) (*ListProjectReply, error)
+	GetUserProjectList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListProjectReply, error)
 }
 
 type projectClient struct {
@@ -91,6 +93,15 @@ func (c *projectClient) ListProject(ctx context.Context, in *ListProjectRequest,
 	return out, nil
 }
 
+func (c *projectClient) GetUserProjectList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListProjectReply, error) {
+	out := new(ListProjectReply)
+	err := c.cc.Invoke(ctx, Project_GetUserProjectList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProjectServer is the server API for Project service.
 // All implementations must embed UnimplementedProjectServer
 // for forward compatibility
@@ -100,6 +111,7 @@ type ProjectServer interface {
 	DeleteProject(context.Context, *DeleteProjectRequest) (*DeleteProjectReply, error)
 	GetProject(context.Context, *GetProjectRequest) (*ProjectInfo, error)
 	ListProject(context.Context, *ListProjectRequest) (*ListProjectReply, error)
+	GetUserProjectList(context.Context, *emptypb.Empty) (*ListProjectReply, error)
 	mustEmbedUnimplementedProjectServer()
 }
 
@@ -121,6 +133,9 @@ func (UnimplementedProjectServer) GetProject(context.Context, *GetProjectRequest
 }
 func (UnimplementedProjectServer) ListProject(context.Context, *ListProjectRequest) (*ListProjectReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListProject not implemented")
+}
+func (UnimplementedProjectServer) GetUserProjectList(context.Context, *emptypb.Empty) (*ListProjectReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserProjectList not implemented")
 }
 func (UnimplementedProjectServer) mustEmbedUnimplementedProjectServer() {}
 
@@ -225,6 +240,24 @@ func _Project_ListProject_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Project_GetUserProjectList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProjectServer).GetUserProjectList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Project_GetUserProjectList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProjectServer).GetUserProjectList(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Project_ServiceDesc is the grpc.ServiceDesc for Project service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -251,6 +284,10 @@ var Project_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListProject",
 			Handler:    _Project_ListProject_Handler,
+		},
+		{
+			MethodName: "GetUserProjectList",
+			Handler:    _Project_GetUserProjectList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -48,6 +48,12 @@ type User struct {
 	DeletedBy   uint32
 }
 
+type CoreUseCase struct {
+	repo       CoreRepo
+	log        *log.Helper
+	signingKey string
+}
+
 func NewCoreUseCase(repo CoreRepo, logger log.Logger, conf *conf.Auth) *CoreUseCase {
 	helper := log.NewHelper(log.With(logger, "module", "core.useCase"))
 	return &CoreUseCase{repo: repo, log: helper, signingKey: conf.JwtKey}

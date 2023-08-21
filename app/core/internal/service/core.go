@@ -20,7 +20,7 @@ func (c *CoreService) Register(ctx context.Context, req *v1.RegisterRequest) (*v
 	ctx, span := tr.Start(ctx, "get user info")
 	span.SpanContext()
 	defer span.End()
-	return c.uc.CreateUser(ctx, req)
+	return c.cc.CreateUser(ctx, req)
 }
 
 func (c *CoreService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginReply, error) {
@@ -29,7 +29,7 @@ func (c *CoreService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	ctx, span := tr.Start(ctx, "login")
 	span.SpanContext()
 	defer span.End()
-	return c.uc.Login(ctx, req)
+	return c.cc.Login(ctx, req)
 }
 
 func (c *CoreService) Logout(ctx context.Context, req *v1.LogoutRequest) (*emptypb.Empty, error) {
@@ -38,31 +38,31 @@ func (c *CoreService) Logout(ctx context.Context, req *v1.LogoutRequest) (*empty
 	ctx, span := tr.Start(ctx, "logout")
 	span.SpanContext()
 	defer span.End()
-	return c.uc.Logout(ctx)
+	return c.cc.Logout(ctx)
 }
 
 func (c *CoreService) UpdatePassword(ctx context.Context, req *v1.UpdatePasswordRequest) (*emptypb.Empty, error) {
-	return c.uc.UpdatePassword(ctx, req)
+	return c.cc.UpdatePassword(ctx, req)
 }
 
 func (c *CoreService) UserDetail(ctx context.Context, req *emptypb.Empty) (*v1.UserDetailReply, error) {
-	return c.uc.UserDetail(ctx, &emptypb.Empty{})
+	return c.cc.UserDetail(ctx, &emptypb.Empty{})
 }
 
 func (c *CoreService) ListUser(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserReply, error) {
-	return c.uc.ListUser(ctx, req.PageNum, req.PageSize)
+	return c.cc.ListUser(ctx, req.PageNum, req.PageSize)
 }
 
 func (c *CoreService) UpdateUserInfo(ctx context.Context, req *v1.UserInfoUpdateRequest) (*v1.UserInfoUpdateReply, error) {
-	return c.uc.UpdateUserInfo(ctx, req)
+	return c.cc.UpdateUserInfo(ctx, req)
 }
 
 func (c *CoreService) DeleteUser(ctx context.Context, req *v1.DeleteRequest) (*v1.DeleteReply, error) {
-	return c.uc.DeleteUser(ctx, req.Id)
+	return c.cc.DeleteUser(ctx, req.Id)
 }
 
 func (c *CoreService) ExecuteToken(ctx context.Context, req *v1.ExecuteTokenRequest) (*v1.ExecuteTokenReply, error) {
-	token, err := c.uc.ExecuteToken(ctx, req.Machine)
+	token, err := c.cc.ExecuteToken(ctx, req.Machine)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func (c *CoreService) DataReportTrack(ctx context.Context, req *v1.DataReportTra
 		return nil, err
 	}
 	/* 调用业务函数 */
-	if err := c.uc.DataReportTrack(ctx, dataList, claims); err != nil {
+	if err := c.cc.DataReportTrack(ctx, dataList, claims); err != nil {
 		return nil, err
 	}
 	return nil, nil

@@ -92,6 +92,18 @@ func (f GroupFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.GroupMutation", m)
 }
 
+// The GroupMemberFunc type is an adapter to allow the use of ordinary
+// function as GroupMember mutator.
+type GroupMemberFunc func(context.Context, *ent.GroupMemberMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f GroupMemberFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.GroupMemberMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.GroupMemberMutation", m)
+}
+
 // The ProjectFunc type is an adapter to allow the use of ordinary
 // function as Project mutator.
 type ProjectFunc func(context.Context, *ent.ProjectMutation) (ent.Value, error)
@@ -102,6 +114,18 @@ func (f ProjectFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProjectMutation", m)
+}
+
+// The ProjectMemberFunc type is an adapter to allow the use of ordinary
+// function as ProjectMember mutator.
+type ProjectMemberFunc func(context.Context, *ent.ProjectMemberMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ProjectMemberFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ProjectMemberMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProjectMemberMutation", m)
 }
 
 // The TaskFunc type is an adapter to allow the use of ordinary
