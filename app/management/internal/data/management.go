@@ -72,11 +72,11 @@ func (r *ManagementRepo) UpdateTestPlan(ctx context.Context, plan *biz.TestPlan)
 		}
 		/* 基于计划更新的状态执行对应逻辑 */
 		switch plan.Status {
-		case managementV1.PlanStatus_INPROGRESS:
-		case managementV1.PlanStatus_BLOCKED:
-		case managementV1.PlanStatus_DELAY:
-		case managementV1.PlanStatus_TERMINATED:
-		case managementV1.PlanStatus_COMPLETED:
+		case managementV1.Status_INPROGRESS:
+		case managementV1.Status_BLOCKED:
+		case managementV1.Status_DELAY:
+		case managementV1.Status_TERMINATED:
+		case managementV1.Status_COMPLETED:
 		}
 	}
 

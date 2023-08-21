@@ -20,11 +20,11 @@ func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
 	}
 }
 
-func (repo userRepo) GetUserProjectList(ctx context.Context) ([]*v1.ProjectInfo, error) {
+func (u *userRepo) GetUserProjectList(ctx context.Context) ([]*v1.ProjectInfo, error) {
 	/* 初始化返回值 */
 	var projectList []*v1.ProjectInfo
-	repo.log.Info("--------------------------------userRepo.GetUserProjectList")
-	res, err := repo.data.projectCli.GetUserProjectList(ctx, &empty.Empty{})
+	u.log.Info("--------------------------------userRepo.GetUserProjectList")
+	res, err := u.data.managementCli.GetUserProjectList(ctx, &empty.Empty{})
 	if err != nil {
 		return nil, err
 	}

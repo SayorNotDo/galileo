@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"galileo/api/management/task/v1"
+	"galileo/api/management/v1"
 	managementV1 "galileo/api/management/v1"
 	"galileo/app/management/internal/biz"
 	"galileo/pkg/ctxdata"
@@ -206,7 +206,7 @@ func (s *ManagementService) UpdateTaskStatus(ctx context.Context, req *v1.Update
 		if err != nil {
 			return nil, err
 		}
-		queryPlan.Status = managementV1.PlanStatus_BLOCKED
+		queryPlan.Status = managementV1.Status_BLOCKED
 		if err := s.uc.UpdateTestPlan(ctx, queryPlan); err != nil {
 			return nil, err
 		}

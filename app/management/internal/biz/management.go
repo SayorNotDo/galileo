@@ -33,7 +33,7 @@ type TestPlan struct {
 	StartTime       time.Time
 	Deadline        time.Time
 	StatusUpdatedAt time.Time
-	Status          v1.PlanStatus
+	Status          v1.Status
 	Tasks           []int64
 	ProjectId       int64
 }

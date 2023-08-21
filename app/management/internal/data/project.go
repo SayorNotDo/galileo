@@ -2,7 +2,7 @@ package data
 
 import (
 	"context"
-	v1 "galileo/api/management/project/v1"
+	v1 "galileo/api/management/v1"
 	"galileo/app/management/internal/biz"
 	"galileo/ent"
 	"galileo/ent/project"
@@ -70,7 +70,7 @@ func (repo *projectRepo) GetProjectById(ctx context.Context, id int64) (*biz.Pro
 		Deadline:    res.Deadline,
 		Remark:      res.Remark,
 		Description: res.Description,
-		Status:      v1.ProjectStatus(res.Status),
+		Status:      v1.Status(res.Status),
 	}, err
 }
 
@@ -98,11 +98,11 @@ func (repo *projectRepo) UpdateProject(ctx context.Context, p *biz.Project) erro
 	}
 	/* 基于项目状态的走不同逻辑流 */
 	switch p.Status {
-	case v1.ProjectStatus_INPROGRESS:
-	case v1.ProjectStatus_DELAY:
-	case v1.ProjectStatus_TERMINATED:
-	case v1.ProjectStatus_COMPLETED:
-	case v1.ProjectStatus_BLOCKED:
+	case v1.Status_INPROGRESS:
+	case v1.Status_DELAY:
+	case v1.Status_TERMINATED:
+	case v1.Status_COMPLETED:
+	case v1.Status_BLOCKED:
 		/* 项目阻塞时通知相关人员 */
 	}
 	return nil
@@ -139,7 +139,7 @@ func (repo *projectRepo) GetUserProjectList(ctx context.Context, uid uint32) ([]
 			Deadline:    timestamppb.New(queryProject.Deadline),
 			Description: queryProject.Description,
 			Remark:      queryProject.Remark,
-			Status:      v1.ProjectStatus(queryProject.Status),
+			Status:      v1.Status(queryProject.Status),
 		})
 	})
 	if err != nil {

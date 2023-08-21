@@ -3,14 +3,135 @@
 
 openapi: 3.0.3
 info:
-    title: Project API
+    title: Management API
     version: 0.0.1
 paths:
+    v1/api/management/case-suite:
+        post:
+            tags:
+                - Management
+            operationId: Management_CreateTestcaseSuite
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateTestcaseSuiteRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateTestcaseSuiteReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/info:
+        get:
+            tags:
+                - Management
+            operationId: Management_BaseInformation
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/BaseInfoReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/interface:
+        put:
+            tags:
+                - Management
+            operationId: Management_UpdateApi
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateApiRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateApiReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - Management
+            description: API
+            operationId: Management_CreateApi
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateApiRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateApiReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/interface/list/{pageNum}/{pageSize}:
+        get:
+            tags:
+                - Management
+            operationId: Management_ListApi
+            parameters:
+                - name: pageNum
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int64
+                - name: pageSize
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListApiReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     v1/api/management/project:
         put:
             tags:
-                - Project
-            operationId: Project_UpdateProject
+                - Management
+            operationId: Management_UpdateProject
             requestBody:
                 content:
                     application/json:
@@ -29,8 +150,9 @@ paths:
                                 $ref: '#/components/schemas/Status'
         post:
             tags:
-                - Project
-            operationId: Project_CreateProject
+                - Management
+            description: project module
+            operationId: Management_CreateProject
             requestBody:
                 content:
                     application/json:
@@ -53,8 +175,8 @@ paths:
     v1/api/management/project/{id}:
         get:
             tags:
-                - Project
-            operationId: Project_GetProject
+                - Management
+            operationId: Management_GetProject
             parameters:
                 - name: id
                   in: path
@@ -75,8 +197,396 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    v1/api/management/task:
+        put:
+            tags:
+                - Management
+            operationId: Management_UpdateTask
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateTaskRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - Management
+            description: task module
+            operationId: Management_CreateTask
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateTaskRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateTaskReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/task/status:
+        put:
+            tags:
+                - Management
+            operationId: Management_UpdateTaskStatus
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateTaskStatusRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateTaskStatusReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/task/{id}:
+        get:
+            tags:
+                - Management
+            operationId: Management_TaskByID
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetTaskReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/task/{id}/progress:
+        get:
+            tags:
+                - Management
+            operationId: Management_GetTaskProgress
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/TaskProgressReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/task/{name}:
+        get:
+            tags:
+                - Management
+            operationId: Management_TaskByName
+            parameters:
+                - name: name
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetTaskReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/testcase:
+        put:
+            tags:
+                - Management
+            operationId: Management_UpdateTestcase
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateTestcaseRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateTestcaseReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - Management
+            description: testcase module
+            operationId: Management_CreateTestcase
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateTestcaseRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateTestcaseReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/testcase/debug:
+        post:
+            tags:
+                - Management
+            description: rpc UploadTestcaseFile (google.protobuf.Empty) returns (UploadTestcaseReply);
+            operationId: Management_DebugTestcase
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/DebugTestcaseRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DebugTestcaseReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/testcase/loadFramework:
+        post:
+            tags:
+                - Management
+            operationId: Management_LoadFramework
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoadFrameworkRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LoadFrameworkReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/testcase/{id}:
+        get:
+            tags:
+                - Management
+            operationId: Management_GetTestcaseById
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetTestcaseReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/testplan:
+        put:
+            tags:
+                - Management
+            operationId: Management_UpdateTestPlan
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateTestPlanRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        post:
+            tags:
+                - Management
+            operationId: Management_CreateTestPlan
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateTestPlanRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateTestPlanReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/management/testplan/{id}:
+        get:
+            tags:
+                - Management
+            operationId: Management_GetTestPlaById
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetTestPlanReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
 components:
     schemas:
+        ApiInfo:
+            type: object
+            properties:
+                name:
+                    type: string
+                url:
+                    type: string
+                type:
+                    type: integer
+                    format: enum
+                status:
+                    type: integer
+                    format: int32
+                label:
+                    type: string
+                body:
+                    type: string
+                queryParams:
+                    type: string
+                response:
+                    type: string
+                module:
+                    type: string
+                description:
+                    type: string
+        BaseInfoReply:
+            type: object
+            properties:
+                apiCount:
+                    type: integer
+                    format: int64
+                sceneCaseCount:
+                    type: integer
+                    format: int64
+                apiCaseCount:
+                    type: integer
+                    format: int64
+                cronJobCount:
+                    type: integer
+                    format: int64
+        CreateApiReply:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                createdAt:
+                    type: integer
+                    format: int64
+        CreateApiRequest:
+            type: object
+            properties:
+                apiInfo:
+                    $ref: '#/components/schemas/ApiInfo'
         CreateProjectReply:
             type: object
             properties:
@@ -100,6 +610,232 @@ components:
                     format: date-time
                 remark:
                     type: string
+        CreateTaskReply:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                status:
+                    type: integer
+                    format: enum
+                createdAt:
+                    type: string
+                    format: date-time
+        CreateTaskRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                rank:
+                    type: integer
+                    format: int32
+                type:
+                    type: integer
+                    format: int32
+                frequency:
+                    type: integer
+                    format: enum
+                scheduleTime:
+                    type: string
+                    format: date-time
+                worker:
+                    type: string
+                config:
+                    type: string
+                description:
+                    type: string
+                assignee:
+                    type: integer
+                    format: uint32
+                deadline:
+                    type: string
+                    format: date-time
+                testcaseSuiteId:
+                    type: array
+                    items:
+                        type: integer
+                        format: int64
+                testPlanId:
+                    type: integer
+                    format: int64
+        CreateTestPlanReply:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+        CreateTestPlanRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                description:
+                    type: string
+                startTime:
+                    type: string
+                    format: date-time
+                deadline:
+                    type: string
+                    format: date-time
+                projectId:
+                    type: integer
+                    format: int64
+                tasks:
+                    type: array
+                    items:
+                        type: integer
+                        format: int64
+        CreateTestcaseReply:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                createdAt:
+                    type: string
+                    format: date-time
+        CreateTestcaseRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                status:
+                    type: integer
+                    format: int32
+                type:
+                    type: integer
+                    format: int32
+                priority:
+                    type: integer
+                    format: int32
+                url:
+                    type: string
+                description:
+                    type: string
+        CreateTestcaseSuiteReply:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                createdAt:
+                    type: string
+                    format: date-time
+        CreateTestcaseSuiteRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                testcaseList:
+                    type: array
+                    items:
+                        type: integer
+                        format: int64
+        DebugTestcaseReply:
+            type: object
+            properties:
+                result:
+                    type: string
+        DebugTestcaseRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                type:
+                    type: string
+                content:
+                    type: string
+        GetTaskReply:
+            type: object
+            properties:
+                name:
+                    type: string
+                rank:
+                    type: integer
+                    format: int32
+                type:
+                    type: integer
+                    format: int32
+                description:
+                    type: string
+                testcaseSuiteId:
+                    type: array
+                    items:
+                        type: integer
+                        format: int64
+                status:
+                    type: integer
+                    format: enum
+                config:
+                    type: string
+                frequency:
+                    type: integer
+                    format: enum
+                startTime:
+                    type: string
+                    format: date-time
+                scheduleTime:
+                    type: string
+                    format: date-time
+                deadline:
+                    type: string
+                    format: date-time
+                assignee:
+                    type: integer
+                    format: uint32
+                worker:
+                    type: string
+                id:
+                    type: integer
+                    format: int64
+        GetTestPlanReply:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                name:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                createdBy:
+                    type: integer
+                    format: uint32
+                updatedAt:
+                    type: string
+                    format: date-time
+                updatedBy:
+                    type: integer
+                    format: uint32
+                description:
+                    type: string
+                startTime:
+                    type: string
+                    format: date-time
+                deadline:
+                    type: string
+                    format: date-time
+                statusUpdatedAt:
+                    type: string
+                    format: date-time
+                status:
+                    type: integer
+                    format: enum
+                tasks:
+                    type: array
+                    items:
+                        type: integer
+                        format: int64
+                projectId:
+                    type: integer
+                    format: int64
+        GetTestcaseReply:
+            type: object
+            properties:
+                testcaseInfo:
+                    $ref: '#/components/schemas/TestcaseInfo'
         GoogleProtobufAny:
             type: object
             properties:
@@ -108,6 +844,42 @@ components:
                     description: The type of the serialized message.
             additionalProperties: true
             description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        ListApiReply:
+            type: object
+            properties: {}
+        LoadFrameworkReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+                worker:
+                    type: string
+        LoadFrameworkRequest:
+            type: object
+            properties:
+                path:
+                    type: string
+                lang:
+                    type: integer
+                    format: enum
+                config:
+                    type: string
+                    format: bytes
+        ProgressDetail:
+            type: object
+            properties:
+                failure:
+                    type: integer
+                    format: int32
+                success:
+                    type: integer
+                    format: int32
+                error:
+                    type: integer
+                    format: int32
+                unknown:
+                    type: integer
+                    format: int32
         ProjectInfo:
             type: object
             properties:
@@ -165,6 +937,63 @@ components:
                         $ref: '#/components/schemas/GoogleProtobufAny'
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+        TaskProgressReply:
+            type: object
+            properties:
+                progress:
+                    type: integer
+                    format: int32
+                detail:
+                    $ref: '#/components/schemas/ProgressDetail'
+        TestcaseInfo:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                name:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                createdBy:
+                    type: integer
+                    format: uint32
+                updatedAt:
+                    type: string
+                    format: date-time
+                updatedBy:
+                    type: integer
+                    format: uint32
+                type:
+                    type: integer
+                    format: int32
+                priority:
+                    type: integer
+                    format: int32
+                status:
+                    type: integer
+                    format: int32
+                url:
+                    type: string
+                description:
+                    type: string
+        UpdateApiReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+                UpdateAt:
+                    type: integer
+                    format: int64
+        UpdateApiRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                apiInfo:
+                    $ref: '#/components/schemas/ApiInfo'
         UpdateProjectRequest:
             type: object
             properties:
@@ -188,5 +1017,109 @@ components:
                     type: string
                 remark:
                     type: string
+        UpdateTaskRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                name:
+                    type: string
+                assignee:
+                    type: integer
+                    format: uint32
+                type:
+                    type: integer
+                    format: int32
+                rank:
+                    type: integer
+                    format: int32
+                config:
+                    type: string
+                frequency:
+                    type: integer
+                    format: enum
+                scheduleTime:
+                    type: string
+                    format: date-time
+                deadline:
+                    type: string
+                    format: date-time
+                description:
+                    type: string
+                testcaseSuiteId:
+                    type: array
+                    items:
+                        type: integer
+                        format: int64
+                worker:
+                    type: string
+        UpdateTaskStatusReply:
+            type: object
+            properties:
+                status:
+                    type: integer
+                    format: enum
+                statusUpdatedAt:
+                    type: string
+                    format: date-time
+        UpdateTaskStatusRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                status:
+                    type: integer
+                    format: enum
+                worker:
+                    type: string
+        UpdateTestPlanRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                name:
+                    type: string
+                description:
+                    type: string
+                startTime:
+                    type: string
+                    format: date-time
+                deadline:
+                    type: string
+                    format: date-time
+                status:
+                    type: integer
+                    format: enum
+                tasks:
+                    type: array
+                    items:
+                        type: integer
+                        format: int64
+        UpdateTestcaseReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+        UpdateTestcaseRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                name:
+                    type: string
+                type:
+                    type: integer
+                    format: int32
+                priority:
+                    type: integer
+                    format: int32
+                url:
+                    type: string
+                description:
+                    type: string
 tags:
-    - name: Project
+    - name: Management

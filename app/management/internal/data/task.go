@@ -3,7 +3,7 @@ package data
 import (
 	"context"
 	engineV1 "galileo/api/engine/v1"
-	taskV1 "galileo/api/management/task/v1"
+	taskV1 "galileo/api/management/v1"
 	"galileo/app/management/internal/biz"
 	. "galileo/app/management/internal/pkg/constant"
 	"galileo/ent"

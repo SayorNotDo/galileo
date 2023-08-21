@@ -20,10 +20,40 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Management_BaseInformation_FullMethodName = "/api.management.v1.Management/BaseInformation"
-	Management_CreateTestPlan_FullMethodName  = "/api.management.v1.Management/CreateTestPlan"
-	Management_UpdateTestPlan_FullMethodName  = "/api.management.v1.Management/UpdateTestPlan"
-	Management_GetTestPlaById_FullMethodName  = "/api.management.v1.Management/GetTestPlaById"
+	Management_BaseInformation_FullMethodName     = "/api.management.v1.Management/BaseInformation"
+	Management_CreateTestPlan_FullMethodName      = "/api.management.v1.Management/CreateTestPlan"
+	Management_UpdateTestPlan_FullMethodName      = "/api.management.v1.Management/UpdateTestPlan"
+	Management_GetTestPlaById_FullMethodName      = "/api.management.v1.Management/GetTestPlaById"
+	Management_CreateProject_FullMethodName       = "/api.management.v1.Management/CreateProject"
+	Management_UpdateProject_FullMethodName       = "/api.management.v1.Management/UpdateProject"
+	Management_DeleteProject_FullMethodName       = "/api.management.v1.Management/DeleteProject"
+	Management_GetProject_FullMethodName          = "/api.management.v1.Management/GetProject"
+	Management_ListProject_FullMethodName         = "/api.management.v1.Management/ListProject"
+	Management_GetUserProjectList_FullMethodName  = "/api.management.v1.Management/GetUserProjectList"
+	Management_CreateTestcase_FullMethodName      = "/api.management.v1.Management/CreateTestcase"
+	Management_GenerateTestcase_FullMethodName    = "/api.management.v1.Management/GenerateTestcase"
+	Management_UpdateTestcase_FullMethodName      = "/api.management.v1.Management/UpdateTestcase"
+	Management_DeleteTestcase_FullMethodName      = "/api.management.v1.Management/DeleteTestcase"
+	Management_GetTestcaseById_FullMethodName     = "/api.management.v1.Management/GetTestcaseById"
+	Management_ListTestcase_FullMethodName        = "/api.management.v1.Management/ListTestcase"
+	Management_DebugTestcase_FullMethodName       = "/api.management.v1.Management/DebugTestcase"
+	Management_LoadFramework_FullMethodName       = "/api.management.v1.Management/LoadFramework"
+	Management_CreateTestcaseSuite_FullMethodName = "/api.management.v1.Management/CreateTestcaseSuite"
+	Management_GetTestcaseSuite_FullMethodName    = "/api.management.v1.Management/GetTestcaseSuite"
+	Management_CreateTask_FullMethodName          = "/api.management.v1.Management/CreateTask"
+	Management_UpdateTask_FullMethodName          = "/api.management.v1.Management/UpdateTask"
+	Management_DeleteTask_FullMethodName          = "/api.management.v1.Management/DeleteTask"
+	Management_TaskByID_FullMethodName            = "/api.management.v1.Management/TaskByID"
+	Management_TaskByName_FullMethodName          = "/api.management.v1.Management/TaskByName"
+	Management_ListTimingTask_FullMethodName      = "/api.management.v1.Management/ListTimingTask"
+	Management_UpdateTaskStatus_FullMethodName    = "/api.management.v1.Management/UpdateTaskStatus"
+	Management_GetTaskProgress_FullMethodName     = "/api.management.v1.Management/GetTaskProgress"
+	Management_CreateApi_FullMethodName           = "/api.management.v1.Management/CreateApi"
+	Management_UpdateApi_FullMethodName           = "/api.management.v1.Management/UpdateApi"
+	Management_DeleteApi_FullMethodName           = "/api.management.v1.Management/DeleteApi"
+	Management_GetApi_FullMethodName              = "/api.management.v1.Management/GetApi"
+	Management_DebugApi_FullMethodName            = "/api.management.v1.Management/DebugApi"
+	Management_ListApi_FullMethodName             = "/api.management.v1.Management/ListApi"
 )
 
 // ManagementClient is the client API for Management service.
@@ -34,6 +64,41 @@ type ManagementClient interface {
 	CreateTestPlan(ctx context.Context, in *CreateTestPlanRequest, opts ...grpc.CallOption) (*CreateTestPlanReply, error)
 	UpdateTestPlan(ctx context.Context, in *UpdateTestPlanRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetTestPlaById(ctx context.Context, in *GetTestPlanRequest, opts ...grpc.CallOption) (*GetTestPlanReply, error)
+	// project module
+	CreateProject(ctx context.Context, in *CreateProjectRequest, opts ...grpc.CallOption) (*CreateProjectReply, error)
+	UpdateProject(ctx context.Context, in *UpdateProjectRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteProject(ctx context.Context, in *DeleteProjectRequest, opts ...grpc.CallOption) (*DeleteProjectReply, error)
+	GetProject(ctx context.Context, in *GetProjectRequest, opts ...grpc.CallOption) (*ProjectInfo, error)
+	ListProject(ctx context.Context, in *ListProjectRequest, opts ...grpc.CallOption) (*ListProjectReply, error)
+	GetUserProjectList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListProjectReply, error)
+	// testcase module
+	CreateTestcase(ctx context.Context, in *CreateTestcaseRequest, opts ...grpc.CallOption) (*CreateTestcaseReply, error)
+	GenerateTestcase(ctx context.Context, in *GenerateTestcaseFileRequest, opts ...grpc.CallOption) (*GenerateTestcaseFileReply, error)
+	UpdateTestcase(ctx context.Context, in *UpdateTestcaseRequest, opts ...grpc.CallOption) (*UpdateTestcaseReply, error)
+	DeleteTestcase(ctx context.Context, in *DeleteTestcaseRequest, opts ...grpc.CallOption) (*DeleteTestcaseReply, error)
+	GetTestcaseById(ctx context.Context, in *GetTestcaseRequest, opts ...grpc.CallOption) (*GetTestcaseReply, error)
+	ListTestcase(ctx context.Context, in *ListTestcaseRequest, opts ...grpc.CallOption) (*ListTestcaseReply, error)
+	// rpc UploadTestcaseFile (google.protobuf.Empty) returns (UploadTestcaseReply);
+	DebugTestcase(ctx context.Context, in *DebugTestcaseRequest, opts ...grpc.CallOption) (*DebugTestcaseReply, error)
+	LoadFramework(ctx context.Context, in *LoadFrameworkRequest, opts ...grpc.CallOption) (*LoadFrameworkReply, error)
+	CreateTestcaseSuite(ctx context.Context, in *CreateTestcaseSuiteRequest, opts ...grpc.CallOption) (*CreateTestcaseSuiteReply, error)
+	GetTestcaseSuite(ctx context.Context, in *GetTestcaseSuiteRequest, opts ...grpc.CallOption) (*GetTestcaseSuiteReply, error)
+	// task module
+	CreateTask(ctx context.Context, in *CreateTaskRequest, opts ...grpc.CallOption) (*CreateTaskReply, error)
+	UpdateTask(ctx context.Context, in *UpdateTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteTask(ctx context.Context, in *DeleteTaskRequest, opts ...grpc.CallOption) (*DeleteTaskReply, error)
+	TaskByID(ctx context.Context, in *TaskByIDRequest, opts ...grpc.CallOption) (*GetTaskReply, error)
+	TaskByName(ctx context.Context, in *TaskByNameRequest, opts ...grpc.CallOption) (*GetTaskReply, error)
+	ListTimingTask(ctx context.Context, in *ListTimingTaskRequest, opts ...grpc.CallOption) (*ListTimingTaskReply, error)
+	UpdateTaskStatus(ctx context.Context, in *UpdateTaskStatusRequest, opts ...grpc.CallOption) (*UpdateTaskStatusReply, error)
+	GetTaskProgress(ctx context.Context, in *TaskProgressRequest, opts ...grpc.CallOption) (*TaskProgressReply, error)
+	// API
+	CreateApi(ctx context.Context, in *CreateApiRequest, opts ...grpc.CallOption) (*CreateApiReply, error)
+	UpdateApi(ctx context.Context, in *UpdateApiRequest, opts ...grpc.CallOption) (*UpdateApiReply, error)
+	DeleteApi(ctx context.Context, in *DeleteApiRequest, opts ...grpc.CallOption) (*DeleteApiReply, error)
+	GetApi(ctx context.Context, in *GetApiRequest, opts ...grpc.CallOption) (*GetApiReply, error)
+	DebugApi(ctx context.Context, in *DebugApiRequest, opts ...grpc.CallOption) (*DebugApiReply, error)
+	ListApi(ctx context.Context, in *ListApiRequest, opts ...grpc.CallOption) (*ListApiReply, error)
 }
 
 type managementClient struct {
@@ -80,6 +145,276 @@ func (c *managementClient) GetTestPlaById(ctx context.Context, in *GetTestPlanRe
 	return out, nil
 }
 
+func (c *managementClient) CreateProject(ctx context.Context, in *CreateProjectRequest, opts ...grpc.CallOption) (*CreateProjectReply, error) {
+	out := new(CreateProjectReply)
+	err := c.cc.Invoke(ctx, Management_CreateProject_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) UpdateProject(ctx context.Context, in *UpdateProjectRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Management_UpdateProject_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) DeleteProject(ctx context.Context, in *DeleteProjectRequest, opts ...grpc.CallOption) (*DeleteProjectReply, error) {
+	out := new(DeleteProjectReply)
+	err := c.cc.Invoke(ctx, Management_DeleteProject_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) GetProject(ctx context.Context, in *GetProjectRequest, opts ...grpc.CallOption) (*ProjectInfo, error) {
+	out := new(ProjectInfo)
+	err := c.cc.Invoke(ctx, Management_GetProject_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) ListProject(ctx context.Context, in *ListProjectRequest, opts ...grpc.CallOption) (*ListProjectReply, error) {
+	out := new(ListProjectReply)
+	err := c.cc.Invoke(ctx, Management_ListProject_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) GetUserProjectList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListProjectReply, error) {
+	out := new(ListProjectReply)
+	err := c.cc.Invoke(ctx, Management_GetUserProjectList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) CreateTestcase(ctx context.Context, in *CreateTestcaseRequest, opts ...grpc.CallOption) (*CreateTestcaseReply, error) {
+	out := new(CreateTestcaseReply)
+	err := c.cc.Invoke(ctx, Management_CreateTestcase_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) GenerateTestcase(ctx context.Context, in *GenerateTestcaseFileRequest, opts ...grpc.CallOption) (*GenerateTestcaseFileReply, error) {
+	out := new(GenerateTestcaseFileReply)
+	err := c.cc.Invoke(ctx, Management_GenerateTestcase_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) UpdateTestcase(ctx context.Context, in *UpdateTestcaseRequest, opts ...grpc.CallOption) (*UpdateTestcaseReply, error) {
+	out := new(UpdateTestcaseReply)
+	err := c.cc.Invoke(ctx, Management_UpdateTestcase_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) DeleteTestcase(ctx context.Context, in *DeleteTestcaseRequest, opts ...grpc.CallOption) (*DeleteTestcaseReply, error) {
+	out := new(DeleteTestcaseReply)
+	err := c.cc.Invoke(ctx, Management_DeleteTestcase_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) GetTestcaseById(ctx context.Context, in *GetTestcaseRequest, opts ...grpc.CallOption) (*GetTestcaseReply, error) {
+	out := new(GetTestcaseReply)
+	err := c.cc.Invoke(ctx, Management_GetTestcaseById_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) ListTestcase(ctx context.Context, in *ListTestcaseRequest, opts ...grpc.CallOption) (*ListTestcaseReply, error) {
+	out := new(ListTestcaseReply)
+	err := c.cc.Invoke(ctx, Management_ListTestcase_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) DebugTestcase(ctx context.Context, in *DebugTestcaseRequest, opts ...grpc.CallOption) (*DebugTestcaseReply, error) {
+	out := new(DebugTestcaseReply)
+	err := c.cc.Invoke(ctx, Management_DebugTestcase_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) LoadFramework(ctx context.Context, in *LoadFrameworkRequest, opts ...grpc.CallOption) (*LoadFrameworkReply, error) {
+	out := new(LoadFrameworkReply)
+	err := c.cc.Invoke(ctx, Management_LoadFramework_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) CreateTestcaseSuite(ctx context.Context, in *CreateTestcaseSuiteRequest, opts ...grpc.CallOption) (*CreateTestcaseSuiteReply, error) {
+	out := new(CreateTestcaseSuiteReply)
+	err := c.cc.Invoke(ctx, Management_CreateTestcaseSuite_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) GetTestcaseSuite(ctx context.Context, in *GetTestcaseSuiteRequest, opts ...grpc.CallOption) (*GetTestcaseSuiteReply, error) {
+	out := new(GetTestcaseSuiteReply)
+	err := c.cc.Invoke(ctx, Management_GetTestcaseSuite_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) CreateTask(ctx context.Context, in *CreateTaskRequest, opts ...grpc.CallOption) (*CreateTaskReply, error) {
+	out := new(CreateTaskReply)
+	err := c.cc.Invoke(ctx, Management_CreateTask_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) UpdateTask(ctx context.Context, in *UpdateTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Management_UpdateTask_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) DeleteTask(ctx context.Context, in *DeleteTaskRequest, opts ...grpc.CallOption) (*DeleteTaskReply, error) {
+	out := new(DeleteTaskReply)
+	err := c.cc.Invoke(ctx, Management_DeleteTask_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) TaskByID(ctx context.Context, in *TaskByIDRequest, opts ...grpc.CallOption) (*GetTaskReply, error) {
+	out := new(GetTaskReply)
+	err := c.cc.Invoke(ctx, Management_TaskByID_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) TaskByName(ctx context.Context, in *TaskByNameRequest, opts ...grpc.CallOption) (*GetTaskReply, error) {
+	out := new(GetTaskReply)
+	err := c.cc.Invoke(ctx, Management_TaskByName_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) ListTimingTask(ctx context.Context, in *ListTimingTaskRequest, opts ...grpc.CallOption) (*ListTimingTaskReply, error) {
+	out := new(ListTimingTaskReply)
+	err := c.cc.Invoke(ctx, Management_ListTimingTask_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) UpdateTaskStatus(ctx context.Context, in *UpdateTaskStatusRequest, opts ...grpc.CallOption) (*UpdateTaskStatusReply, error) {
+	out := new(UpdateTaskStatusReply)
+	err := c.cc.Invoke(ctx, Management_UpdateTaskStatus_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) GetTaskProgress(ctx context.Context, in *TaskProgressRequest, opts ...grpc.CallOption) (*TaskProgressReply, error) {
+	out := new(TaskProgressReply)
+	err := c.cc.Invoke(ctx, Management_GetTaskProgress_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) CreateApi(ctx context.Context, in *CreateApiRequest, opts ...grpc.CallOption) (*CreateApiReply, error) {
+	out := new(CreateApiReply)
+	err := c.cc.Invoke(ctx, Management_CreateApi_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) UpdateApi(ctx context.Context, in *UpdateApiRequest, opts ...grpc.CallOption) (*UpdateApiReply, error) {
+	out := new(UpdateApiReply)
+	err := c.cc.Invoke(ctx, Management_UpdateApi_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) DeleteApi(ctx context.Context, in *DeleteApiRequest, opts ...grpc.CallOption) (*DeleteApiReply, error) {
+	out := new(DeleteApiReply)
+	err := c.cc.Invoke(ctx, Management_DeleteApi_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) GetApi(ctx context.Context, in *GetApiRequest, opts ...grpc.CallOption) (*GetApiReply, error) {
+	out := new(GetApiReply)
+	err := c.cc.Invoke(ctx, Management_GetApi_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) DebugApi(ctx context.Context, in *DebugApiRequest, opts ...grpc.CallOption) (*DebugApiReply, error) {
+	out := new(DebugApiReply)
+	err := c.cc.Invoke(ctx, Management_DebugApi_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *managementClient) ListApi(ctx context.Context, in *ListApiRequest, opts ...grpc.CallOption) (*ListApiReply, error) {
+	out := new(ListApiReply)
+	err := c.cc.Invoke(ctx, Management_ListApi_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ManagementServer is the server API for Management service.
 // All implementations must embed UnimplementedManagementServer
 // for forward compatibility
@@ -88,6 +423,41 @@ type ManagementServer interface {
 	CreateTestPlan(context.Context, *CreateTestPlanRequest) (*CreateTestPlanReply, error)
 	UpdateTestPlan(context.Context, *UpdateTestPlanRequest) (*emptypb.Empty, error)
 	GetTestPlaById(context.Context, *GetTestPlanRequest) (*GetTestPlanReply, error)
+	// project module
+	CreateProject(context.Context, *CreateProjectRequest) (*CreateProjectReply, error)
+	UpdateProject(context.Context, *UpdateProjectRequest) (*emptypb.Empty, error)
+	DeleteProject(context.Context, *DeleteProjectRequest) (*DeleteProjectReply, error)
+	GetProject(context.Context, *GetProjectRequest) (*ProjectInfo, error)
+	ListProject(context.Context, *ListProjectRequest) (*ListProjectReply, error)
+	GetUserProjectList(context.Context, *emptypb.Empty) (*ListProjectReply, error)
+	// testcase module
+	CreateTestcase(context.Context, *CreateTestcaseRequest) (*CreateTestcaseReply, error)
+	GenerateTestcase(context.Context, *GenerateTestcaseFileRequest) (*GenerateTestcaseFileReply, error)
+	UpdateTestcase(context.Context, *UpdateTestcaseRequest) (*UpdateTestcaseReply, error)
+	DeleteTestcase(context.Context, *DeleteTestcaseRequest) (*DeleteTestcaseReply, error)
+	GetTestcaseById(context.Context, *GetTestcaseRequest) (*GetTestcaseReply, error)
+	ListTestcase(context.Context, *ListTestcaseRequest) (*ListTestcaseReply, error)
+	// rpc UploadTestcaseFile (google.protobuf.Empty) returns (UploadTestcaseReply);
+	DebugTestcase(context.Context, *DebugTestcaseRequest) (*DebugTestcaseReply, error)
+	LoadFramework(context.Context, *LoadFrameworkRequest) (*LoadFrameworkReply, error)
+	CreateTestcaseSuite(context.Context, *CreateTestcaseSuiteRequest) (*CreateTestcaseSuiteReply, error)
+	GetTestcaseSuite(context.Context, *GetTestcaseSuiteRequest) (*GetTestcaseSuiteReply, error)
+	// task module
+	CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskReply, error)
+	UpdateTask(context.Context, *UpdateTaskRequest) (*emptypb.Empty, error)
+	DeleteTask(context.Context, *DeleteTaskRequest) (*DeleteTaskReply, error)
+	TaskByID(context.Context, *TaskByIDRequest) (*GetTaskReply, error)
+	TaskByName(context.Context, *TaskByNameRequest) (*GetTaskReply, error)
+	ListTimingTask(context.Context, *ListTimingTaskRequest) (*ListTimingTaskReply, error)
+	UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error)
+	GetTaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error)
+	// API
+	CreateApi(context.Context, *CreateApiRequest) (*CreateApiReply, error)
+	UpdateApi(context.Context, *UpdateApiRequest) (*UpdateApiReply, error)
+	DeleteApi(context.Context, *DeleteApiRequest) (*DeleteApiReply, error)
+	GetApi(context.Context, *GetApiRequest) (*GetApiReply, error)
+	DebugApi(context.Context, *DebugApiRequest) (*DebugApiReply, error)
+	ListApi(context.Context, *ListApiRequest) (*ListApiReply, error)
 	mustEmbedUnimplementedManagementServer()
 }
 
@@ -106,6 +476,96 @@ func (UnimplementedManagementServer) UpdateTestPlan(context.Context, *UpdateTest
 }
 func (UnimplementedManagementServer) GetTestPlaById(context.Context, *GetTestPlanRequest) (*GetTestPlanReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTestPlaById not implemented")
+}
+func (UnimplementedManagementServer) CreateProject(context.Context, *CreateProjectRequest) (*CreateProjectReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateProject not implemented")
+}
+func (UnimplementedManagementServer) UpdateProject(context.Context, *UpdateProjectRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateProject not implemented")
+}
+func (UnimplementedManagementServer) DeleteProject(context.Context, *DeleteProjectRequest) (*DeleteProjectReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteProject not implemented")
+}
+func (UnimplementedManagementServer) GetProject(context.Context, *GetProjectRequest) (*ProjectInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProject not implemented")
+}
+func (UnimplementedManagementServer) ListProject(context.Context, *ListProjectRequest) (*ListProjectReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListProject not implemented")
+}
+func (UnimplementedManagementServer) GetUserProjectList(context.Context, *emptypb.Empty) (*ListProjectReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserProjectList not implemented")
+}
+func (UnimplementedManagementServer) CreateTestcase(context.Context, *CreateTestcaseRequest) (*CreateTestcaseReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTestcase not implemented")
+}
+func (UnimplementedManagementServer) GenerateTestcase(context.Context, *GenerateTestcaseFileRequest) (*GenerateTestcaseFileReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateTestcase not implemented")
+}
+func (UnimplementedManagementServer) UpdateTestcase(context.Context, *UpdateTestcaseRequest) (*UpdateTestcaseReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTestcase not implemented")
+}
+func (UnimplementedManagementServer) DeleteTestcase(context.Context, *DeleteTestcaseRequest) (*DeleteTestcaseReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteTestcase not implemented")
+}
+func (UnimplementedManagementServer) GetTestcaseById(context.Context, *GetTestcaseRequest) (*GetTestcaseReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTestcaseById not implemented")
+}
+func (UnimplementedManagementServer) ListTestcase(context.Context, *ListTestcaseRequest) (*ListTestcaseReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTestcase not implemented")
+}
+func (UnimplementedManagementServer) DebugTestcase(context.Context, *DebugTestcaseRequest) (*DebugTestcaseReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DebugTestcase not implemented")
+}
+func (UnimplementedManagementServer) LoadFramework(context.Context, *LoadFrameworkRequest) (*LoadFrameworkReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoadFramework not implemented")
+}
+func (UnimplementedManagementServer) CreateTestcaseSuite(context.Context, *CreateTestcaseSuiteRequest) (*CreateTestcaseSuiteReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTestcaseSuite not implemented")
+}
+func (UnimplementedManagementServer) GetTestcaseSuite(context.Context, *GetTestcaseSuiteRequest) (*GetTestcaseSuiteReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTestcaseSuite not implemented")
+}
+func (UnimplementedManagementServer) CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTask not implemented")
+}
+func (UnimplementedManagementServer) UpdateTask(context.Context, *UpdateTaskRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTask not implemented")
+}
+func (UnimplementedManagementServer) DeleteTask(context.Context, *DeleteTaskRequest) (*DeleteTaskReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteTask not implemented")
+}
+func (UnimplementedManagementServer) TaskByID(context.Context, *TaskByIDRequest) (*GetTaskReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TaskByID not implemented")
+}
+func (UnimplementedManagementServer) TaskByName(context.Context, *TaskByNameRequest) (*GetTaskReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TaskByName not implemented")
+}
+func (UnimplementedManagementServer) ListTimingTask(context.Context, *ListTimingTaskRequest) (*ListTimingTaskReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTimingTask not implemented")
+}
+func (UnimplementedManagementServer) UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTaskStatus not implemented")
+}
+func (UnimplementedManagementServer) GetTaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTaskProgress not implemented")
+}
+func (UnimplementedManagementServer) CreateApi(context.Context, *CreateApiRequest) (*CreateApiReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateApi not implemented")
+}
+func (UnimplementedManagementServer) UpdateApi(context.Context, *UpdateApiRequest) (*UpdateApiReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateApi not implemented")
+}
+func (UnimplementedManagementServer) DeleteApi(context.Context, *DeleteApiRequest) (*DeleteApiReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteApi not implemented")
+}
+func (UnimplementedManagementServer) GetApi(context.Context, *GetApiRequest) (*GetApiReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetApi not implemented")
+}
+func (UnimplementedManagementServer) DebugApi(context.Context, *DebugApiRequest) (*DebugApiReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DebugApi not implemented")
+}
+func (UnimplementedManagementServer) ListApi(context.Context, *ListApiRequest) (*ListApiReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListApi not implemented")
 }
 func (UnimplementedManagementServer) mustEmbedUnimplementedManagementServer() {}
 
@@ -192,6 +652,546 @@ func _Management_GetTestPlaById_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Management_CreateProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateProjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).CreateProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_CreateProject_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).CreateProject(ctx, req.(*CreateProjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_UpdateProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateProjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).UpdateProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_UpdateProject_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).UpdateProject(ctx, req.(*UpdateProjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_DeleteProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteProjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).DeleteProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_DeleteProject_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).DeleteProject(ctx, req.(*DeleteProjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_GetProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).GetProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_GetProject_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).GetProject(ctx, req.(*GetProjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_ListProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListProjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).ListProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_ListProject_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).ListProject(ctx, req.(*ListProjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_GetUserProjectList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).GetUserProjectList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_GetUserProjectList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).GetUserProjectList(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_CreateTestcase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTestcaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).CreateTestcase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_CreateTestcase_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).CreateTestcase(ctx, req.(*CreateTestcaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_GenerateTestcase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateTestcaseFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).GenerateTestcase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_GenerateTestcase_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).GenerateTestcase(ctx, req.(*GenerateTestcaseFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_UpdateTestcase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTestcaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).UpdateTestcase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_UpdateTestcase_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).UpdateTestcase(ctx, req.(*UpdateTestcaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_DeleteTestcase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteTestcaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).DeleteTestcase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_DeleteTestcase_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).DeleteTestcase(ctx, req.(*DeleteTestcaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_GetTestcaseById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTestcaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).GetTestcaseById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_GetTestcaseById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).GetTestcaseById(ctx, req.(*GetTestcaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_ListTestcase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTestcaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).ListTestcase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_ListTestcase_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).ListTestcase(ctx, req.(*ListTestcaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_DebugTestcase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DebugTestcaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).DebugTestcase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_DebugTestcase_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).DebugTestcase(ctx, req.(*DebugTestcaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_LoadFramework_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoadFrameworkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).LoadFramework(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_LoadFramework_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).LoadFramework(ctx, req.(*LoadFrameworkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_CreateTestcaseSuite_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTestcaseSuiteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).CreateTestcaseSuite(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_CreateTestcaseSuite_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).CreateTestcaseSuite(ctx, req.(*CreateTestcaseSuiteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_GetTestcaseSuite_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTestcaseSuiteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).GetTestcaseSuite(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_GetTestcaseSuite_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).GetTestcaseSuite(ctx, req.(*GetTestcaseSuiteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_CreateTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTaskRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).CreateTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_CreateTask_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).CreateTask(ctx, req.(*CreateTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_UpdateTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTaskRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).UpdateTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_UpdateTask_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).UpdateTask(ctx, req.(*UpdateTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_DeleteTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteTaskRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).DeleteTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_DeleteTask_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).DeleteTask(ctx, req.(*DeleteTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_TaskByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskByIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).TaskByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_TaskByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).TaskByID(ctx, req.(*TaskByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_TaskByName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskByNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).TaskByName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_TaskByName_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).TaskByName(ctx, req.(*TaskByNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_ListTimingTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTimingTaskRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).ListTimingTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_ListTimingTask_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).ListTimingTask(ctx, req.(*ListTimingTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_UpdateTaskStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTaskStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).UpdateTaskStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_UpdateTaskStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).UpdateTaskStatus(ctx, req.(*UpdateTaskStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_GetTaskProgress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskProgressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).GetTaskProgress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_GetTaskProgress_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).GetTaskProgress(ctx, req.(*TaskProgressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_CreateApi_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateApiRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).CreateApi(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_CreateApi_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).CreateApi(ctx, req.(*CreateApiRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_UpdateApi_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateApiRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).UpdateApi(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_UpdateApi_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).UpdateApi(ctx, req.(*UpdateApiRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_DeleteApi_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteApiRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).DeleteApi(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_DeleteApi_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).DeleteApi(ctx, req.(*DeleteApiRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_GetApi_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetApiRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).GetApi(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_GetApi_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).GetApi(ctx, req.(*GetApiRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_DebugApi_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DebugApiRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).DebugApi(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_DebugApi_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).DebugApi(ctx, req.(*DebugApiRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Management_ListApi_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListApiRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ManagementServer).ListApi(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Management_ListApi_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ManagementServer).ListApi(ctx, req.(*ListApiRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Management_ServiceDesc is the grpc.ServiceDesc for Management service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -214,6 +1214,126 @@ var Management_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTestPlaById",
 			Handler:    _Management_GetTestPlaById_Handler,
+		},
+		{
+			MethodName: "CreateProject",
+			Handler:    _Management_CreateProject_Handler,
+		},
+		{
+			MethodName: "UpdateProject",
+			Handler:    _Management_UpdateProject_Handler,
+		},
+		{
+			MethodName: "DeleteProject",
+			Handler:    _Management_DeleteProject_Handler,
+		},
+		{
+			MethodName: "GetProject",
+			Handler:    _Management_GetProject_Handler,
+		},
+		{
+			MethodName: "ListProject",
+			Handler:    _Management_ListProject_Handler,
+		},
+		{
+			MethodName: "GetUserProjectList",
+			Handler:    _Management_GetUserProjectList_Handler,
+		},
+		{
+			MethodName: "CreateTestcase",
+			Handler:    _Management_CreateTestcase_Handler,
+		},
+		{
+			MethodName: "GenerateTestcase",
+			Handler:    _Management_GenerateTestcase_Handler,
+		},
+		{
+			MethodName: "UpdateTestcase",
+			Handler:    _Management_UpdateTestcase_Handler,
+		},
+		{
+			MethodName: "DeleteTestcase",
+			Handler:    _Management_DeleteTestcase_Handler,
+		},
+		{
+			MethodName: "GetTestcaseById",
+			Handler:    _Management_GetTestcaseById_Handler,
+		},
+		{
+			MethodName: "ListTestcase",
+			Handler:    _Management_ListTestcase_Handler,
+		},
+		{
+			MethodName: "DebugTestcase",
+			Handler:    _Management_DebugTestcase_Handler,
+		},
+		{
+			MethodName: "LoadFramework",
+			Handler:    _Management_LoadFramework_Handler,
+		},
+		{
+			MethodName: "CreateTestcaseSuite",
+			Handler:    _Management_CreateTestcaseSuite_Handler,
+		},
+		{
+			MethodName: "GetTestcaseSuite",
+			Handler:    _Management_GetTestcaseSuite_Handler,
+		},
+		{
+			MethodName: "CreateTask",
+			Handler:    _Management_CreateTask_Handler,
+		},
+		{
+			MethodName: "UpdateTask",
+			Handler:    _Management_UpdateTask_Handler,
+		},
+		{
+			MethodName: "DeleteTask",
+			Handler:    _Management_DeleteTask_Handler,
+		},
+		{
+			MethodName: "TaskByID",
+			Handler:    _Management_TaskByID_Handler,
+		},
+		{
+			MethodName: "TaskByName",
+			Handler:    _Management_TaskByName_Handler,
+		},
+		{
+			MethodName: "ListTimingTask",
+			Handler:    _Management_ListTimingTask_Handler,
+		},
+		{
+			MethodName: "UpdateTaskStatus",
+			Handler:    _Management_UpdateTaskStatus_Handler,
+		},
+		{
+			MethodName: "GetTaskProgress",
+			Handler:    _Management_GetTaskProgress_Handler,
+		},
+		{
+			MethodName: "CreateApi",
+			Handler:    _Management_CreateApi_Handler,
+		},
+		{
+			MethodName: "UpdateApi",
+			Handler:    _Management_UpdateApi_Handler,
+		},
+		{
+			MethodName: "DeleteApi",
+			Handler:    _Management_DeleteApi_Handler,
+		},
+		{
+			MethodName: "GetApi",
+			Handler:    _Management_GetApi_Handler,
+		},
+		{
+			MethodName: "DebugApi",
+			Handler:    _Management_DebugApi_Handler,
+		},
+		{
+			MethodName: "ListApi",
+			Handler:    _Management_ListApi_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

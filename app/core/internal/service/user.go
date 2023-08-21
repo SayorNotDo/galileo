@@ -7,7 +7,6 @@ import (
 )
 
 func (c *CoreService) GetUserProjectList(ctx context.Context, empty *empty.Empty) (*v1.UserProjectListReply, error) {
-	c.log.Info("--------------------------------debug--------------------------------")
 	ret, err := c.uc.GetUserProjectList(ctx)
 	if err != nil {
 		return nil, err

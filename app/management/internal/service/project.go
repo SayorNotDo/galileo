@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	v1 "galileo/api/management/project/v1"
+	v1 "galileo/api/management/v1"
 	"galileo/app/management/internal/biz"
 	"galileo/pkg/ctxdata"
 	. "galileo/pkg/errResponse"
