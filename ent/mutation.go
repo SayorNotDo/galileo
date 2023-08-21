@@ -5994,6 +5994,7 @@ type GroupMutation struct {
 	typ           string
 	id            *int32
 	name          *string
+	avatar        *string
 	created_by    *uint32
 	addcreated_by *int32
 	created_at    *time.Time
@@ -6143,6 +6144,55 @@ func (m *GroupMutation) ResetName() {
 	m.name = nil
 }
 
+// SetAvatar sets the "avatar" field.
+func (m *GroupMutation) SetAvatar(s string) {
+	m.avatar = &s
+}
+
+// Avatar returns the value of the "avatar" field in the mutation.
+func (m *GroupMutation) Avatar() (r string, exists bool) {
+	v := m.avatar
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAvatar returns the old "avatar" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldAvatar(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAvatar is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAvatar requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAvatar: %w", err)
+	}
+	return oldValue.Avatar, nil
+}
+
+// ClearAvatar clears the value of the "avatar" field.
+func (m *GroupMutation) ClearAvatar() {
+	m.avatar = nil
+	m.clearedFields[group.FieldAvatar] = struct{}{}
+}
+
+// AvatarCleared returns if the "avatar" field was cleared in this mutation.
+func (m *GroupMutation) AvatarCleared() bool {
+	_, ok := m.clearedFields[group.FieldAvatar]
+	return ok
+}
+
+// ResetAvatar resets all changes to the "avatar" field.
+func (m *GroupMutation) ResetAvatar() {
+	m.avatar = nil
+	delete(m.clearedFields, group.FieldAvatar)
+}
+
 // SetCreatedBy sets the "created_by" field.
 func (m *GroupMutation) SetCreatedBy(u uint32) {
 	m.created_by = &u
@@ -6269,9 +6319,12 @@ func (m *GroupMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 4)
 	if m.name != nil {
 		fields = append(fields, group.FieldName)
+	}
+	if m.avatar != nil {
+		fields = append(fields, group.FieldAvatar)
 	}
 	if m.created_by != nil {
 		fields = append(fields, group.FieldCreatedBy)
@@ -6289,6 +6342,8 @@ func (m *GroupMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case group.FieldName:
 		return m.Name()
+	case group.FieldAvatar:
+		return m.Avatar()
 	case group.FieldCreatedBy:
 		return m.CreatedBy()
 	case group.FieldCreatedAt:
@@ -6304,6 +6359,8 @@ func (m *GroupMutation) OldField(ctx context.Context, name string) (ent.Value, e
 	switch name {
 	case group.FieldName:
 		return m.OldName(ctx)
+	case group.FieldAvatar:
+		return m.OldAvatar(ctx)
 	case group.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
 	case group.FieldCreatedAt:
@@ -6323,6 +6380,13 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case group.FieldAvatar:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAvatar(v)
 		return nil
 	case group.FieldCreatedBy:
 		v, ok := value.(uint32)
@@ -6382,7 +6446,11 @@ func (m *GroupMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *GroupMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(group.FieldAvatar) {
+		fields = append(fields, group.FieldAvatar)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -6395,6 +6463,11 @@ func (m *GroupMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *GroupMutation) ClearField(name string) error {
+	switch name {
+	case group.FieldAvatar:
+		m.ClearAvatar()
+		return nil
+	}
 	return fmt.Errorf("unknown Group nullable field %s", name)
 }
 
@@ -6404,6 +6477,9 @@ func (m *GroupMutation) ResetField(name string) error {
 	switch name {
 	case group.FieldName:
 		m.ResetName()
+		return nil
+	case group.FieldAvatar:
+		m.ResetAvatar()
 		return nil
 	case group.FieldCreatedBy:
 		m.ResetCreatedBy()

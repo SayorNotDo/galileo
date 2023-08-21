@@ -33,6 +33,26 @@ func (gu *GroupUpdate) SetName(s string) *GroupUpdate {
 	return gu
 }
 
+// SetAvatar sets the "avatar" field.
+func (gu *GroupUpdate) SetAvatar(s string) *GroupUpdate {
+	gu.mutation.SetAvatar(s)
+	return gu
+}
+
+// SetNillableAvatar sets the "avatar" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableAvatar(s *string) *GroupUpdate {
+	if s != nil {
+		gu.SetAvatar(*s)
+	}
+	return gu
+}
+
+// ClearAvatar clears the value of the "avatar" field.
+func (gu *GroupUpdate) ClearAvatar() *GroupUpdate {
+	gu.mutation.ClearAvatar()
+	return gu
+}
+
 // SetCreatedBy sets the "created_by" field.
 func (gu *GroupUpdate) SetCreatedBy(u uint32) *GroupUpdate {
 	gu.mutation.ResetCreatedBy()
@@ -103,6 +123,12 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := gu.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)
 	}
+	if value, ok := gu.mutation.Avatar(); ok {
+		_spec.SetField(group.FieldAvatar, field.TypeString, value)
+	}
+	if gu.mutation.AvatarCleared() {
+		_spec.ClearField(group.FieldAvatar, field.TypeString)
+	}
 	if value, ok := gu.mutation.CreatedBy(); ok {
 		_spec.SetField(group.FieldCreatedBy, field.TypeUint32, value)
 	}
@@ -132,6 +158,26 @@ type GroupUpdateOne struct {
 // SetName sets the "name" field.
 func (guo *GroupUpdateOne) SetName(s string) *GroupUpdateOne {
 	guo.mutation.SetName(s)
+	return guo
+}
+
+// SetAvatar sets the "avatar" field.
+func (guo *GroupUpdateOne) SetAvatar(s string) *GroupUpdateOne {
+	guo.mutation.SetAvatar(s)
+	return guo
+}
+
+// SetNillableAvatar sets the "avatar" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableAvatar(s *string) *GroupUpdateOne {
+	if s != nil {
+		guo.SetAvatar(*s)
+	}
+	return guo
+}
+
+// ClearAvatar clears the value of the "avatar" field.
+func (guo *GroupUpdateOne) ClearAvatar() *GroupUpdateOne {
+	guo.mutation.ClearAvatar()
 	return guo
 }
 
@@ -234,6 +280,12 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	}
 	if value, ok := guo.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)
+	}
+	if value, ok := guo.mutation.Avatar(); ok {
+		_spec.SetField(group.FieldAvatar, field.TypeString, value)
+	}
+	if guo.mutation.AvatarCleared() {
+		_spec.ClearField(group.FieldAvatar, field.TypeString)
 	}
 	if value, ok := guo.mutation.CreatedBy(); ok {
 		_spec.SetField(group.FieldCreatedBy, field.TypeUint32, value)

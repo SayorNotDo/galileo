@@ -105,7 +105,7 @@ var reasonMessageAll = map[string]string{
 }
 
 var reasonCodeAll = map[string]int{
-	ReasonSuccess:      0,
+	ReasonSuccess:      2000,
 	ReasonUnknownError: 1,
 
 	ReasonParamsError:    4000,

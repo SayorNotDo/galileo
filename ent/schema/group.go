@@ -17,6 +17,7 @@ func (Group) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int32("id"),
 		field.String("name").Match(regexp.MustCompile("[a-zA-Z_]+$")),
+		field.Text("avatar").Optional(),
 		field.Uint32("created_by"),
 		field.Time("created_at").
 			Default(time.Now).

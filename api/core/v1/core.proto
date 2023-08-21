@@ -120,7 +120,26 @@ service Core {
   }
 }
 
-message UserGroupListReply {}
+message UserGroupListReply {
+  int32 total = 1;
+  repeated GroupInfo groupList = 2;
+}
+
+message GroupInfo {
+  int32 id = 1;
+  string name = 2;
+  string avatar = 3;
+  string description = 4;
+  google.protobuf.Timestamp createdAt = 5;
+  uint32 createdBy = 6;
+  google.protobuf.Timestamp updatedAt = 7;
+  uint32 updatedBy = 8;
+  google.protobuf.Timestamp deletedAt = 9;
+  uint32 deletedBy = 10;
+  int32 headcount = 11;
+}
+
+message GroupMember {}
 
 message UserLatestActivityReply {}
 

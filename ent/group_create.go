@@ -26,6 +26,20 @@ func (gc *GroupCreate) SetName(s string) *GroupCreate {
 	return gc
 }
 
+// SetAvatar sets the "avatar" field.
+func (gc *GroupCreate) SetAvatar(s string) *GroupCreate {
+	gc.mutation.SetAvatar(s)
+	return gc
+}
+
+// SetNillableAvatar sets the "avatar" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableAvatar(s *string) *GroupCreate {
+	if s != nil {
+		gc.SetAvatar(*s)
+	}
+	return gc
+}
+
 // SetCreatedBy sets the "created_by" field.
 func (gc *GroupCreate) SetCreatedBy(u uint32) *GroupCreate {
 	gc.mutation.SetCreatedBy(u)
@@ -144,6 +158,10 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if value, ok := gc.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := gc.mutation.Avatar(); ok {
+		_spec.SetField(group.FieldAvatar, field.TypeString, value)
+		_node.Avatar = value
 	}
 	if value, ok := gc.mutation.CreatedBy(); ok {
 		_spec.SetField(group.FieldCreatedBy, field.TypeUint32, value)

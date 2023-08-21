@@ -137,6 +137,7 @@ var (
 	GroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt32, Increment: true},
 		{Name: "name", Type: field.TypeString},
+		{Name: "avatar", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "created_by", Type: field.TypeUint32},
 		{Name: "created_at", Type: field.TypeTime},
 	}

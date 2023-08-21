@@ -18,6 +18,8 @@ type Group struct {
 	ID int32 `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Avatar holds the value of the "avatar" field.
+	Avatar string `json:"avatar,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
 	CreatedBy uint32 `json:"created_by,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -31,7 +33,7 @@ func (*Group) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case group.FieldID, group.FieldCreatedBy:
 			values[i] = new(sql.NullInt64)
-		case group.FieldName:
+		case group.FieldName, group.FieldAvatar:
 			values[i] = new(sql.NullString)
 		case group.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -61,6 +63,12 @@ func (gr *Group) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				gr.Name = value.String
+			}
+		case group.FieldAvatar:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field avatar", values[i])
+			} else if value.Valid {
+				gr.Avatar = value.String
 			}
 		case group.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -104,6 +112,9 @@ func (gr *Group) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v, ", gr.ID))
 	builder.WriteString("name=")
 	builder.WriteString(gr.Name)
+	builder.WriteString(", ")
+	builder.WriteString("avatar=")
+	builder.WriteString(gr.Avatar)
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
 	builder.WriteString(fmt.Sprintf("%v", gr.CreatedBy))
