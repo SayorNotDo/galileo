@@ -25,7 +25,7 @@ func (GroupMember) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int32("id").Unique(),
 		field.Int32("group_id"),
-		field.Int32("user_id"),
+		field.Uint32("user_id"),
 		field.Uint8("role").Default(0),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("created_by"),

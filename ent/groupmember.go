@@ -19,7 +19,7 @@ type GroupMember struct {
 	// GroupID holds the value of the "group_id" field.
 	GroupID int32 `json:"group_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
-	UserID int32 `json:"user_id,omitempty"`
+	UserID uint32 `json:"user_id,omitempty"`
 	// Role holds the value of the "role" field.
 	Role uint8 `json:"role,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -72,7 +72,7 @@ func (gm *GroupMember) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				gm.UserID = int32(value.Int64)
+				gm.UserID = uint32(value.Int64)
 			}
 		case groupmember.FieldRole:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

@@ -5,8 +5,11 @@ import (
 	v1 "galileo/api/user/v1"
 	"galileo/app/user/internal/biz"
 	"galileo/app/user/internal/pkg/util"
+	"galileo/pkg/ctxdata"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/metadata"
+	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"strconv"
@@ -168,7 +171,7 @@ func (s *UserService) ResetPassword(ctx context.Context, req *emptypb.Empty) (*e
 
 func (s *UserService) UpdatePassword(ctx context.Context, req *v1.UpdatePasswordRequest) (*emptypb.Empty, error) {
 	md, _ := metadata.FromServerContext(ctx)
-	uidStr := md.Get("x-md-local-uid")
+	uidStr := md.Get(ctxdata.UserIdKey)
 	uid, _ := strconv.ParseInt(uidStr, 10, 64)
 	u, err := s.uc.Get(ctx, uint32(uid))
 	if err != nil {
@@ -178,4 +181,39 @@ func (s *UserService) UpdatePassword(ctx context.Context, req *v1.UpdatePassword
 		return nil, err
 	}
 	return &emptypb.Empty{}, nil
+}
+
+func (s *UserService) GetUserGroupList(ctx context.Context, empty *empty.Empty) (*v1.UserGroupListReply, error) {
+	md, _ := metadata.FromServerContext(ctx)
+	uidStr := md.Get(ctxdata.UserIdKey)
+	uid, _ := strconv.ParseInt(uidStr, 10, 64)
+	res, err := s.uc.GetUserGroupList(ctx, uint32(uid))
+	if err != nil {
+		return nil, err
+	}
+	/* 初始化返回的分组列表: UserGroup */
+	var userGroupList = make([]*v1.UserGroup, 0)
+	lo.ForEach(res, func(item *biz.UserGroup, _ int) {
+		userGroupList = append(userGroupList, &v1.UserGroup{
+			GroupMemberId: item.GroupMemberId,
+			Role:          int32(item.Role),
+			Group: &v1.GroupInfo{
+				Id:          item.GroupInfo.Id,
+				Name:        item.GroupInfo.Name,
+				Avatar:      item.GroupInfo.Avatar,
+				Description: item.GroupInfo.Description,
+				CreatedAt:   timestamppb.New(item.GroupInfo.CreatedAt),
+				CreatedBy:   item.GroupInfo.CreatedBy,
+				UpdatedAt:   timestamppb.New(item.GroupInfo.UpdatedAt),
+				UpdatedBy:   item.GroupInfo.UpdatedBy,
+				DeletedAt:   timestamppb.New(item.GroupInfo.DeletedAt),
+				DeletedBy:   item.GroupInfo.DeletedBy,
+				Headcount:   item.GroupInfo.Headcount,
+			},
+		})
+	})
+	return &v1.UserGroupListReply{
+		Total:     int32(len(res)),
+		GroupList: userGroupList,
+	}, nil
 }

@@ -27,8 +27,8 @@ func (gmc *GroupMemberCreate) SetGroupID(i int32) *GroupMemberCreate {
 }
 
 // SetUserID sets the "user_id" field.
-func (gmc *GroupMemberCreate) SetUserID(i int32) *GroupMemberCreate {
-	gmc.mutation.SetUserID(i)
+func (gmc *GroupMemberCreate) SetUserID(u uint32) *GroupMemberCreate {
+	gmc.mutation.SetUserID(u)
 	return gmc
 }
 
@@ -199,7 +199,7 @@ func (gmc *GroupMemberCreate) createSpec() (*GroupMember, *sqlgraph.CreateSpec) 
 		_node.GroupID = value
 	}
 	if value, ok := gmc.mutation.UserID(); ok {
-		_spec.SetField(groupmember.FieldUserID, field.TypeInt32, value)
+		_spec.SetField(groupmember.FieldUserID, field.TypeUint32, value)
 		_node.UserID = value
 	}
 	if value, ok := gmc.mutation.Role(); ok {

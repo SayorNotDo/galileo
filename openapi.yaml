@@ -3,19 +3,64 @@
 
 openapi: 3.0.3
 info:
-    title: Management API
+    title: Core API
     version: 0.0.1
 paths:
-    v1/api/management/case-suite:
+    data/report:
         post:
             tags:
-                - Management
-            operationId: Management_CreateTestcaseSuite
+                - Core
+            operationId: Core_DataReportTrack
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CreateTestcaseSuiteRequest'
+                            $ref: '#/components/schemas/DataReportTrackRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/engine/container/{id}:
+        get:
+            tags:
+                - Core
+            operationId: Core_InspectContainer
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ContainerInfo'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/execute-token:
+        post:
+            tags:
+                - Core
+            operationId: Core_ExecuteToken
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ExecuteTokenRequest'
                 required: true
             responses:
                 "200":
@@ -23,41 +68,48 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/CreateTestcaseSuiteReply'
+                                $ref: '#/components/schemas/ExecuteTokenReply'
                 default:
                     description: Default error response
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/management/info:
-        get:
+    v1/api/user/delete/{id}:
+        delete:
             tags:
-                - Management
-            operationId: Management_BaseInformation
+                - Core
+            operationId: Core_DeleteUser
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
             responses:
                 "200":
                     description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/BaseInfoReply'
+                                $ref: '#/components/schemas/DeleteReply'
                 default:
                     description: Default error response
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/management/interface:
+    v1/api/user/email:
         put:
             tags:
-                - Management
-            operationId: Management_UpdateApi
+                - Core
+            operationId: Core_UpdateEmail
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateApiRequest'
+                            $ref: '#/components/schemas/UpdateEmailRequest'
                 required: true
             responses:
                 "200":
@@ -65,7 +117,28 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/UpdateApiReply'
+                                $ref: '#/components/schemas/UpdateEmailReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/group:
+        put:
+            tags:
+                - Core
+            operationId: Core_UpdateGroup
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateGroupRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
                 default:
                     description: Default error response
                     content:
@@ -74,14 +147,13 @@ paths:
                                 $ref: '#/components/schemas/Status'
         post:
             tags:
-                - Management
-            description: API
-            operationId: Management_CreateApi
+                - Core
+            operationId: Core_CreateGroup
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CreateApiRequest'
+                            $ref: '#/components/schemas/CreateGroupRequest'
                 required: true
             responses:
                 "200":
@@ -89,18 +161,72 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/CreateApiReply'
+                                $ref: '#/components/schemas/CreateGroupReply'
                 default:
                     description: Default error response
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/management/interface/list/{pageNum}/{pageSize}:
+    v1/api/user/group/list:
         get:
             tags:
-                - Management
-            operationId: Management_ListApi
+                - Core
+            operationId: Core_GetUserGroupList
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserGroupListReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/info:
+        get:
+            tags:
+                - Core
+            operationId: Core_UserDetail
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserDetailReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/latest-activity:
+        get:
+            tags:
+                - Core
+            operationId: Core_GetUserLatestActivity
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserLatestActivityReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/list/{pageNum}/{pageSize}:
+        get:
+            tags:
+                - Core
+            operationId: Core_ListUser
             parameters:
                 - name: pageNum
                   in: path
@@ -120,23 +246,47 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ListApiReply'
+                                $ref: '#/components/schemas/ListUserReply'
                 default:
                     description: Default error response
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/management/project:
-        put:
+    v1/api/user/login:
+        post:
             tags:
-                - Management
-            operationId: Management_UpdateProject
+                - Core
+            operationId: Core_Login
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateProjectRequest'
+                            $ref: '#/components/schemas/LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LoginReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/logout:
+        post:
+            tags:
+                - Core
+            operationId: Core_Logout
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LogoutRequest'
                 required: true
             responses:
                 "200":
@@ -148,65 +298,16 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-        post:
-            tags:
-                - Management
-            description: project module
-            operationId: Management_CreateProject
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/CreateProjectRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/CreateProjectReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    v1/api/management/project/{id}:
-        get:
-            tags:
-                - Management
-            operationId: Management_GetProject
-            parameters:
-                - name: id
-                  in: path
-                  required: true
-                  schema:
-                    type: integer
-                    format: int32
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/ProjectInfo'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    v1/api/management/task:
+    v1/api/user/password:
         put:
             tags:
-                - Management
-            operationId: Management_UpdateTask
+                - Core
+            operationId: Core_UpdatePassword
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateTaskRequest'
+                            $ref: '#/components/schemas/UpdatePasswordRequest'
                 required: true
             responses:
                 "200":
@@ -218,40 +319,16 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-        post:
-            tags:
-                - Management
-            description: task module
-            operationId: Management_CreateTask
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/CreateTaskRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/CreateTaskReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    v1/api/management/task/status:
+    v1/api/user/phone:
         put:
             tags:
-                - Management
-            operationId: Management_UpdateTaskStatus
+                - Core
+            operationId: Core_UpdatePhone
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateTaskStatusRequest'
+                            $ref: '#/components/schemas/UpdatePhoneRequest'
                 required: true
             responses:
                 "200":
@@ -259,97 +336,83 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/UpdateTaskStatusReply'
+                                $ref: '#/components/schemas/UpdatePhoneReply'
                 default:
                     description: Default error response
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/management/task/{id}:
+    v1/api/user/project/list:
         get:
             tags:
-                - Management
-            operationId: Management_TaskByID
-            parameters:
-                - name: id
-                  in: path
-                  required: true
-                  schema:
-                    type: integer
-                    format: int32
+                - Core
+            operationId: Core_GetUserProjectList
             responses:
                 "200":
                     description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/GetTaskReply'
+                                $ref: '#/components/schemas/UserProjectListReply'
                 default:
                     description: Default error response
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/management/task/{id}/progress:
-        get:
+    v1/api/user/register:
+        post:
             tags:
-                - Management
-            operationId: Management_GetTaskProgress
-            parameters:
-                - name: id
-                  in: path
-                  required: true
-                  schema:
-                    type: integer
-                    format: int32
+                - Core
+            operationId: Core_Register
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RegisterRequest'
+                required: true
             responses:
                 "200":
                     description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/TaskProgressReply'
+                                $ref: '#/components/schemas/RegisterReply'
                 default:
                     description: Default error response
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/management/task/{name}:
-        get:
+    v1/api/user/unregister:
+        delete:
             tags:
-                - Management
-            operationId: Management_TaskByName
-            parameters:
-                - name: name
-                  in: path
-                  required: true
-                  schema:
-                    type: string
+                - Core
+            operationId: Core_Unregister
             responses:
                 "200":
                     description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/GetTaskReply'
+                                $ref: '#/components/schemas/UnregisterReply'
                 default:
                     description: Default error response
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/management/testcase:
+    v1/api/user/update:
         put:
             tags:
-                - Management
-            operationId: Management_UpdateTestcase
+                - Core
+            operationId: Core_UpdateUserInfo
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateTestcaseRequest'
+                            $ref: '#/components/schemas/UserInfoUpdateRequest'
                 required: true
             responses:
                 "200":
@@ -357,174 +420,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/UpdateTestcaseReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-        post:
-            tags:
-                - Management
-            description: testcase module
-            operationId: Management_CreateTestcase
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/CreateTestcaseRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/CreateTestcaseReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    v1/api/management/testcase/debug:
-        post:
-            tags:
-                - Management
-            description: rpc UploadTestcaseFile (google.protobuf.Empty) returns (UploadTestcaseReply);
-            operationId: Management_DebugTestcase
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/DebugTestcaseRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/DebugTestcaseReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    v1/api/management/testcase/loadFramework:
-        post:
-            tags:
-                - Management
-            operationId: Management_LoadFramework
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/LoadFrameworkRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/LoadFrameworkReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    v1/api/management/testcase/{id}:
-        get:
-            tags:
-                - Management
-            operationId: Management_GetTestcaseById
-            parameters:
-                - name: id
-                  in: path
-                  required: true
-                  schema:
-                    type: integer
-                    format: int32
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/GetTestcaseReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    v1/api/management/testplan:
-        put:
-            tags:
-                - Management
-            operationId: Management_UpdateTestPlan
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/UpdateTestPlanRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content: {}
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-        post:
-            tags:
-                - Management
-            operationId: Management_CreateTestPlan
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/CreateTestPlanRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/CreateTestPlanReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    v1/api/management/testplan/{id}:
-        get:
-            tags:
-                - Management
-            operationId: Management_GetTestPlaById
-            parameters:
-                - name: id
-                  in: path
-                  required: true
-                  schema:
-                    type: integer
-                    format: int32
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/GetTestPlanReply'
+                                $ref: '#/components/schemas/UserInfoUpdateReply'
                 default:
                     description: Default error response
                     content:
@@ -533,269 +429,83 @@ paths:
                                 $ref: '#/components/schemas/Status'
 components:
     schemas:
-        ApiInfo:
+        ContainerInfo:
             type: object
             properties:
+                id:
+                    type: string
                 name:
                     type: string
-                url:
+                image:
                     type: string
-                type:
-                    type: integer
-                    format: enum
-                status:
-                    type: integer
-                    format: int32
-                label:
-                    type: string
-                body:
-                    type: string
-                queryParams:
-                    type: string
-                response:
-                    type: string
-                module:
-                    type: string
-                description:
-                    type: string
-        BaseInfoReply:
-            type: object
-            properties:
-                apiCount:
-                    type: integer
-                    format: int32
-                sceneCaseCount:
-                    type: integer
-                    format: int32
-                apiCaseCount:
-                    type: integer
-                    format: int32
-                cronJobCount:
-                    type: integer
-                    format: int32
-        CreateApiReply:
+                labels:
+                    type: object
+                    additionalProperties:
+                        type: string
+        CreateGroupReply:
             type: object
             properties:
                 id:
                     type: integer
                     format: int32
-                createdAt:
-                    type: integer
-                    format: int64
-        CreateApiRequest:
-            type: object
-            properties:
-                apiInfo:
-                    $ref: '#/components/schemas/ApiInfo'
-        CreateProjectReply:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: int32
-        CreateProjectRequest:
+                success:
+                    type: boolean
+        CreateGroupRequest:
             type: object
             properties:
                 name:
                     type: string
-                identifier:
+        DataReportTrackRequest:
+            type: object
+            properties:
+                data:
                     type: string
-                description:
-                    type: string
-                startTime:
-                    type: string
-                    format: date-time
-                endTime:
-                    type: string
-                    format: date-time
-                remark:
-                    type: string
-        CreateTaskReply:
+        DeleteReply:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/DeleteReply_DeleteInfo'
+        DeleteReply_DeleteInfo:
             type: object
             properties:
                 id:
-                    type: integer
-                    format: int32
-                status:
-                    type: integer
-                    format: enum
-                createdAt:
-                    type: string
-                    format: date-time
-        CreateTaskRequest:
-            type: object
-            properties:
-                name:
-                    type: string
-                rank:
-                    type: integer
-                    format: int32
-                type:
-                    type: integer
-                    format: int32
-                frequency:
-                    type: integer
-                    format: enum
-                scheduleTime:
-                    type: string
-                    format: date-time
-                worker:
-                    type: string
-                config:
-                    type: string
-                description:
-                    type: string
-                assignee:
                     type: integer
                     format: uint32
-                deadline:
+                deleteAt:
                     type: string
                     format: date-time
-                testcaseSuiteId:
-                    type: array
-                    items:
-                        type: integer
-                        format: int32
-                testPlanId:
-                    type: integer
-                    format: int32
-        CreateTestPlanReply:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: int32
-        CreateTestPlanRequest:
-            type: object
-            properties:
-                name:
-                    type: string
-                description:
-                    type: string
-                startTime:
-                    type: string
-                    format: date-time
-                deadline:
-                    type: string
-                    format: date-time
-                projectId:
-                    type: integer
-                    format: int32
-                tasks:
-                    type: array
-                    items:
-                        type: integer
-                        format: int32
-        CreateTestcaseReply:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: int32
-                createdAt:
-                    type: string
-                    format: date-time
-        CreateTestcaseRequest:
-            type: object
-            properties:
-                name:
-                    type: string
-                status:
-                    type: integer
-                    format: int32
-                type:
-                    type: integer
-                    format: int32
-                priority:
-                    type: integer
-                    format: int32
-                url:
-                    type: string
-                description:
-                    type: string
-        CreateTestcaseSuiteReply:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: int32
-                createdAt:
-                    type: string
-                    format: date-time
-        CreateTestcaseSuiteRequest:
-            type: object
-            properties:
-                name:
-                    type: string
-                testcaseList:
-                    type: array
-                    items:
-                        type: integer
-                        format: int32
-        DebugTestcaseReply:
-            type: object
-            properties:
-                result:
-                    type: string
-        DebugTestcaseRequest:
-            type: object
-            properties:
-                name:
-                    type: string
-                type:
-                    type: string
-                content:
-                    type: string
-        GetTaskReply:
-            type: object
-            properties:
-                name:
-                    type: string
-                rank:
-                    type: integer
-                    format: int32
-                type:
-                    type: integer
-                    format: int32
-                description:
-                    type: string
-                testcaseSuite:
-                    type: array
-                    items:
-                        type: integer
-                        format: int32
-                status:
-                    type: integer
-                    format: enum
-                config:
-                    type: string
-                frequency:
-                    type: integer
-                    format: enum
-                startTime:
-                    type: string
-                    format: date-time
-                scheduleTime:
-                    type: string
-                    format: date-time
-                deadline:
-                    type: string
-                    format: date-time
-                assignee:
+                deletedBy:
                     type: integer
                     format: uint32
-                worker:
+        ExecuteTokenReply:
+            type: object
+            properties:
+                executeToken:
                     type: string
-                id:
-                    type: integer
-                    format: int32
-        GetTestPlanReply:
+        ExecuteTokenRequest:
+            type: object
+            properties:
+                machine:
+                    type: string
+        GoogleProtobufAny:
+            type: object
+            properties:
+                '@type':
+                    type: string
+                    description: The type of the serialized message.
+            additionalProperties: true
+            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        GroupInfo:
             type: object
             properties:
                 id:
                     type: integer
                     format: int32
                 name:
+                    type: string
+                avatar:
+                    type: string
+                description:
                     type: string
                 createdAt:
                     type: string
@@ -809,77 +519,45 @@ components:
                 updatedBy:
                     type: integer
                     format: uint32
-                description:
-                    type: string
-                startTime:
+                deletedAt:
                     type: string
                     format: date-time
-                deadline:
-                    type: string
-                    format: date-time
-                statusUpdatedAt:
-                    type: string
-                    format: date-time
-                status:
+                deletedBy:
                     type: integer
-                    format: enum
-                tasks:
+                    format: uint32
+                headcount:
+                    type: integer
+                    format: int32
+        ListUserReply:
+            type: object
+            properties:
+                total:
+                    type: integer
+                    format: int32
+                userList:
                     type: array
                     items:
-                        type: integer
-                        format: int32
-                projectId:
-                    type: integer
-                    format: int32
-        GetTestcaseReply:
+                        $ref: '#/components/schemas/UserDetail'
+        LoginReply:
             type: object
             properties:
-                testcaseInfo:
-                    $ref: '#/components/schemas/TestcaseInfo'
-        GoogleProtobufAny:
-            type: object
-            properties:
-                '@type':
+                type:
                     type: string
-                    description: The type of the serialized message.
-            additionalProperties: true
-            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
-        ListApiReply:
+                token:
+                    type: string
+                expiresAt:
+                    type: string
+                    format: date-time
+        LoginRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+        LogoutRequest:
             type: object
             properties: {}
-        LoadFrameworkReply:
-            type: object
-            properties:
-                success:
-                    type: boolean
-                worker:
-                    type: string
-        LoadFrameworkRequest:
-            type: object
-            properties:
-                path:
-                    type: string
-                lang:
-                    type: integer
-                    format: enum
-                config:
-                    type: string
-                    format: bytes
-        ProgressDetail:
-            type: object
-            properties:
-                failure:
-                    type: integer
-                    format: int32
-                success:
-                    type: integer
-                    format: int32
-                error:
-                    type: integer
-                    format: int32
-                unknown:
-                    type: integer
-                    format: int32
         ProjectInfo:
             type: object
             properties:
@@ -889,13 +567,6 @@ components:
                 name:
                     type: string
                 identifier:
-                    type: string
-                remark:
-                    type: string
-                status:
-                    type: integer
-                    format: enum
-                description:
                     type: string
                 createdAt:
                     type: string
@@ -921,6 +592,32 @@ components:
                 deadline:
                     type: string
                     format: date-time
+                description:
+                    type: string
+                remark:
+                    type: string
+        RegisterReply:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                username:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+        RegisterRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+                phone:
+                    type: string
+                email:
+                    type: string
         Status:
             type: object
             properties:
@@ -937,189 +634,110 @@ components:
                         $ref: '#/components/schemas/GoogleProtobufAny'
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
-        TaskProgressReply:
+        UnregisterReply:
+            type: object
+            properties: {}
+        UpdateEmailReply:
+            type: object
+            properties: {}
+        UpdateEmailRequest:
+            type: object
+            properties: {}
+        UpdateGroupRequest:
+            type: object
+            properties: {}
+        UpdatePasswordRequest:
             type: object
             properties:
-                progress:
-                    type: integer
-                    format: int32
-                detail:
-                    $ref: '#/components/schemas/ProgressDetail'
-        TestcaseInfo:
+                password:
+                    type: string
+        UpdatePhoneReply:
+            type: object
+            properties: {}
+        UpdatePhoneRequest:
+            type: object
+            properties: {}
+        UserDetail:
             type: object
             properties:
                 id:
                     type: integer
+                    format: uint32
+                nickname:
+                    type: string
+                chineseName:
+                    type: string
+                phone:
+                    type: string
+                email:
+                    type: string
+                role:
+                    type: integer
                     format: int32
-                name:
-                    type: string
-                createdAt:
-                    type: string
-                    format: date-time
-                createdBy:
+        UserDetailReply:
+            type: object
+            properties:
+                id:
                     type: integer
                     format: uint32
-                updatedAt:
+                nickname:
                     type: string
-                    format: date-time
-                updatedBy:
-                    type: integer
-                    format: uint32
-                type:
+                chineseName:
+                    type: string
+                phone:
+                    type: string
+                email:
+                    type: string
+                role:
                     type: integer
                     format: int32
-                priority:
+        UserGroup:
+            type: object
+            properties:
+                groupMemberId:
                     type: integer
                     format: int32
-                status:
+                role:
                     type: integer
                     format: int32
-                url:
-                    type: string
-                description:
-                    type: string
-        UpdateApiReply:
+                group:
+                    $ref: '#/components/schemas/GroupInfo'
+        UserGroupListReply:
+            type: object
+            properties:
+                total:
+                    type: integer
+                    format: int32
+                groupList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserGroup'
+        UserInfoUpdateReply:
             type: object
             properties:
                 success:
                     type: boolean
-                UpdateAt:
-                    type: integer
-                    format: int32
-        UpdateApiRequest:
+        UserInfoUpdateRequest:
             type: object
             properties:
-                id:
-                    type: integer
-                    format: int32
-                apiInfo:
-                    $ref: '#/components/schemas/ApiInfo'
-        UpdateProjectRequest:
+                nickname:
+                    type: string
+                email:
+                    type: string
+                phone:
+                    type: string
+        UserLatestActivityReply:
+            type: object
+            properties: {}
+        UserProjectListReply:
             type: object
             properties:
-                id:
+                total:
                     type: integer
                     format: int32
-                name:
-                    type: string
-                identifier:
-                    type: string
-                status:
-                    type: integer
-                    format: enum
-                startTime:
-                    type: string
-                    format: date-time
-                endTime:
-                    type: string
-                    format: date-time
-                description:
-                    type: string
-                remark:
-                    type: string
-        UpdateTaskRequest:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: int32
-                name:
-                    type: string
-                assignee:
-                    type: integer
-                    format: uint32
-                type:
-                    type: integer
-                    format: int32
-                rank:
-                    type: integer
-                    format: int32
-                config:
-                    type: string
-                frequency:
-                    type: integer
-                    format: enum
-                scheduleTime:
-                    type: string
-                    format: date-time
-                deadline:
-                    type: string
-                    format: date-time
-                description:
-                    type: string
-                testcaseSuiteId:
+                projectList:
                     type: array
                     items:
-                        type: integer
-                        format: int32
-                worker:
-                    type: string
-        UpdateTaskStatusReply:
-            type: object
-            properties:
-                status:
-                    type: integer
-                    format: enum
-                statusUpdatedAt:
-                    type: string
-                    format: date-time
-        UpdateTaskStatusRequest:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: int32
-                status:
-                    type: integer
-                    format: enum
-                worker:
-                    type: string
-        UpdateTestPlanRequest:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: int32
-                name:
-                    type: string
-                description:
-                    type: string
-                startTime:
-                    type: string
-                    format: date-time
-                deadline:
-                    type: string
-                    format: date-time
-                status:
-                    type: integer
-                    format: enum
-                tasks:
-                    type: array
-                    items:
-                        type: integer
-                        format: int32
-        UpdateTestcaseReply:
-            type: object
-            properties:
-                success:
-                    type: boolean
-        UpdateTestcaseRequest:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: int32
-                name:
-                    type: string
-                type:
-                    type: integer
-                    format: int32
-                priority:
-                    type: integer
-                    format: int32
-                url:
-                    type: string
-                description:
-                    type: string
+                        $ref: '#/components/schemas/ProjectInfo'
 tags:
-    - name: Management
+    - name: Core

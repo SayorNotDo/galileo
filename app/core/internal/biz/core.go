@@ -14,22 +14,6 @@ type CoreRepo interface {
 	DataReportTrack(ctx context.Context, data []map[string]interface{}, claims *auth.ReportClaims) error
 }
 
-type User struct {
-	Id          uint32
-	Phone       string
-	ChineseName string
-	Username    string
-	Nickname    string
-	Gender      string
-	Email       string
-	Role        int32
-	Password    string
-	Status      bool
-	CreatedAt   time.Time
-	DeletedAt   time.Time
-	DeletedBy   uint32
-}
-
 type CoreUseCase struct {
 	repo CoreRepo
 	log  *log.Helper

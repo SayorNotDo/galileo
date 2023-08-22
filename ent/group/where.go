@@ -64,6 +64,11 @@ func Avatar(v string) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldAvatar, v))
 }
 
+// Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
+func Description(v string) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldDescription, v))
+}
+
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
 func CreatedBy(v uint32) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldCreatedBy, v))
@@ -72,6 +77,31 @@ func CreatedBy(v uint32) predicate.Group {
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
+func UpdatedBy(v uint32) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldUpdatedBy, v))
+}
+
+// DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldDeletedAt, v))
+}
+
+// DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
+func DeletedBy(v uint32) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldDeletedBy, v))
+}
+
+// Headcount applies equality check predicate on the "headcount" field. It's identical to HeadcountEQ.
+func Headcount(v int32) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldHeadcount, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -214,6 +244,81 @@ func AvatarContainsFold(v string) predicate.Group {
 	return predicate.Group(sql.FieldContainsFold(FieldAvatar, v))
 }
 
+// DescriptionEQ applies the EQ predicate on the "description" field.
+func DescriptionEQ(v string) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldDescription, v))
+}
+
+// DescriptionNEQ applies the NEQ predicate on the "description" field.
+func DescriptionNEQ(v string) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldDescription, v))
+}
+
+// DescriptionIn applies the In predicate on the "description" field.
+func DescriptionIn(vs ...string) predicate.Group {
+	return predicate.Group(sql.FieldIn(FieldDescription, vs...))
+}
+
+// DescriptionNotIn applies the NotIn predicate on the "description" field.
+func DescriptionNotIn(vs ...string) predicate.Group {
+	return predicate.Group(sql.FieldNotIn(FieldDescription, vs...))
+}
+
+// DescriptionGT applies the GT predicate on the "description" field.
+func DescriptionGT(v string) predicate.Group {
+	return predicate.Group(sql.FieldGT(FieldDescription, v))
+}
+
+// DescriptionGTE applies the GTE predicate on the "description" field.
+func DescriptionGTE(v string) predicate.Group {
+	return predicate.Group(sql.FieldGTE(FieldDescription, v))
+}
+
+// DescriptionLT applies the LT predicate on the "description" field.
+func DescriptionLT(v string) predicate.Group {
+	return predicate.Group(sql.FieldLT(FieldDescription, v))
+}
+
+// DescriptionLTE applies the LTE predicate on the "description" field.
+func DescriptionLTE(v string) predicate.Group {
+	return predicate.Group(sql.FieldLTE(FieldDescription, v))
+}
+
+// DescriptionContains applies the Contains predicate on the "description" field.
+func DescriptionContains(v string) predicate.Group {
+	return predicate.Group(sql.FieldContains(FieldDescription, v))
+}
+
+// DescriptionHasPrefix applies the HasPrefix predicate on the "description" field.
+func DescriptionHasPrefix(v string) predicate.Group {
+	return predicate.Group(sql.FieldHasPrefix(FieldDescription, v))
+}
+
+// DescriptionHasSuffix applies the HasSuffix predicate on the "description" field.
+func DescriptionHasSuffix(v string) predicate.Group {
+	return predicate.Group(sql.FieldHasSuffix(FieldDescription, v))
+}
+
+// DescriptionIsNil applies the IsNil predicate on the "description" field.
+func DescriptionIsNil() predicate.Group {
+	return predicate.Group(sql.FieldIsNull(FieldDescription))
+}
+
+// DescriptionNotNil applies the NotNil predicate on the "description" field.
+func DescriptionNotNil() predicate.Group {
+	return predicate.Group(sql.FieldNotNull(FieldDescription))
+}
+
+// DescriptionEqualFold applies the EqualFold predicate on the "description" field.
+func DescriptionEqualFold(v string) predicate.Group {
+	return predicate.Group(sql.FieldEqualFold(FieldDescription, v))
+}
+
+// DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
+func DescriptionContainsFold(v string) predicate.Group {
+	return predicate.Group(sql.FieldContainsFold(FieldDescription, v))
+}
+
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
 func CreatedByEQ(v uint32) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldCreatedBy, v))
@@ -292,6 +397,246 @@ func CreatedAtLT(v time.Time) predicate.Group {
 // CreatedAtLTE applies the LTE predicate on the "created_at" field.
 func CreatedAtLTE(v time.Time) predicate.Group {
 	return predicate.Group(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.Group {
+	return predicate.Group(sql.FieldIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.Group {
+	return predicate.Group(sql.FieldNotIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.Group {
+	return predicate.Group(sql.FieldGT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.Group {
+	return predicate.Group(sql.FieldGTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.Group {
+	return predicate.Group(sql.FieldLT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.Group {
+	return predicate.Group(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.Group {
+	return predicate.Group(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.Group {
+	return predicate.Group(sql.FieldNotNull(FieldUpdatedAt))
+}
+
+// UpdatedByEQ applies the EQ predicate on the "updated_by" field.
+func UpdatedByEQ(v uint32) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldUpdatedBy, v))
+}
+
+// UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
+func UpdatedByNEQ(v uint32) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldUpdatedBy, v))
+}
+
+// UpdatedByIn applies the In predicate on the "updated_by" field.
+func UpdatedByIn(vs ...uint32) predicate.Group {
+	return predicate.Group(sql.FieldIn(FieldUpdatedBy, vs...))
+}
+
+// UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
+func UpdatedByNotIn(vs ...uint32) predicate.Group {
+	return predicate.Group(sql.FieldNotIn(FieldUpdatedBy, vs...))
+}
+
+// UpdatedByGT applies the GT predicate on the "updated_by" field.
+func UpdatedByGT(v uint32) predicate.Group {
+	return predicate.Group(sql.FieldGT(FieldUpdatedBy, v))
+}
+
+// UpdatedByGTE applies the GTE predicate on the "updated_by" field.
+func UpdatedByGTE(v uint32) predicate.Group {
+	return predicate.Group(sql.FieldGTE(FieldUpdatedBy, v))
+}
+
+// UpdatedByLT applies the LT predicate on the "updated_by" field.
+func UpdatedByLT(v uint32) predicate.Group {
+	return predicate.Group(sql.FieldLT(FieldUpdatedBy, v))
+}
+
+// UpdatedByLTE applies the LTE predicate on the "updated_by" field.
+func UpdatedByLTE(v uint32) predicate.Group {
+	return predicate.Group(sql.FieldLTE(FieldUpdatedBy, v))
+}
+
+// UpdatedByIsNil applies the IsNil predicate on the "updated_by" field.
+func UpdatedByIsNil() predicate.Group {
+	return predicate.Group(sql.FieldIsNull(FieldUpdatedBy))
+}
+
+// UpdatedByNotNil applies the NotNil predicate on the "updated_by" field.
+func UpdatedByNotNil() predicate.Group {
+	return predicate.Group(sql.FieldNotNull(FieldUpdatedBy))
+}
+
+// DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
+func DeletedAtEQ(v time.Time) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtNEQ applies the NEQ predicate on the "deleted_at" field.
+func DeletedAtNEQ(v time.Time) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtIn applies the In predicate on the "deleted_at" field.
+func DeletedAtIn(vs ...time.Time) predicate.Group {
+	return predicate.Group(sql.FieldIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtNotIn applies the NotIn predicate on the "deleted_at" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.Group {
+	return predicate.Group(sql.FieldNotIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtGT applies the GT predicate on the "deleted_at" field.
+func DeletedAtGT(v time.Time) predicate.Group {
+	return predicate.Group(sql.FieldGT(FieldDeletedAt, v))
+}
+
+// DeletedAtGTE applies the GTE predicate on the "deleted_at" field.
+func DeletedAtGTE(v time.Time) predicate.Group {
+	return predicate.Group(sql.FieldGTE(FieldDeletedAt, v))
+}
+
+// DeletedAtLT applies the LT predicate on the "deleted_at" field.
+func DeletedAtLT(v time.Time) predicate.Group {
+	return predicate.Group(sql.FieldLT(FieldDeletedAt, v))
+}
+
+// DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
+func DeletedAtLTE(v time.Time) predicate.Group {
+	return predicate.Group(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.Group {
+	return predicate.Group(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.Group {
+	return predicate.Group(sql.FieldNotNull(FieldDeletedAt))
+}
+
+// DeletedByEQ applies the EQ predicate on the "deleted_by" field.
+func DeletedByEQ(v uint32) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldDeletedBy, v))
+}
+
+// DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
+func DeletedByNEQ(v uint32) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldDeletedBy, v))
+}
+
+// DeletedByIn applies the In predicate on the "deleted_by" field.
+func DeletedByIn(vs ...uint32) predicate.Group {
+	return predicate.Group(sql.FieldIn(FieldDeletedBy, vs...))
+}
+
+// DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
+func DeletedByNotIn(vs ...uint32) predicate.Group {
+	return predicate.Group(sql.FieldNotIn(FieldDeletedBy, vs...))
+}
+
+// DeletedByGT applies the GT predicate on the "deleted_by" field.
+func DeletedByGT(v uint32) predicate.Group {
+	return predicate.Group(sql.FieldGT(FieldDeletedBy, v))
+}
+
+// DeletedByGTE applies the GTE predicate on the "deleted_by" field.
+func DeletedByGTE(v uint32) predicate.Group {
+	return predicate.Group(sql.FieldGTE(FieldDeletedBy, v))
+}
+
+// DeletedByLT applies the LT predicate on the "deleted_by" field.
+func DeletedByLT(v uint32) predicate.Group {
+	return predicate.Group(sql.FieldLT(FieldDeletedBy, v))
+}
+
+// DeletedByLTE applies the LTE predicate on the "deleted_by" field.
+func DeletedByLTE(v uint32) predicate.Group {
+	return predicate.Group(sql.FieldLTE(FieldDeletedBy, v))
+}
+
+// DeletedByIsNil applies the IsNil predicate on the "deleted_by" field.
+func DeletedByIsNil() predicate.Group {
+	return predicate.Group(sql.FieldIsNull(FieldDeletedBy))
+}
+
+// DeletedByNotNil applies the NotNil predicate on the "deleted_by" field.
+func DeletedByNotNil() predicate.Group {
+	return predicate.Group(sql.FieldNotNull(FieldDeletedBy))
+}
+
+// HeadcountEQ applies the EQ predicate on the "headcount" field.
+func HeadcountEQ(v int32) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldHeadcount, v))
+}
+
+// HeadcountNEQ applies the NEQ predicate on the "headcount" field.
+func HeadcountNEQ(v int32) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldHeadcount, v))
+}
+
+// HeadcountIn applies the In predicate on the "headcount" field.
+func HeadcountIn(vs ...int32) predicate.Group {
+	return predicate.Group(sql.FieldIn(FieldHeadcount, vs...))
+}
+
+// HeadcountNotIn applies the NotIn predicate on the "headcount" field.
+func HeadcountNotIn(vs ...int32) predicate.Group {
+	return predicate.Group(sql.FieldNotIn(FieldHeadcount, vs...))
+}
+
+// HeadcountGT applies the GT predicate on the "headcount" field.
+func HeadcountGT(v int32) predicate.Group {
+	return predicate.Group(sql.FieldGT(FieldHeadcount, v))
+}
+
+// HeadcountGTE applies the GTE predicate on the "headcount" field.
+func HeadcountGTE(v int32) predicate.Group {
+	return predicate.Group(sql.FieldGTE(FieldHeadcount, v))
+}
+
+// HeadcountLT applies the LT predicate on the "headcount" field.
+func HeadcountLT(v int32) predicate.Group {
+	return predicate.Group(sql.FieldLT(FieldHeadcount, v))
+}
+
+// HeadcountLTE applies the LTE predicate on the "headcount" field.
+func HeadcountLTE(v int32) predicate.Group {
+	return predicate.Group(sql.FieldLTE(FieldHeadcount, v))
 }
 
 // And groups predicates with the AND operator between them.

@@ -32,6 +32,7 @@ const (
 	User_SoftDeleteUser_FullMethodName    = "/api.user.v1.User/SoftDeleteUser"
 	User_SetToken_FullMethodName          = "/api.user.v1.User/SetToken"
 	User_EmptyToken_FullMethodName        = "/api.user.v1.User/EmptyToken"
+	User_GetUserGroupList_FullMethodName  = "/api.user.v1.User/GetUserGroupList"
 )
 
 // UserClient is the client API for User service.
@@ -50,6 +51,7 @@ type UserClient interface {
 	SoftDeleteUser(ctx context.Context, in *SoftDeleteRequest, opts ...grpc.CallOption) (*SoftDeleteReply, error)
 	SetToken(ctx context.Context, in *SetTokenRequest, opts ...grpc.CallOption) (*SetTokenReply, error)
 	EmptyToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*EmptyTokenReply, error)
+	GetUserGroupList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserGroupListReply, error)
 }
 
 type userClient struct {
@@ -168,6 +170,15 @@ func (c *userClient) EmptyToken(ctx context.Context, in *emptypb.Empty, opts ...
 	return out, nil
 }
 
+func (c *userClient) GetUserGroupList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserGroupListReply, error) {
+	out := new(UserGroupListReply)
+	err := c.cc.Invoke(ctx, User_GetUserGroupList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
@@ -184,6 +195,7 @@ type UserServer interface {
 	SoftDeleteUser(context.Context, *SoftDeleteRequest) (*SoftDeleteReply, error)
 	SetToken(context.Context, *SetTokenRequest) (*SetTokenReply, error)
 	EmptyToken(context.Context, *emptypb.Empty) (*EmptyTokenReply, error)
+	GetUserGroupList(context.Context, *emptypb.Empty) (*UserGroupListReply, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -226,6 +238,9 @@ func (UnimplementedUserServer) SetToken(context.Context, *SetTokenRequest) (*Set
 }
 func (UnimplementedUserServer) EmptyToken(context.Context, *emptypb.Empty) (*EmptyTokenReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EmptyToken not implemented")
+}
+func (UnimplementedUserServer) GetUserGroupList(context.Context, *emptypb.Empty) (*UserGroupListReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserGroupList not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -456,6 +471,24 @@ func _User_EmptyToken_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_GetUserGroupList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GetUserGroupList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_GetUserGroupList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GetUserGroupList(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -510,6 +543,10 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EmptyToken",
 			Handler:    _User_EmptyToken_Handler,
+		},
+		{
+			MethodName: "GetUserGroupList",
+			Handler:    _User_GetUserGroupList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

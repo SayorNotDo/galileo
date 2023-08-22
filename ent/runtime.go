@@ -86,9 +86,13 @@ func init() {
 	// group.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	group.NameValidator = groupDescName.Validators[0].(func(string) error)
 	// groupDescCreatedAt is the schema descriptor for created_at field.
-	groupDescCreatedAt := groupFields[4].Descriptor()
+	groupDescCreatedAt := groupFields[5].Descriptor()
 	// group.DefaultCreatedAt holds the default value on creation for the created_at field.
 	group.DefaultCreatedAt = groupDescCreatedAt.Default.(func() time.Time)
+	// groupDescUpdatedAt is the schema descriptor for updated_at field.
+	groupDescUpdatedAt := groupFields[6].Descriptor()
+	// group.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	group.UpdateDefaultUpdatedAt = groupDescUpdatedAt.UpdateDefault.(func() time.Time)
 	groupmemberFields := schema.GroupMember{}.Fields()
 	_ = groupmemberFields
 	// groupmemberDescRole is the schema descriptor for role field.

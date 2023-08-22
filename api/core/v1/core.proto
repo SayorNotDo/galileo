@@ -122,7 +122,13 @@ service Core {
 
 message UserGroupListReply {
   int32 total = 1;
-  repeated GroupInfo groupList = 2;
+  repeated UserGroup groupList = 2;
+}
+
+message UserGroup {
+  int32 groupMemberId = 1;
+  int32 role = 2;
+  GroupInfo group = 3;
 }
 
 message GroupInfo {

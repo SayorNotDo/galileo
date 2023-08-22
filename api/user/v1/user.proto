@@ -23,6 +23,32 @@ service User {
   rpc SoftDeleteUser (SoftDeleteRequest) returns (SoftDeleteReply){};
   rpc SetToken(SetTokenRequest) returns (SetTokenReply){};
   rpc EmptyToken(google.protobuf.Empty) returns(EmptyTokenReply){};
+  rpc GetUserGroupList(google.protobuf.Empty) returns (UserGroupListReply){};
+}
+
+message UserGroupListReply {
+  int32 total = 1;
+  repeated UserGroup groupList = 2;
+}
+
+message UserGroup {
+  int32 groupMemberId = 1;
+  int32 role = 2;
+  GroupInfo group = 3;
+}
+
+message GroupInfo {
+  int32 id = 1;
+  string name = 2;
+  string avatar = 3;
+  string description = 4;
+  google.protobuf.Timestamp createdAt = 5;
+  uint32 createdBy = 6;
+  google.protobuf.Timestamp updatedAt = 7;
+  uint32 updatedBy = 8;
+  google.protobuf.Timestamp deletedAt = 9;
+  uint32 deletedBy = 10;
+  int32 headcount = 11;
 }
 
 message UpdatePasswordRequest {

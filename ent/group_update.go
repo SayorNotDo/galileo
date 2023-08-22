@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"galileo/ent/group"
 	"galileo/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -53,6 +54,26 @@ func (gu *GroupUpdate) ClearAvatar() *GroupUpdate {
 	return gu
 }
 
+// SetDescription sets the "description" field.
+func (gu *GroupUpdate) SetDescription(s string) *GroupUpdate {
+	gu.mutation.SetDescription(s)
+	return gu
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableDescription(s *string) *GroupUpdate {
+	if s != nil {
+		gu.SetDescription(*s)
+	}
+	return gu
+}
+
+// ClearDescription clears the value of the "description" field.
+func (gu *GroupUpdate) ClearDescription() *GroupUpdate {
+	gu.mutation.ClearDescription()
+	return gu
+}
+
 // SetCreatedBy sets the "created_by" field.
 func (gu *GroupUpdate) SetCreatedBy(u uint32) *GroupUpdate {
 	gu.mutation.ResetCreatedBy()
@@ -66,6 +87,105 @@ func (gu *GroupUpdate) AddCreatedBy(u int32) *GroupUpdate {
 	return gu
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (gu *GroupUpdate) SetUpdatedAt(t time.Time) *GroupUpdate {
+	gu.mutation.SetUpdatedAt(t)
+	return gu
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (gu *GroupUpdate) ClearUpdatedAt() *GroupUpdate {
+	gu.mutation.ClearUpdatedAt()
+	return gu
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (gu *GroupUpdate) SetUpdatedBy(u uint32) *GroupUpdate {
+	gu.mutation.ResetUpdatedBy()
+	gu.mutation.SetUpdatedBy(u)
+	return gu
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableUpdatedBy(u *uint32) *GroupUpdate {
+	if u != nil {
+		gu.SetUpdatedBy(*u)
+	}
+	return gu
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (gu *GroupUpdate) AddUpdatedBy(u int32) *GroupUpdate {
+	gu.mutation.AddUpdatedBy(u)
+	return gu
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (gu *GroupUpdate) ClearUpdatedBy() *GroupUpdate {
+	gu.mutation.ClearUpdatedBy()
+	return gu
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (gu *GroupUpdate) SetDeletedAt(t time.Time) *GroupUpdate {
+	gu.mutation.SetDeletedAt(t)
+	return gu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableDeletedAt(t *time.Time) *GroupUpdate {
+	if t != nil {
+		gu.SetDeletedAt(*t)
+	}
+	return gu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (gu *GroupUpdate) ClearDeletedAt() *GroupUpdate {
+	gu.mutation.ClearDeletedAt()
+	return gu
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (gu *GroupUpdate) SetDeletedBy(u uint32) *GroupUpdate {
+	gu.mutation.ResetDeletedBy()
+	gu.mutation.SetDeletedBy(u)
+	return gu
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableDeletedBy(u *uint32) *GroupUpdate {
+	if u != nil {
+		gu.SetDeletedBy(*u)
+	}
+	return gu
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (gu *GroupUpdate) AddDeletedBy(u int32) *GroupUpdate {
+	gu.mutation.AddDeletedBy(u)
+	return gu
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (gu *GroupUpdate) ClearDeletedBy() *GroupUpdate {
+	gu.mutation.ClearDeletedBy()
+	return gu
+}
+
+// SetHeadcount sets the "headcount" field.
+func (gu *GroupUpdate) SetHeadcount(i int32) *GroupUpdate {
+	gu.mutation.ResetHeadcount()
+	gu.mutation.SetHeadcount(i)
+	return gu
+}
+
+// AddHeadcount adds i to the "headcount" field.
+func (gu *GroupUpdate) AddHeadcount(i int32) *GroupUpdate {
+	gu.mutation.AddHeadcount(i)
+	return gu
+}
+
 // Mutation returns the GroupMutation object of the builder.
 func (gu *GroupUpdate) Mutation() *GroupMutation {
 	return gu.mutation
@@ -73,6 +193,7 @@ func (gu *GroupUpdate) Mutation() *GroupMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (gu *GroupUpdate) Save(ctx context.Context) (int, error) {
+	gu.defaults()
 	return withHooks[int, GroupMutation](ctx, gu.sqlSave, gu.mutation, gu.hooks)
 }
 
@@ -95,6 +216,14 @@ func (gu *GroupUpdate) Exec(ctx context.Context) error {
 func (gu *GroupUpdate) ExecX(ctx context.Context) {
 	if err := gu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (gu *GroupUpdate) defaults() {
+	if _, ok := gu.mutation.UpdatedAt(); !ok && !gu.mutation.UpdatedAtCleared() {
+		v := group.UpdateDefaultUpdatedAt()
+		gu.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -129,11 +258,53 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if gu.mutation.AvatarCleared() {
 		_spec.ClearField(group.FieldAvatar, field.TypeString)
 	}
+	if value, ok := gu.mutation.Description(); ok {
+		_spec.SetField(group.FieldDescription, field.TypeString, value)
+	}
+	if gu.mutation.DescriptionCleared() {
+		_spec.ClearField(group.FieldDescription, field.TypeString)
+	}
 	if value, ok := gu.mutation.CreatedBy(); ok {
 		_spec.SetField(group.FieldCreatedBy, field.TypeUint32, value)
 	}
 	if value, ok := gu.mutation.AddedCreatedBy(); ok {
 		_spec.AddField(group.FieldCreatedBy, field.TypeUint32, value)
+	}
+	if value, ok := gu.mutation.UpdatedAt(); ok {
+		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if gu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(group.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := gu.mutation.UpdatedBy(); ok {
+		_spec.SetField(group.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if value, ok := gu.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(group.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if gu.mutation.UpdatedByCleared() {
+		_spec.ClearField(group.FieldUpdatedBy, field.TypeUint32)
+	}
+	if value, ok := gu.mutation.DeletedAt(); ok {
+		_spec.SetField(group.FieldDeletedAt, field.TypeTime, value)
+	}
+	if gu.mutation.DeletedAtCleared() {
+		_spec.ClearField(group.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := gu.mutation.DeletedBy(); ok {
+		_spec.SetField(group.FieldDeletedBy, field.TypeUint32, value)
+	}
+	if value, ok := gu.mutation.AddedDeletedBy(); ok {
+		_spec.AddField(group.FieldDeletedBy, field.TypeUint32, value)
+	}
+	if gu.mutation.DeletedByCleared() {
+		_spec.ClearField(group.FieldDeletedBy, field.TypeUint32)
+	}
+	if value, ok := gu.mutation.Headcount(); ok {
+		_spec.SetField(group.FieldHeadcount, field.TypeInt32, value)
+	}
+	if value, ok := gu.mutation.AddedHeadcount(); ok {
+		_spec.AddField(group.FieldHeadcount, field.TypeInt32, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, gu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -181,6 +352,26 @@ func (guo *GroupUpdateOne) ClearAvatar() *GroupUpdateOne {
 	return guo
 }
 
+// SetDescription sets the "description" field.
+func (guo *GroupUpdateOne) SetDescription(s string) *GroupUpdateOne {
+	guo.mutation.SetDescription(s)
+	return guo
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableDescription(s *string) *GroupUpdateOne {
+	if s != nil {
+		guo.SetDescription(*s)
+	}
+	return guo
+}
+
+// ClearDescription clears the value of the "description" field.
+func (guo *GroupUpdateOne) ClearDescription() *GroupUpdateOne {
+	guo.mutation.ClearDescription()
+	return guo
+}
+
 // SetCreatedBy sets the "created_by" field.
 func (guo *GroupUpdateOne) SetCreatedBy(u uint32) *GroupUpdateOne {
 	guo.mutation.ResetCreatedBy()
@@ -191,6 +382,105 @@ func (guo *GroupUpdateOne) SetCreatedBy(u uint32) *GroupUpdateOne {
 // AddCreatedBy adds u to the "created_by" field.
 func (guo *GroupUpdateOne) AddCreatedBy(u int32) *GroupUpdateOne {
 	guo.mutation.AddCreatedBy(u)
+	return guo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (guo *GroupUpdateOne) SetUpdatedAt(t time.Time) *GroupUpdateOne {
+	guo.mutation.SetUpdatedAt(t)
+	return guo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (guo *GroupUpdateOne) ClearUpdatedAt() *GroupUpdateOne {
+	guo.mutation.ClearUpdatedAt()
+	return guo
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (guo *GroupUpdateOne) SetUpdatedBy(u uint32) *GroupUpdateOne {
+	guo.mutation.ResetUpdatedBy()
+	guo.mutation.SetUpdatedBy(u)
+	return guo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableUpdatedBy(u *uint32) *GroupUpdateOne {
+	if u != nil {
+		guo.SetUpdatedBy(*u)
+	}
+	return guo
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (guo *GroupUpdateOne) AddUpdatedBy(u int32) *GroupUpdateOne {
+	guo.mutation.AddUpdatedBy(u)
+	return guo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (guo *GroupUpdateOne) ClearUpdatedBy() *GroupUpdateOne {
+	guo.mutation.ClearUpdatedBy()
+	return guo
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (guo *GroupUpdateOne) SetDeletedAt(t time.Time) *GroupUpdateOne {
+	guo.mutation.SetDeletedAt(t)
+	return guo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableDeletedAt(t *time.Time) *GroupUpdateOne {
+	if t != nil {
+		guo.SetDeletedAt(*t)
+	}
+	return guo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (guo *GroupUpdateOne) ClearDeletedAt() *GroupUpdateOne {
+	guo.mutation.ClearDeletedAt()
+	return guo
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (guo *GroupUpdateOne) SetDeletedBy(u uint32) *GroupUpdateOne {
+	guo.mutation.ResetDeletedBy()
+	guo.mutation.SetDeletedBy(u)
+	return guo
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableDeletedBy(u *uint32) *GroupUpdateOne {
+	if u != nil {
+		guo.SetDeletedBy(*u)
+	}
+	return guo
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (guo *GroupUpdateOne) AddDeletedBy(u int32) *GroupUpdateOne {
+	guo.mutation.AddDeletedBy(u)
+	return guo
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (guo *GroupUpdateOne) ClearDeletedBy() *GroupUpdateOne {
+	guo.mutation.ClearDeletedBy()
+	return guo
+}
+
+// SetHeadcount sets the "headcount" field.
+func (guo *GroupUpdateOne) SetHeadcount(i int32) *GroupUpdateOne {
+	guo.mutation.ResetHeadcount()
+	guo.mutation.SetHeadcount(i)
+	return guo
+}
+
+// AddHeadcount adds i to the "headcount" field.
+func (guo *GroupUpdateOne) AddHeadcount(i int32) *GroupUpdateOne {
+	guo.mutation.AddHeadcount(i)
 	return guo
 }
 
@@ -214,6 +504,7 @@ func (guo *GroupUpdateOne) Select(field string, fields ...string) *GroupUpdateOn
 
 // Save executes the query and returns the updated Group entity.
 func (guo *GroupUpdateOne) Save(ctx context.Context) (*Group, error) {
+	guo.defaults()
 	return withHooks[*Group, GroupMutation](ctx, guo.sqlSave, guo.mutation, guo.hooks)
 }
 
@@ -236,6 +527,14 @@ func (guo *GroupUpdateOne) Exec(ctx context.Context) error {
 func (guo *GroupUpdateOne) ExecX(ctx context.Context) {
 	if err := guo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (guo *GroupUpdateOne) defaults() {
+	if _, ok := guo.mutation.UpdatedAt(); !ok && !guo.mutation.UpdatedAtCleared() {
+		v := group.UpdateDefaultUpdatedAt()
+		guo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -287,11 +586,53 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	if guo.mutation.AvatarCleared() {
 		_spec.ClearField(group.FieldAvatar, field.TypeString)
 	}
+	if value, ok := guo.mutation.Description(); ok {
+		_spec.SetField(group.FieldDescription, field.TypeString, value)
+	}
+	if guo.mutation.DescriptionCleared() {
+		_spec.ClearField(group.FieldDescription, field.TypeString)
+	}
 	if value, ok := guo.mutation.CreatedBy(); ok {
 		_spec.SetField(group.FieldCreatedBy, field.TypeUint32, value)
 	}
 	if value, ok := guo.mutation.AddedCreatedBy(); ok {
 		_spec.AddField(group.FieldCreatedBy, field.TypeUint32, value)
+	}
+	if value, ok := guo.mutation.UpdatedAt(); ok {
+		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if guo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(group.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := guo.mutation.UpdatedBy(); ok {
+		_spec.SetField(group.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if value, ok := guo.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(group.FieldUpdatedBy, field.TypeUint32, value)
+	}
+	if guo.mutation.UpdatedByCleared() {
+		_spec.ClearField(group.FieldUpdatedBy, field.TypeUint32)
+	}
+	if value, ok := guo.mutation.DeletedAt(); ok {
+		_spec.SetField(group.FieldDeletedAt, field.TypeTime, value)
+	}
+	if guo.mutation.DeletedAtCleared() {
+		_spec.ClearField(group.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := guo.mutation.DeletedBy(); ok {
+		_spec.SetField(group.FieldDeletedBy, field.TypeUint32, value)
+	}
+	if value, ok := guo.mutation.AddedDeletedBy(); ok {
+		_spec.AddField(group.FieldDeletedBy, field.TypeUint32, value)
+	}
+	if guo.mutation.DeletedByCleared() {
+		_spec.ClearField(group.FieldDeletedBy, field.TypeUint32)
+	}
+	if value, ok := guo.mutation.Headcount(); ok {
+		_spec.SetField(group.FieldHeadcount, field.TypeInt32, value)
+	}
+	if value, ok := guo.mutation.AddedHeadcount(); ok {
+		_spec.AddField(group.FieldHeadcount, field.TypeInt32, value)
 	}
 	_node = &Group{config: guo.config}
 	_spec.Assign = _node.assignValues

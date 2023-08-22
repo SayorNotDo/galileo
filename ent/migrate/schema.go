@@ -138,8 +138,14 @@ var (
 		{Name: "id", Type: field.TypeInt32, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "avatar", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "created_by", Type: field.TypeUint32},
 		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
+		{Name: "headcount", Type: field.TypeInt32},
 	}
 	// GroupsTable holds the schema information for the "groups" table.
 	GroupsTable = &schema.Table{
@@ -151,7 +157,7 @@ var (
 	GroupMemberColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt32, Increment: true},
 		{Name: "group_id", Type: field.TypeInt32},
-		{Name: "user_id", Type: field.TypeInt32},
+		{Name: "user_id", Type: field.TypeUint32},
 		{Name: "role", Type: field.TypeUint8, Default: 0},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},

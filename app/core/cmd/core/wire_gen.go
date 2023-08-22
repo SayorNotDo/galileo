@@ -36,11 +36,11 @@ func wireApp(confServer *conf.Server, confData *conf.Data, auth *conf.Auth, conf
 		return nil, nil, err
 	}
 	coreRepo := data.NewCoreRepo(dataData, logger)
-	coreUseCase := biz.NewCoreUseCase(coreRepo, logger, auth)
+	coreUseCase := biz.NewCoreUseCase(coreRepo, logger)
 	engineRepo := data.NewEngineRepo(dataData, logger)
 	engineUseCase := biz.NewEngineUseCase(engineRepo, logger)
 	userRepo := data.NewUserRepo(dataData, logger)
-	userUseCase := biz.NewUserUseCase(userRepo, logger)
+	userUseCase := biz.NewUserUseCase(userRepo, logger, auth)
 	coreService := service.NewCoreService(coreUseCase, engineUseCase, userUseCase, logger)
 	httpServer := server.NewHTTPServer(confServer, auth, coreService, logger)
 	registrar := data.NewRegistrar(registry)

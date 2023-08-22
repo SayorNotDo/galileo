@@ -10,6 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/samber/lo"
 	"strings"
 )
 
@@ -27,7 +28,7 @@ func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
 
 func (u *userRepo) GetUserProjectList(ctx context.Context) ([]*v1.ProjectInfo, error) {
 	/* 初始化返回值 */
-	var projectList []*v1.ProjectInfo
+	var projectList = make([]*v1.ProjectInfo, 0)
 	res, err := u.data.managementCli.GetUserProjectList(ctx, &empty.Empty{})
 	if err != nil {
 		return nil, err
@@ -49,7 +50,36 @@ func (u *userRepo) GetUserProjectList(ctx context.Context) ([]*v1.ProjectInfo, e
 			Remark:      v.Remark,
 		})
 	}
-	return nil, nil
+	return projectList, nil
+}
+
+func (u *userRepo) GetUserGroupList(ctx context.Context) ([]*biz.UserGroup, error) {
+	/* 初始化返回值 */
+	var groupList = make([]*biz.UserGroup, 0)
+	res, err := u.data.uc.GetUserGroupList(ctx, &empty.Empty{})
+	if err != nil {
+		return nil, err
+	}
+	lo.ForEach(res.GroupList, func(item *userService.UserGroup, index int) {
+		groupList = append(groupList, &biz.UserGroup{
+			GroupMemberId: item.GroupMemberId,
+			Role:          uint8(item.Role),
+			GroupInfo: biz.Group{
+				Id:          item.Group.Id,
+				Name:        item.Group.Name,
+				Avatar:      item.Group.Avatar,
+				Description: item.Group.Description,
+				Headcount:   item.Group.Headcount,
+				CreatedAt:   item.Group.CreatedAt.AsTime(),
+				CreatedBy:   item.Group.CreatedBy,
+				UpdatedAt:   item.Group.UpdatedAt.AsTime(),
+				UpdatedBy:   item.Group.UpdatedBy,
+				DeletedAt:   item.Group.DeletedAt.AsTime(),
+				DeletedBy:   item.Group.DeletedBy,
+			},
+		})
+	})
+	return groupList, nil
 }
 
 func (u *userRepo) ListUser(c context.Context, pageNum, pageSize int32) ([]*v1.UserDetail, int32, error) {

@@ -60,7 +60,7 @@ func GroupID(v int32) predicate.GroupMember {
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v int32) predicate.GroupMember {
+func UserID(v uint32) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldEQ(FieldUserID, v))
 }
 
@@ -130,42 +130,42 @@ func GroupIDLTE(v int32) predicate.GroupMember {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v int32) predicate.GroupMember {
+func UserIDEQ(v uint32) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v int32) predicate.GroupMember {
+func UserIDNEQ(v uint32) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...int32) predicate.GroupMember {
+func UserIDIn(vs ...uint32) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...int32) predicate.GroupMember {
+func UserIDNotIn(vs ...uint32) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v int32) predicate.GroupMember {
+func UserIDGT(v uint32) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldGT(FieldUserID, v))
 }
 
 // UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v int32) predicate.GroupMember {
+func UserIDGTE(v uint32) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldGTE(FieldUserID, v))
 }
 
 // UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v int32) predicate.GroupMember {
+func UserIDLT(v uint32) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldLT(FieldUserID, v))
 }
 
 // UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v int32) predicate.GroupMember {
+func UserIDLTE(v uint32) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldLTE(FieldUserID, v))
 }
 

@@ -6,10 +6,14 @@ import (
 	v1 "galileo/api/user/v1"
 	"galileo/app/user/internal/biz"
 	"galileo/ent"
+	"galileo/ent/group"
+	"galileo/ent/groupmember"
 	"galileo/ent/user"
+	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/redis/go-redis/v9"
+	"github.com/samber/lo"
 	"time"
 )
 
@@ -190,4 +194,48 @@ func (repo *userRepo) EmptyToken(ctx context.Context, username string) (bool, er
 		return false, errors.InternalServer("InternalServer Error", res.Err().Error())
 	}
 	return true, nil
+}
+
+func (repo *userRepo) GetUserGroupList(ctx context.Context, uid uint32) ([]*biz.UserGroup, error) {
+	/* 初始化返回值 */
+	var groupList = make([]*biz.UserGroup, 0)
+	var err error
+	/* 关系表查询对应uid的记录 */
+	ret, err := repo.data.entDB.GroupMember.Query().
+		Where(groupmember.UserID(uid)).All(ctx)
+	switch {
+	case ent.IsNotFound(err):
+		return nil, SetCustomizeErrInfoByReason(ReasonRecordNotFound)
+	case err != nil:
+		return nil, err
+	}
+	lo.ForEach(ret, func(item *ent.GroupMember, _ int) {
+		var queryGroup *ent.Group
+		/* 基于获取的记录查询对应的GroupInfo */
+		queryGroup, err = repo.data.entDB.Group.Query().Where(group.ID(item.GroupID)).Only(ctx)
+		if err != nil {
+			return
+		}
+		groupList = append(groupList, &biz.UserGroup{
+			GroupMemberId: item.ID,
+			Role:          item.Role,
+			GroupInfo: biz.Group{
+				Id:          queryGroup.ID,
+				Name:        queryGroup.Name,
+				Avatar:      queryGroup.Avatar,
+				Description: queryGroup.Description,
+				CreatedBy:   queryGroup.CreatedBy,
+				CreatedAt:   queryGroup.CreatedAt,
+				UpdatedBy:   queryGroup.UpdatedBy,
+				UpdatedAt:   queryGroup.UpdatedAt,
+				DeletedBy:   queryGroup.DeletedBy,
+				DeletedAt:   queryGroup.DeletedAt,
+				Headcount:   queryGroup.Headcount,
+			},
+		})
+	})
+	if err != nil {
+		return nil, err
+	}
+	return groupList, nil
 }

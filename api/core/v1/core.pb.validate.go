@@ -57,6 +57,42 @@ func (m *UserGroupListReply) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Total
+
+	for idx, item := range m.GetGroupList() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserGroupListReplyValidationError{
+						field:  fmt.Sprintf("GroupList[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserGroupListReplyValidationError{
+						field:  fmt.Sprintf("GroupList[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserGroupListReplyValidationError{
+					field:  fmt.Sprintf("GroupList[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return UserGroupListReplyMultiError(errors)
 	}
@@ -136,6 +172,439 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UserGroupListReplyValidationError{}
+
+// Validate checks the field values on UserGroup with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UserGroup) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserGroup with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UserGroupMultiError, or nil
+// if none found.
+func (m *UserGroup) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserGroup) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for GroupMemberId
+
+	// no validation rules for Role
+
+	if all {
+		switch v := interface{}(m.GetGroup()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserGroupValidationError{
+					field:  "Group",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserGroupValidationError{
+					field:  "Group",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetGroup()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UserGroupValidationError{
+				field:  "Group",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UserGroupMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserGroupMultiError is an error wrapping multiple validation errors returned
+// by UserGroup.ValidateAll() if the designated constraints aren't met.
+type UserGroupMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserGroupMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserGroupMultiError) AllErrors() []error { return m }
+
+// UserGroupValidationError is the validation error returned by
+// UserGroup.Validate if the designated constraints aren't met.
+type UserGroupValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserGroupValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserGroupValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserGroupValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserGroupValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserGroupValidationError) ErrorName() string { return "UserGroupValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UserGroupValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserGroup.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserGroupValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserGroupValidationError{}
+
+// Validate checks the field values on GroupInfo with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GroupInfo) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GroupInfo with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in GroupInfoMultiError, or nil
+// if none found.
+func (m *GroupInfo) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GroupInfo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for Name
+
+	// no validation rules for Avatar
+
+	// no validation rules for Description
+
+	if all {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GroupInfoValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GroupInfoValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GroupInfoValidationError{
+				field:  "CreatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for CreatedBy
+
+	if all {
+		switch v := interface{}(m.GetUpdatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GroupInfoValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GroupInfoValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GroupInfoValidationError{
+				field:  "UpdatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for UpdatedBy
+
+	if all {
+		switch v := interface{}(m.GetDeletedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GroupInfoValidationError{
+					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GroupInfoValidationError{
+					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDeletedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GroupInfoValidationError{
+				field:  "DeletedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for DeletedBy
+
+	// no validation rules for Headcount
+
+	if len(errors) > 0 {
+		return GroupInfoMultiError(errors)
+	}
+
+	return nil
+}
+
+// GroupInfoMultiError is an error wrapping multiple validation errors returned
+// by GroupInfo.ValidateAll() if the designated constraints aren't met.
+type GroupInfoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GroupInfoMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GroupInfoMultiError) AllErrors() []error { return m }
+
+// GroupInfoValidationError is the validation error returned by
+// GroupInfo.Validate if the designated constraints aren't met.
+type GroupInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GroupInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GroupInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GroupInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GroupInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GroupInfoValidationError) ErrorName() string { return "GroupInfoValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GroupInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGroupInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GroupInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GroupInfoValidationError{}
+
+// Validate checks the field values on GroupMember with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GroupMember) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GroupMember with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in GroupMemberMultiError, or
+// nil if none found.
+func (m *GroupMember) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GroupMember) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GroupMemberMultiError(errors)
+	}
+
+	return nil
+}
+
+// GroupMemberMultiError is an error wrapping multiple validation errors
+// returned by GroupMember.ValidateAll() if the designated constraints aren't met.
+type GroupMemberMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GroupMemberMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GroupMemberMultiError) AllErrors() []error { return m }
+
+// GroupMemberValidationError is the validation error returned by
+// GroupMember.Validate if the designated constraints aren't met.
+type GroupMemberValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GroupMemberValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GroupMemberValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GroupMemberValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GroupMemberValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GroupMemberValidationError) ErrorName() string { return "GroupMemberValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GroupMemberValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGroupMember.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GroupMemberValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GroupMemberValidationError{}
 
 // Validate checks the field values on UserLatestActivityReply with the rules
 // defined in the proto definition for this message. If any rules are

@@ -3,9 +3,12 @@ package service
 import (
 	"context"
 	v1 "galileo/api/core/v1"
+	"galileo/app/core/internal/biz"
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/samber/lo"
 	"go.opentelemetry.io/otel"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (c *CoreService) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterReply, error) {
@@ -81,5 +84,32 @@ func (c *CoreService) GetUserLatestActivity(ctx context.Context, empty *empty.Em
 }
 
 func (c *CoreService) GetUserGroupList(ctx context.Context, empty *empty.Empty) (*v1.UserGroupListReply, error) {
-	return nil, nil
+	var userGroupList = make([]*v1.UserGroup, 0)
+	ret, err := c.uc.GetUserGroupList(ctx)
+	if err != nil {
+		return nil, err
+	}
+	lo.ForEach(ret, func(item *biz.UserGroup, _ int) {
+		userGroupList = append(userGroupList, &v1.UserGroup{
+			GroupMemberId: item.GroupMemberId,
+			Role:          int32(item.Role),
+			Group: &v1.GroupInfo{
+				Id:          item.GroupInfo.Id,
+				Name:        item.GroupInfo.Name,
+				Avatar:      item.GroupInfo.Avatar,
+				Description: item.GroupInfo.Description,
+				CreatedAt:   timestamppb.New(item.GroupInfo.CreatedAt),
+				CreatedBy:   item.GroupInfo.CreatedBy,
+				UpdatedAt:   timestamppb.New(item.GroupInfo.UpdatedAt),
+				UpdatedBy:   item.GroupInfo.UpdatedBy,
+				DeletedAt:   timestamppb.New(item.GroupInfo.DeletedAt),
+				DeletedBy:   item.GroupInfo.DeletedBy,
+				Headcount:   item.GroupInfo.Headcount,
+			},
+		})
+	})
+	return &v1.UserGroupListReply{
+		Total:     int32(len(ret)),
+		GroupList: userGroupList,
+	}, nil
 }

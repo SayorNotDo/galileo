@@ -6,25 +6,7 @@ import (
 	"galileo/app/user/internal/pkg/util"
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
-	"time"
 )
-
-type User struct {
-	Id          uint32    `json:"id"`
-	Username    string    `json:"name"`
-	ChineseName string    `json:"chinese_name"`
-	Nickname    string    `json:"nickname"`
-	Password    string    `json:"password"`
-	Avatar      string    `json:"avatar"`
-	Email       string    `json:"email"`
-	Phone       string    `json:"phone"`
-	Status      bool      `json:"status"`
-	Role        int32     `json:"role"`
-	UpdateAt    time.Time `json:"update_at"`
-	DeletedAt   time.Time `json:"deleted_at"`
-	DeletedBy   uint32    `json:"deleted_by"`
-	CreatedAt   time.Time `json:"created_at"`
-}
 
 type UserRepo interface {
 	Save(context.Context, *User) (*User, error)
@@ -38,6 +20,7 @@ type UserRepo interface {
 	SoftDeleteById(context.Context, uint32, uint32) (bool, error)
 	SetToken(context.Context, string, string) (bool, error)
 	EmptyToken(context.Context, string) (bool, error)
+	GetUserGroupList(context.Context, uint32) ([]*UserGroup, error)
 }
 
 type UserUseCase struct {
@@ -105,4 +88,8 @@ func (uc *UserUseCase) UpdatePassword(ctx context.Context, u *User, newPassword 
 	}
 	u.Password = encryptedPassword
 	return uc.repo.UpdatePassword(ctx, u)
+}
+
+func (uc *UserUseCase) GetUserGroupList(ctx context.Context, uid uint32) ([]*UserGroup, error) {
+	return uc.repo.GetUserGroupList(ctx, uid)
 }

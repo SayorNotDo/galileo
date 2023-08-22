@@ -42,15 +42,15 @@ func (gmu *GroupMemberUpdate) AddGroupID(i int32) *GroupMemberUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (gmu *GroupMemberUpdate) SetUserID(i int32) *GroupMemberUpdate {
+func (gmu *GroupMemberUpdate) SetUserID(u uint32) *GroupMemberUpdate {
 	gmu.mutation.ResetUserID()
-	gmu.mutation.SetUserID(i)
+	gmu.mutation.SetUserID(u)
 	return gmu
 }
 
-// AddUserID adds i to the "user_id" field.
-func (gmu *GroupMemberUpdate) AddUserID(i int32) *GroupMemberUpdate {
-	gmu.mutation.AddUserID(i)
+// AddUserID adds u to the "user_id" field.
+func (gmu *GroupMemberUpdate) AddUserID(u int32) *GroupMemberUpdate {
+	gmu.mutation.AddUserID(u)
 	return gmu
 }
 
@@ -183,10 +183,10 @@ func (gmu *GroupMemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddField(groupmember.FieldGroupID, field.TypeInt32, value)
 	}
 	if value, ok := gmu.mutation.UserID(); ok {
-		_spec.SetField(groupmember.FieldUserID, field.TypeInt32, value)
+		_spec.SetField(groupmember.FieldUserID, field.TypeUint32, value)
 	}
 	if value, ok := gmu.mutation.AddedUserID(); ok {
-		_spec.AddField(groupmember.FieldUserID, field.TypeInt32, value)
+		_spec.AddField(groupmember.FieldUserID, field.TypeUint32, value)
 	}
 	if value, ok := gmu.mutation.Role(); ok {
 		_spec.SetField(groupmember.FieldRole, field.TypeUint8, value)
@@ -249,15 +249,15 @@ func (gmuo *GroupMemberUpdateOne) AddGroupID(i int32) *GroupMemberUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (gmuo *GroupMemberUpdateOne) SetUserID(i int32) *GroupMemberUpdateOne {
+func (gmuo *GroupMemberUpdateOne) SetUserID(u uint32) *GroupMemberUpdateOne {
 	gmuo.mutation.ResetUserID()
-	gmuo.mutation.SetUserID(i)
+	gmuo.mutation.SetUserID(u)
 	return gmuo
 }
 
-// AddUserID adds i to the "user_id" field.
-func (gmuo *GroupMemberUpdateOne) AddUserID(i int32) *GroupMemberUpdateOne {
-	gmuo.mutation.AddUserID(i)
+// AddUserID adds u to the "user_id" field.
+func (gmuo *GroupMemberUpdateOne) AddUserID(u int32) *GroupMemberUpdateOne {
+	gmuo.mutation.AddUserID(u)
 	return gmuo
 }
 
@@ -420,10 +420,10 @@ func (gmuo *GroupMemberUpdateOne) sqlSave(ctx context.Context) (_node *GroupMemb
 		_spec.AddField(groupmember.FieldGroupID, field.TypeInt32, value)
 	}
 	if value, ok := gmuo.mutation.UserID(); ok {
-		_spec.SetField(groupmember.FieldUserID, field.TypeInt32, value)
+		_spec.SetField(groupmember.FieldUserID, field.TypeUint32, value)
 	}
 	if value, ok := gmuo.mutation.AddedUserID(); ok {
-		_spec.AddField(groupmember.FieldUserID, field.TypeInt32, value)
+		_spec.AddField(groupmember.FieldUserID, field.TypeUint32, value)
 	}
 	if value, ok := gmuo.mutation.Role(); ok {
 		_spec.SetField(groupmember.FieldRole, field.TypeUint8, value)

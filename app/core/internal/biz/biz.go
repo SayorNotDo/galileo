@@ -1,22 +1,45 @@
 package biz
 
 import (
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	"time"
 )
 
 // ProviderSet is biz providers.
 var ProviderSet = wire.NewSet(NewCoreUseCase, NewEngineUseCase, NewUserUseCase)
 
-type EngineUseCase struct {
-	repo EngineRepo
-	log  *log.Helper
+type User struct {
+	Id          uint32
+	Phone       string
+	ChineseName string
+	Username    string
+	Nickname    string
+	Gender      string
+	Email       string
+	Role        int32
+	Password    string
+	Status      bool
+	CreatedAt   time.Time
+	DeletedAt   time.Time
+	DeletedBy   uint32
 }
 
-func NewEngineUseCase(repo EngineRepo, logger log.Logger) *EngineUseCase {
-	helper := log.NewHelper(log.With(logger, "module", "core.useCase"))
-	return &EngineUseCase{
-		repo: repo,
-		log:  helper,
-	}
+type UserGroup struct {
+	GroupMemberId int32 `json:"group_member_id"`
+	Role          uint8 `json:"role"`
+	GroupInfo     Group `json:"group_info"`
+}
+
+type Group struct {
+	Id          int32     `json:"id"`
+	Name        string    `json:"name"`
+	Avatar      string    `json:"avatar"`
+	Description string    `json:"description"`
+	Headcount   int32     `json:"headcount"`
+	CreatedAt   time.Time `json:"created_at"`
+	CreatedBy   uint32    `json:"created_by"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	UpdatedBy   uint32    `json:"updated_by"`
+	DeletedAt   time.Time `json:"deleted_at"`
+	DeletedBy   uint32    `json:"deleted_by"`
 }

@@ -40,6 +40,20 @@ func (gc *GroupCreate) SetNillableAvatar(s *string) *GroupCreate {
 	return gc
 }
 
+// SetDescription sets the "description" field.
+func (gc *GroupCreate) SetDescription(s string) *GroupCreate {
+	gc.mutation.SetDescription(s)
+	return gc
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableDescription(s *string) *GroupCreate {
+	if s != nil {
+		gc.SetDescription(*s)
+	}
+	return gc
+}
+
 // SetCreatedBy sets the "created_by" field.
 func (gc *GroupCreate) SetCreatedBy(u uint32) *GroupCreate {
 	gc.mutation.SetCreatedBy(u)
@@ -57,6 +71,68 @@ func (gc *GroupCreate) SetNillableCreatedAt(t *time.Time) *GroupCreate {
 	if t != nil {
 		gc.SetCreatedAt(*t)
 	}
+	return gc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (gc *GroupCreate) SetUpdatedAt(t time.Time) *GroupCreate {
+	gc.mutation.SetUpdatedAt(t)
+	return gc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableUpdatedAt(t *time.Time) *GroupCreate {
+	if t != nil {
+		gc.SetUpdatedAt(*t)
+	}
+	return gc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (gc *GroupCreate) SetUpdatedBy(u uint32) *GroupCreate {
+	gc.mutation.SetUpdatedBy(u)
+	return gc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableUpdatedBy(u *uint32) *GroupCreate {
+	if u != nil {
+		gc.SetUpdatedBy(*u)
+	}
+	return gc
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (gc *GroupCreate) SetDeletedAt(t time.Time) *GroupCreate {
+	gc.mutation.SetDeletedAt(t)
+	return gc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableDeletedAt(t *time.Time) *GroupCreate {
+	if t != nil {
+		gc.SetDeletedAt(*t)
+	}
+	return gc
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (gc *GroupCreate) SetDeletedBy(u uint32) *GroupCreate {
+	gc.mutation.SetDeletedBy(u)
+	return gc
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableDeletedBy(u *uint32) *GroupCreate {
+	if u != nil {
+		gc.SetDeletedBy(*u)
+	}
+	return gc
+}
+
+// SetHeadcount sets the "headcount" field.
+func (gc *GroupCreate) SetHeadcount(i int32) *GroupCreate {
+	gc.mutation.SetHeadcount(i)
 	return gc
 }
 
@@ -123,6 +199,9 @@ func (gc *GroupCreate) check() error {
 	if _, ok := gc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Group.created_at"`)}
 	}
+	if _, ok := gc.mutation.Headcount(); !ok {
+		return &ValidationError{Name: "headcount", err: errors.New(`ent: missing required field "Group.headcount"`)}
+	}
 	return nil
 }
 
@@ -163,6 +242,10 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 		_spec.SetField(group.FieldAvatar, field.TypeString, value)
 		_node.Avatar = value
 	}
+	if value, ok := gc.mutation.Description(); ok {
+		_spec.SetField(group.FieldDescription, field.TypeString, value)
+		_node.Description = value
+	}
 	if value, ok := gc.mutation.CreatedBy(); ok {
 		_spec.SetField(group.FieldCreatedBy, field.TypeUint32, value)
 		_node.CreatedBy = value
@@ -170,6 +253,26 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if value, ok := gc.mutation.CreatedAt(); ok {
 		_spec.SetField(group.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
+	}
+	if value, ok := gc.mutation.UpdatedAt(); ok {
+		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := gc.mutation.UpdatedBy(); ok {
+		_spec.SetField(group.FieldUpdatedBy, field.TypeUint32, value)
+		_node.UpdatedBy = value
+	}
+	if value, ok := gc.mutation.DeletedAt(); ok {
+		_spec.SetField(group.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
+	}
+	if value, ok := gc.mutation.DeletedBy(); ok {
+		_spec.SetField(group.FieldDeletedBy, field.TypeUint32, value)
+		_node.DeletedBy = value
+	}
+	if value, ok := gc.mutation.Headcount(); ok {
+		_spec.SetField(group.FieldHeadcount, field.TypeInt32, value)
+		_node.Headcount = value
 	}
 	return _node, _spec
 }

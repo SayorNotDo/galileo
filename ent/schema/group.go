@@ -18,10 +18,16 @@ func (Group) Fields() []ent.Field {
 		field.Int32("id"),
 		field.String("name").Match(regexp.MustCompile("[a-zA-Z_]+$")),
 		field.Text("avatar").Optional(),
+		field.Text("description").Optional(),
 		field.Uint32("created_by"),
 		field.Time("created_at").
 			Default(time.Now).
 			Immutable(),
+		field.Time("updated_at").Optional().UpdateDefault(time.Now),
+		field.Uint32("updated_by").Optional(),
+		field.Time("deleted_at").Optional(),
+		field.Uint32("deleted_by").Optional(),
+		field.Int32("headcount"),
 	}
 }
 
