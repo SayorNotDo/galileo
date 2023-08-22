@@ -20,7 +20,7 @@ import (
 )
 
 type UserRepo interface {
-	UserById(context.Context, uint32) (*User, error)
+	GetUserInfo(context.Context) (*User, error)
 	CreateUser(ctx context.Context, u *User) (*User, error)
 	UpdatePassword(ctx context.Context, password string) (bool, error)
 	SoftDeleteUser(ctx context.Context, uid uint32) (bool, error)
@@ -29,6 +29,7 @@ type UserRepo interface {
 	DestroyToken(ctx context.Context) error
 	ListUser(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserDetail, int32, error)
 	GetUserProjectList(ctx context.Context) ([]*v1.ProjectInfo, error)
+	GetUserGroup(ctx context.Context, groupId int32) (*UserGroup, error)
 	GetUserGroupList(ctx context.Context) ([]*UserGroup, error)
 	VerifyPassword(ctx context.Context, password, encryptedPassword string) (bool, error)
 }
@@ -100,7 +101,7 @@ func (u *UserUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (
 	}, nil
 }
 
-func (u *UserUseCase) UpdateUserInfo(ctx context.Context, req *v1.UserInfoUpdateRequest) (*v1.UserInfoUpdateReply, error) {
+func (u *UserUseCase) UpdateUserInfo(ctx context.Context, req *v1.UserInfoRequest) (*v1.UserInfoReply, error) {
 	userClaim, ok := jwt.FromContext(ctx)
 	if !ok {
 		return nil, SetErrByReason(ReasonUnknownError)
@@ -140,7 +141,7 @@ func (u *UserUseCase) DeleteUser(ctx context.Context, deleteId uint32) (*v1.Dele
 		return nil, errors.Forbidden(http.StatusText(403), "Permission denied")
 	}
 	ctx = metadata.AppendToClientContext(ctx, ctxdata.UserIdKey, uid)
-	_, err := u.repo.UserById(ctx, deleteId)
+	_, err := u.repo.GetUserInfo(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -182,22 +183,15 @@ func (u *UserUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 }
 
 func (u *UserUseCase) Logout(ctx context.Context) (*emptypb.Empty, error) {
-	claims, _ := jwt.FromContext(ctx)
-	id := uint32(claims.(jwt2.MapClaims)["ID"].(float64))
-	if _, err := u.repo.UserById(ctx, id); err != nil {
+	if _, err := u.repo.GetUserInfo(ctx); err != nil {
 		return nil, err
 	}
 	_ = u.repo.DestroyToken(ctx)
 	return nil, nil
 }
 
-func (u *UserUseCase) UserDetail(ctx context.Context, empty *emptypb.Empty) (*v1.UserDetailReply, error) {
-	userClaim, ok := jwt.FromContext(ctx)
-	if !ok {
-		return nil, SetErrByReason(ReasonUnknownError)
-	}
-	uid := uint32(userClaim.(jwt2.MapClaims)["ID"].(float64))
-	user, err := u.repo.UserById(ctx, uid)
+func (u *UserUseCase) GetUserInfo(ctx context.Context) (*v1.UserDetailReply, error) {
+	user, err := u.repo.GetUserInfo(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -228,4 +222,8 @@ func (u *UserUseCase) GetUserProjectList(ctx context.Context) ([]*v1.ProjectInfo
 
 func (u *UserUseCase) GetUserGroupList(ctx context.Context) ([]*UserGroup, error) {
 	return u.repo.GetUserGroupList(ctx)
+}
+
+func (u *UserUseCase) GetUserGroup(ctx context.Context, groupId int32) (*UserGroup, error) {
+	return u.repo.GetUserGroup(ctx, groupId)
 }

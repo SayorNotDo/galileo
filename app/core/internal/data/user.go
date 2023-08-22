@@ -102,8 +102,8 @@ func (u *userRepo) ListUser(c context.Context, pageNum, pageSize int32) ([]*v1.U
 	return rv, total, nil
 }
 
-func (u *userRepo) UserById(c context.Context, id uint32) (*biz.User, error) {
-	user, err := u.data.uc.GetUser(c, &userService.GetUserRequest{Id: id})
+func (u *userRepo) GetUserInfo(ctx context.Context) (*biz.User, error) {
+	user, err := u.data.uc.GetUserInfo(ctx, &empty.Empty{})
 	if err != nil {
 		return nil, err
 	}
@@ -192,4 +192,9 @@ func (u *userRepo) UpdatePassword(ctx context.Context, password string) (bool, e
 		return false, err
 	}
 	return true, nil
+}
+
+func (u *userRepo) GetUserGroup(ctx context.Context, groupId int32) (*biz.UserGroup, error) {
+
+	return nil, nil
 }

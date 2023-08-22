@@ -239,3 +239,44 @@ func (repo *userRepo) GetUserGroupList(ctx context.Context, uid uint32) ([]*biz.
 	}
 	return groupList, nil
 }
+
+func (repo *userRepo) GetUserGroup(ctx context.Context, uid uint32, groupId int32) (*biz.UserGroup, error) {
+	ret, err := repo.data.entDB.Group.Get(ctx, groupId)
+	switch {
+	case ent.IsNotFound(err):
+		return nil, SetErrByReason(ReasonRecordNotFound)
+	case err != nil:
+		return nil, err
+	}
+	var groupMember struct {
+		Id   int32 `json:"id"`
+		Role uint8 `json:"role"`
+	}
+	if err := repo.data.entDB.GroupMember.Query().
+		Where(
+			groupmember.UserID(uid),
+			groupmember.GroupID(groupId),
+		).Select(
+		groupmember.FieldID,
+		groupmember.FieldRole,
+	).Scan(ctx, &groupMember); err != nil {
+		return nil, err
+	}
+	return &biz.UserGroup{
+		GroupMemberId: groupMember.Id,
+		Role:          groupMember.Role,
+		GroupInfo: biz.Group{
+			Id:          ret.ID,
+			Name:        ret.Name,
+			Avatar:      ret.Avatar,
+			Description: ret.Description,
+			Headcount:   ret.Headcount,
+			CreatedAt:   ret.CreatedAt,
+			CreatedBy:   ret.CreatedBy,
+			UpdatedAt:   ret.UpdatedAt,
+			UpdatedBy:   ret.UpdatedBy,
+			DeletedAt:   ret.DeletedAt,
+			DeletedBy:   ret.DeletedBy,
+		},
+	}, nil
+}

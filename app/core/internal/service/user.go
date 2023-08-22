@@ -4,6 +4,8 @@ import (
 	"context"
 	v1 "galileo/api/core/v1"
 	"galileo/app/core/internal/biz"
+	"galileo/pkg/ctxdata"
+	"galileo/pkg/errResponse"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/samber/lo"
 	"go.opentelemetry.io/otel"
@@ -29,7 +31,7 @@ func (c *CoreService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	return c.uc.Login(ctx, req)
 }
 
-func (c *CoreService) Logout(ctx context.Context, req *v1.LogoutRequest) (*emptypb.Empty, error) {
+func (c *CoreService) Logout(ctx context.Context, empty *empty.Empty) (*emptypb.Empty, error) {
 	// add trace
 	tr := otel.Tracer("scheduler")
 	ctx, span := tr.Start(ctx, "logout")
@@ -42,16 +44,25 @@ func (c *CoreService) UpdatePassword(ctx context.Context, req *v1.UpdatePassword
 	return c.uc.UpdatePassword(ctx, req)
 }
 
-func (c *CoreService) UserDetail(ctx context.Context, req *emptypb.Empty) (*v1.UserDetailReply, error) {
-	return c.uc.UserDetail(ctx, &emptypb.Empty{})
-}
-
 func (c *CoreService) ListUser(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserReply, error) {
 	return c.uc.ListUser(ctx, req.PageNum, req.PageSize)
 }
 
-func (c *CoreService) UpdateUserInfo(ctx context.Context, req *v1.UserInfoUpdateRequest) (*v1.UserInfoUpdateReply, error) {
-	return c.uc.UpdateUserInfo(ctx, req)
+func (c *CoreService) UserInfo(ctx context.Context, req *v1.UserInfoRequest) (*v1.UserInfoReply, error) {
+	var reply *v1.UserInfoReply
+	var err error
+	switch ctxdata.MethodFromContext(ctx) {
+	case "PUT":
+		reply, err = c.uc.UpdateUserInfo(ctx, req)
+	case "GET":
+		//return c.uc.GetUserInfo(ctx)
+	case "":
+		return nil, errResponse.SetErrByReason(errResponse.ReasonSystemError)
+	}
+	if err != nil {
+		return nil, err
+	}
+	return reply, nil
 }
 
 func (c *CoreService) DeleteUser(ctx context.Context, req *v1.DeleteRequest) (*v1.DeleteReply, error) {
@@ -112,4 +123,16 @@ func (c *CoreService) GetUserGroupList(ctx context.Context, empty *empty.Empty) 
 		Total:     int32(len(ret)),
 		GroupList: userGroupList,
 	}, nil
+}
+
+func (c *CoreService) UserGroup(ctx context.Context, req *v1.UserGroupRequest) (*v1.UserGroupReply, error) {
+	var reply *v1.UserGroupReply
+	switch ctxdata.MethodFromContext(ctx) {
+	case "POST":
+	case "DELETE":
+	case "PUT":
+	case "GET":
+
+	}
+	return reply, nil
 }

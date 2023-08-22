@@ -20,7 +20,6 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationCoreCreateGroup = "/api.core.v1.Core/CreateGroup"
 const OperationCoreDataReportTrack = "/api.core.v1.Core/DataReportTrack"
 const OperationCoreDeleteUser = "/api.core.v1.Core/DeleteUser"
 const OperationCoreExecuteToken = "/api.core.v1.Core/ExecuteToken"
@@ -33,15 +32,11 @@ const OperationCoreLogin = "/api.core.v1.Core/Login"
 const OperationCoreLogout = "/api.core.v1.Core/Logout"
 const OperationCoreRegister = "/api.core.v1.Core/Register"
 const OperationCoreUnregister = "/api.core.v1.Core/Unregister"
-const OperationCoreUpdateEmail = "/api.core.v1.Core/UpdateEmail"
-const OperationCoreUpdateGroup = "/api.core.v1.Core/UpdateGroup"
 const OperationCoreUpdatePassword = "/api.core.v1.Core/UpdatePassword"
-const OperationCoreUpdatePhone = "/api.core.v1.Core/UpdatePhone"
-const OperationCoreUpdateUserInfo = "/api.core.v1.Core/UpdateUserInfo"
-const OperationCoreUserDetail = "/api.core.v1.Core/UserDetail"
+const OperationCoreUserGroup = "/api.core.v1.Core/UserGroup"
+const OperationCoreUserInfo = "/api.core.v1.Core/UserInfo"
 
 type CoreHTTPServer interface {
-	CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupReply, error)
 	DataReportTrack(context.Context, *DataReportTrackRequest) (*emptypb.Empty, error)
 	DeleteUser(context.Context, *DeleteRequest) (*DeleteReply, error)
 	ExecuteToken(context.Context, *ExecuteTokenRequest) (*ExecuteTokenReply, error)
@@ -51,15 +46,12 @@ type CoreHTTPServer interface {
 	InspectContainer(context.Context, *InspectContainerRequest) (*ContainerInfo, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
-	Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error)
+	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error)
-	UpdateEmail(context.Context, *UpdateEmailRequest) (*UpdateEmailReply, error)
-	UpdateGroup(context.Context, *UpdateGroupRequest) (*emptypb.Empty, error)
 	UpdatePassword(context.Context, *UpdatePasswordRequest) (*emptypb.Empty, error)
-	UpdatePhone(context.Context, *UpdatePhoneRequest) (*UpdatePhoneReply, error)
-	UpdateUserInfo(context.Context, *UserInfoUpdateRequest) (*UserInfoUpdateReply, error)
-	UserDetail(context.Context, *emptypb.Empty) (*UserDetailReply, error)
+	UserGroup(context.Context, *UserGroupRequest) (*UserGroupReply, error)
+	UserInfo(context.Context, *UserInfoRequest) (*UserInfoReply, error)
 }
 
 func RegisterCoreHTTPServer(s *http.Server, srv CoreHTTPServer) {
@@ -68,15 +60,15 @@ func RegisterCoreHTTPServer(s *http.Server, srv CoreHTTPServer) {
 	r.POST("v1/api/user/login", _Core_Login0_HTTP_Handler(srv))
 	r.DELETE("v1/api/user/unregister", _Core_Unregister0_HTTP_Handler(srv))
 	r.POST("v1/api/user/logout", _Core_Logout0_HTTP_Handler(srv))
-	r.DELETE("v1/api/user/delete/{id}", _Core_DeleteUser0_HTTP_Handler(srv))
-	r.GET("v1/api/user/info", _Core_UserDetail0_HTTP_Handler(srv))
-	r.PUT("v1/api/user/update", _Core_UpdateUserInfo0_HTTP_Handler(srv))
+	r.DELETE("v1/api/user/{id}", _Core_DeleteUser0_HTTP_Handler(srv))
+	r.PUT("v1/api/user/info", _Core_UserInfo0_HTTP_Handler(srv))
+	r.GET("v1/api/user/info", _Core_UserInfo1_HTTP_Handler(srv))
 	r.PUT("v1/api/user/password", _Core_UpdatePassword0_HTTP_Handler(srv))
-	r.PUT("v1/api/user/email", _Core_UpdateEmail0_HTTP_Handler(srv))
-	r.PUT("v1/api/user/phone", _Core_UpdatePhone0_HTTP_Handler(srv))
 	r.GET("v1/api/user/list/{pageNum}/{pageSize}", _Core_ListUser0_HTTP_Handler(srv))
-	r.POST("v1/api/user/group", _Core_CreateGroup0_HTTP_Handler(srv))
-	r.PUT("v1/api/user/group", _Core_UpdateGroup0_HTTP_Handler(srv))
+	r.PUT("v1/api/user/group/{id}", _Core_UserGroup0_HTTP_Handler(srv))
+	r.GET("v1/api/user/group/{id}", _Core_UserGroup1_HTTP_Handler(srv))
+	r.DELETE("v1/api/user/group/{id}", _Core_UserGroup2_HTTP_Handler(srv))
+	r.POST("v1/api/user/group", _Core_UserGroup3_HTTP_Handler(srv))
 	r.GET("v1/api/user/group/list", _Core_GetUserGroupList0_HTTP_Handler(srv))
 	r.GET("v1/api/user/project/list", _Core_GetUserProjectList0_HTTP_Handler(srv))
 	r.GET("v1/api/user/latest-activity", _Core_GetUserLatestActivity0_HTTP_Handler(srv))
@@ -150,7 +142,7 @@ func _Core_Unregister0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) e
 
 func _Core_Logout0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in LogoutRequest
+		var in emptypb.Empty
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
@@ -159,7 +151,7 @@ func _Core_Logout0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error
 		}
 		http.SetOperation(ctx, OperationCoreLogout)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Logout(ctx, req.(*LogoutRequest))
+			return srv.Logout(ctx, req.(*emptypb.Empty))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -192,43 +184,43 @@ func _Core_DeleteUser0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) e
 	}
 }
 
-func _Core_UserDetail0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+func _Core_UserInfo0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in emptypb.Empty
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationCoreUserDetail)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UserDetail(ctx, req.(*emptypb.Empty))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*UserDetailReply)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _Core_UpdateUserInfo0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in UserInfoUpdateRequest
+		var in UserInfoRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationCoreUpdateUserInfo)
+		http.SetOperation(ctx, OperationCoreUserInfo)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UpdateUserInfo(ctx, req.(*UserInfoUpdateRequest))
+			return srv.UserInfo(ctx, req.(*UserInfoRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*UserInfoUpdateReply)
+		reply := out.(*UserInfoReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Core_UserInfo1_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UserInfoRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCoreUserInfo)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UserInfo(ctx, req.(*UserInfoRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UserInfoReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -255,50 +247,6 @@ func _Core_UpdatePassword0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Contex
 	}
 }
 
-func _Core_UpdateEmail0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in UpdateEmailRequest
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationCoreUpdateEmail)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UpdateEmail(ctx, req.(*UpdateEmailRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*UpdateEmailReply)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _Core_UpdatePhone0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in UpdatePhoneRequest
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationCoreUpdatePhone)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UpdatePhone(ctx, req.(*UpdatePhoneRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*UpdatePhoneReply)
-		return ctx.Result(200, reply)
-	}
-}
-
 func _Core_ListUser0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in ListUserRequest
@@ -321,46 +269,93 @@ func _Core_ListUser0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) err
 	}
 }
 
-func _Core_CreateGroup0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+func _Core_UserGroup0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in CreateGroupRequest
+		var in UserGroupRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationCoreCreateGroup)
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCoreUserGroup)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.CreateGroup(ctx, req.(*CreateGroupRequest))
+			return srv.UserGroup(ctx, req.(*UserGroupRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*CreateGroupReply)
+		reply := out.(*UserGroupReply)
 		return ctx.Result(200, reply)
 	}
 }
 
-func _Core_UpdateGroup0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+func _Core_UserGroup1_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in UpdateGroupRequest
+		var in UserGroupRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCoreUserGroup)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UserGroup(ctx, req.(*UserGroupRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UserGroupReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Core_UserGroup2_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UserGroupRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCoreUserGroup)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UserGroup(ctx, req.(*UserGroupRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UserGroupReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Core_UserGroup3_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UserGroupRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationCoreUpdateGroup)
+		http.SetOperation(ctx, OperationCoreUserGroup)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UpdateGroup(ctx, req.(*UpdateGroupRequest))
+			return srv.UserGroup(ctx, req.(*UserGroupRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*emptypb.Empty)
+		reply := out.(*UserGroupReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -489,7 +484,6 @@ func _Core_InspectContainer0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Cont
 }
 
 type CoreHTTPClient interface {
-	CreateGroup(ctx context.Context, req *CreateGroupRequest, opts ...http.CallOption) (rsp *CreateGroupReply, err error)
 	DataReportTrack(ctx context.Context, req *DataReportTrackRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	DeleteUser(ctx context.Context, req *DeleteRequest, opts ...http.CallOption) (rsp *DeleteReply, err error)
 	ExecuteToken(ctx context.Context, req *ExecuteTokenRequest, opts ...http.CallOption) (rsp *ExecuteTokenReply, err error)
@@ -499,15 +493,12 @@ type CoreHTTPClient interface {
 	InspectContainer(ctx context.Context, req *InspectContainerRequest, opts ...http.CallOption) (rsp *ContainerInfo, err error)
 	ListUser(ctx context.Context, req *ListUserRequest, opts ...http.CallOption) (rsp *ListUserReply, err error)
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *LoginReply, err error)
-	Logout(ctx context.Context, req *LogoutRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	Logout(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *RegisterReply, err error)
 	Unregister(ctx context.Context, req *UnregisterRequest, opts ...http.CallOption) (rsp *UnregisterReply, err error)
-	UpdateEmail(ctx context.Context, req *UpdateEmailRequest, opts ...http.CallOption) (rsp *UpdateEmailReply, err error)
-	UpdateGroup(ctx context.Context, req *UpdateGroupRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	UpdatePassword(ctx context.Context, req *UpdatePasswordRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
-	UpdatePhone(ctx context.Context, req *UpdatePhoneRequest, opts ...http.CallOption) (rsp *UpdatePhoneReply, err error)
-	UpdateUserInfo(ctx context.Context, req *UserInfoUpdateRequest, opts ...http.CallOption) (rsp *UserInfoUpdateReply, err error)
-	UserDetail(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *UserDetailReply, err error)
+	UserGroup(ctx context.Context, req *UserGroupRequest, opts ...http.CallOption) (rsp *UserGroupReply, err error)
+	UserInfo(ctx context.Context, req *UserInfoRequest, opts ...http.CallOption) (rsp *UserInfoReply, err error)
 }
 
 type CoreHTTPClientImpl struct {
@@ -516,19 +507,6 @@ type CoreHTTPClientImpl struct {
 
 func NewCoreHTTPClient(client *http.Client) CoreHTTPClient {
 	return &CoreHTTPClientImpl{client}
-}
-
-func (c *CoreHTTPClientImpl) CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...http.CallOption) (*CreateGroupReply, error) {
-	var out CreateGroupReply
-	pattern := "v1/api/user/group"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationCoreCreateGroup))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, err
 }
 
 func (c *CoreHTTPClientImpl) DataReportTrack(ctx context.Context, in *DataReportTrackRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
@@ -546,7 +524,7 @@ func (c *CoreHTTPClientImpl) DataReportTrack(ctx context.Context, in *DataReport
 
 func (c *CoreHTTPClientImpl) DeleteUser(ctx context.Context, in *DeleteRequest, opts ...http.CallOption) (*DeleteReply, error) {
 	var out DeleteReply
-	pattern := "v1/api/user/delete/{id}"
+	pattern := "v1/api/user/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCoreDeleteUser))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -648,7 +626,7 @@ func (c *CoreHTTPClientImpl) Login(ctx context.Context, in *LoginRequest, opts .
 	return &out, err
 }
 
-func (c *CoreHTTPClientImpl) Logout(ctx context.Context, in *LogoutRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+func (c *CoreHTTPClientImpl) Logout(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "v1/api/user/logout"
 	path := binding.EncodeURL(pattern, in, false)
@@ -687,32 +665,6 @@ func (c *CoreHTTPClientImpl) Unregister(ctx context.Context, in *UnregisterReque
 	return &out, err
 }
 
-func (c *CoreHTTPClientImpl) UpdateEmail(ctx context.Context, in *UpdateEmailRequest, opts ...http.CallOption) (*UpdateEmailReply, error) {
-	var out UpdateEmailReply
-	pattern := "v1/api/user/email"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationCoreUpdateEmail))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, err
-}
-
-func (c *CoreHTTPClientImpl) UpdateGroup(ctx context.Context, in *UpdateGroupRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
-	var out emptypb.Empty
-	pattern := "v1/api/user/group"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationCoreUpdateGroup))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, err
-}
-
 func (c *CoreHTTPClientImpl) UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "v1/api/user/password"
@@ -726,37 +678,24 @@ func (c *CoreHTTPClientImpl) UpdatePassword(ctx context.Context, in *UpdatePassw
 	return &out, err
 }
 
-func (c *CoreHTTPClientImpl) UpdatePhone(ctx context.Context, in *UpdatePhoneRequest, opts ...http.CallOption) (*UpdatePhoneReply, error) {
-	var out UpdatePhoneReply
-	pattern := "v1/api/user/phone"
+func (c *CoreHTTPClientImpl) UserGroup(ctx context.Context, in *UserGroupRequest, opts ...http.CallOption) (*UserGroupReply, error) {
+	var out UserGroupReply
+	pattern := "v1/api/user/group"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationCoreUpdatePhone))
+	opts = append(opts, http.Operation(OperationCoreUserGroup))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return &out, err
 }
 
-func (c *CoreHTTPClientImpl) UpdateUserInfo(ctx context.Context, in *UserInfoUpdateRequest, opts ...http.CallOption) (*UserInfoUpdateReply, error) {
-	var out UserInfoUpdateReply
-	pattern := "v1/api/user/update"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationCoreUpdateUserInfo))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, err
-}
-
-func (c *CoreHTTPClientImpl) UserDetail(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*UserDetailReply, error) {
-	var out UserDetailReply
+func (c *CoreHTTPClientImpl) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...http.CallOption) (*UserInfoReply, error) {
+	var out UserInfoReply
 	pattern := "v1/api/user/info"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationCoreUserDetail))
+	opts = append(opts, http.Operation(OperationCoreUserInfo))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

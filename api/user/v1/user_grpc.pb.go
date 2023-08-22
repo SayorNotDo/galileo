@@ -23,7 +23,7 @@ const (
 	User_CreateUser_FullMethodName        = "/api.user.v1.User/CreateUser"
 	User_UpdateUserInfo_FullMethodName    = "/api.user.v1.User/UpdateUserInfo"
 	User_DeleteUser_FullMethodName        = "/api.user.v1.User/DeleteUser"
-	User_GetUser_FullMethodName           = "/api.user.v1.User/GetUser"
+	User_GetUserInfo_FullMethodName       = "/api.user.v1.User/GetUserInfo"
 	User_GetUserByUsername_FullMethodName = "/api.user.v1.User/GetUserByUsername"
 	User_ListUser_FullMethodName          = "/api.user.v1.User/ListUser"
 	User_VerifyPassword_FullMethodName    = "/api.user.v1.User/VerifyPassword"
@@ -33,6 +33,7 @@ const (
 	User_SetToken_FullMethodName          = "/api.user.v1.User/SetToken"
 	User_EmptyToken_FullMethodName        = "/api.user.v1.User/EmptyToken"
 	User_GetUserGroupList_FullMethodName  = "/api.user.v1.User/GetUserGroupList"
+	User_GetUserGroup_FullMethodName      = "/api.user.v1.User/GetUserGroup"
 )
 
 // UserClient is the client API for User service.
@@ -42,7 +43,7 @@ type UserClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserReply, error)
 	UpdateUserInfo(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserReply, error)
-	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*UserInfoReply, error)
+	GetUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfoReply, error)
 	GetUserByUsername(ctx context.Context, in *UsernameRequest, opts ...grpc.CallOption) (*UserInfoReply, error)
 	ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
 	VerifyPassword(ctx context.Context, in *VerifyPasswordRequest, opts ...grpc.CallOption) (*VerifyPasswordReply, error)
@@ -52,6 +53,7 @@ type UserClient interface {
 	SetToken(ctx context.Context, in *SetTokenRequest, opts ...grpc.CallOption) (*SetTokenReply, error)
 	EmptyToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*EmptyTokenReply, error)
 	GetUserGroupList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserGroupListReply, error)
+	GetUserGroup(ctx context.Context, in *UserGroupRequest, opts ...grpc.CallOption) (*UserGroup, error)
 }
 
 type userClient struct {
@@ -89,9 +91,9 @@ func (c *userClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts
 	return out, nil
 }
 
-func (c *userClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*UserInfoReply, error) {
+func (c *userClient) GetUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfoReply, error) {
 	out := new(UserInfoReply)
-	err := c.cc.Invoke(ctx, User_GetUser_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, User_GetUserInfo_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -179,6 +181,15 @@ func (c *userClient) GetUserGroupList(ctx context.Context, in *emptypb.Empty, op
 	return out, nil
 }
 
+func (c *userClient) GetUserGroup(ctx context.Context, in *UserGroupRequest, opts ...grpc.CallOption) (*UserGroup, error) {
+	out := new(UserGroup)
+	err := c.cc.Invoke(ctx, User_GetUserGroup_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
@@ -186,7 +197,7 @@ type UserServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserReply, error)
 	UpdateUserInfo(context.Context, *UpdateUserRequest) (*emptypb.Empty, error)
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserReply, error)
-	GetUser(context.Context, *GetUserRequest) (*UserInfoReply, error)
+	GetUserInfo(context.Context, *emptypb.Empty) (*UserInfoReply, error)
 	GetUserByUsername(context.Context, *UsernameRequest) (*UserInfoReply, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	VerifyPassword(context.Context, *VerifyPasswordRequest) (*VerifyPasswordReply, error)
@@ -196,6 +207,7 @@ type UserServer interface {
 	SetToken(context.Context, *SetTokenRequest) (*SetTokenReply, error)
 	EmptyToken(context.Context, *emptypb.Empty) (*EmptyTokenReply, error)
 	GetUserGroupList(context.Context, *emptypb.Empty) (*UserGroupListReply, error)
+	GetUserGroup(context.Context, *UserGroupRequest) (*UserGroup, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -212,8 +224,8 @@ func (UnimplementedUserServer) UpdateUserInfo(context.Context, *UpdateUserReques
 func (UnimplementedUserServer) DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
-func (UnimplementedUserServer) GetUser(context.Context, *GetUserRequest) (*UserInfoReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+func (UnimplementedUserServer) GetUserInfo(context.Context, *emptypb.Empty) (*UserInfoReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfo not implemented")
 }
 func (UnimplementedUserServer) GetUserByUsername(context.Context, *UsernameRequest) (*UserInfoReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserByUsername not implemented")
@@ -241,6 +253,9 @@ func (UnimplementedUserServer) EmptyToken(context.Context, *emptypb.Empty) (*Emp
 }
 func (UnimplementedUserServer) GetUserGroupList(context.Context, *emptypb.Empty) (*UserGroupListReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserGroupList not implemented")
+}
+func (UnimplementedUserServer) GetUserGroup(context.Context, *UserGroupRequest) (*UserGroup, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserGroup not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -309,20 +324,20 @@ func _User_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _User_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserRequest)
+func _User_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServer).GetUser(ctx, in)
+		return srv.(UserServer).GetUserInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: User_GetUser_FullMethodName,
+		FullMethod: User_GetUserInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).GetUser(ctx, req.(*GetUserRequest))
+		return srv.(UserServer).GetUserInfo(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -489,6 +504,24 @@ func _User_GetUserGroupList_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_GetUserGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GetUserGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_GetUserGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GetUserGroup(ctx, req.(*UserGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -509,8 +542,8 @@ var User_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _User_DeleteUser_Handler,
 		},
 		{
-			MethodName: "GetUser",
-			Handler:    _User_GetUser_Handler,
+			MethodName: "GetUserInfo",
+			Handler:    _User_GetUserInfo_Handler,
 		},
 		{
 			MethodName: "GetUserByUsername",
@@ -547,6 +580,10 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserGroupList",
 			Handler:    _User_GetUserGroupList_Handler,
+		},
+		{
+			MethodName: "GetUserGroup",
+			Handler:    _User_GetUserGroup_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

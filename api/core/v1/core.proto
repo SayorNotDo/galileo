@@ -29,7 +29,7 @@ service Core {
       delete: "v1/api/user/unregister"
     };
   };
-  rpc Logout (LogoutRequest) returns (google.protobuf.Empty){
+  rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty){
     option(google.api.http) = {
       post: "v1/api/user/logout"
       body: "*"
@@ -37,18 +37,16 @@ service Core {
   };
   rpc DeleteUser (DeleteRequest) returns (DeleteReply){
     option (google.api.http) = {
-      delete: "v1/api/user/delete/{id}"
+      delete: "v1/api/user/{id}"
     };
   };
-  rpc UserDetail (google.protobuf.Empty) returns (UserDetailReply){
+  rpc UserInfo(UserInfoRequest) returns (UserInfoReply) {
     option(google.api.http) = {
-      get: "v1/api/user/info"
-    };
-  };
-  rpc UpdateUserInfo(UserInfoUpdateRequest) returns (UserInfoUpdateReply) {
-    option(google.api.http) = {
-      put: "v1/api/user/update"
-      body: "*"
+      get: "v1/api/user/info",
+      additional_bindings {
+        put: "v1/api/user/info"
+        body: "*"
+      }
     };
   };
   rpc UpdatePassword(UpdatePasswordRequest) returns (google.protobuf.Empty){
@@ -57,33 +55,25 @@ service Core {
       body: "*"
     };
   }
-  rpc UpdateEmail(UpdateEmailRequest) returns (UpdateEmailReply) {
-    option(google.api.http) = {
-      put: "v1/api/user/email"
-      body: "*"
-    };
-  }
-  rpc UpdatePhone(UpdatePhoneRequest) returns (UpdatePhoneReply) {
-    option(google.api.http) = {
-      put: "v1/api/user/phone"
-      body: "*"
-    };
-  }
   rpc ListUser (ListUserRequest) returns (ListUserReply){
     option(google.api.http) = {
       get: "v1/api/user/list/{pageNum}/{pageSize}"
     };
   }
-  rpc CreateGroup(CreateGroupRequest) returns (CreateGroupReply) {
+  rpc UserGroup(UserGroupRequest) returns (UserGroupReply) {
     option(google.api.http) = {
       post: "v1/api/user/group"
       body: "*"
-    };
-  }
-  rpc UpdateGroup(UpdateGroupRequest) returns (google.protobuf.Empty) {
-    option(google.api.http) = {
-      put: "v1/api/user/group"
-      body: "*"
+      additional_bindings {
+        put: "v1/api/user/group/{id}"
+        body: "*"
+      }
+      additional_bindings {
+        get: "v1/api/user/group/{id}"
+      }
+      additional_bindings {
+        delete: "v1/api/user/group/{id}"
+      }
     };
   }
   rpc GetUserGroupList(google.protobuf.Empty) returns (UserGroupListReply) {
@@ -193,26 +183,27 @@ message DataReportTrackRequest{
   string data = 1;
 }
 
-message UpdateGroupRequest {}
-
-message UpdateGroupReply {}
-
-message CreateGroupRequest {
-  string name = 1;
-}
-
-message CreateGroupReply {
+message UserGroupRequest {
   int32 id = 1;
-  bool success = 2;
+  string name = 2;
+  string avatar = 3;
+  string description = 4;
 }
 
-message UpdatePhoneRequest {}
+message UserGroupReply {
+  int32 id = 1;
+  string name = 2;
+  string avatar = 3;
+  string description = 4;
+  google.protobuf.Timestamp createdAt = 5;
+  uint32 createdBy = 6;
+  google.protobuf.Timestamp updatedAt = 7;
+  uint32 updatedBy = 8;
+  google.protobuf.Timestamp deletedAt = 9;
+  uint32 deletedBy = 10;
+  int32 headcount = 11;
+}
 
-message UpdatePhoneReply {}
-
-message UpdateEmailRequest {}
-
-message UpdateEmailReply {}
 
 message UpdatePasswordRequest {
   string password = 1[(validate.rules).string = {min_len: 8}];
@@ -241,13 +232,13 @@ message ListUserReply {
   repeated UserDetail userList = 2;
 }
 
-message UserInfoUpdateRequest {
+message UserInfoRequest {
   string nickname = 1 [(validate.rules).string = {min_len:1, max_len:24}];
   string email = 2 [(validate.rules).string.email = true];
   string phone = 3 [(validate.rules).string.len = 11];
 }
 
-message UserInfoUpdateReply {
+message UserInfoReply {
   bool success = 1;
 }
 
@@ -280,8 +271,6 @@ message TokenInfo{
   string token = 2;
   int64 expiresAt = 3;
 }
-
-message LogoutRequest {}
 
 message UnregisterRequest {}
 message UnregisterReply {}

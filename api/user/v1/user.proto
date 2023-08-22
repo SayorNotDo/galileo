@@ -14,7 +14,7 @@ service User {
   rpc CreateUser (CreateUserRequest) returns (CreateUserReply) {};
   rpc UpdateUserInfo (UpdateUserRequest) returns (google.protobuf.Empty){};
   rpc DeleteUser (DeleteUserRequest) returns (DeleteUserReply){};
-  rpc GetUser (GetUserRequest) returns (userInfoReply){};
+  rpc GetUserInfo (google.protobuf.Empty) returns (userInfoReply);
   rpc GetUserByUsername (UsernameRequest) returns (userInfoReply){};
   rpc ListUser (ListUserRequest) returns (ListUserReply){};
   rpc VerifyPassword(VerifyPasswordRequest) returns (VerifyPasswordReply){};
@@ -24,6 +24,14 @@ service User {
   rpc SetToken(SetTokenRequest) returns (SetTokenReply){};
   rpc EmptyToken(google.protobuf.Empty) returns(EmptyTokenReply){};
   rpc GetUserGroupList(google.protobuf.Empty) returns (UserGroupListReply){};
+  rpc GetUserGroup(UserGroupRequest) returns (UserGroup);
+}
+
+message UserGroupRequest {
+  int32 id = 1;
+  string name = 2;
+  string avatar = 3;
+  string description = 4;
 }
 
 message UserGroupListReply {
@@ -123,10 +131,6 @@ message DeleteUserRequest {
 }
 message DeleteUserReply {
   bool deleted = 1;
-}
-
-message GetUserRequest {
-  uint32 id = 1;
 }
 
 message userInfoReply {

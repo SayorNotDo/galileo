@@ -6,6 +6,7 @@ import (
 	"galileo/app/user/internal/biz"
 	"galileo/app/user/internal/pkg/util"
 	"galileo/pkg/ctxdata"
+	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/metadata"
 	"github.com/golang/protobuf/ptypes/empty"
@@ -102,8 +103,12 @@ func (s *UserService) GetUserByUsername(ctx context.Context, req *v1.UsernameReq
 	}
 }
 
-func (s *UserService) GetUser(ctx context.Context, req *v1.GetUserRequest) (*v1.UserInfoReply, error) {
-	user, err := s.uc.Get(ctx, req.Id)
+func (s *UserService) GetUser(ctx context.Context, empty *empty.Empty) (*v1.UserInfoReply, error) {
+	uid := ctxdata.GetUserId(ctx)
+	if uid <= 0 {
+		return nil, SetErrByReason(ReasonParamsError)
+	}
+	user, err := s.uc.Get(ctx, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -184,10 +189,11 @@ func (s *UserService) UpdatePassword(ctx context.Context, req *v1.UpdatePassword
 }
 
 func (s *UserService) GetUserGroupList(ctx context.Context, empty *empty.Empty) (*v1.UserGroupListReply, error) {
-	md, _ := metadata.FromServerContext(ctx)
-	uidStr := md.Get(ctxdata.UserIdKey)
-	uid, _ := strconv.ParseInt(uidStr, 10, 64)
-	res, err := s.uc.GetUserGroupList(ctx, uint32(uid))
+	uid := ctxdata.UserIdFromMetaData(ctx)
+	if uid <= 0 {
+		return nil, SetErrByReason(ReasonParamsError)
+	}
+	res, err := s.uc.GetUserGroupList(ctx, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -215,5 +221,30 @@ func (s *UserService) GetUserGroupList(ctx context.Context, empty *empty.Empty) 
 	return &v1.UserGroupListReply{
 		Total:     int32(len(res)),
 		GroupList: userGroupList,
+	}, nil
+}
+
+func (s *UserService) GetUserGroup(ctx context.Context, req *v1.UserGroupRequest) (*v1.UserGroup, error) {
+	uid := ctxdata.UserIdFromMetaData(ctx)
+	ret, err := s.uc.GetUserGroup(ctx, uid, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.UserGroup{
+		GroupMemberId: ret.GroupMemberId,
+		Role:          int32(ret.Role),
+		Group: &v1.GroupInfo{
+			Id:          ret.GroupInfo.Id,
+			Name:        ret.GroupInfo.Name,
+			Avatar:      ret.GroupInfo.Avatar,
+			Description: ret.GroupInfo.Description,
+			CreatedAt:   timestamppb.New(ret.GroupInfo.CreatedAt),
+			CreatedBy:   ret.GroupInfo.CreatedBy,
+			UpdatedAt:   timestamppb.New(ret.GroupInfo.UpdatedAt),
+			UpdatedBy:   ret.GroupInfo.UpdatedBy,
+			DeletedAt:   timestamppb.New(ret.GroupInfo.DeletedAt),
+			DeletedBy:   ret.GroupInfo.DeletedBy,
+			Headcount:   ret.GroupInfo.Headcount,
+		},
 	}, nil
 }
