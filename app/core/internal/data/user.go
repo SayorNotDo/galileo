@@ -53,30 +53,26 @@ func (u *userRepo) GetUserProjectList(ctx context.Context) ([]*v1.ProjectInfo, e
 	return projectList, nil
 }
 
-func (u *userRepo) GetUserGroupList(ctx context.Context) ([]*biz.UserGroup, error) {
+func (u *userRepo) GetUserGroupList(ctx context.Context) ([]*biz.Group, error) {
 	/* 初始化返回值 */
-	var groupList = make([]*biz.UserGroup, 0)
+	var groupList = make([]*biz.Group, 0)
 	res, err := u.data.uc.GetUserGroupList(ctx, &empty.Empty{})
 	if err != nil {
 		return nil, err
 	}
-	lo.ForEach(res.GroupList, func(item *userService.UserGroup, index int) {
-		groupList = append(groupList, &biz.UserGroup{
-			GroupMemberId: item.GroupMemberId,
-			Role:          uint8(item.Role),
-			GroupInfo: biz.Group{
-				Id:          item.Group.Id,
-				Name:        item.Group.Name,
-				Avatar:      item.Group.Avatar,
-				Description: item.Group.Description,
-				Headcount:   item.Group.Headcount,
-				CreatedAt:   item.Group.CreatedAt.AsTime(),
-				CreatedBy:   item.Group.CreatedBy,
-				UpdatedAt:   item.Group.UpdatedAt.AsTime(),
-				UpdatedBy:   item.Group.UpdatedBy,
-				DeletedAt:   item.Group.DeletedAt.AsTime(),
-				DeletedBy:   item.Group.DeletedBy,
-			},
+	lo.ForEach(res.GroupList, func(item *userService.GroupInfo, index int) {
+		groupList = append(groupList, &biz.Group{
+			Id:          item.Id,
+			Name:        item.Name,
+			Avatar:      item.Avatar,
+			Description: item.Description,
+			Headcount:   item.Headcount,
+			CreatedAt:   item.CreatedAt.AsTime(),
+			CreatedBy:   item.CreatedBy,
+			UpdatedAt:   item.UpdatedAt.AsTime(),
+			UpdatedBy:   item.UpdatedBy,
+			DeletedAt:   item.DeletedAt.AsTime(),
+			DeletedBy:   item.DeletedBy,
 		})
 	})
 	return groupList, nil
@@ -194,7 +190,33 @@ func (u *userRepo) UpdatePassword(ctx context.Context, password string) (bool, e
 	return true, nil
 }
 
-func (u *userRepo) GetUserGroup(ctx context.Context, groupId int32) (*biz.UserGroup, error) {
-
-	return nil, nil
+func (u *userRepo) GetUserGroup(ctx context.Context, groupId int32) (*biz.Group, error) {
+	var groupMemberList []*biz.GroupMember
+	res, err := u.data.uc.GetUserGroup(ctx, &userService.UserGroupRequest{Id: groupId})
+	if err != nil {
+		return nil, err
+	}
+	lo.ForEach(res.GroupMemberList, func(item *userService.GroupMember, _ int) {
+		groupMemberList = append(groupMemberList, &biz.GroupMember{
+			Uid:       item.Uid,
+			Username:  item.Username,
+			Role:      uint8(item.Role),
+			CreatedBy: item.CreatedBy,
+			CreatedAt: item.CreatedAt.AsTime(),
+		})
+	})
+	return &biz.Group{
+		Id:              res.Id,
+		Name:            res.Name,
+		Avatar:          res.Avatar,
+		Description:     res.Description,
+		Headcount:       res.Headcount,
+		CreatedAt:       res.CreatedAt.AsTime(),
+		CreatedBy:       res.CreatedBy,
+		UpdatedAt:       res.UpdatedAt.AsTime(),
+		UpdatedBy:       res.UpdatedBy,
+		DeletedAt:       res.DeletedAt.AsTime(),
+		DeletedBy:       res.DeletedBy,
+		GroupMemberList: groupMemberList,
+	}, nil
 }

@@ -24,7 +24,7 @@ service User {
   rpc SetToken(SetTokenRequest) returns (SetTokenReply){};
   rpc EmptyToken(google.protobuf.Empty) returns(EmptyTokenReply){};
   rpc GetUserGroupList(google.protobuf.Empty) returns (UserGroupListReply){};
-  rpc GetUserGroup(UserGroupRequest) returns (UserGroup);
+  rpc GetUserGroup(UserGroupRequest) returns (GroupInfo);
 }
 
 message UserGroupRequest {
@@ -36,13 +36,15 @@ message UserGroupRequest {
 
 message UserGroupListReply {
   int32 total = 1;
-  repeated UserGroup groupList = 2;
+  repeated GroupInfo groupList = 2;
 }
 
-message UserGroup {
-  int32 groupMemberId = 1;
-  int32 role = 2;
-  GroupInfo group = 3;
+message GroupMember {
+  uint32 uid = 1;
+  string username = 2;
+  uint32 role = 3;
+  google.protobuf.Timestamp createdAt = 4;
+  uint32 createdBy = 5;
 }
 
 message GroupInfo {
@@ -57,6 +59,7 @@ message GroupInfo {
   google.protobuf.Timestamp deletedAt = 9;
   uint32 deletedBy = 10;
   int32 headcount = 11;
+  repeated GroupMember groupMemberList = 12;
 }
 
 message UpdatePasswordRequest {

@@ -240,7 +240,9 @@ func (repo *userRepo) GetUserGroupList(ctx context.Context, uid uint32) ([]*biz.
 	return groupList, nil
 }
 
-func (repo *userRepo) GetUserGroup(ctx context.Context, uid uint32, groupId int32) (*biz.UserGroup, error) {
+func (repo *userRepo) GetUserGroup(ctx context.Context, groupId int32) (*biz.Group, error) {
+	/* 获取指定的Group */
+	var err error
 	ret, err := repo.data.entDB.Group.Get(ctx, groupId)
 	switch {
 	case ent.IsNotFound(err):
@@ -248,35 +250,41 @@ func (repo *userRepo) GetUserGroup(ctx context.Context, uid uint32, groupId int3
 	case err != nil:
 		return nil, err
 	}
-	var groupMember struct {
-		Id   int32 `json:"id"`
-		Role uint8 `json:"role"`
-	}
-	if err := repo.data.entDB.GroupMember.Query().
+	var groupMemberList []*biz.GroupMember
+	res, err := repo.data.entDB.GroupMember.Query().
 		Where(
-			groupmember.UserID(uid),
 			groupmember.GroupID(groupId),
-		).Select(
-		groupmember.FieldID,
-		groupmember.FieldRole,
-	).Scan(ctx, &groupMember); err != nil {
+		).All(ctx)
+	lo.ForEach(res, func(item *ent.GroupMember, _ int) {
+		var username string
+		err = repo.data.entDB.User.Query().
+			Where(user.ID(item.UserID)).
+			Select(user.FieldUsername).
+			Scan(ctx, username)
+		groupMemberList = append(groupMemberList, &biz.GroupMember{
+			Uid:       item.UserID,
+			Username:  username,
+			Role:      item.Role,
+			CreatedAt: item.CreatedAt,
+			CreatedBy: item.CreatedBy,
+			DeletedAt: item.DeletedAt,
+			DeletedBy: item.DeletedBy,
+		})
+	})
+	if err != nil {
 		return nil, err
 	}
-	return &biz.UserGroup{
-		GroupMemberId: groupMember.Id,
-		Role:          groupMember.Role,
-		GroupInfo: biz.Group{
-			Id:          ret.ID,
-			Name:        ret.Name,
-			Avatar:      ret.Avatar,
-			Description: ret.Description,
-			Headcount:   ret.Headcount,
-			CreatedAt:   ret.CreatedAt,
-			CreatedBy:   ret.CreatedBy,
-			UpdatedAt:   ret.UpdatedAt,
-			UpdatedBy:   ret.UpdatedBy,
-			DeletedAt:   ret.DeletedAt,
-			DeletedBy:   ret.DeletedBy,
-		},
+	return &biz.Group{
+		Id:          ret.ID,
+		Name:        ret.Name,
+		Avatar:      ret.Avatar,
+		Description: ret.Description,
+		Headcount:   ret.Headcount,
+		CreatedAt:   ret.CreatedAt,
+		CreatedBy:   ret.CreatedBy,
+		UpdatedAt:   ret.UpdatedAt,
+		UpdatedBy:   ret.UpdatedBy,
+		DeletedAt:   ret.DeletedAt,
+		DeletedBy:   ret.DeletedBy,
 	}, nil
 }

@@ -53,7 +53,7 @@ type UserClient interface {
 	SetToken(ctx context.Context, in *SetTokenRequest, opts ...grpc.CallOption) (*SetTokenReply, error)
 	EmptyToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*EmptyTokenReply, error)
 	GetUserGroupList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserGroupListReply, error)
-	GetUserGroup(ctx context.Context, in *UserGroupRequest, opts ...grpc.CallOption) (*UserGroup, error)
+	GetUserGroup(ctx context.Context, in *UserGroupRequest, opts ...grpc.CallOption) (*GroupInfo, error)
 }
 
 type userClient struct {
@@ -181,8 +181,8 @@ func (c *userClient) GetUserGroupList(ctx context.Context, in *emptypb.Empty, op
 	return out, nil
 }
 
-func (c *userClient) GetUserGroup(ctx context.Context, in *UserGroupRequest, opts ...grpc.CallOption) (*UserGroup, error) {
-	out := new(UserGroup)
+func (c *userClient) GetUserGroup(ctx context.Context, in *UserGroupRequest, opts ...grpc.CallOption) (*GroupInfo, error) {
+	out := new(GroupInfo)
 	err := c.cc.Invoke(ctx, User_GetUserGroup_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -207,7 +207,7 @@ type UserServer interface {
 	SetToken(context.Context, *SetTokenRequest) (*SetTokenReply, error)
 	EmptyToken(context.Context, *emptypb.Empty) (*EmptyTokenReply, error)
 	GetUserGroupList(context.Context, *emptypb.Empty) (*UserGroupListReply, error)
-	GetUserGroup(context.Context, *UserGroupRequest) (*UserGroup, error)
+	GetUserGroup(context.Context, *UserGroupRequest) (*GroupInfo, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -254,7 +254,7 @@ func (UnimplementedUserServer) EmptyToken(context.Context, *emptypb.Empty) (*Emp
 func (UnimplementedUserServer) GetUserGroupList(context.Context, *emptypb.Empty) (*UserGroupListReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserGroupList not implemented")
 }
-func (UnimplementedUserServer) GetUserGroup(context.Context, *UserGroupRequest) (*UserGroup, error) {
+func (UnimplementedUserServer) GetUserGroup(context.Context, *UserGroupRequest) (*GroupInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserGroup not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}

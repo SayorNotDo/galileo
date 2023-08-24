@@ -29,8 +29,8 @@ type UserRepo interface {
 	DestroyToken(ctx context.Context) error
 	ListUser(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserDetail, int32, error)
 	GetUserProjectList(ctx context.Context) ([]*v1.ProjectInfo, error)
-	GetUserGroup(ctx context.Context, groupId int32) (*UserGroup, error)
-	GetUserGroupList(ctx context.Context) ([]*UserGroup, error)
+	GetUserGroup(ctx context.Context, groupId int32) (*Group, error)
+	GetUserGroupList(ctx context.Context) ([]*Group, error)
 	VerifyPassword(ctx context.Context, password, encryptedPassword string) (bool, error)
 }
 
@@ -220,10 +220,10 @@ func (u *UserUseCase) GetUserProjectList(ctx context.Context) ([]*v1.ProjectInfo
 	return u.repo.GetUserProjectList(ctx)
 }
 
-func (u *UserUseCase) GetUserGroupList(ctx context.Context) ([]*UserGroup, error) {
+func (u *UserUseCase) GetUserGroupList(ctx context.Context) ([]*Group, error) {
 	return u.repo.GetUserGroupList(ctx)
 }
 
-func (u *UserUseCase) GetUserGroup(ctx context.Context, groupId int32) (*UserGroup, error) {
+func (u *UserUseCase) GetUserGroup(ctx context.Context, groupId int32) (*Group, error) {
 	return u.repo.GetUserGroup(ctx, groupId)
 }

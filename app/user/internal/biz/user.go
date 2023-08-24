@@ -21,7 +21,7 @@ type UserRepo interface {
 	SetToken(context.Context, string, string) (bool, error)
 	EmptyToken(context.Context, string) (bool, error)
 	GetUserGroupList(context.Context, uint32) ([]*UserGroup, error)
-	GetUserGroup(ctx context.Context, uid uint32, groupId int32) (*UserGroup, error)
+	GetUserGroup(ctx context.Context, groupId int32) (*Group, error)
 }
 
 type UserUseCase struct {
@@ -95,6 +95,6 @@ func (uc *UserUseCase) GetUserGroupList(ctx context.Context, uid uint32) ([]*Use
 	return uc.repo.GetUserGroupList(ctx, uid)
 }
 
-func (uc *UserUseCase) GetUserGroup(ctx context.Context, uid uint32, groupId int32) (*UserGroup, error) {
-	return uc.repo.GetUserGroup(ctx, uid, groupId)
+func (uc *UserUseCase) GetUserGroup(ctx context.Context, groupId int32) (*Group, error) {
+	return uc.repo.GetUserGroup(ctx, groupId)
 }

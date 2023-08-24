@@ -95,28 +95,24 @@ func (c *CoreService) GetUserLatestActivity(ctx context.Context, empty *empty.Em
 }
 
 func (c *CoreService) GetUserGroupList(ctx context.Context, empty *empty.Empty) (*v1.UserGroupListReply, error) {
-	var userGroupList = make([]*v1.UserGroup, 0)
+	var userGroupList = make([]*v1.GroupInfo, 0)
 	ret, err := c.uc.GetUserGroupList(ctx)
 	if err != nil {
 		return nil, err
 	}
-	lo.ForEach(ret, func(item *biz.UserGroup, _ int) {
-		userGroupList = append(userGroupList, &v1.UserGroup{
-			GroupMemberId: item.GroupMemberId,
-			Role:          int32(item.Role),
-			Group: &v1.GroupInfo{
-				Id:          item.GroupInfo.Id,
-				Name:        item.GroupInfo.Name,
-				Avatar:      item.GroupInfo.Avatar,
-				Description: item.GroupInfo.Description,
-				CreatedAt:   timestamppb.New(item.GroupInfo.CreatedAt),
-				CreatedBy:   item.GroupInfo.CreatedBy,
-				UpdatedAt:   timestamppb.New(item.GroupInfo.UpdatedAt),
-				UpdatedBy:   item.GroupInfo.UpdatedBy,
-				DeletedAt:   timestamppb.New(item.GroupInfo.DeletedAt),
-				DeletedBy:   item.GroupInfo.DeletedBy,
-				Headcount:   item.GroupInfo.Headcount,
-			},
+	lo.ForEach(ret, func(item *biz.Group, _ int) {
+		userGroupList = append(userGroupList, &v1.GroupInfo{
+			Id:          item.Id,
+			Name:        item.Name,
+			Avatar:      item.Avatar,
+			Description: item.Description,
+			CreatedAt:   timestamppb.New(item.CreatedAt),
+			CreatedBy:   item.CreatedBy,
+			UpdatedAt:   timestamppb.New(item.UpdatedAt),
+			UpdatedBy:   item.UpdatedBy,
+			DeletedAt:   timestamppb.New(item.DeletedAt),
+			DeletedBy:   item.DeletedBy,
+			Headcount:   item.Headcount,
 		})
 	})
 	return &v1.UserGroupListReply{
@@ -125,14 +121,20 @@ func (c *CoreService) GetUserGroupList(ctx context.Context, empty *empty.Empty) 
 	}, nil
 }
 
-func (c *CoreService) UserGroup(ctx context.Context, req *v1.UserGroupRequest) (*v1.UserGroupReply, error) {
-	var reply *v1.UserGroupReply
+func (c *CoreService) UserGroup(ctx context.Context, req *v1.GroupInfoRequest) (*v1.GroupInfo, error) {
+	var reply *v1.GroupInfo
 	switch ctxdata.MethodFromContext(ctx) {
 	case "POST":
 	case "DELETE":
 	case "PUT":
 	case "GET":
-
+		_, err := c.uc.GetUserGroup(ctx, req.Id)
+		if err != nil {
+			return nil, err
+		}
+		return &v1.GroupInfo{}, nil
+	default:
+		return nil, errResponse.SetErrByReason(errResponse.ReasonUnknownError)
 	}
 	return reply, nil
 }

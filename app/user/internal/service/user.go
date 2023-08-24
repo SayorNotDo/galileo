@@ -198,24 +198,20 @@ func (s *UserService) GetUserGroupList(ctx context.Context, empty *empty.Empty) 
 		return nil, err
 	}
 	/* 初始化返回的分组列表: UserGroup */
-	var userGroupList = make([]*v1.UserGroup, 0)
+	var userGroupList = make([]*v1.GroupInfo, 0)
 	lo.ForEach(res, func(item *biz.UserGroup, _ int) {
-		userGroupList = append(userGroupList, &v1.UserGroup{
-			GroupMemberId: item.GroupMemberId,
-			Role:          int32(item.Role),
-			Group: &v1.GroupInfo{
-				Id:          item.GroupInfo.Id,
-				Name:        item.GroupInfo.Name,
-				Avatar:      item.GroupInfo.Avatar,
-				Description: item.GroupInfo.Description,
-				CreatedAt:   timestamppb.New(item.GroupInfo.CreatedAt),
-				CreatedBy:   item.GroupInfo.CreatedBy,
-				UpdatedAt:   timestamppb.New(item.GroupInfo.UpdatedAt),
-				UpdatedBy:   item.GroupInfo.UpdatedBy,
-				DeletedAt:   timestamppb.New(item.GroupInfo.DeletedAt),
-				DeletedBy:   item.GroupInfo.DeletedBy,
-				Headcount:   item.GroupInfo.Headcount,
-			},
+		userGroupList = append(userGroupList, &v1.GroupInfo{
+			Id:          item.GroupInfo.Id,
+			Name:        item.GroupInfo.Name,
+			Avatar:      item.GroupInfo.Avatar,
+			Description: item.GroupInfo.Description,
+			CreatedAt:   timestamppb.New(item.GroupInfo.CreatedAt),
+			CreatedBy:   item.GroupInfo.CreatedBy,
+			UpdatedAt:   timestamppb.New(item.GroupInfo.UpdatedAt),
+			UpdatedBy:   item.GroupInfo.UpdatedBy,
+			DeletedAt:   timestamppb.New(item.GroupInfo.DeletedAt),
+			DeletedBy:   item.GroupInfo.DeletedBy,
+			Headcount:   item.GroupInfo.Headcount,
 		})
 	})
 	return &v1.UserGroupListReply{
@@ -224,27 +220,22 @@ func (s *UserService) GetUserGroupList(ctx context.Context, empty *empty.Empty) 
 	}, nil
 }
 
-func (s *UserService) GetUserGroup(ctx context.Context, req *v1.UserGroupRequest) (*v1.UserGroup, error) {
-	uid := ctxdata.UserIdFromMetaData(ctx)
-	ret, err := s.uc.GetUserGroup(ctx, uid, req.Id)
+func (s *UserService) GetUserGroup(ctx context.Context, req *v1.UserGroupRequest) (*v1.GroupInfo, error) {
+	ret, err := s.uc.GetUserGroup(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
-	return &v1.UserGroup{
-		GroupMemberId: ret.GroupMemberId,
-		Role:          int32(ret.Role),
-		Group: &v1.GroupInfo{
-			Id:          ret.GroupInfo.Id,
-			Name:        ret.GroupInfo.Name,
-			Avatar:      ret.GroupInfo.Avatar,
-			Description: ret.GroupInfo.Description,
-			CreatedAt:   timestamppb.New(ret.GroupInfo.CreatedAt),
-			CreatedBy:   ret.GroupInfo.CreatedBy,
-			UpdatedAt:   timestamppb.New(ret.GroupInfo.UpdatedAt),
-			UpdatedBy:   ret.GroupInfo.UpdatedBy,
-			DeletedAt:   timestamppb.New(ret.GroupInfo.DeletedAt),
-			DeletedBy:   ret.GroupInfo.DeletedBy,
-			Headcount:   ret.GroupInfo.Headcount,
-		},
+	return &v1.GroupInfo{
+		Id:          ret.GroupInfo.Id,
+		Name:        ret.GroupInfo.Name,
+		Avatar:      ret.GroupInfo.Avatar,
+		Description: ret.GroupInfo.Description,
+		CreatedAt:   timestamppb.New(ret.GroupInfo.CreatedAt),
+		CreatedBy:   ret.GroupInfo.CreatedBy,
+		UpdatedAt:   timestamppb.New(ret.GroupInfo.UpdatedAt),
+		UpdatedBy:   ret.GroupInfo.UpdatedBy,
+		DeletedAt:   timestamppb.New(ret.GroupInfo.DeletedAt),
+		DeletedBy:   ret.GroupInfo.DeletedBy,
+		Headcount:   ret.GroupInfo.Headcount,
 	}, nil
 }

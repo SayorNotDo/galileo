@@ -50,7 +50,7 @@ type CoreHTTPServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error)
 	UpdatePassword(context.Context, *UpdatePasswordRequest) (*emptypb.Empty, error)
-	UserGroup(context.Context, *UserGroupRequest) (*UserGroupReply, error)
+	UserGroup(context.Context, *GroupInfoRequest) (*GroupInfo, error)
 	UserInfo(context.Context, *UserInfoRequest) (*UserInfoReply, error)
 }
 
@@ -271,7 +271,7 @@ func _Core_ListUser0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) err
 
 func _Core_UserGroup0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in UserGroupRequest
+		var in GroupInfoRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
@@ -283,20 +283,20 @@ func _Core_UserGroup0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) er
 		}
 		http.SetOperation(ctx, OperationCoreUserGroup)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UserGroup(ctx, req.(*UserGroupRequest))
+			return srv.UserGroup(ctx, req.(*GroupInfoRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*UserGroupReply)
+		reply := out.(*GroupInfo)
 		return ctx.Result(200, reply)
 	}
 }
 
 func _Core_UserGroup1_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in UserGroupRequest
+		var in GroupInfoRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
@@ -305,20 +305,20 @@ func _Core_UserGroup1_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) er
 		}
 		http.SetOperation(ctx, OperationCoreUserGroup)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UserGroup(ctx, req.(*UserGroupRequest))
+			return srv.UserGroup(ctx, req.(*GroupInfoRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*UserGroupReply)
+		reply := out.(*GroupInfo)
 		return ctx.Result(200, reply)
 	}
 }
 
 func _Core_UserGroup2_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in UserGroupRequest
+		var in GroupInfoRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
@@ -327,20 +327,20 @@ func _Core_UserGroup2_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) er
 		}
 		http.SetOperation(ctx, OperationCoreUserGroup)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UserGroup(ctx, req.(*UserGroupRequest))
+			return srv.UserGroup(ctx, req.(*GroupInfoRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*UserGroupReply)
+		reply := out.(*GroupInfo)
 		return ctx.Result(200, reply)
 	}
 }
 
 func _Core_UserGroup3_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in UserGroupRequest
+		var in GroupInfoRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
@@ -349,13 +349,13 @@ func _Core_UserGroup3_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) er
 		}
 		http.SetOperation(ctx, OperationCoreUserGroup)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UserGroup(ctx, req.(*UserGroupRequest))
+			return srv.UserGroup(ctx, req.(*GroupInfoRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*UserGroupReply)
+		reply := out.(*GroupInfo)
 		return ctx.Result(200, reply)
 	}
 }
@@ -497,7 +497,7 @@ type CoreHTTPClient interface {
 	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *RegisterReply, err error)
 	Unregister(ctx context.Context, req *UnregisterRequest, opts ...http.CallOption) (rsp *UnregisterReply, err error)
 	UpdatePassword(ctx context.Context, req *UpdatePasswordRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
-	UserGroup(ctx context.Context, req *UserGroupRequest, opts ...http.CallOption) (rsp *UserGroupReply, err error)
+	UserGroup(ctx context.Context, req *GroupInfoRequest, opts ...http.CallOption) (rsp *GroupInfo, err error)
 	UserInfo(ctx context.Context, req *UserInfoRequest, opts ...http.CallOption) (rsp *UserInfoReply, err error)
 }
 
@@ -678,8 +678,8 @@ func (c *CoreHTTPClientImpl) UpdatePassword(ctx context.Context, in *UpdatePassw
 	return &out, err
 }
 
-func (c *CoreHTTPClientImpl) UserGroup(ctx context.Context, in *UserGroupRequest, opts ...http.CallOption) (*UserGroupReply, error) {
-	var out UserGroupReply
+func (c *CoreHTTPClientImpl) UserGroup(ctx context.Context, in *GroupInfoRequest, opts ...http.CallOption) (*GroupInfo, error) {
+	var out GroupInfo
 	pattern := "v1/api/user/group"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationCoreUserGroup))

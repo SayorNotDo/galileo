@@ -60,7 +60,7 @@ service Core {
       get: "v1/api/user/list/{pageNum}/{pageSize}"
     };
   }
-  rpc UserGroup(UserGroupRequest) returns (UserGroupReply) {
+  rpc UserGroup(GroupInfoRequest) returns (GroupInfo) {
     option(google.api.http) = {
       post: "v1/api/user/group"
       body: "*"
@@ -112,13 +112,14 @@ service Core {
 
 message UserGroupListReply {
   int32 total = 1;
-  repeated UserGroup groupList = 2;
+  repeated GroupInfo groupList = 2;
 }
 
-message UserGroup {
-  int32 groupMemberId = 1;
-  int32 role = 2;
-  GroupInfo group = 3;
+message GroupInfoRequest {
+  int32 id = 1;
+  string name = 2;
+  string avatar = 3;
+  string description = 4;
 }
 
 message GroupInfo {
@@ -133,9 +134,16 @@ message GroupInfo {
   google.protobuf.Timestamp deletedAt = 9;
   uint32 deletedBy = 10;
   int32 headcount = 11;
+  repeated GroupMember groupMemberList = 12;
 }
 
-message GroupMember {}
+message GroupMember {
+  uint32 uid = 1;
+  string username = 2;
+  uint32 role = 3;
+  google.protobuf.Timestamp createdAt = 4;
+  uint32 createdBy = 5;
+}
 
 message UserLatestActivityReply {}
 
@@ -183,26 +191,6 @@ message DataReportTrackRequest{
   string data = 1;
 }
 
-message UserGroupRequest {
-  int32 id = 1;
-  string name = 2;
-  string avatar = 3;
-  string description = 4;
-}
-
-message UserGroupReply {
-  int32 id = 1;
-  string name = 2;
-  string avatar = 3;
-  string description = 4;
-  google.protobuf.Timestamp createdAt = 5;
-  uint32 createdBy = 6;
-  google.protobuf.Timestamp updatedAt = 7;
-  uint32 updatedBy = 8;
-  google.protobuf.Timestamp deletedAt = 9;
-  uint32 deletedBy = 10;
-  int32 headcount = 11;
-}
 
 
 message UpdatePasswordRequest {

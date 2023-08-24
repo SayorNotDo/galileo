@@ -49,7 +49,7 @@ type CoreClient interface {
 	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserInfoReply, error)
 	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
-	UserGroup(ctx context.Context, in *UserGroupRequest, opts ...grpc.CallOption) (*UserGroupReply, error)
+	UserGroup(ctx context.Context, in *GroupInfoRequest, opts ...grpc.CallOption) (*GroupInfo, error)
 	GetUserGroupList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserGroupListReply, error)
 	GetUserProjectList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserProjectListReply, error)
 	GetUserLatestActivity(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserLatestActivityReply, error)
@@ -138,8 +138,8 @@ func (c *coreClient) ListUser(ctx context.Context, in *ListUserRequest, opts ...
 	return out, nil
 }
 
-func (c *coreClient) UserGroup(ctx context.Context, in *UserGroupRequest, opts ...grpc.CallOption) (*UserGroupReply, error) {
-	out := new(UserGroupReply)
+func (c *coreClient) UserGroup(ctx context.Context, in *GroupInfoRequest, opts ...grpc.CallOption) (*GroupInfo, error) {
+	out := new(GroupInfo)
 	err := c.cc.Invoke(ctx, Core_UserGroup_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -213,7 +213,7 @@ type CoreServer interface {
 	UserInfo(context.Context, *UserInfoRequest) (*UserInfoReply, error)
 	UpdatePassword(context.Context, *UpdatePasswordRequest) (*emptypb.Empty, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
-	UserGroup(context.Context, *UserGroupRequest) (*UserGroupReply, error)
+	UserGroup(context.Context, *GroupInfoRequest) (*GroupInfo, error)
 	GetUserGroupList(context.Context, *emptypb.Empty) (*UserGroupListReply, error)
 	GetUserProjectList(context.Context, *emptypb.Empty) (*UserProjectListReply, error)
 	GetUserLatestActivity(context.Context, *emptypb.Empty) (*UserLatestActivityReply, error)
@@ -251,7 +251,7 @@ func (UnimplementedCoreServer) UpdatePassword(context.Context, *UpdatePasswordRe
 func (UnimplementedCoreServer) ListUser(context.Context, *ListUserRequest) (*ListUserReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUser not implemented")
 }
-func (UnimplementedCoreServer) UserGroup(context.Context, *UserGroupRequest) (*UserGroupReply, error) {
+func (UnimplementedCoreServer) UserGroup(context.Context, *GroupInfoRequest) (*GroupInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserGroup not implemented")
 }
 func (UnimplementedCoreServer) GetUserGroupList(context.Context, *emptypb.Empty) (*UserGroupListReply, error) {
@@ -430,7 +430,7 @@ func _Core_ListUser_Handler(srv interface{}, ctx context.Context, dec func(inter
 }
 
 func _Core_UserGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserGroupRequest)
+	in := new(GroupInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -442,7 +442,7 @@ func _Core_UserGroup_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: Core_UserGroup_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).UserGroup(ctx, req.(*UserGroupRequest))
+		return srv.(CoreServer).UserGroup(ctx, req.(*GroupInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
