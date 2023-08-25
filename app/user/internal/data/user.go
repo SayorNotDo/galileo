@@ -196,9 +196,9 @@ func (repo *userRepo) EmptyToken(ctx context.Context, username string) (bool, er
 	return true, nil
 }
 
-func (repo *userRepo) GetUserGroupList(ctx context.Context, uid uint32) ([]*biz.UserGroup, error) {
+func (repo *userRepo) GetUserGroupList(ctx context.Context, uid uint32) ([]*biz.Group, error) {
 	/* 初始化返回值 */
-	var groupList = make([]*biz.UserGroup, 0)
+	var groupList = make([]*biz.Group, 0)
 	var err error
 	/* 关系表查询对应uid的记录 */
 	ret, err := repo.data.entDB.GroupMember.Query().
@@ -216,22 +216,18 @@ func (repo *userRepo) GetUserGroupList(ctx context.Context, uid uint32) ([]*biz.
 		if err != nil {
 			return
 		}
-		groupList = append(groupList, &biz.UserGroup{
-			GroupMemberId: item.ID,
-			Role:          item.Role,
-			GroupInfo: biz.Group{
-				Id:          queryGroup.ID,
-				Name:        queryGroup.Name,
-				Avatar:      queryGroup.Avatar,
-				Description: queryGroup.Description,
-				CreatedBy:   queryGroup.CreatedBy,
-				CreatedAt:   queryGroup.CreatedAt,
-				UpdatedBy:   queryGroup.UpdatedBy,
-				UpdatedAt:   queryGroup.UpdatedAt,
-				DeletedBy:   queryGroup.DeletedBy,
-				DeletedAt:   queryGroup.DeletedAt,
-				Headcount:   queryGroup.Headcount,
-			},
+		groupList = append(groupList, &biz.Group{
+			Id:          queryGroup.ID,
+			Name:        queryGroup.Name,
+			Avatar:      queryGroup.Avatar,
+			Description: queryGroup.Description,
+			CreatedBy:   queryGroup.CreatedBy,
+			CreatedAt:   queryGroup.CreatedAt,
+			UpdatedBy:   queryGroup.UpdatedBy,
+			UpdatedAt:   queryGroup.UpdatedAt,
+			DeletedBy:   queryGroup.DeletedBy,
+			DeletedAt:   queryGroup.DeletedAt,
+			Headcount:   queryGroup.Headcount,
 		})
 	})
 	if err != nil {
@@ -286,5 +282,65 @@ func (repo *userRepo) GetUserGroup(ctx context.Context, groupId int32) (*biz.Gro
 		UpdatedBy:   ret.UpdatedBy,
 		DeletedAt:   ret.DeletedAt,
 		DeletedBy:   ret.DeletedBy,
+	}, nil
+}
+
+func (repo *userRepo) UpdateUserGroup(ctx context.Context, updateGroup *biz.Group) error {
+	/* 查询当前用户分组是否存在 */
+	if exist, _ := repo.data.entDB.Group.Query().Where(group.ID(updateGroup.Id)).Exist(ctx); !exist {
+		return SetCustomizeErrInfoByReason(ReasonRecordNotFound)
+	}
+	/* 更新 */
+	if err := repo.data.entDB.Group.UpdateOneID(updateGroup.Id).
+		SetName(updateGroup.Name).
+		SetAvatar(updateGroup.Avatar).
+		SetDescription(updateGroup.Description).
+		SetUpdatedBy(updateGroup.UpdatedBy).
+		Exec(ctx); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repo *userRepo) CreateUserGroup(ctx context.Context, group *biz.Group) (*biz.Group, error) {
+	/* 创建用户分组逻辑：
+	1.新建分组信息
+	2.设置创建人的角色为分组负责人
+	*/
+	/* 创建事务函数 */
+	tx, err := repo.data.entDB.Tx(ctx)
+	if err != nil {
+		return nil, SetCustomizeErrMsg(ReasonSystemError, err.Error())
+	}
+	ret, err := tx.Group.Create().
+		SetName(group.Name).
+		SetAvatar(group.Avatar).
+		SetDescription(group.Description).
+		SetCreatedAt(group.CreatedAt).
+		SetCreatedBy(group.CreatedBy).
+		SetHeadcount(1).
+		Save(ctx)
+	if err != nil {
+		return nil, rollback(tx, err)
+	}
+	if err := tx.GroupMember.Create().
+		SetGroupID(ret.ID).
+		SetUserID(group.CreatedBy).
+		SetRole(7).
+		Exec(ctx); err != nil {
+		return nil, rollback(tx, err)
+	}
+	/* 提交事务，失败则回滚 */
+	if err := tx.Commit(); err != nil {
+		return nil, rollback(tx, err)
+	}
+	return &biz.Group{
+		Id:          ret.ID,
+		Name:        ret.Name,
+		Avatar:      ret.Avatar,
+		Description: ret.Description,
+		Headcount:   ret.Headcount,
+		CreatedAt:   ret.CreatedAt,
+		CreatedBy:   ret.CreatedBy,
 	}, nil
 }

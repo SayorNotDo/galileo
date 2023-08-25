@@ -66,6 +66,14 @@ func (gmc *GroupMemberCreate) SetCreatedBy(u uint32) *GroupMemberCreate {
 	return gmc
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (gmc *GroupMemberCreate) SetNillableCreatedBy(u *uint32) *GroupMemberCreate {
+	if u != nil {
+		gmc.SetCreatedBy(*u)
+	}
+	return gmc
+}
+
 // SetDeletedAt sets the "deleted_at" field.
 func (gmc *GroupMemberCreate) SetDeletedAt(t time.Time) *GroupMemberCreate {
 	gmc.mutation.SetDeletedAt(t)
@@ -158,9 +166,6 @@ func (gmc *GroupMemberCreate) check() error {
 	}
 	if _, ok := gmc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "GroupMember.created_at"`)}
-	}
-	if _, ok := gmc.mutation.CreatedBy(); !ok {
-		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "GroupMember.created_by"`)}
 	}
 	return nil
 }

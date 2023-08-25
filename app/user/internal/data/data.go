@@ -85,3 +85,10 @@ func NewRedis(c *conf.Data) *redis.Client {
 	}
 	return rdb
 }
+
+func rollback(tx *ent.Tx, err error) error {
+	if rErr := tx.Rollback(); rErr != nil {
+		err = fmt.Errorf("%w: %v", err, rErr)
+	}
+	return err
+}

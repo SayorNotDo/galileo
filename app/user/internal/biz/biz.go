@@ -25,12 +25,6 @@ type User struct {
 	CreatedAt   time.Time `json:"created_at"`
 }
 
-type UserGroup struct {
-	GroupMemberId int32 `json:"group_member_id"`
-	Role          uint8 `json:"role"`
-	GroupInfo     Group `json:"group_info"`
-}
-
 type GroupMember struct {
 	Uid       uint32    `json:"uid"`
 	Username  string    `json:"username"`

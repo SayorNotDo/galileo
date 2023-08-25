@@ -2,7 +2,6 @@ package data
 
 import (
 	"context"
-	"fmt"
 	fileService "galileo/api/file/v1"
 	"galileo/app/management/internal/biz"
 	"galileo/ent"
@@ -43,13 +42,6 @@ func convertApi(api *ent.Api) *biz.Api {
 		DeletedBy:   api.DeletedBy,
 		DeletedAt:   api.DeletedAt,
 	}
-}
-
-func rollback(tx *ent.Tx, err error) error {
-	if rErr := tx.Rollback(); rErr != nil {
-		err = fmt.Errorf("%w: %v", err, rErr)
-	}
-	return err
 }
 
 func (repo *ApiRepo) CreateApi(ctx context.Context, api *biz.Api) (*biz.Api, error) {

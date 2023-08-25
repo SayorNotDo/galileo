@@ -34,6 +34,8 @@ const (
 	User_EmptyToken_FullMethodName        = "/api.user.v1.User/EmptyToken"
 	User_GetUserGroupList_FullMethodName  = "/api.user.v1.User/GetUserGroupList"
 	User_GetUserGroup_FullMethodName      = "/api.user.v1.User/GetUserGroup"
+	User_UpdateUserGroup_FullMethodName   = "/api.user.v1.User/UpdateUserGroup"
+	User_CreateUserGroup_FullMethodName   = "/api.user.v1.User/CreateUserGroup"
 )
 
 // UserClient is the client API for User service.
@@ -54,6 +56,8 @@ type UserClient interface {
 	EmptyToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*EmptyTokenReply, error)
 	GetUserGroupList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserGroupListReply, error)
 	GetUserGroup(ctx context.Context, in *UserGroupRequest, opts ...grpc.CallOption) (*GroupInfo, error)
+	UpdateUserGroup(ctx context.Context, in *UserGroupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	CreateUserGroup(ctx context.Context, in *UserGroupRequest, opts ...grpc.CallOption) (*GroupInfo, error)
 }
 
 type userClient struct {
@@ -190,6 +194,24 @@ func (c *userClient) GetUserGroup(ctx context.Context, in *UserGroupRequest, opt
 	return out, nil
 }
 
+func (c *userClient) UpdateUserGroup(ctx context.Context, in *UserGroupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, User_UpdateUserGroup_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) CreateUserGroup(ctx context.Context, in *UserGroupRequest, opts ...grpc.CallOption) (*GroupInfo, error) {
+	out := new(GroupInfo)
+	err := c.cc.Invoke(ctx, User_CreateUserGroup_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility
@@ -208,6 +230,8 @@ type UserServer interface {
 	EmptyToken(context.Context, *emptypb.Empty) (*EmptyTokenReply, error)
 	GetUserGroupList(context.Context, *emptypb.Empty) (*UserGroupListReply, error)
 	GetUserGroup(context.Context, *UserGroupRequest) (*GroupInfo, error)
+	UpdateUserGroup(context.Context, *UserGroupRequest) (*emptypb.Empty, error)
+	CreateUserGroup(context.Context, *UserGroupRequest) (*GroupInfo, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -256,6 +280,12 @@ func (UnimplementedUserServer) GetUserGroupList(context.Context, *emptypb.Empty)
 }
 func (UnimplementedUserServer) GetUserGroup(context.Context, *UserGroupRequest) (*GroupInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserGroup not implemented")
+}
+func (UnimplementedUserServer) UpdateUserGroup(context.Context, *UserGroupRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserGroup not implemented")
+}
+func (UnimplementedUserServer) CreateUserGroup(context.Context, *UserGroupRequest) (*GroupInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUserGroup not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
@@ -522,6 +552,42 @@ func _User_GetUserGroup_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_UpdateUserGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).UpdateUserGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_UpdateUserGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).UpdateUserGroup(ctx, req.(*UserGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_CreateUserGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).CreateUserGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_CreateUserGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).CreateUserGroup(ctx, req.(*UserGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -584,6 +650,14 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserGroup",
 			Handler:    _User_GetUserGroup_Handler,
+		},
+		{
+			MethodName: "UpdateUserGroup",
+			Handler:    _User_UpdateUserGroup_Handler,
+		},
+		{
+			MethodName: "CreateUserGroup",
+			Handler:    _User_CreateUserGroup_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

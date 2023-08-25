@@ -188,3 +188,10 @@ func NewFileServiceClient(sr *conf.Service, rr registry.Discovery) fileV1.FileCl
 	c := fileV1.NewFileClient(conn)
 	return c
 }
+
+func rollback(tx *ent.Tx, err error) error {
+	if rErr := tx.Rollback(); rErr != nil {
+		err = fmt.Errorf("%w: %v", err, rErr)
+	}
+	return err
+}

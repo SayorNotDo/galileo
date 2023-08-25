@@ -160,7 +160,7 @@ var (
 		{Name: "user_id", Type: field.TypeUint32},
 		{Name: "role", Type: field.TypeUint8, Default: 0},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "created_by", Type: field.TypeUint32},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 	}

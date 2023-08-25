@@ -199,19 +199,19 @@ func (s *UserService) GetUserGroupList(ctx context.Context, empty *empty.Empty) 
 	}
 	/* 初始化返回的分组列表: UserGroup */
 	var userGroupList = make([]*v1.GroupInfo, 0)
-	lo.ForEach(res, func(item *biz.UserGroup, _ int) {
+	lo.ForEach(res, func(item *biz.Group, _ int) {
 		userGroupList = append(userGroupList, &v1.GroupInfo{
-			Id:          item.GroupInfo.Id,
-			Name:        item.GroupInfo.Name,
-			Avatar:      item.GroupInfo.Avatar,
-			Description: item.GroupInfo.Description,
-			CreatedAt:   timestamppb.New(item.GroupInfo.CreatedAt),
-			CreatedBy:   item.GroupInfo.CreatedBy,
-			UpdatedAt:   timestamppb.New(item.GroupInfo.UpdatedAt),
-			UpdatedBy:   item.GroupInfo.UpdatedBy,
-			DeletedAt:   timestamppb.New(item.GroupInfo.DeletedAt),
-			DeletedBy:   item.GroupInfo.DeletedBy,
-			Headcount:   item.GroupInfo.Headcount,
+			Id:          item.Id,
+			Name:        item.Name,
+			Avatar:      item.Avatar,
+			Description: item.Description,
+			CreatedAt:   timestamppb.New(item.CreatedAt),
+			CreatedBy:   item.CreatedBy,
+			UpdatedAt:   timestamppb.New(item.UpdatedAt),
+			UpdatedBy:   item.UpdatedBy,
+			DeletedAt:   timestamppb.New(item.DeletedAt),
+			DeletedBy:   item.DeletedBy,
+			Headcount:   item.Headcount,
 		})
 	})
 	return &v1.UserGroupListReply{
@@ -226,16 +226,51 @@ func (s *UserService) GetUserGroup(ctx context.Context, req *v1.UserGroupRequest
 		return nil, err
 	}
 	return &v1.GroupInfo{
-		Id:          ret.GroupInfo.Id,
-		Name:        ret.GroupInfo.Name,
-		Avatar:      ret.GroupInfo.Avatar,
-		Description: ret.GroupInfo.Description,
-		CreatedAt:   timestamppb.New(ret.GroupInfo.CreatedAt),
-		CreatedBy:   ret.GroupInfo.CreatedBy,
-		UpdatedAt:   timestamppb.New(ret.GroupInfo.UpdatedAt),
-		UpdatedBy:   ret.GroupInfo.UpdatedBy,
-		DeletedAt:   timestamppb.New(ret.GroupInfo.DeletedAt),
-		DeletedBy:   ret.GroupInfo.DeletedBy,
-		Headcount:   ret.GroupInfo.Headcount,
+		Id:          ret.Id,
+		Name:        ret.Name,
+		Avatar:      ret.Avatar,
+		Description: ret.Description,
+		CreatedAt:   timestamppb.New(ret.CreatedAt),
+		CreatedBy:   ret.CreatedBy,
+		UpdatedAt:   timestamppb.New(ret.UpdatedAt),
+		UpdatedBy:   ret.UpdatedBy,
+		DeletedAt:   timestamppb.New(ret.DeletedAt),
+		DeletedBy:   ret.DeletedBy,
+		Headcount:   ret.Headcount,
+	}, nil
+}
+
+func (s *UserService) UpdateUserGroup(ctx context.Context, req *v1.UserGroupRequest) (*emptypb.Empty, error) {
+	uid := ctxdata.UserIdFromMetaData(ctx)
+	group := &biz.Group{
+		Id:          req.Id,
+		Name:        req.Name,
+		Avatar:      req.Avatar,
+		Description: req.Description,
+		UpdatedBy:   uid,
+	}
+	err := s.uc.UpdateUserGroup(ctx, group)
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+func (s *UserService) CreateUserGroup(ctx context.Context, req *v1.UserGroupRequest) (*v1.GroupInfo, error) {
+	ret, err := s.uc.CreateUserGroup(ctx, &biz.Group{
+		Name:        req.Name,
+		Avatar:      req.Avatar,
+		Description: req.Description,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &v1.GroupInfo{
+		Id:          ret.Id,
+		Name:        ret.Name,
+		Avatar:      ret.Avatar,
+		Description: ret.Description,
+		CreatedAt:   timestamppb.New(ret.CreatedAt),
+		CreatedBy:   ret.CreatedBy,
 	}, nil
 }

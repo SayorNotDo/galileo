@@ -20,8 +20,10 @@ type UserRepo interface {
 	SoftDeleteById(context.Context, uint32, uint32) (bool, error)
 	SetToken(context.Context, string, string) (bool, error)
 	EmptyToken(context.Context, string) (bool, error)
-	GetUserGroupList(context.Context, uint32) ([]*UserGroup, error)
+	GetUserGroupList(context.Context, uint32) ([]*Group, error)
 	GetUserGroup(ctx context.Context, groupId int32) (*Group, error)
+	UpdateUserGroup(context.Context, *Group) error
+	CreateUserGroup(context.Context, *Group) (*Group, error)
 }
 
 type UserUseCase struct {
@@ -91,10 +93,18 @@ func (uc *UserUseCase) UpdatePassword(ctx context.Context, u *User, newPassword 
 	return uc.repo.UpdatePassword(ctx, u)
 }
 
-func (uc *UserUseCase) GetUserGroupList(ctx context.Context, uid uint32) ([]*UserGroup, error) {
+func (uc *UserUseCase) GetUserGroupList(ctx context.Context, uid uint32) ([]*Group, error) {
 	return uc.repo.GetUserGroupList(ctx, uid)
 }
 
 func (uc *UserUseCase) GetUserGroup(ctx context.Context, groupId int32) (*Group, error) {
 	return uc.repo.GetUserGroup(ctx, groupId)
+}
+
+func (uc *UserUseCase) UpdateUserGroup(ctx context.Context, group *Group) error {
+	return uc.repo.UpdateUserGroup(ctx, group)
+}
+
+func (uc *UserUseCase) CreateUserGroup(ctx context.Context, group *Group) (*Group, error) {
+	return uc.repo.CreateUserGroup(ctx, group)
 }

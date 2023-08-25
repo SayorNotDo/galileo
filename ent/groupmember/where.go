@@ -289,6 +289,16 @@ func CreatedByLTE(v uint32) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldLTE(FieldCreatedBy, v))
 }
 
+// CreatedByIsNil applies the IsNil predicate on the "created_by" field.
+func CreatedByIsNil() predicate.GroupMember {
+	return predicate.GroupMember(sql.FieldIsNull(FieldCreatedBy))
+}
+
+// CreatedByNotNil applies the NotNil predicate on the "created_by" field.
+func CreatedByNotNil() predicate.GroupMember {
+	return predicate.GroupMember(sql.FieldNotNull(FieldCreatedBy))
+}
+
 // DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
 func DeletedAtEQ(v time.Time) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldEQ(FieldDeletedAt, v))

@@ -220,3 +220,28 @@ func (u *userRepo) GetUserGroup(ctx context.Context, groupId int32) (*biz.Group,
 		GroupMemberList: groupMemberList,
 	}, nil
 }
+
+func (u *userRepo) UpdateUserGroup(ctx context.Context, group *biz.Group) error {
+	return nil
+}
+
+func (u *userRepo) CreateUserGroup(ctx context.Context, group *biz.Group) (*biz.Group, error) {
+	res, err := u.data.uc.CreateUserGroup(ctx, &userService.UserGroupRequest{
+		Id:          group.Id,
+		Name:        group.Name,
+		Avatar:      group.Avatar,
+		Description: group.Description,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &biz.Group{
+		Id:          res.Id,
+		Name:        res.Name,
+		Avatar:      res.Avatar,
+		Description: res.Description,
+		CreatedBy:   res.CreatedBy,
+		CreatedAt:   res.CreatedAt.AsTime(),
+		Headcount:   res.Headcount,
+	}, nil
+}

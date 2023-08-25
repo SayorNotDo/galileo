@@ -125,14 +125,57 @@ func (c *CoreService) UserGroup(ctx context.Context, req *v1.GroupInfoRequest) (
 	var reply *v1.GroupInfo
 	switch ctxdata.MethodFromContext(ctx) {
 	case "POST":
-	case "DELETE":
-	case "PUT":
-	case "GET":
-		_, err := c.uc.GetUserGroup(ctx, req.Id)
+		ret, err := c.uc.CreateUserGroup(ctx, &biz.Group{
+			Id:          req.Id,
+			Name:        req.Name,
+			Avatar:      req.Avatar,
+			Description: req.Description,
+		})
 		if err != nil {
 			return nil, err
 		}
-		return &v1.GroupInfo{}, nil
+		return &v1.GroupInfo{Id: ret.Id}, nil
+	case "DELETE":
+	case "PUT":
+		err := c.uc.UpdateUserGroup(ctx, &biz.Group{
+			Id:          req.Id,
+			Name:        req.Name,
+			Avatar:      req.Avatar,
+			Description: req.Description,
+		})
+		if err != nil {
+			return nil, err
+		}
+		return nil, nil
+	case "GET":
+		ret, err := c.uc.GetUserGroup(ctx, req.Id)
+		if err != nil {
+			return nil, err
+		}
+		var groupMemberList []*v1.GroupMember
+		lo.ForEach(ret.GroupMemberList, func(item *biz.GroupMember, _ int) {
+			groupMemberList = append(groupMemberList, &v1.GroupMember{
+				Uid:       item.Uid,
+				Username:  item.Username,
+				Role:      uint32(item.Role),
+				CreatedAt: timestamppb.New(ret.CreatedAt),
+				CreatedBy: ret.CreatedBy,
+			})
+		})
+		return &v1.GroupInfo{
+			Id:              ret.Id,
+			Name:            ret.Name,
+			Avatar:          ret.Avatar,
+			Description:     ret.Description,
+			CreatedAt:       timestamppb.New(ret.CreatedAt),
+			CreatedBy:       ret.CreatedBy,
+			UpdatedAt:       timestamppb.New(ret.UpdatedAt),
+			UpdatedBy:       ret.UpdatedBy,
+			DeletedAt:       timestamppb.New(ret.DeletedAt),
+			DeletedBy:       ret.DeletedBy,
+			Headcount:       ret.Headcount,
+			GroupMemberList: groupMemberList,
+		}, nil
 	default:
 		return nil, errResponse.SetErrByReason(errResponse.ReasonUnknownError)
 	}

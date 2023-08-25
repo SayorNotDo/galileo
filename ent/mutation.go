@@ -7441,10 +7441,24 @@ func (m *GroupMemberMutation) AddedCreatedBy() (r int32, exists bool) {
 	return *v, true
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *GroupMemberMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[groupmember.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *GroupMemberMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[groupmember.FieldCreatedBy]
+	return ok
+}
+
 // ResetCreatedBy resets all changes to the "created_by" field.
 func (m *GroupMemberMutation) ResetCreatedBy() {
 	m.created_by = nil
 	m.addcreated_by = nil
+	delete(m.clearedFields, groupmember.FieldCreatedBy)
 }
 
 // SetDeletedAt sets the "deleted_at" field.
@@ -7818,6 +7832,9 @@ func (m *GroupMemberMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *GroupMemberMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(groupmember.FieldCreatedBy) {
+		fields = append(fields, groupmember.FieldCreatedBy)
+	}
 	if m.FieldCleared(groupmember.FieldDeletedAt) {
 		fields = append(fields, groupmember.FieldDeletedAt)
 	}
@@ -7838,6 +7855,9 @@ func (m *GroupMemberMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *GroupMemberMutation) ClearField(name string) error {
 	switch name {
+	case groupmember.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
 	case groupmember.FieldDeletedAt:
 		m.ClearDeletedAt()
 		return nil

@@ -82,9 +82,23 @@ func (gmu *GroupMemberUpdate) SetCreatedBy(u uint32) *GroupMemberUpdate {
 	return gmu
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (gmu *GroupMemberUpdate) SetNillableCreatedBy(u *uint32) *GroupMemberUpdate {
+	if u != nil {
+		gmu.SetCreatedBy(*u)
+	}
+	return gmu
+}
+
 // AddCreatedBy adds u to the "created_by" field.
 func (gmu *GroupMemberUpdate) AddCreatedBy(u int32) *GroupMemberUpdate {
 	gmu.mutation.AddCreatedBy(u)
+	return gmu
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (gmu *GroupMemberUpdate) ClearCreatedBy() *GroupMemberUpdate {
+	gmu.mutation.ClearCreatedBy()
 	return gmu
 }
 
@@ -200,6 +214,9 @@ func (gmu *GroupMemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := gmu.mutation.AddedCreatedBy(); ok {
 		_spec.AddField(groupmember.FieldCreatedBy, field.TypeUint32, value)
 	}
+	if gmu.mutation.CreatedByCleared() {
+		_spec.ClearField(groupmember.FieldCreatedBy, field.TypeUint32)
+	}
 	if value, ok := gmu.mutation.DeletedAt(); ok {
 		_spec.SetField(groupmember.FieldDeletedAt, field.TypeTime, value)
 	}
@@ -289,9 +306,23 @@ func (gmuo *GroupMemberUpdateOne) SetCreatedBy(u uint32) *GroupMemberUpdateOne {
 	return gmuo
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (gmuo *GroupMemberUpdateOne) SetNillableCreatedBy(u *uint32) *GroupMemberUpdateOne {
+	if u != nil {
+		gmuo.SetCreatedBy(*u)
+	}
+	return gmuo
+}
+
 // AddCreatedBy adds u to the "created_by" field.
 func (gmuo *GroupMemberUpdateOne) AddCreatedBy(u int32) *GroupMemberUpdateOne {
 	gmuo.mutation.AddCreatedBy(u)
+	return gmuo
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (gmuo *GroupMemberUpdateOne) ClearCreatedBy() *GroupMemberUpdateOne {
+	gmuo.mutation.ClearCreatedBy()
 	return gmuo
 }
 
@@ -436,6 +467,9 @@ func (gmuo *GroupMemberUpdateOne) sqlSave(ctx context.Context) (_node *GroupMemb
 	}
 	if value, ok := gmuo.mutation.AddedCreatedBy(); ok {
 		_spec.AddField(groupmember.FieldCreatedBy, field.TypeUint32, value)
+	}
+	if gmuo.mutation.CreatedByCleared() {
+		_spec.ClearField(groupmember.FieldCreatedBy, field.TypeUint32)
 	}
 	if value, ok := gmuo.mutation.DeletedAt(); ok {
 		_spec.SetField(groupmember.FieldDeletedAt, field.TypeTime, value)

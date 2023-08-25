@@ -30,6 +30,8 @@ type UserRepo interface {
 	ListUser(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserDetail, int32, error)
 	GetUserProjectList(ctx context.Context) ([]*v1.ProjectInfo, error)
 	GetUserGroup(ctx context.Context, groupId int32) (*Group, error)
+	CreateUserGroup(ctx context.Context, group *Group) (*Group, error)
+	UpdateUserGroup(ctx context.Context, group *Group) error
 	GetUserGroupList(ctx context.Context) ([]*Group, error)
 	VerifyPassword(ctx context.Context, password, encryptedPassword string) (bool, error)
 }
@@ -226,4 +228,12 @@ func (u *UserUseCase) GetUserGroupList(ctx context.Context) ([]*Group, error) {
 
 func (u *UserUseCase) GetUserGroup(ctx context.Context, groupId int32) (*Group, error) {
 	return u.repo.GetUserGroup(ctx, groupId)
+}
+
+func (u *UserUseCase) UpdateUserGroup(ctx context.Context, group *Group) error {
+	return u.repo.UpdateUserGroup(ctx, group)
+}
+
+func (u *UserUseCase) CreateUserGroup(ctx context.Context, group *Group) (*Group, error) {
+	return u.repo.CreateUserGroup(ctx, group)
 }
