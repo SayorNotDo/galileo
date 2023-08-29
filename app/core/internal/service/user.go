@@ -44,7 +44,7 @@ func (c *CoreService) UpdatePassword(ctx context.Context, req *v1.UpdatePassword
 	return c.uc.UpdatePassword(ctx, req)
 }
 
-func (c *CoreService) ListUser(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserReply, error) {
+func (c *CoreService) ListUsers(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserReply, error) {
 	return c.uc.ListUser(ctx, req.PageNum, req.PageSize)
 }
 
@@ -65,7 +65,13 @@ func (c *CoreService) UserInfo(ctx context.Context, req *v1.UserInfoRequest) (*v
 	return reply, nil
 }
 
-func (c *CoreService) DeleteUser(ctx context.Context, req *v1.DeleteRequest) (*v1.DeleteReply, error) {
+func (c *CoreService) CurrentUserInfo(ctx context.Context, empty *empty.Empty) (*v1.UserInfoReply, error) {
+	//uid := ctxdata.GetUserId(ctx)
+
+	return nil, nil
+}
+
+func (c *CoreService) DeleteUser(ctx context.Context, req *v1.DeleteRequest) (*emptypb.Empty, error) {
 	return c.uc.DeleteUser(ctx, req.Id)
 }
 
@@ -94,7 +100,7 @@ func (c *CoreService) GetUserLatestActivity(ctx context.Context, empty *empty.Em
 	return nil, nil
 }
 
-func (c *CoreService) GetUserGroupList(ctx context.Context, empty *empty.Empty) (*v1.UserGroupListReply, error) {
+func (c *CoreService) ListUserGroups(ctx context.Context, request *v1.ListUserGroupsRequest) (*v1.UserGroupListReply, error) {
 	var userGroupList = make([]*v1.GroupInfo, 0)
 	ret, err := c.uc.GetUserGroupList(ctx)
 	if err != nil {

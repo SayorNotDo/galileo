@@ -7,6 +7,7 @@ import (
 
 const ReasonSuccess = "SUCCESS"
 const ReasonUnknownError = "UNKNOWN_ERROR"
+const ReasonUnsupportedMethod = "METHOD_UNSUPPORTED"
 
 const ReasonMissingParams = "MISSING_PARAMS"
 const ReasonMissingId = "MISSING_ID"
@@ -62,8 +63,9 @@ var reasonMessageAll = map[string]string{
 	ReasonUserPhoneExist:    "phone is already exist",
 	ReasonUnauthorizedUser:  "user is unauthorized",
 
-	ReasonSuccess:      "success",
-	ReasonUnknownError: "unknown error",
+	ReasonSuccess:           "success",
+	ReasonUnknownError:      "unknown error",
+	ReasonUnsupportedMethod: "unsupported method",
 
 	ReasonParamsError:    "params error",
 	ReasonMissingParams:  "params missing",
@@ -105,14 +107,15 @@ var reasonMessageAll = map[string]string{
 }
 
 var reasonCodeAll = map[string]int{
-	ReasonSuccess:      2000,
-	ReasonUnknownError: 1,
+	ReasonSuccess:           2000,
+	ReasonUnknownError:      5000,
+	ReasonUnsupportedMethod: 4005,
 
 	ReasonParamsError:    4000,
-	ReasonMissingParams:  1001,
-	ReasonMissingId:      1002,
+	ReasonMissingParams:  4000,
+	ReasonMissingId:      4000,
 	ReasonRecordNotFound: 4004,
-	ReasonRecordExists:   4005,
+	ReasonRecordExists:   4009,
 	TimeFormatError:      1004,
 
 	ReasonAdministratorNotFound:      2001,

@@ -12,6 +12,7 @@ type DockerRepo interface {
 	InspectContainer(ctx context.Context, id string) (*Container, error)
 	CreateContainer(ctx context.Context, container *Container) (id string, warnings []string, err error)
 	ParseComposeFile(ctx context.Context, fp []byte) ([]*ContainerConfig, error)
+	GetDockerInfo(ctx context.Context)
 }
 
 type DockerUseCase struct {

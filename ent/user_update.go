@@ -29,6 +29,20 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
+// SetUUID sets the "uuid" field.
+func (uu *UserUpdate) SetUUID(u uuid.UUID) *UserUpdate {
+	uu.mutation.SetUUID(u)
+	return uu
+}
+
+// SetNillableUUID sets the "uuid" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableUUID(u *uuid.UUID) *UserUpdate {
+	if u != nil {
+		uu.SetUUID(*u)
+	}
+	return uu
+}
+
 // SetActive sets the "active" field.
 func (uu *UserUpdate) SetActive(b bool) *UserUpdate {
 	uu.mutation.SetActive(b)
@@ -66,12 +80,6 @@ func (uu *UserUpdate) SetNillableChineseName(s *string) *UserUpdate {
 // ClearChineseName clears the value of the "chineseName" field.
 func (uu *UserUpdate) ClearChineseName() *UserUpdate {
 	uu.mutation.ClearChineseName()
-	return uu
-}
-
-// SetNickname sets the "nickname" field.
-func (uu *UserUpdate) SetNickname(s string) *UserUpdate {
-	uu.mutation.SetNickname(s)
 	return uu
 }
 
@@ -113,30 +121,55 @@ func (uu *UserUpdate) ClearAvatar() *UserUpdate {
 	return uu
 }
 
-// SetRole sets the "role" field.
-func (uu *UserUpdate) SetRole(u uint8) *UserUpdate {
-	uu.mutation.ResetRole()
-	uu.mutation.SetRole(u)
+// SetLocation sets the "location" field.
+func (uu *UserUpdate) SetLocation(s string) *UserUpdate {
+	uu.mutation.SetLocation(s)
 	return uu
 }
 
-// SetNillableRole sets the "role" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableRole(u *uint8) *UserUpdate {
-	if u != nil {
-		uu.SetRole(*u)
+// SetNillableLocation sets the "location" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableLocation(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetLocation(*s)
 	}
 	return uu
 }
 
-// AddRole adds u to the "role" field.
-func (uu *UserUpdate) AddRole(u int8) *UserUpdate {
-	uu.mutation.AddRole(u)
+// ClearLocation clears the value of the "location" field.
+func (uu *UserUpdate) ClearLocation() *UserUpdate {
+	uu.mutation.ClearLocation()
 	return uu
 }
 
-// SetUpdateAt sets the "update_at" field.
-func (uu *UserUpdate) SetUpdateAt(t time.Time) *UserUpdate {
-	uu.mutation.SetUpdateAt(t)
+// SetLastLoginTime sets the "last_login_time" field.
+func (uu *UserUpdate) SetLastLoginTime(t time.Time) *UserUpdate {
+	uu.mutation.SetLastLoginTime(t)
+	return uu
+}
+
+// SetNillableLastLoginTime sets the "last_login_time" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableLastLoginTime(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetLastLoginTime(*t)
+	}
+	return uu
+}
+
+// ClearLastLoginTime clears the value of the "last_login_time" field.
+func (uu *UserUpdate) ClearLastLoginTime() *UserUpdate {
+	uu.mutation.ClearLastLoginTime()
+	return uu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
+	uu.mutation.SetUpdatedAt(t)
+	return uu
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (uu *UserUpdate) ClearUpdatedAt() *UserUpdate {
+	uu.mutation.ClearUpdatedAt()
 	return uu
 }
 
@@ -187,114 +220,6 @@ func (uu *UserUpdate) ClearDeletedBy() *UserUpdate {
 	return uu
 }
 
-// SetIsDeleted sets the "is_deleted" field.
-func (uu *UserUpdate) SetIsDeleted(b bool) *UserUpdate {
-	uu.mutation.SetIsDeleted(b)
-	return uu
-}
-
-// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableIsDeleted(b *bool) *UserUpdate {
-	if b != nil {
-		uu.SetIsDeleted(*b)
-	}
-	return uu
-}
-
-// ClearIsDeleted clears the value of the "is_deleted" field.
-func (uu *UserUpdate) ClearIsDeleted() *UserUpdate {
-	uu.mutation.ClearIsDeleted()
-	return uu
-}
-
-// SetUUID sets the "uuid" field.
-func (uu *UserUpdate) SetUUID(u uuid.UUID) *UserUpdate {
-	uu.mutation.SetUUID(u)
-	return uu
-}
-
-// SetNillableUUID sets the "uuid" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableUUID(u *uuid.UUID) *UserUpdate {
-	if u != nil {
-		uu.SetUUID(*u)
-	}
-	return uu
-}
-
-// SetGroupID sets the "group_id" field.
-func (uu *UserUpdate) SetGroupID(i int32) *UserUpdate {
-	uu.mutation.ResetGroupID()
-	uu.mutation.SetGroupID(i)
-	return uu
-}
-
-// SetNillableGroupID sets the "group_id" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableGroupID(i *int32) *UserUpdate {
-	if i != nil {
-		uu.SetGroupID(*i)
-	}
-	return uu
-}
-
-// AddGroupID adds i to the "group_id" field.
-func (uu *UserUpdate) AddGroupID(i int32) *UserUpdate {
-	uu.mutation.AddGroupID(i)
-	return uu
-}
-
-// ClearGroupID clears the value of the "group_id" field.
-func (uu *UserUpdate) ClearGroupID() *UserUpdate {
-	uu.mutation.ClearGroupID()
-	return uu
-}
-
-// SetLocation sets the "location" field.
-func (uu *UserUpdate) SetLocation(s string) *UserUpdate {
-	uu.mutation.SetLocation(s)
-	return uu
-}
-
-// SetNillableLocation sets the "location" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableLocation(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetLocation(*s)
-	}
-	return uu
-}
-
-// ClearLocation clears the value of the "location" field.
-func (uu *UserUpdate) ClearLocation() *UserUpdate {
-	uu.mutation.ClearLocation()
-	return uu
-}
-
-// SetDepartmentID sets the "department_id" field.
-func (uu *UserUpdate) SetDepartmentID(i int32) *UserUpdate {
-	uu.mutation.ResetDepartmentID()
-	uu.mutation.SetDepartmentID(i)
-	return uu
-}
-
-// SetNillableDepartmentID sets the "department_id" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableDepartmentID(i *int32) *UserUpdate {
-	if i != nil {
-		uu.SetDepartmentID(*i)
-	}
-	return uu
-}
-
-// AddDepartmentID adds i to the "department_id" field.
-func (uu *UserUpdate) AddDepartmentID(i int32) *UserUpdate {
-	uu.mutation.AddDepartmentID(i)
-	return uu
-}
-
-// ClearDepartmentID clears the value of the "department_id" field.
-func (uu *UserUpdate) ClearDepartmentID() *UserUpdate {
-	uu.mutation.ClearDepartmentID()
-	return uu
-}
-
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -330,9 +255,9 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uu *UserUpdate) defaults() {
-	if _, ok := uu.mutation.UpdateAt(); !ok {
-		v := user.UpdateDefaultUpdateAt()
-		uu.mutation.SetUpdateAt(v)
+	if _, ok := uu.mutation.UpdatedAt(); !ok && !uu.mutation.UpdatedAtCleared() {
+		v := user.UpdateDefaultUpdatedAt()
+		uu.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -345,6 +270,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := uu.mutation.UUID(); ok {
+		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
+	}
 	if value, ok := uu.mutation.Active(); ok {
 		_spec.SetField(user.FieldActive, field.TypeBool, value)
 	}
@@ -356,9 +284,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.ChineseNameCleared() {
 		_spec.ClearField(user.FieldChineseName, field.TypeString)
-	}
-	if value, ok := uu.mutation.Nickname(); ok {
-		_spec.SetField(user.FieldNickname, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
@@ -375,14 +300,23 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if uu.mutation.AvatarCleared() {
 		_spec.ClearField(user.FieldAvatar, field.TypeString)
 	}
-	if value, ok := uu.mutation.Role(); ok {
-		_spec.SetField(user.FieldRole, field.TypeUint8, value)
+	if value, ok := uu.mutation.Location(); ok {
+		_spec.SetField(user.FieldLocation, field.TypeString, value)
 	}
-	if value, ok := uu.mutation.AddedRole(); ok {
-		_spec.AddField(user.FieldRole, field.TypeUint8, value)
+	if uu.mutation.LocationCleared() {
+		_spec.ClearField(user.FieldLocation, field.TypeString)
 	}
-	if value, ok := uu.mutation.UpdateAt(); ok {
-		_spec.SetField(user.FieldUpdateAt, field.TypeTime, value)
+	if value, ok := uu.mutation.LastLoginTime(); ok {
+		_spec.SetField(user.FieldLastLoginTime, field.TypeTime, value)
+	}
+	if uu.mutation.LastLoginTimeCleared() {
+		_spec.ClearField(user.FieldLastLoginTime, field.TypeTime)
+	}
+	if value, ok := uu.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if uu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(user.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := uu.mutation.DeletedAt(); ok {
 		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
@@ -398,39 +332,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.DeletedByCleared() {
 		_spec.ClearField(user.FieldDeletedBy, field.TypeUint32)
-	}
-	if value, ok := uu.mutation.IsDeleted(); ok {
-		_spec.SetField(user.FieldIsDeleted, field.TypeBool, value)
-	}
-	if uu.mutation.IsDeletedCleared() {
-		_spec.ClearField(user.FieldIsDeleted, field.TypeBool)
-	}
-	if value, ok := uu.mutation.UUID(); ok {
-		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
-	}
-	if value, ok := uu.mutation.GroupID(); ok {
-		_spec.SetField(user.FieldGroupID, field.TypeInt32, value)
-	}
-	if value, ok := uu.mutation.AddedGroupID(); ok {
-		_spec.AddField(user.FieldGroupID, field.TypeInt32, value)
-	}
-	if uu.mutation.GroupIDCleared() {
-		_spec.ClearField(user.FieldGroupID, field.TypeInt32)
-	}
-	if value, ok := uu.mutation.Location(); ok {
-		_spec.SetField(user.FieldLocation, field.TypeString, value)
-	}
-	if uu.mutation.LocationCleared() {
-		_spec.ClearField(user.FieldLocation, field.TypeString)
-	}
-	if value, ok := uu.mutation.DepartmentID(); ok {
-		_spec.SetField(user.FieldDepartmentID, field.TypeInt32, value)
-	}
-	if value, ok := uu.mutation.AddedDepartmentID(); ok {
-		_spec.AddField(user.FieldDepartmentID, field.TypeInt32, value)
-	}
-	if uu.mutation.DepartmentIDCleared() {
-		_spec.ClearField(user.FieldDepartmentID, field.TypeInt32)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -450,6 +351,20 @@ type UserUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *UserMutation
+}
+
+// SetUUID sets the "uuid" field.
+func (uuo *UserUpdateOne) SetUUID(u uuid.UUID) *UserUpdateOne {
+	uuo.mutation.SetUUID(u)
+	return uuo
+}
+
+// SetNillableUUID sets the "uuid" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableUUID(u *uuid.UUID) *UserUpdateOne {
+	if u != nil {
+		uuo.SetUUID(*u)
+	}
+	return uuo
 }
 
 // SetActive sets the "active" field.
@@ -492,12 +407,6 @@ func (uuo *UserUpdateOne) ClearChineseName() *UserUpdateOne {
 	return uuo
 }
 
-// SetNickname sets the "nickname" field.
-func (uuo *UserUpdateOne) SetNickname(s string) *UserUpdateOne {
-	uuo.mutation.SetNickname(s)
-	return uuo
-}
-
 // SetPassword sets the "password" field.
 func (uuo *UserUpdateOne) SetPassword(s string) *UserUpdateOne {
 	uuo.mutation.SetPassword(s)
@@ -536,30 +445,55 @@ func (uuo *UserUpdateOne) ClearAvatar() *UserUpdateOne {
 	return uuo
 }
 
-// SetRole sets the "role" field.
-func (uuo *UserUpdateOne) SetRole(u uint8) *UserUpdateOne {
-	uuo.mutation.ResetRole()
-	uuo.mutation.SetRole(u)
+// SetLocation sets the "location" field.
+func (uuo *UserUpdateOne) SetLocation(s string) *UserUpdateOne {
+	uuo.mutation.SetLocation(s)
 	return uuo
 }
 
-// SetNillableRole sets the "role" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableRole(u *uint8) *UserUpdateOne {
-	if u != nil {
-		uuo.SetRole(*u)
+// SetNillableLocation sets the "location" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableLocation(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetLocation(*s)
 	}
 	return uuo
 }
 
-// AddRole adds u to the "role" field.
-func (uuo *UserUpdateOne) AddRole(u int8) *UserUpdateOne {
-	uuo.mutation.AddRole(u)
+// ClearLocation clears the value of the "location" field.
+func (uuo *UserUpdateOne) ClearLocation() *UserUpdateOne {
+	uuo.mutation.ClearLocation()
 	return uuo
 }
 
-// SetUpdateAt sets the "update_at" field.
-func (uuo *UserUpdateOne) SetUpdateAt(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetUpdateAt(t)
+// SetLastLoginTime sets the "last_login_time" field.
+func (uuo *UserUpdateOne) SetLastLoginTime(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetLastLoginTime(t)
+	return uuo
+}
+
+// SetNillableLastLoginTime sets the "last_login_time" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableLastLoginTime(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetLastLoginTime(*t)
+	}
+	return uuo
+}
+
+// ClearLastLoginTime clears the value of the "last_login_time" field.
+func (uuo *UserUpdateOne) ClearLastLoginTime() *UserUpdateOne {
+	uuo.mutation.ClearLastLoginTime()
+	return uuo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetUpdatedAt(t)
+	return uuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (uuo *UserUpdateOne) ClearUpdatedAt() *UserUpdateOne {
+	uuo.mutation.ClearUpdatedAt()
 	return uuo
 }
 
@@ -607,114 +541,6 @@ func (uuo *UserUpdateOne) AddDeletedBy(u int32) *UserUpdateOne {
 // ClearDeletedBy clears the value of the "deleted_by" field.
 func (uuo *UserUpdateOne) ClearDeletedBy() *UserUpdateOne {
 	uuo.mutation.ClearDeletedBy()
-	return uuo
-}
-
-// SetIsDeleted sets the "is_deleted" field.
-func (uuo *UserUpdateOne) SetIsDeleted(b bool) *UserUpdateOne {
-	uuo.mutation.SetIsDeleted(b)
-	return uuo
-}
-
-// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableIsDeleted(b *bool) *UserUpdateOne {
-	if b != nil {
-		uuo.SetIsDeleted(*b)
-	}
-	return uuo
-}
-
-// ClearIsDeleted clears the value of the "is_deleted" field.
-func (uuo *UserUpdateOne) ClearIsDeleted() *UserUpdateOne {
-	uuo.mutation.ClearIsDeleted()
-	return uuo
-}
-
-// SetUUID sets the "uuid" field.
-func (uuo *UserUpdateOne) SetUUID(u uuid.UUID) *UserUpdateOne {
-	uuo.mutation.SetUUID(u)
-	return uuo
-}
-
-// SetNillableUUID sets the "uuid" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableUUID(u *uuid.UUID) *UserUpdateOne {
-	if u != nil {
-		uuo.SetUUID(*u)
-	}
-	return uuo
-}
-
-// SetGroupID sets the "group_id" field.
-func (uuo *UserUpdateOne) SetGroupID(i int32) *UserUpdateOne {
-	uuo.mutation.ResetGroupID()
-	uuo.mutation.SetGroupID(i)
-	return uuo
-}
-
-// SetNillableGroupID sets the "group_id" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableGroupID(i *int32) *UserUpdateOne {
-	if i != nil {
-		uuo.SetGroupID(*i)
-	}
-	return uuo
-}
-
-// AddGroupID adds i to the "group_id" field.
-func (uuo *UserUpdateOne) AddGroupID(i int32) *UserUpdateOne {
-	uuo.mutation.AddGroupID(i)
-	return uuo
-}
-
-// ClearGroupID clears the value of the "group_id" field.
-func (uuo *UserUpdateOne) ClearGroupID() *UserUpdateOne {
-	uuo.mutation.ClearGroupID()
-	return uuo
-}
-
-// SetLocation sets the "location" field.
-func (uuo *UserUpdateOne) SetLocation(s string) *UserUpdateOne {
-	uuo.mutation.SetLocation(s)
-	return uuo
-}
-
-// SetNillableLocation sets the "location" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableLocation(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetLocation(*s)
-	}
-	return uuo
-}
-
-// ClearLocation clears the value of the "location" field.
-func (uuo *UserUpdateOne) ClearLocation() *UserUpdateOne {
-	uuo.mutation.ClearLocation()
-	return uuo
-}
-
-// SetDepartmentID sets the "department_id" field.
-func (uuo *UserUpdateOne) SetDepartmentID(i int32) *UserUpdateOne {
-	uuo.mutation.ResetDepartmentID()
-	uuo.mutation.SetDepartmentID(i)
-	return uuo
-}
-
-// SetNillableDepartmentID sets the "department_id" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableDepartmentID(i *int32) *UserUpdateOne {
-	if i != nil {
-		uuo.SetDepartmentID(*i)
-	}
-	return uuo
-}
-
-// AddDepartmentID adds i to the "department_id" field.
-func (uuo *UserUpdateOne) AddDepartmentID(i int32) *UserUpdateOne {
-	uuo.mutation.AddDepartmentID(i)
-	return uuo
-}
-
-// ClearDepartmentID clears the value of the "department_id" field.
-func (uuo *UserUpdateOne) ClearDepartmentID() *UserUpdateOne {
-	uuo.mutation.ClearDepartmentID()
 	return uuo
 }
 
@@ -766,9 +592,9 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uuo *UserUpdateOne) defaults() {
-	if _, ok := uuo.mutation.UpdateAt(); !ok {
-		v := user.UpdateDefaultUpdateAt()
-		uuo.mutation.SetUpdateAt(v)
+	if _, ok := uuo.mutation.UpdatedAt(); !ok && !uuo.mutation.UpdatedAtCleared() {
+		v := user.UpdateDefaultUpdatedAt()
+		uuo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -798,6 +624,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			}
 		}
 	}
+	if value, ok := uuo.mutation.UUID(); ok {
+		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
+	}
 	if value, ok := uuo.mutation.Active(); ok {
 		_spec.SetField(user.FieldActive, field.TypeBool, value)
 	}
@@ -809,9 +638,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.ChineseNameCleared() {
 		_spec.ClearField(user.FieldChineseName, field.TypeString)
-	}
-	if value, ok := uuo.mutation.Nickname(); ok {
-		_spec.SetField(user.FieldNickname, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
@@ -828,14 +654,23 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if uuo.mutation.AvatarCleared() {
 		_spec.ClearField(user.FieldAvatar, field.TypeString)
 	}
-	if value, ok := uuo.mutation.Role(); ok {
-		_spec.SetField(user.FieldRole, field.TypeUint8, value)
+	if value, ok := uuo.mutation.Location(); ok {
+		_spec.SetField(user.FieldLocation, field.TypeString, value)
 	}
-	if value, ok := uuo.mutation.AddedRole(); ok {
-		_spec.AddField(user.FieldRole, field.TypeUint8, value)
+	if uuo.mutation.LocationCleared() {
+		_spec.ClearField(user.FieldLocation, field.TypeString)
 	}
-	if value, ok := uuo.mutation.UpdateAt(); ok {
-		_spec.SetField(user.FieldUpdateAt, field.TypeTime, value)
+	if value, ok := uuo.mutation.LastLoginTime(); ok {
+		_spec.SetField(user.FieldLastLoginTime, field.TypeTime, value)
+	}
+	if uuo.mutation.LastLoginTimeCleared() {
+		_spec.ClearField(user.FieldLastLoginTime, field.TypeTime)
+	}
+	if value, ok := uuo.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if uuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(user.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := uuo.mutation.DeletedAt(); ok {
 		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
@@ -851,39 +686,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.DeletedByCleared() {
 		_spec.ClearField(user.FieldDeletedBy, field.TypeUint32)
-	}
-	if value, ok := uuo.mutation.IsDeleted(); ok {
-		_spec.SetField(user.FieldIsDeleted, field.TypeBool, value)
-	}
-	if uuo.mutation.IsDeletedCleared() {
-		_spec.ClearField(user.FieldIsDeleted, field.TypeBool)
-	}
-	if value, ok := uuo.mutation.UUID(); ok {
-		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
-	}
-	if value, ok := uuo.mutation.GroupID(); ok {
-		_spec.SetField(user.FieldGroupID, field.TypeInt32, value)
-	}
-	if value, ok := uuo.mutation.AddedGroupID(); ok {
-		_spec.AddField(user.FieldGroupID, field.TypeInt32, value)
-	}
-	if uuo.mutation.GroupIDCleared() {
-		_spec.ClearField(user.FieldGroupID, field.TypeInt32)
-	}
-	if value, ok := uuo.mutation.Location(); ok {
-		_spec.SetField(user.FieldLocation, field.TypeString, value)
-	}
-	if uuo.mutation.LocationCleared() {
-		_spec.ClearField(user.FieldLocation, field.TypeString)
-	}
-	if value, ok := uuo.mutation.DepartmentID(); ok {
-		_spec.SetField(user.FieldDepartmentID, field.TypeInt32, value)
-	}
-	if value, ok := uuo.mutation.AddedDepartmentID(); ok {
-		_spec.AddField(user.FieldDepartmentID, field.TypeInt32, value)
-	}
-	if uuo.mutation.DepartmentIDCleared() {
-		_spec.ClearField(user.FieldDepartmentID, field.TypeInt32)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

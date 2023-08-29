@@ -24,43 +24,43 @@ service Core {
       body: "*"
     };
   };
-  rpc Unregister (UnregisterRequest) returns (UnregisterReply){
-    option (google.api.http) = {
-      delete: "v1/api/user/unregister"
-    };
-  };
   rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty){
     option(google.api.http) = {
       post: "v1/api/user/logout"
       body: "*"
     };
   };
-  rpc DeleteUser (DeleteRequest) returns (DeleteReply){
-    option (google.api.http) = {
-      delete: "v1/api/user/{id}"
-    };
-  };
   rpc UserInfo(UserInfoRequest) returns (UserInfoReply) {
     option(google.api.http) = {
-      get: "v1/api/user/info",
+      get: "v1/api/user/{id}/info",
       additional_bindings {
-        put: "v1/api/user/info"
+        put: "v1/api/user/{id}/info"
         body: "*"
       }
     };
   };
+  rpc CurrentUserInfo(google.protobuf.Empty) returns (UserInfoReply) {
+    option(google.api.http) = {
+      get: "v1/api/user/info"
+    };
+  }
   rpc UpdatePassword(UpdatePasswordRequest) returns (google.protobuf.Empty){
     option(google.api.http) = {
       put: "v1/api/user/password"
       body: "*"
     };
   }
-  rpc ListUser (ListUserRequest) returns (ListUserReply){
+  rpc DeleteUser (DeleteRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      delete: "v1/api/user/{id}"
+    };
+  };
+  rpc ListUsers (ListUserRequest) returns (ListUserReply){
     option(google.api.http) = {
       get: "v1/api/user/list/{pageNum}/{pageSize}"
     };
   }
-  rpc UserGroup(GroupInfoRequest) returns (GroupInfo) {
+  rpc UserGroups(GroupInfoRequest) returns (GroupInfo) {
     option(google.api.http) = {
       post: "v1/api/user/group"
       body: "*"
@@ -76,9 +76,9 @@ service Core {
       }
     };
   }
-  rpc GetUserGroupList(google.protobuf.Empty) returns (UserGroupListReply) {
+  rpc ListUserGroups(ListUserGroupsRequest) returns (UserGroupListReply) {
     option(google.api.http) = {
-      get: "v1/api/user/group/list"
+      get: "v1/api/user/groups"
     };
   }
   rpc GetUserProjectList(google.protobuf.Empty) returns (UserProjectListReply){
@@ -110,9 +110,17 @@ service Core {
   }
 }
 
+message ListUserGroupsRequest {
+  string parent = 1;
+
+  int32 pageSize = 2;
+  string pageToken = 3;
+}
+
 message UserGroupListReply {
   int32 total = 1;
   repeated GroupInfo groupList = 2;
+  string nextPageToken = 3;
 }
 
 message GroupInfoRequest {
@@ -201,15 +209,6 @@ message DeleteRequest{
   uint32 id = 1;
 }
 
-message DeleteReply{
-  message DeleteInfo{
-    uint32 id = 1;
-    google.protobuf.Timestamp deleteAt = 2;
-    uint32 deletedBy = 3;
-  };
-  DeleteInfo data = 1;
-}
-
 message ListUserRequest {
   int32 pageNum = 1;
   int32 pageSize = 2;
@@ -221,14 +220,13 @@ message ListUserReply {
 }
 
 message UserInfoRequest {
-  string nickname = 1 [(validate.rules).string = {min_len:1, max_len:24}];
-  string email = 2 [(validate.rules).string.email = true];
-  string phone = 3 [(validate.rules).string.len = 11];
+  int32 id = 1;
+  string nickname = 2 [(validate.rules).string = {min_len:1, max_len:24}];
+  string email = 3 [(validate.rules).string.email = true];
+  string phone = 4 [(validate.rules).string.len = 11];
 }
 
-message UserInfoReply {
-  bool success = 1;
-}
+message UserInfoReply {}
 
 message RegisterRequest {
   string username = 1 [(validate.rules).string = {min_len: 3, max_len:16}];

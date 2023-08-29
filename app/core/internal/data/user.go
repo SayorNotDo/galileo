@@ -98,7 +98,7 @@ func (u *userRepo) ListUser(c context.Context, pageNum, pageSize int32) ([]*v1.U
 	return rv, total, nil
 }
 
-func (u *userRepo) GetUserInfo(ctx context.Context) (*biz.User, error) {
+func (u *userRepo) GetUserInfo(ctx context.Context, uid uint32) (*biz.User, error) {
 	user, err := u.data.uc.GetUserInfo(ctx, &empty.Empty{})
 	if err != nil {
 		return nil, err

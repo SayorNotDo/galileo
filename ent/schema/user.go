@@ -23,26 +23,22 @@ func (User) Annotations() []schema.Annotation {
 // Fields of the User.
 func (User) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("id"),
+		field.Uint32("id").Comment("主键ID"),
+		field.UUID("uuid", uuid.UUID{}).Default(uuid.New).Comment("通用唯一识别码"),
 		field.Time("created_at").
-			Default(time.Now).Immutable(),
-		field.Bool("active").Default(true),
-		field.String("username").Unique(),
-		field.String("chineseName").Optional(),
-		field.String("nickname").Unique(),
-		field.String("password"),
-		field.String("phone").Unique(),
-		field.String("email").Unique(),
-		field.Text("avatar").Optional(),
-		field.Uint8("role").Default(3),
-		field.Time("update_at").Default(time.Now).UpdateDefault(time.Now),
-		field.Time("deleted_at").Optional().Nillable(),
-		field.Uint32("deleted_by").Optional().Nillable(),
-		field.Bool("is_deleted").Optional().Nillable().Default(false),
-		field.UUID("uuid", uuid.UUID{}).Default(uuid.New),
-		field.Int32("group_id").Optional(),
-		field.String("location").Optional(),
-		field.Int32("department_id").Optional(),
+			Default(time.Now).Immutable().Comment("用户创建时间"),
+		field.Bool("active").Default(true).Comment("用户的活跃状态：1 活跃，2 非活跃"),
+		field.String("username").Unique().Comment("用户名"),
+		field.String("chineseName").Optional().Comment("中文名，可选"),
+		field.String("password").Comment("用户密码"),
+		field.String("phone").Unique().Comment("电话号码"),
+		field.String("email").Unique().Comment("电子邮箱"),
+		field.Text("avatar").Optional().Comment("头像"),
+		field.String("location").Optional().Comment("所处地理位置"),
+		field.Time("last_login_time").Optional().Comment("最后登录时间"),
+		field.Time("updated_at").Optional().UpdateDefault(time.Now).Comment("用户更新时间"),
+		field.Time("deleted_at").Optional().Comment("用户删除时间"),
+		field.Uint32("deleted_by").Optional().Comment("删除操作人"),
 	}
 }
 

@@ -21,10 +21,6 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	Engine_RunJob_FullMethodName           = "/api.engine.v1.Engine/RunJob"
-	Engine_CancelJob_FullMethodName        = "/api.engine.v1.Engine/CancelJob"
-	Engine_PauseJob_FullMethodName         = "/api.engine.v1.Engine/PauseJob"
-	Engine_ResumeJob_FullMethodName        = "/api.engine.v1.Engine/ResumeJob"
-	Engine_DeleteJob_FullMethodName        = "/api.engine.v1.Engine/DeleteJob"
 	Engine_AddCronJob_FullMethodName       = "/api.engine.v1.Engine/AddCronJob"
 	Engine_UpdateCronJob_FullMethodName    = "/api.engine.v1.Engine/UpdateCronJob"
 	Engine_CreateContainer_FullMethodName  = "/api.engine.v1.Engine/CreateContainer"
@@ -37,10 +33,6 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EngineClient interface {
 	RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobReply, error)
-	CancelJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	PauseJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	ResumeJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	DeleteJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	AddCronJob(ctx context.Context, in *AddCronJobRequest, opts ...grpc.CallOption) (*AddCronJobReply, error)
 	UpdateCronJob(ctx context.Context, in *UpdateCronJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreateContainer(ctx context.Context, in *CreateContainerRequest, opts ...grpc.CallOption) (*CreateContainerReply, error)
@@ -59,42 +51,6 @@ func NewEngineClient(cc grpc.ClientConnInterface) EngineClient {
 func (c *engineClient) RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobReply, error) {
 	out := new(RunJobReply)
 	err := c.cc.Invoke(ctx, Engine_RunJob_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *engineClient) CancelJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Engine_CancelJob_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *engineClient) PauseJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Engine_PauseJob_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *engineClient) ResumeJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Engine_ResumeJob_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *engineClient) DeleteJob(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Engine_DeleteJob_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -151,10 +107,6 @@ func (c *engineClient) InspectContainer(ctx context.Context, in *InspectContaine
 // for forward compatibility
 type EngineServer interface {
 	RunJob(context.Context, *RunJobRequest) (*RunJobReply, error)
-	CancelJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	PauseJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	ResumeJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	DeleteJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	AddCronJob(context.Context, *AddCronJobRequest) (*AddCronJobReply, error)
 	UpdateCronJob(context.Context, *UpdateCronJobRequest) (*emptypb.Empty, error)
 	CreateContainer(context.Context, *CreateContainerRequest) (*CreateContainerReply, error)
@@ -169,18 +121,6 @@ type UnimplementedEngineServer struct {
 
 func (UnimplementedEngineServer) RunJob(context.Context, *RunJobRequest) (*RunJobReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RunJob not implemented")
-}
-func (UnimplementedEngineServer) CancelJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CancelJob not implemented")
-}
-func (UnimplementedEngineServer) PauseJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PauseJob not implemented")
-}
-func (UnimplementedEngineServer) ResumeJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ResumeJob not implemented")
-}
-func (UnimplementedEngineServer) DeleteJob(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteJob not implemented")
 }
 func (UnimplementedEngineServer) AddCronJob(context.Context, *AddCronJobRequest) (*AddCronJobReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddCronJob not implemented")
@@ -224,78 +164,6 @@ func _Engine_RunJob_Handler(srv interface{}, ctx context.Context, dec func(inter
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(EngineServer).RunJob(ctx, req.(*RunJobRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Engine_CancelJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EngineServer).CancelJob(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Engine_CancelJob_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EngineServer).CancelJob(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Engine_PauseJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EngineServer).PauseJob(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Engine_PauseJob_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EngineServer).PauseJob(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Engine_ResumeJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EngineServer).ResumeJob(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Engine_ResumeJob_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EngineServer).ResumeJob(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Engine_DeleteJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EngineServer).DeleteJob(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Engine_DeleteJob_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EngineServer).DeleteJob(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -400,22 +268,6 @@ var Engine_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RunJob",
 			Handler:    _Engine_RunJob_Handler,
-		},
-		{
-			MethodName: "CancelJob",
-			Handler:    _Engine_CancelJob_Handler,
-		},
-		{
-			MethodName: "PauseJob",
-			Handler:    _Engine_PauseJob_Handler,
-		},
-		{
-			MethodName: "ResumeJob",
-			Handler:    _Engine_ResumeJob_Handler,
-		},
-		{
-			MethodName: "DeleteJob",
-			Handler:    _Engine_DeleteJob_Handler,
 		},
 		{
 			MethodName: "AddCronJob",

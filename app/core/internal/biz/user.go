@@ -20,7 +20,7 @@ import (
 )
 
 type UserRepo interface {
-	GetUserInfo(context.Context) (*User, error)
+	GetUserInfo(ctx context.Context, uid uint32) (*User, error)
 	CreateUser(ctx context.Context, u *User) (*User, error)
 	UpdatePassword(ctx context.Context, password string) (bool, error)
 	SoftDeleteUser(ctx context.Context, uid uint32) (bool, error)
@@ -130,7 +130,7 @@ func (u *UserUseCase) UpdatePassword(ctx context.Context, req *v1.UpdatePassword
 	return &emptypb.Empty{}, nil
 }
 
-func (u *UserUseCase) DeleteUser(ctx context.Context, deleteId uint32) (*v1.DeleteReply, error) {
+func (u *UserUseCase) DeleteUser(ctx context.Context, deleteId uint32) (*emptypb.Empty, error) {
 	userClaim, ok := jwt.FromContext(ctx)
 	if !ok {
 		return nil, SetErrByReason(ReasonUnknownError)
@@ -143,7 +143,7 @@ func (u *UserUseCase) DeleteUser(ctx context.Context, deleteId uint32) (*v1.Dele
 		return nil, errors.Forbidden(http.StatusText(403), "Permission denied")
 	}
 	ctx = metadata.AppendToClientContext(ctx, ctxdata.UserIdKey, uid)
-	_, err := u.repo.GetUserInfo(ctx)
+	_, err := u.repo.GetUserInfo(ctx, deleteId)
 	if err != nil {
 		return nil, err
 	}
@@ -151,9 +151,7 @@ func (u *UserUseCase) DeleteUser(ctx context.Context, deleteId uint32) (*v1.Dele
 	if err != nil {
 		return nil, err
 	}
-	return &v1.DeleteReply{
-		Data: nil,
-	}, nil
+	return nil, nil
 }
 
 // Login TODO: 修复逻辑，禁止密码的传递
@@ -184,20 +182,20 @@ func (u *UserUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	}, nil
 }
 
-func (u *UserUseCase) Logout(ctx context.Context) (*emptypb.Empty, error) {
-	if _, err := u.repo.GetUserInfo(ctx); err != nil {
+func (u *UserUseCase) Logout(ctx context.Context, uid uint32) (*emptypb.Empty, error) {
+	if _, err := u.repo.GetUserInfo(ctx, uid); err != nil {
 		return nil, err
 	}
 	_ = u.repo.DestroyToken(ctx)
 	return nil, nil
 }
 
-func (u *UserUseCase) GetUserInfo(ctx context.Context) (*v1.UserDetailReply, error) {
-	user, err := u.repo.GetUserInfo(ctx)
+func (u *UserUseCase) GetUserInfo(ctx context.Context, uid uint32) (*User, error) {
+	user, err := u.repo.GetUserInfo(ctx, uid)
 	if err != nil {
 		return nil, err
 	}
-	return &v1.UserDetailReply{
+	return &User{
 		Id:          user.Id,
 		Nickname:    user.Nickname,
 		ChineseName: user.ChineseName,

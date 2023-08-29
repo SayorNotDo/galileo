@@ -20,22 +20,20 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	User_CreateUser_FullMethodName        = "/api.user.v1.User/CreateUser"
-	User_UpdateUserInfo_FullMethodName    = "/api.user.v1.User/UpdateUserInfo"
-	User_DeleteUser_FullMethodName        = "/api.user.v1.User/DeleteUser"
-	User_GetUserInfo_FullMethodName       = "/api.user.v1.User/GetUserInfo"
-	User_GetUserByUsername_FullMethodName = "/api.user.v1.User/GetUserByUsername"
-	User_ListUser_FullMethodName          = "/api.user.v1.User/ListUser"
-	User_VerifyPassword_FullMethodName    = "/api.user.v1.User/VerifyPassword"
-	User_ResetPassword_FullMethodName     = "/api.user.v1.User/ResetPassword"
-	User_UpdatePassword_FullMethodName    = "/api.user.v1.User/UpdatePassword"
-	User_SoftDeleteUser_FullMethodName    = "/api.user.v1.User/SoftDeleteUser"
-	User_SetToken_FullMethodName          = "/api.user.v1.User/SetToken"
-	User_EmptyToken_FullMethodName        = "/api.user.v1.User/EmptyToken"
-	User_GetUserGroupList_FullMethodName  = "/api.user.v1.User/GetUserGroupList"
-	User_GetUserGroup_FullMethodName      = "/api.user.v1.User/GetUserGroup"
-	User_UpdateUserGroup_FullMethodName   = "/api.user.v1.User/UpdateUserGroup"
-	User_CreateUserGroup_FullMethodName   = "/api.user.v1.User/CreateUserGroup"
+	User_CreateUser_FullMethodName       = "/api.user.v1.User/CreateUser"
+	User_UpdateUserInfo_FullMethodName   = "/api.user.v1.User/UpdateUserInfo"
+	User_GetUserInfo_FullMethodName      = "/api.user.v1.User/GetUserInfo"
+	User_ListUser_FullMethodName         = "/api.user.v1.User/ListUser"
+	User_VerifyPassword_FullMethodName   = "/api.user.v1.User/VerifyPassword"
+	User_ResetPassword_FullMethodName    = "/api.user.v1.User/ResetPassword"
+	User_UpdatePassword_FullMethodName   = "/api.user.v1.User/UpdatePassword"
+	User_SoftDeleteUser_FullMethodName   = "/api.user.v1.User/SoftDeleteUser"
+	User_SetToken_FullMethodName         = "/api.user.v1.User/SetToken"
+	User_EmptyToken_FullMethodName       = "/api.user.v1.User/EmptyToken"
+	User_GetUserGroupList_FullMethodName = "/api.user.v1.User/GetUserGroupList"
+	User_GetUserGroup_FullMethodName     = "/api.user.v1.User/GetUserGroup"
+	User_UpdateUserGroup_FullMethodName  = "/api.user.v1.User/UpdateUserGroup"
+	User_CreateUserGroup_FullMethodName  = "/api.user.v1.User/CreateUserGroup"
 )
 
 // UserClient is the client API for User service.
@@ -44,9 +42,7 @@ const (
 type UserClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserReply, error)
 	UpdateUserInfo(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserReply, error)
-	GetUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfoReply, error)
-	GetUserByUsername(ctx context.Context, in *UsernameRequest, opts ...grpc.CallOption) (*UserInfoReply, error)
+	GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...grpc.CallOption) (*UserInfo, error)
 	ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
 	VerifyPassword(ctx context.Context, in *VerifyPasswordRequest, opts ...grpc.CallOption) (*VerifyPasswordReply, error)
 	ResetPassword(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -86,27 +82,9 @@ func (c *userClient) UpdateUserInfo(ctx context.Context, in *UpdateUserRequest, 
 	return out, nil
 }
 
-func (c *userClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserReply, error) {
-	out := new(DeleteUserReply)
-	err := c.cc.Invoke(ctx, User_DeleteUser_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userClient) GetUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfoReply, error) {
-	out := new(UserInfoReply)
+func (c *userClient) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...grpc.CallOption) (*UserInfo, error) {
+	out := new(UserInfo)
 	err := c.cc.Invoke(ctx, User_GetUserInfo_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userClient) GetUserByUsername(ctx context.Context, in *UsernameRequest, opts ...grpc.CallOption) (*UserInfoReply, error) {
-	out := new(UserInfoReply)
-	err := c.cc.Invoke(ctx, User_GetUserByUsername_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -218,9 +196,7 @@ func (c *userClient) CreateUserGroup(ctx context.Context, in *UserGroupRequest, 
 type UserServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserReply, error)
 	UpdateUserInfo(context.Context, *UpdateUserRequest) (*emptypb.Empty, error)
-	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserReply, error)
-	GetUserInfo(context.Context, *emptypb.Empty) (*UserInfoReply, error)
-	GetUserByUsername(context.Context, *UsernameRequest) (*UserInfoReply, error)
+	GetUserInfo(context.Context, *GetUserInfoRequest) (*UserInfo, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	VerifyPassword(context.Context, *VerifyPasswordRequest) (*VerifyPasswordReply, error)
 	ResetPassword(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
@@ -245,14 +221,8 @@ func (UnimplementedUserServer) CreateUser(context.Context, *CreateUserRequest) (
 func (UnimplementedUserServer) UpdateUserInfo(context.Context, *UpdateUserRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserInfo not implemented")
 }
-func (UnimplementedUserServer) DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
-}
-func (UnimplementedUserServer) GetUserInfo(context.Context, *emptypb.Empty) (*UserInfoReply, error) {
+func (UnimplementedUserServer) GetUserInfo(context.Context, *GetUserInfoRequest) (*UserInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfo not implemented")
-}
-func (UnimplementedUserServer) GetUserByUsername(context.Context, *UsernameRequest) (*UserInfoReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserByUsername not implemented")
 }
 func (UnimplementedUserServer) ListUser(context.Context, *ListUserRequest) (*ListUserReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUser not implemented")
@@ -336,26 +306,8 @@ func _User_UpdateUserInfo_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _User_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteUserRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).DeleteUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: User_DeleteUser_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).DeleteUser(ctx, req.(*DeleteUserRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _User_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(GetUserInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -367,25 +319,7 @@ func _User_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: User_GetUserInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).GetUserInfo(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _User_GetUserByUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UsernameRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).GetUserByUsername(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: User_GetUserByUsername_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).GetUserByUsername(ctx, req.(*UsernameRequest))
+		return srv.(UserServer).GetUserInfo(ctx, req.(*GetUserInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -604,16 +538,8 @@ var User_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _User_UpdateUserInfo_Handler,
 		},
 		{
-			MethodName: "DeleteUser",
-			Handler:    _User_DeleteUser_Handler,
-		},
-		{
 			MethodName: "GetUserInfo",
 			Handler:    _User_GetUserInfo_Handler,
-		},
-		{
-			MethodName: "GetUserByUsername",
-			Handler:    _User_GetUserByUsername_Handler,
 		},
 		{
 			MethodName: "ListUser",

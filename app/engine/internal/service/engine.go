@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	v1 "galileo/api/engine/v1"
-	taskV1 "galileo/api/management/task/v1"
+	managementV1 "galileo/api/management/v1"
 	"galileo/app/engine/internal/biz"
 	. "galileo/pkg/errResponse"
 	"galileo/pkg/utils/snowflake"
@@ -45,7 +45,7 @@ func (s *EngineService) Scheduler(ctx context.Context) {
 	var timingTaskList []*biz.Task
 	var err error
 	err = retry.Do(func() error {
-		timingTaskList, err = s.uc.TimingTaskList(ctx, []taskV1.TaskStatus{taskV1.TaskStatus_NEW})
+		timingTaskList, err = s.uc.TimingTaskList(ctx, []managementV1.TaskStatus{managementV1.TaskStatus_NEW})
 		if err != nil {
 			return err
 		}
@@ -98,7 +98,7 @@ func (s *EngineService) AddCronJob(ctx context.Context, req *v1.AddCronJobReques
 		Id:           req.TaskId,
 		Type:         int8(req.Type),
 		ScheduleTime: req.ScheduleTime.AsTime(),
-		Frequency:    taskV1.Frequency(req.Frequency),
+		Frequency:    managementV1.Frequency(req.Frequency),
 	}
 	/* 增加定时任务到调度列表 */
 	_, err := s.uc.AddCronJob(ctx, task)
@@ -122,7 +122,7 @@ func (s *EngineService) UpdateCronJob(ctx context.Context, req *v1.UpdateCronJob
 		Id:           req.TaskId,
 		Type:         int8(req.Type),
 		ScheduleTime: req.ScheduleTime.AsTime(),
-		Frequency:    taskV1.Frequency(req.Frequency),
+		Frequency:    managementV1.Frequency(req.Frequency),
 	}
 	/* 更新定时任务逻辑：旧任务移除 */
 	err := s.uc.RemoveCronJob(ctx, task.Id)

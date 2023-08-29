@@ -3,13 +3,14 @@ package data
 import (
 	"context"
 	"fmt"
-	v1 "galileo/api/user/v1"
 	"galileo/app/user/internal/biz"
 	"galileo/ent"
 	"galileo/ent/group"
 	"galileo/ent/groupmember"
 	"galileo/ent/user"
+	"galileo/pkg/constant"
 	. "galileo/pkg/errResponse"
+	"galileo/pkg/pagination"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/redis/go-redis/v9"
@@ -33,53 +34,29 @@ func (repo *userRepo) Save(ctx context.Context, user *biz.User) (*biz.User, erro
 	return user, nil
 }
 
-func (repo *userRepo) GetById(ctx context.Context, id uint32) (*biz.User, error) {
+func (repo *userRepo) GetUserInfo(ctx context.Context, id uint32) (*biz.User, error) {
 	u, err := repo.data.entDB.User.Query().Where(user.ID(id)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
 	return &biz.User{
-		Id:       u.ID,
-		Username: u.Username,
-		Nickname: u.Nickname,
-		Avatar:   u.Avatar,
-		Email:    u.Email,
-		Status:   u.Active,
-		Phone:    u.Phone,
-		Password: u.Password,
+		Id:            u.ID,
+		Username:      u.Username,
+		ChineseName:   u.ChineseName,
+		Avatar:        u.Avatar,
+		Email:         u.Email,
+		Phone:         u.Phone,
+		Active:        u.Active,
+		Location:      u.Location,
+		LastLoginTime: u.LastLoginTime,
+		CreatedAt:     u.CreatedAt,
 	}, nil
-}
-
-func (repo *userRepo) GetByUsername(ctx context.Context, username string) (*biz.User, error) {
-	u, err := repo.data.entDB.User.Query().Where(user.Username(username)).Only(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return &biz.User{
-		Id:       u.ID,
-		Username: u.Username,
-		Nickname: u.Nickname,
-		Email:    u.Email,
-		Password: u.Password,
-		Phone:    u.Phone,
-		Status:   u.Active,
-		Role:     int32(u.Role),
-	}, nil
-}
-
-func (repo *userRepo) DeleteById(ctx context.Context, id uint32) (bool, error) {
-	_, err := repo.data.entDB.User.Delete().Where(user.ID(id)).Exec(ctx)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
 }
 
 func (repo *userRepo) SoftDeleteById(ctx context.Context, id, deleteId uint32) (bool, error) {
 	_, err := repo.data.entDB.User.
 		UpdateOneID(deleteId).
 		SetDeletedAt(time.Now()).
-		SetIsDeleted(true).
 		SetDeletedBy(id).
 		Save(ctx)
 	if err != nil {
@@ -88,36 +65,48 @@ func (repo *userRepo) SoftDeleteById(ctx context.Context, id, deleteId uint32) (
 	return true, nil
 }
 
-func (repo *userRepo) List(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserInfoReply, int32, error) {
-	if pageNum == 0 {
-		pageNum = 1
+func (repo *userRepo) ListUser(ctx context.Context, pageToken string, pageSize int32) ([]*biz.User, int32, string, error) {
+	/* 初始化偏移量 */
+	var offset int
+	/* 解析pageToken获得分页状态信息结构 */
+	if len(pageToken) == 0 {
+		offset = 0
+	} else {
+		state, err := pagination.ParsePageToken(pageToken)
+		if err != nil {
+			return nil, 0, "", err
+		}
+		offset = state.Offset
 	}
-	switch {
-	case pageSize > 100:
-		pageSize = 100
-	case pageSize <= 10:
-		pageSize = 10
-	}
-	offset := (pageNum - 1) * pageSize
-	userList, err := repo.data.entDB.User.Query().Offset(int(offset)).Limit(int(pageSize)).All(ctx)
+	//offset = (pageNum - 1) * pageSize
+	userList, err := repo.data.entDB.User.Query().Offset(offset).Limit(int(pageSize)).All(ctx)
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, "", err
 	}
 	total := len(userList)
-	rv := make([]*v1.UserInfoReply, 0)
+	rv := make([]*biz.User, 0)
 	for _, u := range userList {
-		rv = append(rv, &v1.UserInfoReply{
-			Id:          u.ID,
-			Username:    u.Username,
-			Nickname:    u.Nickname,
-			ChineseName: u.ChineseName,
-			Email:       u.Email,
-			Phone:       u.Phone,
-			Role:        int32(u.Role),
-			Status:      u.Active,
+		rv = append(rv, &biz.User{
+			Id:            u.ID,
+			Username:      u.Username,
+			ChineseName:   u.ChineseName,
+			Email:         u.Email,
+			Phone:         u.Phone,
+			Avatar:        u.Avatar,
+			Active:        u.Active,
+			Location:      u.Location,
+			LastLoginTime: u.LastLoginTime,
+			CreatedAt:     u.CreatedAt,
 		})
 	}
-	return rv, int32(total), nil
+	/* 生成序列化的分页状态信息 */
+	nextPageToken, err := pagination.GeneratePageToken(pagination.State{
+		Offset: offset,
+	})
+	if err != nil {
+		return nil, 0, "", err
+	}
+	return rv, int32(total), nextPageToken, nil
 }
 
 func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error) {
@@ -125,7 +114,6 @@ func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error
 		SetUsername(u.Username).
 		SetEmail(u.Email).
 		SetPhone(u.Phone).
-		SetNickname(u.Username).
 		SetPassword(u.Password).
 		Save(ctx)
 	if err != nil {
@@ -142,7 +130,6 @@ func (repo *userRepo) Update(ctx context.Context, u *biz.User) (bool, error) {
 	err := repo.data.entDB.User.
 		UpdateOneID(u.Id).
 		SetAvatar(u.Avatar).
-		SetNickname(u.Nickname).
 		Exec(ctx)
 	switch {
 	case ent.IsNotFound(err):
@@ -326,7 +313,7 @@ func (repo *userRepo) CreateUserGroup(ctx context.Context, group *biz.Group) (*b
 	if err := tx.GroupMember.Create().
 		SetGroupID(ret.ID).
 		SetUserID(group.CreatedBy).
-		SetRole(7).
+		SetRole(constant.Leader).
 		Exec(ctx); err != nil {
 		return nil, rollback(tx, err)
 	}

@@ -28,4 +28,8 @@ services:
 		Ω(err).ShouldNot(HaveOccurred())
 	})
 
+	It("Get Docker information", func() {
+		ro.GetDockerInfo(context.Background())
+	})
+
 })

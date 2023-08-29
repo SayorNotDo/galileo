@@ -2,7 +2,6 @@ package biz
 
 import (
 	"context"
-	v1 "galileo/api/user/v1"
 	"galileo/app/user/internal/pkg/util"
 	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
@@ -10,13 +9,11 @@ import (
 
 type UserRepo interface {
 	Save(context.Context, *User) (*User, error)
-	GetById(context.Context, uint32) (*User, error)
-	GetByUsername(context.Context, string) (*User, error)
+	GetUserInfo(context.Context, uint32) (*User, error)
 	Create(context.Context, *User) (*User, error)
-	List(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserInfoReply, int32, error)
+	ListUser(ctx context.Context, pageToken string, pageSize int32) ([]*User, int32, string, error)
 	Update(context.Context, *User) (bool, error)
 	UpdatePassword(context.Context, *User) (bool, error)
-	DeleteById(context.Context, uint32) (bool, error)
 	SoftDeleteById(context.Context, uint32, uint32) (bool, error)
 	SetToken(context.Context, string, string) (bool, error)
 	EmptyToken(context.Context, string) (bool, error)
@@ -38,7 +35,7 @@ func NewUserUseCase(repo UserRepo, logger log.Logger) *UserUseCase {
 }
 
 func (uc *UserUseCase) EmptyToken(ctx context.Context, uid uint32) (bool, error) {
-	u, err := uc.repo.GetById(ctx, uid)
+	u, err := uc.repo.GetUserInfo(ctx, uid)
 	if err != nil {
 		return false, err
 	}
@@ -57,24 +54,16 @@ func (uc *UserUseCase) Create(ctx context.Context, user *User) (*User, error) {
 	return uc.repo.Create(ctx, user)
 }
 
-func (uc *UserUseCase) Get(ctx context.Context, id uint32) (*User, error) {
-	return uc.repo.GetById(ctx, id)
+func (uc *UserUseCase) GetUserInfo(ctx context.Context, id uint32) (*User, error) {
+	return uc.repo.GetUserInfo(ctx, id)
 }
 
-func (uc *UserUseCase) List(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserInfoReply, int32, error) {
-	return uc.repo.List(ctx, pageNum, pageSize)
+func (uc *UserUseCase) ListUser(ctx context.Context, pageToken string, pageSize int32) ([]*User, int32, string, error) {
+	return uc.repo.ListUser(ctx, pageToken, pageSize)
 }
 
 func (uc *UserUseCase) Update(ctx context.Context, user *User) (bool, error) {
 	return uc.repo.Update(ctx, user)
-}
-
-func (uc *UserUseCase) Delete(ctx context.Context, id uint32) (bool, error) {
-	return uc.repo.DeleteById(ctx, id)
-}
-
-func (uc *UserUseCase) GetByUsername(ctx context.Context, username string) (*User, error) {
-	return uc.repo.GetByUsername(ctx, username)
 }
 
 func (uc *UserUseCase) VerifyPassword(password, hashedPassword string) (bool, error) {

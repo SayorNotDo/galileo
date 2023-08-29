@@ -11,23 +11,39 @@ option java_multiple_files = true;
 option java_package = "api.user";
 
 service User {
-  rpc CreateUser (CreateUserRequest) returns (CreateUserReply) {};
-  rpc UpdateUserInfo (UpdateUserRequest) returns (google.protobuf.Empty){};
-  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserReply){};
-  rpc GetUserInfo (google.protobuf.Empty) returns (userInfoReply);
-  rpc GetUserByUsername (UsernameRequest) returns (userInfoReply){};
-  rpc ListUser (ListUserRequest) returns (ListUserReply){};
-  rpc VerifyPassword(VerifyPasswordRequest) returns (VerifyPasswordReply){};
-  rpc ResetPassword(google.protobuf.Empty) returns (google.protobuf.Empty){};
-  rpc UpdatePassword(UpdatePasswordRequest) returns (google.protobuf.Empty){};
-  rpc SoftDeleteUser (SoftDeleteRequest) returns (SoftDeleteReply){};
-  rpc SetToken(SetTokenRequest) returns (SetTokenReply){};
-  rpc EmptyToken(google.protobuf.Empty) returns(EmptyTokenReply){};
-  rpc GetUserGroupList(google.protobuf.Empty) returns (UserGroupListReply){};
+  rpc CreateUser (CreateUserRequest) returns (CreateUserReply);
+  rpc UpdateUserInfo (UpdateUserRequest) returns (google.protobuf.Empty);
+  rpc GetUserInfo (GetUserInfoRequest) returns (UserInfo);
+  rpc ListUser (ListUserRequest) returns (ListUserReply);
+  rpc VerifyPassword(VerifyPasswordRequest) returns (VerifyPasswordReply);
+  rpc ResetPassword(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc UpdatePassword(UpdatePasswordRequest) returns (google.protobuf.Empty);
+  rpc SoftDeleteUser (SoftDeleteRequest) returns (SoftDeleteReply);
+  rpc SetToken(SetTokenRequest) returns (SetTokenReply);
+  rpc EmptyToken(google.protobuf.Empty) returns(EmptyTokenReply);
+  rpc GetUserGroupList(google.protobuf.Empty) returns (UserGroupListReply);
   rpc GetUserGroup(UserGroupRequest) returns (GroupInfo);
   rpc UpdateUserGroup(UserGroupRequest) returns (google.protobuf.Empty);
   rpc CreateUserGroup(UserGroupRequest) returns (GroupInfo);
 }
+
+message GetUserInfoRequest {
+  uint32 id = 1;
+}
+
+message UserInfo {
+  uint32 id = 1;
+  string username = 2;
+  string chineseName = 3;
+  string email = 4;
+  string phone = 5;
+  string avatar = 6;
+  bool active = 7;
+  string location = 8;
+  google.protobuf.Timestamp createdAt = 9;
+  google.protobuf.Timestamp lastLoginTime = 10;
+
+};
 
 message UserGroupRequest {
   int32 id = 1;
@@ -131,32 +147,13 @@ message UpdateUserRequest {
   string avatar = 3;
 }
 
-message DeleteUserRequest {
-  uint32 id = 1;
-}
-message DeleteUserReply {
-  bool deleted = 1;
-}
-
-message userInfoReply {
-  uint32 id = 1;
-  string username = 3;
-  string email = 4;
-  string nickname = 5;
-  bool status = 6;
-  string phone = 7;
-  int32 role = 8;
-  string chineseName = 9;
-  string password = 2;
-  google.protobuf.Timestamp createdAt = 10;
-};
-
 message ListUserRequest {
-  int32 pageNum = 1;
-  int32 pageSize = 2;
+  int32 pageSize = 1;
+  string pageToken = 2;
 }
 
 message ListUserReply {
   int32  total = 1;
-  repeated userInfoReply data = 2;
+  repeated UserInfo data = 2;
+  string nextPageToken = 3;
 }

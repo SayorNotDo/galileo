@@ -9,20 +9,20 @@ import (
 var ProviderSet = wire.NewSet(NewUserUseCase)
 
 type User struct {
-	Id          uint32    `json:"id"`
-	Username    string    `json:"name"`
-	ChineseName string    `json:"chinese_name"`
-	Nickname    string    `json:"nickname"`
-	Password    string    `json:"password"`
-	Avatar      string    `json:"avatar"`
-	Email       string    `json:"email"`
-	Phone       string    `json:"phone"`
-	Status      bool      `json:"status"`
-	Role        int32     `json:"role"`
-	UpdateAt    time.Time `json:"update_at"`
-	DeletedAt   time.Time `json:"deleted_at"`
-	DeletedBy   uint32    `json:"deleted_by"`
-	CreatedAt   time.Time `json:"created_at"`
+	Id            uint32    `json:"id"`
+	Username      string    `json:"name"`
+	ChineseName   string    `json:"chinese_name"`
+	Password      string    `json:"password"`
+	Avatar        string    `json:"avatar"`
+	Email         string    `json:"email"`
+	Phone         string    `json:"phone"`
+	Active        bool      `json:"active"`
+	Location      string    `json:"location"`
+	LastLoginTime time.Time `json:"last_login_time"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdateAt      time.Time `json:"update_at"`
+	DeletedAt     time.Time `json:"deleted_at"`
+	DeletedBy     uint32    `json:"deleted_by"`
 }
 
 type GroupMember struct {

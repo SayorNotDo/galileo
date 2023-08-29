@@ -22,14 +22,14 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	Core_Register_FullMethodName              = "/api.core.v1.Core/Register"
 	Core_Login_FullMethodName                 = "/api.core.v1.Core/Login"
-	Core_Unregister_FullMethodName            = "/api.core.v1.Core/Unregister"
 	Core_Logout_FullMethodName                = "/api.core.v1.Core/Logout"
-	Core_DeleteUser_FullMethodName            = "/api.core.v1.Core/DeleteUser"
 	Core_UserInfo_FullMethodName              = "/api.core.v1.Core/UserInfo"
+	Core_CurrentUserInfo_FullMethodName       = "/api.core.v1.Core/CurrentUserInfo"
 	Core_UpdatePassword_FullMethodName        = "/api.core.v1.Core/UpdatePassword"
-	Core_ListUser_FullMethodName              = "/api.core.v1.Core/ListUser"
-	Core_UserGroup_FullMethodName             = "/api.core.v1.Core/UserGroup"
-	Core_GetUserGroupList_FullMethodName      = "/api.core.v1.Core/GetUserGroupList"
+	Core_DeleteUser_FullMethodName            = "/api.core.v1.Core/DeleteUser"
+	Core_ListUsers_FullMethodName             = "/api.core.v1.Core/ListUsers"
+	Core_UserGroups_FullMethodName            = "/api.core.v1.Core/UserGroups"
+	Core_ListUserGroups_FullMethodName        = "/api.core.v1.Core/ListUserGroups"
 	Core_GetUserProjectList_FullMethodName    = "/api.core.v1.Core/GetUserProjectList"
 	Core_GetUserLatestActivity_FullMethodName = "/api.core.v1.Core/GetUserLatestActivity"
 	Core_DataReportTrack_FullMethodName       = "/api.core.v1.Core/DataReportTrack"
@@ -43,14 +43,14 @@ const (
 type CoreClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
-	Unregister(ctx context.Context, in *UnregisterRequest, opts ...grpc.CallOption) (*UnregisterReply, error)
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	DeleteUser(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteReply, error)
 	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserInfoReply, error)
+	CurrentUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfoReply, error)
 	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
-	UserGroup(ctx context.Context, in *GroupInfoRequest, opts ...grpc.CallOption) (*GroupInfo, error)
-	GetUserGroupList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserGroupListReply, error)
+	DeleteUser(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ListUsers(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
+	UserGroups(ctx context.Context, in *GroupInfoRequest, opts ...grpc.CallOption) (*GroupInfo, error)
+	ListUserGroups(ctx context.Context, in *ListUserGroupsRequest, opts ...grpc.CallOption) (*UserGroupListReply, error)
 	GetUserProjectList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserProjectListReply, error)
 	GetUserLatestActivity(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserLatestActivityReply, error)
 	DataReportTrack(ctx context.Context, in *DataReportTrackRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -84,27 +84,9 @@ func (c *coreClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.C
 	return out, nil
 }
 
-func (c *coreClient) Unregister(ctx context.Context, in *UnregisterRequest, opts ...grpc.CallOption) (*UnregisterReply, error) {
-	out := new(UnregisterReply)
-	err := c.cc.Invoke(ctx, Core_Unregister_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *coreClient) Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, Core_Logout_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *coreClient) DeleteUser(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteReply, error) {
-	out := new(DeleteReply)
-	err := c.cc.Invoke(ctx, Core_DeleteUser_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -120,6 +102,15 @@ func (c *coreClient) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...
 	return out, nil
 }
 
+func (c *coreClient) CurrentUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfoReply, error) {
+	out := new(UserInfoReply)
+	err := c.cc.Invoke(ctx, Core_CurrentUserInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *coreClient) UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, Core_UpdatePassword_FullMethodName, in, out, opts...)
@@ -129,27 +120,36 @@ func (c *coreClient) UpdatePassword(ctx context.Context, in *UpdatePasswordReque
 	return out, nil
 }
 
-func (c *coreClient) ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error) {
+func (c *coreClient) DeleteUser(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Core_DeleteUser_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) ListUsers(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error) {
 	out := new(ListUserReply)
-	err := c.cc.Invoke(ctx, Core_ListUser_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Core_ListUsers_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *coreClient) UserGroup(ctx context.Context, in *GroupInfoRequest, opts ...grpc.CallOption) (*GroupInfo, error) {
+func (c *coreClient) UserGroups(ctx context.Context, in *GroupInfoRequest, opts ...grpc.CallOption) (*GroupInfo, error) {
 	out := new(GroupInfo)
-	err := c.cc.Invoke(ctx, Core_UserGroup_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Core_UserGroups_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *coreClient) GetUserGroupList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserGroupListReply, error) {
+func (c *coreClient) ListUserGroups(ctx context.Context, in *ListUserGroupsRequest, opts ...grpc.CallOption) (*UserGroupListReply, error) {
 	out := new(UserGroupListReply)
-	err := c.cc.Invoke(ctx, Core_GetUserGroupList_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Core_ListUserGroups_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -207,14 +207,14 @@ func (c *coreClient) InspectContainer(ctx context.Context, in *InspectContainerR
 type CoreServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
-	Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error)
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	DeleteUser(context.Context, *DeleteRequest) (*DeleteReply, error)
 	UserInfo(context.Context, *UserInfoRequest) (*UserInfoReply, error)
+	CurrentUserInfo(context.Context, *emptypb.Empty) (*UserInfoReply, error)
 	UpdatePassword(context.Context, *UpdatePasswordRequest) (*emptypb.Empty, error)
-	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
-	UserGroup(context.Context, *GroupInfoRequest) (*GroupInfo, error)
-	GetUserGroupList(context.Context, *emptypb.Empty) (*UserGroupListReply, error)
+	DeleteUser(context.Context, *DeleteRequest) (*emptypb.Empty, error)
+	ListUsers(context.Context, *ListUserRequest) (*ListUserReply, error)
+	UserGroups(context.Context, *GroupInfoRequest) (*GroupInfo, error)
+	ListUserGroups(context.Context, *ListUserGroupsRequest) (*UserGroupListReply, error)
 	GetUserProjectList(context.Context, *emptypb.Empty) (*UserProjectListReply, error)
 	GetUserLatestActivity(context.Context, *emptypb.Empty) (*UserLatestActivityReply, error)
 	DataReportTrack(context.Context, *DataReportTrackRequest) (*emptypb.Empty, error)
@@ -233,29 +233,29 @@ func (UnimplementedCoreServer) Register(context.Context, *RegisterRequest) (*Reg
 func (UnimplementedCoreServer) Login(context.Context, *LoginRequest) (*LoginReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedCoreServer) Unregister(context.Context, *UnregisterRequest) (*UnregisterReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Unregister not implemented")
-}
 func (UnimplementedCoreServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
-}
-func (UnimplementedCoreServer) DeleteUser(context.Context, *DeleteRequest) (*DeleteReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
 func (UnimplementedCoreServer) UserInfo(context.Context, *UserInfoRequest) (*UserInfoReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserInfo not implemented")
 }
+func (UnimplementedCoreServer) CurrentUserInfo(context.Context, *emptypb.Empty) (*UserInfoReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CurrentUserInfo not implemented")
+}
 func (UnimplementedCoreServer) UpdatePassword(context.Context, *UpdatePasswordRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePassword not implemented")
 }
-func (UnimplementedCoreServer) ListUser(context.Context, *ListUserRequest) (*ListUserReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListUser not implemented")
+func (UnimplementedCoreServer) DeleteUser(context.Context, *DeleteRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
-func (UnimplementedCoreServer) UserGroup(context.Context, *GroupInfoRequest) (*GroupInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UserGroup not implemented")
+func (UnimplementedCoreServer) ListUsers(context.Context, *ListUserRequest) (*ListUserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUsers not implemented")
 }
-func (UnimplementedCoreServer) GetUserGroupList(context.Context, *emptypb.Empty) (*UserGroupListReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserGroupList not implemented")
+func (UnimplementedCoreServer) UserGroups(context.Context, *GroupInfoRequest) (*GroupInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserGroups not implemented")
+}
+func (UnimplementedCoreServer) ListUserGroups(context.Context, *ListUserGroupsRequest) (*UserGroupListReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUserGroups not implemented")
 }
 func (UnimplementedCoreServer) GetUserProjectList(context.Context, *emptypb.Empty) (*UserProjectListReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserProjectList not implemented")
@@ -321,24 +321,6 @@ func _Core_Login_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Core_Unregister_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UnregisterRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CoreServer).Unregister(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Core_Unregister_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).Unregister(ctx, req.(*UnregisterRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Core_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -353,24 +335,6 @@ func _Core_Logout_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CoreServer).Logout(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Core_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CoreServer).DeleteUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Core_DeleteUser_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).DeleteUser(ctx, req.(*DeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -393,6 +357,24 @@ func _Core_UserInfo_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Core_CurrentUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).CurrentUserInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_CurrentUserInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).CurrentUserInfo(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Core_UpdatePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdatePasswordRequest)
 	if err := dec(in); err != nil {
@@ -411,56 +393,74 @@ func _Core_UpdatePassword_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Core_ListUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Core_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).DeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_DeleteUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).DeleteUser(ctx, req.(*DeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_ListUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CoreServer).ListUser(ctx, in)
+		return srv.(CoreServer).ListUsers(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Core_ListUser_FullMethodName,
+		FullMethod: Core_ListUsers_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).ListUser(ctx, req.(*ListUserRequest))
+		return srv.(CoreServer).ListUsers(ctx, req.(*ListUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Core_UserGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Core_UserGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GroupInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CoreServer).UserGroup(ctx, in)
+		return srv.(CoreServer).UserGroups(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Core_UserGroup_FullMethodName,
+		FullMethod: Core_UserGroups_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).UserGroup(ctx, req.(*GroupInfoRequest))
+		return srv.(CoreServer).UserGroups(ctx, req.(*GroupInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Core_GetUserGroupList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+func _Core_ListUserGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserGroupsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CoreServer).GetUserGroupList(ctx, in)
+		return srv.(CoreServer).ListUserGroups(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Core_GetUserGroupList_FullMethodName,
+		FullMethod: Core_ListUserGroups_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).GetUserGroupList(ctx, req.(*emptypb.Empty))
+		return srv.(CoreServer).ListUserGroups(ctx, req.(*ListUserGroupsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -571,36 +571,36 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Core_Login_Handler,
 		},
 		{
-			MethodName: "Unregister",
-			Handler:    _Core_Unregister_Handler,
-		},
-		{
 			MethodName: "Logout",
 			Handler:    _Core_Logout_Handler,
-		},
-		{
-			MethodName: "DeleteUser",
-			Handler:    _Core_DeleteUser_Handler,
 		},
 		{
 			MethodName: "UserInfo",
 			Handler:    _Core_UserInfo_Handler,
 		},
 		{
+			MethodName: "CurrentUserInfo",
+			Handler:    _Core_CurrentUserInfo_Handler,
+		},
+		{
 			MethodName: "UpdatePassword",
 			Handler:    _Core_UpdatePassword_Handler,
 		},
 		{
-			MethodName: "ListUser",
-			Handler:    _Core_ListUser_Handler,
+			MethodName: "DeleteUser",
+			Handler:    _Core_DeleteUser_Handler,
 		},
 		{
-			MethodName: "UserGroup",
-			Handler:    _Core_UserGroup_Handler,
+			MethodName: "ListUsers",
+			Handler:    _Core_ListUsers_Handler,
 		},
 		{
-			MethodName: "GetUserGroupList",
-			Handler:    _Core_GetUserGroupList_Handler,
+			MethodName: "UserGroups",
+			Handler:    _Core_UserGroups_Handler,
+		},
+		{
+			MethodName: "ListUserGroups",
+			Handler:    _Core_ListUserGroups_Handler,
 		},
 		{
 			MethodName: "GetUserProjectList",

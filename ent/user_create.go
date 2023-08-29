@@ -21,6 +21,20 @@ type UserCreate struct {
 	hooks    []Hook
 }
 
+// SetUUID sets the "uuid" field.
+func (uc *UserCreate) SetUUID(u uuid.UUID) *UserCreate {
+	uc.mutation.SetUUID(u)
+	return uc
+}
+
+// SetNillableUUID sets the "uuid" field if the given value is not nil.
+func (uc *UserCreate) SetNillableUUID(u *uuid.UUID) *UserCreate {
+	if u != nil {
+		uc.SetUUID(*u)
+	}
+	return uc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
 	uc.mutation.SetCreatedAt(t)
@@ -69,12 +83,6 @@ func (uc *UserCreate) SetNillableChineseName(s *string) *UserCreate {
 	return uc
 }
 
-// SetNickname sets the "nickname" field.
-func (uc *UserCreate) SetNickname(s string) *UserCreate {
-	uc.mutation.SetNickname(s)
-	return uc
-}
-
 // SetPassword sets the "password" field.
 func (uc *UserCreate) SetPassword(s string) *UserCreate {
 	uc.mutation.SetPassword(s)
@@ -107,30 +115,44 @@ func (uc *UserCreate) SetNillableAvatar(s *string) *UserCreate {
 	return uc
 }
 
-// SetRole sets the "role" field.
-func (uc *UserCreate) SetRole(u uint8) *UserCreate {
-	uc.mutation.SetRole(u)
+// SetLocation sets the "location" field.
+func (uc *UserCreate) SetLocation(s string) *UserCreate {
+	uc.mutation.SetLocation(s)
 	return uc
 }
 
-// SetNillableRole sets the "role" field if the given value is not nil.
-func (uc *UserCreate) SetNillableRole(u *uint8) *UserCreate {
-	if u != nil {
-		uc.SetRole(*u)
+// SetNillableLocation sets the "location" field if the given value is not nil.
+func (uc *UserCreate) SetNillableLocation(s *string) *UserCreate {
+	if s != nil {
+		uc.SetLocation(*s)
 	}
 	return uc
 }
 
-// SetUpdateAt sets the "update_at" field.
-func (uc *UserCreate) SetUpdateAt(t time.Time) *UserCreate {
-	uc.mutation.SetUpdateAt(t)
+// SetLastLoginTime sets the "last_login_time" field.
+func (uc *UserCreate) SetLastLoginTime(t time.Time) *UserCreate {
+	uc.mutation.SetLastLoginTime(t)
 	return uc
 }
 
-// SetNillableUpdateAt sets the "update_at" field if the given value is not nil.
-func (uc *UserCreate) SetNillableUpdateAt(t *time.Time) *UserCreate {
+// SetNillableLastLoginTime sets the "last_login_time" field if the given value is not nil.
+func (uc *UserCreate) SetNillableLastLoginTime(t *time.Time) *UserCreate {
 	if t != nil {
-		uc.SetUpdateAt(*t)
+		uc.SetLastLoginTime(*t)
+	}
+	return uc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uc *UserCreate) SetUpdatedAt(t time.Time) *UserCreate {
+	uc.mutation.SetUpdatedAt(t)
+	return uc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetUpdatedAt(*t)
 	}
 	return uc
 }
@@ -159,76 +181,6 @@ func (uc *UserCreate) SetDeletedBy(u uint32) *UserCreate {
 func (uc *UserCreate) SetNillableDeletedBy(u *uint32) *UserCreate {
 	if u != nil {
 		uc.SetDeletedBy(*u)
-	}
-	return uc
-}
-
-// SetIsDeleted sets the "is_deleted" field.
-func (uc *UserCreate) SetIsDeleted(b bool) *UserCreate {
-	uc.mutation.SetIsDeleted(b)
-	return uc
-}
-
-// SetNillableIsDeleted sets the "is_deleted" field if the given value is not nil.
-func (uc *UserCreate) SetNillableIsDeleted(b *bool) *UserCreate {
-	if b != nil {
-		uc.SetIsDeleted(*b)
-	}
-	return uc
-}
-
-// SetUUID sets the "uuid" field.
-func (uc *UserCreate) SetUUID(u uuid.UUID) *UserCreate {
-	uc.mutation.SetUUID(u)
-	return uc
-}
-
-// SetNillableUUID sets the "uuid" field if the given value is not nil.
-func (uc *UserCreate) SetNillableUUID(u *uuid.UUID) *UserCreate {
-	if u != nil {
-		uc.SetUUID(*u)
-	}
-	return uc
-}
-
-// SetGroupID sets the "group_id" field.
-func (uc *UserCreate) SetGroupID(i int32) *UserCreate {
-	uc.mutation.SetGroupID(i)
-	return uc
-}
-
-// SetNillableGroupID sets the "group_id" field if the given value is not nil.
-func (uc *UserCreate) SetNillableGroupID(i *int32) *UserCreate {
-	if i != nil {
-		uc.SetGroupID(*i)
-	}
-	return uc
-}
-
-// SetLocation sets the "location" field.
-func (uc *UserCreate) SetLocation(s string) *UserCreate {
-	uc.mutation.SetLocation(s)
-	return uc
-}
-
-// SetNillableLocation sets the "location" field if the given value is not nil.
-func (uc *UserCreate) SetNillableLocation(s *string) *UserCreate {
-	if s != nil {
-		uc.SetLocation(*s)
-	}
-	return uc
-}
-
-// SetDepartmentID sets the "department_id" field.
-func (uc *UserCreate) SetDepartmentID(i int32) *UserCreate {
-	uc.mutation.SetDepartmentID(i)
-	return uc
-}
-
-// SetNillableDepartmentID sets the "department_id" field if the given value is not nil.
-func (uc *UserCreate) SetNillableDepartmentID(i *int32) *UserCreate {
-	if i != nil {
-		uc.SetDepartmentID(*i)
 	}
 	return uc
 }
@@ -274,6 +226,10 @@ func (uc *UserCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uc *UserCreate) defaults() {
+	if _, ok := uc.mutation.UUID(); !ok {
+		v := user.DefaultUUID()
+		uc.mutation.SetUUID(v)
+	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		v := user.DefaultCreatedAt()
 		uc.mutation.SetCreatedAt(v)
@@ -282,26 +238,13 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultActive
 		uc.mutation.SetActive(v)
 	}
-	if _, ok := uc.mutation.Role(); !ok {
-		v := user.DefaultRole
-		uc.mutation.SetRole(v)
-	}
-	if _, ok := uc.mutation.UpdateAt(); !ok {
-		v := user.DefaultUpdateAt()
-		uc.mutation.SetUpdateAt(v)
-	}
-	if _, ok := uc.mutation.IsDeleted(); !ok {
-		v := user.DefaultIsDeleted
-		uc.mutation.SetIsDeleted(v)
-	}
-	if _, ok := uc.mutation.UUID(); !ok {
-		v := user.DefaultUUID()
-		uc.mutation.SetUUID(v)
-	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
+	if _, ok := uc.mutation.UUID(); !ok {
+		return &ValidationError{Name: "uuid", err: errors.New(`ent: missing required field "User.uuid"`)}
+	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
 	}
@@ -311,9 +254,6 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Username(); !ok {
 		return &ValidationError{Name: "username", err: errors.New(`ent: missing required field "User.username"`)}
 	}
-	if _, ok := uc.mutation.Nickname(); !ok {
-		return &ValidationError{Name: "nickname", err: errors.New(`ent: missing required field "User.nickname"`)}
-	}
 	if _, ok := uc.mutation.Password(); !ok {
 		return &ValidationError{Name: "password", err: errors.New(`ent: missing required field "User.password"`)}
 	}
@@ -322,15 +262,6 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`ent: missing required field "User.email"`)}
-	}
-	if _, ok := uc.mutation.Role(); !ok {
-		return &ValidationError{Name: "role", err: errors.New(`ent: missing required field "User.role"`)}
-	}
-	if _, ok := uc.mutation.UpdateAt(); !ok {
-		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "User.update_at"`)}
-	}
-	if _, ok := uc.mutation.UUID(); !ok {
-		return &ValidationError{Name: "uuid", err: errors.New(`ent: missing required field "User.uuid"`)}
 	}
 	return nil
 }
@@ -364,6 +295,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := uc.mutation.UUID(); ok {
+		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
+		_node.UUID = value
+	}
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -379,10 +314,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.ChineseName(); ok {
 		_spec.SetField(user.FieldChineseName, field.TypeString, value)
 		_node.ChineseName = value
-	}
-	if value, ok := uc.mutation.Nickname(); ok {
-		_spec.SetField(user.FieldNickname, field.TypeString, value)
-		_node.Nickname = value
 	}
 	if value, ok := uc.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
@@ -400,41 +331,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldAvatar, field.TypeString, value)
 		_node.Avatar = value
 	}
-	if value, ok := uc.mutation.Role(); ok {
-		_spec.SetField(user.FieldRole, field.TypeUint8, value)
-		_node.Role = value
-	}
-	if value, ok := uc.mutation.UpdateAt(); ok {
-		_spec.SetField(user.FieldUpdateAt, field.TypeTime, value)
-		_node.UpdateAt = value
-	}
-	if value, ok := uc.mutation.DeletedAt(); ok {
-		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = &value
-	}
-	if value, ok := uc.mutation.DeletedBy(); ok {
-		_spec.SetField(user.FieldDeletedBy, field.TypeUint32, value)
-		_node.DeletedBy = &value
-	}
-	if value, ok := uc.mutation.IsDeleted(); ok {
-		_spec.SetField(user.FieldIsDeleted, field.TypeBool, value)
-		_node.IsDeleted = &value
-	}
-	if value, ok := uc.mutation.UUID(); ok {
-		_spec.SetField(user.FieldUUID, field.TypeUUID, value)
-		_node.UUID = value
-	}
-	if value, ok := uc.mutation.GroupID(); ok {
-		_spec.SetField(user.FieldGroupID, field.TypeInt32, value)
-		_node.GroupID = value
-	}
 	if value, ok := uc.mutation.Location(); ok {
 		_spec.SetField(user.FieldLocation, field.TypeString, value)
 		_node.Location = value
 	}
-	if value, ok := uc.mutation.DepartmentID(); ok {
-		_spec.SetField(user.FieldDepartmentID, field.TypeInt32, value)
-		_node.DepartmentID = value
+	if value, ok := uc.mutation.LastLoginTime(); ok {
+		_spec.SetField(user.FieldLastLoginTime, field.TypeTime, value)
+		_node.LastLoginTime = value
+	}
+	if value, ok := uc.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := uc.mutation.DeletedAt(); ok {
+		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
+	}
+	if value, ok := uc.mutation.DeletedBy(); ok {
+		_spec.SetField(user.FieldDeletedBy, field.TypeUint32, value)
+		_node.DeletedBy = value
 	}
 	return _node, _spec
 }

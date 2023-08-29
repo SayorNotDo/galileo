@@ -317,24 +317,20 @@ var (
 	// UserColumns holds the columns for the "user" table.
 	UserColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "uuid", Type: field.TypeUUID},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "active", Type: field.TypeBool, Default: true},
 		{Name: "username", Type: field.TypeString, Unique: true},
 		{Name: "chinese_name", Type: field.TypeString, Nullable: true},
-		{Name: "nickname", Type: field.TypeString, Unique: true},
 		{Name: "password", Type: field.TypeString},
 		{Name: "phone", Type: field.TypeString, Unique: true},
 		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "avatar", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "role", Type: field.TypeUint8, Default: 3},
-		{Name: "update_at", Type: field.TypeTime},
+		{Name: "location", Type: field.TypeString, Nullable: true},
+		{Name: "last_login_time", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
-		{Name: "is_deleted", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "uuid", Type: field.TypeUUID},
-		{Name: "group_id", Type: field.TypeInt32, Nullable: true},
-		{Name: "location", Type: field.TypeString, Nullable: true},
-		{Name: "department_id", Type: field.TypeInt32, Nullable: true},
 	}
 	// UserTable holds the schema information for the "user" table.
 	UserTable = &schema.Table{

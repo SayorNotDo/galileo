@@ -13,10 +13,6 @@ option java_package = "api.engine.v1";
 
 service Engine {
   rpc RunJob(RunJobRequest) returns (RunJobReply);
-  rpc CancelJob(google.protobuf.Empty) returns (google.protobuf.Empty);
-  rpc PauseJob(google.protobuf.Empty) returns (google.protobuf.Empty);
-  rpc ResumeJob(google.protobuf.Empty) returns (google.protobuf.Empty);
-  rpc DeleteJob(google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc AddCronJob(AddCronJobRequest) returns (AddCronJobReply);
   rpc UpdateCronJob(UpdateCronJobRequest) returns (google.protobuf.Empty);
   rpc CreateContainer(CreateContainerRequest) returns (CreateContainerReply);

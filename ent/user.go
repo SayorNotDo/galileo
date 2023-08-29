@@ -16,43 +16,36 @@ import (
 type User struct {
 	config `json:"-"`
 	// ID of the ent.
+	// 主键ID
 	ID uint32 `json:"id,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// Active holds the value of the "active" field.
-	Active bool `json:"active,omitempty"`
-	// Username holds the value of the "username" field.
-	Username string `json:"username,omitempty"`
-	// ChineseName holds the value of the "chineseName" field.
-	ChineseName string `json:"chineseName,omitempty"`
-	// Nickname holds the value of the "nickname" field.
-	Nickname string `json:"nickname,omitempty"`
-	// Password holds the value of the "password" field.
-	Password string `json:"password,omitempty"`
-	// Phone holds the value of the "phone" field.
-	Phone string `json:"phone,omitempty"`
-	// Email holds the value of the "email" field.
-	Email string `json:"email,omitempty"`
-	// Avatar holds the value of the "avatar" field.
-	Avatar string `json:"avatar,omitempty"`
-	// Role holds the value of the "role" field.
-	Role uint8 `json:"role,omitempty"`
-	// UpdateAt holds the value of the "update_at" field.
-	UpdateAt time.Time `json:"update_at,omitempty"`
-	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
-	// DeletedBy holds the value of the "deleted_by" field.
-	DeletedBy *uint32 `json:"deleted_by,omitempty"`
-	// IsDeleted holds the value of the "is_deleted" field.
-	IsDeleted *bool `json:"is_deleted,omitempty"`
-	// UUID holds the value of the "uuid" field.
+	// 通用唯一识别码
 	UUID uuid.UUID `json:"uuid,omitempty"`
-	// GroupID holds the value of the "group_id" field.
-	GroupID int32 `json:"group_id,omitempty"`
-	// Location holds the value of the "location" field.
+	// 用户创建时间
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// 用户的活跃状态：1 活跃，2 非活跃
+	Active bool `json:"active,omitempty"`
+	// 用户名
+	Username string `json:"username,omitempty"`
+	// 中文名，可选
+	ChineseName string `json:"chineseName,omitempty"`
+	// 用户密码
+	Password string `json:"password,omitempty"`
+	// 电话号码
+	Phone string `json:"phone,omitempty"`
+	// 电子邮箱
+	Email string `json:"email,omitempty"`
+	// 头像
+	Avatar string `json:"avatar,omitempty"`
+	// 所处地理位置
 	Location string `json:"location,omitempty"`
-	// DepartmentID holds the value of the "department_id" field.
-	DepartmentID int32 `json:"department_id,omitempty"`
+	// 最后登录时间
+	LastLoginTime time.Time `json:"last_login_time,omitempty"`
+	// 用户更新时间
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// 用户删除时间
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
+	// 删除操作人
+	DeletedBy uint32 `json:"deleted_by,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -60,13 +53,13 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldActive, user.FieldIsDeleted:
+		case user.FieldActive:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldRole, user.FieldDeletedBy, user.FieldGroupID, user.FieldDepartmentID:
+		case user.FieldID, user.FieldDeletedBy:
 			values[i] = new(sql.NullInt64)
-		case user.FieldUsername, user.FieldChineseName, user.FieldNickname, user.FieldPassword, user.FieldPhone, user.FieldEmail, user.FieldAvatar, user.FieldLocation:
+		case user.FieldUsername, user.FieldChineseName, user.FieldPassword, user.FieldPhone, user.FieldEmail, user.FieldAvatar, user.FieldLocation:
 			values[i] = new(sql.NullString)
-		case user.FieldCreatedAt, user.FieldUpdateAt, user.FieldDeletedAt:
+		case user.FieldCreatedAt, user.FieldLastLoginTime, user.FieldUpdatedAt, user.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		case user.FieldUUID:
 			values[i] = new(uuid.UUID)
@@ -91,6 +84,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			u.ID = uint32(value.Int64)
+		case user.FieldUUID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field uuid", values[i])
+			} else if value != nil {
+				u.UUID = *value
+			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -114,12 +113,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field chineseName", values[i])
 			} else if value.Valid {
 				u.ChineseName = value.String
-			}
-		case user.FieldNickname:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field nickname", values[i])
-			} else if value.Valid {
-				u.Nickname = value.String
 			}
 		case user.FieldPassword:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -145,62 +138,35 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Avatar = value.String
 			}
-		case user.FieldRole:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field role", values[i])
-			} else if value.Valid {
-				u.Role = uint8(value.Int64)
-			}
-		case user.FieldUpdateAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field update_at", values[i])
-			} else if value.Valid {
-				u.UpdateAt = value.Time
-			}
-		case user.FieldDeletedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
-			} else if value.Valid {
-				u.DeletedAt = new(time.Time)
-				*u.DeletedAt = value.Time
-			}
-		case user.FieldDeletedBy:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
-			} else if value.Valid {
-				u.DeletedBy = new(uint32)
-				*u.DeletedBy = uint32(value.Int64)
-			}
-		case user.FieldIsDeleted:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_deleted", values[i])
-			} else if value.Valid {
-				u.IsDeleted = new(bool)
-				*u.IsDeleted = value.Bool
-			}
-		case user.FieldUUID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field uuid", values[i])
-			} else if value != nil {
-				u.UUID = *value
-			}
-		case user.FieldGroupID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field group_id", values[i])
-			} else if value.Valid {
-				u.GroupID = int32(value.Int64)
-			}
 		case user.FieldLocation:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field location", values[i])
 			} else if value.Valid {
 				u.Location = value.String
 			}
-		case user.FieldDepartmentID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field department_id", values[i])
+		case user.FieldLastLoginTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field last_login_time", values[i])
 			} else if value.Valid {
-				u.DepartmentID = int32(value.Int64)
+				u.LastLoginTime = value.Time
+			}
+		case user.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				u.UpdatedAt = value.Time
+			}
+		case user.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				u.DeletedAt = value.Time
+			}
+		case user.FieldDeletedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
+			} else if value.Valid {
+				u.DeletedBy = uint32(value.Int64)
 			}
 		}
 	}
@@ -230,6 +196,9 @@ func (u *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", u.ID))
+	builder.WriteString("uuid=")
+	builder.WriteString(fmt.Sprintf("%v", u.UUID))
+	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
@@ -241,9 +210,6 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("chineseName=")
 	builder.WriteString(u.ChineseName)
-	builder.WriteString(", ")
-	builder.WriteString("nickname=")
-	builder.WriteString(u.Nickname)
 	builder.WriteString(", ")
 	builder.WriteString("password=")
 	builder.WriteString(u.Password)
@@ -257,38 +223,20 @@ func (u *User) String() string {
 	builder.WriteString("avatar=")
 	builder.WriteString(u.Avatar)
 	builder.WriteString(", ")
-	builder.WriteString("role=")
-	builder.WriteString(fmt.Sprintf("%v", u.Role))
-	builder.WriteString(", ")
-	builder.WriteString("update_at=")
-	builder.WriteString(u.UpdateAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	if v := u.DeletedAt; v != nil {
-		builder.WriteString("deleted_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
-	builder.WriteString(", ")
-	if v := u.DeletedBy; v != nil {
-		builder.WriteString("deleted_by=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	if v := u.IsDeleted; v != nil {
-		builder.WriteString("is_deleted=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	builder.WriteString(", ")
-	builder.WriteString("uuid=")
-	builder.WriteString(fmt.Sprintf("%v", u.UUID))
-	builder.WriteString(", ")
-	builder.WriteString("group_id=")
-	builder.WriteString(fmt.Sprintf("%v", u.GroupID))
-	builder.WriteString(", ")
 	builder.WriteString("location=")
 	builder.WriteString(u.Location)
 	builder.WriteString(", ")
-	builder.WriteString("department_id=")
-	builder.WriteString(fmt.Sprintf("%v", u.DepartmentID))
+	builder.WriteString("last_login_time=")
+	builder.WriteString(u.LastLoginTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(u.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(u.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_by=")
+	builder.WriteString(fmt.Sprintf("%v", u.DeletedBy))
 	builder.WriteByte(')')
 	return builder.String()
 }

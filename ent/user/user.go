@@ -13,6 +13,8 @@ const (
 	Label = "user"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldUUID holds the string denoting the uuid field in the database.
+	FieldUUID = "uuid"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldActive holds the string denoting the active field in the database.
@@ -21,8 +23,6 @@ const (
 	FieldUsername = "username"
 	// FieldChineseName holds the string denoting the chinesename field in the database.
 	FieldChineseName = "chinese_name"
-	// FieldNickname holds the string denoting the nickname field in the database.
-	FieldNickname = "nickname"
 	// FieldPassword holds the string denoting the password field in the database.
 	FieldPassword = "password"
 	// FieldPhone holds the string denoting the phone field in the database.
@@ -31,24 +31,16 @@ const (
 	FieldEmail = "email"
 	// FieldAvatar holds the string denoting the avatar field in the database.
 	FieldAvatar = "avatar"
-	// FieldRole holds the string denoting the role field in the database.
-	FieldRole = "role"
-	// FieldUpdateAt holds the string denoting the update_at field in the database.
-	FieldUpdateAt = "update_at"
+	// FieldLocation holds the string denoting the location field in the database.
+	FieldLocation = "location"
+	// FieldLastLoginTime holds the string denoting the last_login_time field in the database.
+	FieldLastLoginTime = "last_login_time"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
 	FieldDeletedBy = "deleted_by"
-	// FieldIsDeleted holds the string denoting the is_deleted field in the database.
-	FieldIsDeleted = "is_deleted"
-	// FieldUUID holds the string denoting the uuid field in the database.
-	FieldUUID = "uuid"
-	// FieldGroupID holds the string denoting the group_id field in the database.
-	FieldGroupID = "group_id"
-	// FieldLocation holds the string denoting the location field in the database.
-	FieldLocation = "location"
-	// FieldDepartmentID holds the string denoting the department_id field in the database.
-	FieldDepartmentID = "department_id"
 	// Table holds the table name of the user in the database.
 	Table = "user"
 )
@@ -56,24 +48,20 @@ const (
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
+	FieldUUID,
 	FieldCreatedAt,
 	FieldActive,
 	FieldUsername,
 	FieldChineseName,
-	FieldNickname,
 	FieldPassword,
 	FieldPhone,
 	FieldEmail,
 	FieldAvatar,
-	FieldRole,
-	FieldUpdateAt,
+	FieldLocation,
+	FieldLastLoginTime,
+	FieldUpdatedAt,
 	FieldDeletedAt,
 	FieldDeletedBy,
-	FieldIsDeleted,
-	FieldUUID,
-	FieldGroupID,
-	FieldLocation,
-	FieldDepartmentID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -87,18 +75,12 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultUUID holds the default value on creation for the "uuid" field.
+	DefaultUUID func() uuid.UUID
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultActive holds the default value on creation for the "active" field.
 	DefaultActive bool
-	// DefaultRole holds the default value on creation for the "role" field.
-	DefaultRole uint8
-	// DefaultUpdateAt holds the default value on creation for the "update_at" field.
-	DefaultUpdateAt func() time.Time
-	// UpdateDefaultUpdateAt holds the default value on update for the "update_at" field.
-	UpdateDefaultUpdateAt func() time.Time
-	// DefaultIsDeleted holds the default value on creation for the "is_deleted" field.
-	DefaultIsDeleted bool
-	// DefaultUUID holds the default value on creation for the "uuid" field.
-	DefaultUUID func() uuid.UUID
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
 )

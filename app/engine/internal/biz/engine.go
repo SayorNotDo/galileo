@@ -2,32 +2,32 @@ package biz
 
 import (
 	"context"
-	taskV1 "galileo/api/management/task/v1"
+	managementV1 "galileo/api/management/v1"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/robfig/cron/v3"
 	"time"
 )
 
 type Task struct {
-	Id             int64
+	Id             int32
 	Name           string
 	Rank           int8
 	Type           int8
-	Status         taskV1.TaskStatus
+	Status         managementV1.TaskStatus
 	Worker         string
 	Config         string
-	Frequency      taskV1.Frequency
+	Frequency      managementV1.Frequency
 	ScheduleTime   time.Time
-	TestcaseSuites []int64
+	TestcaseSuites []int32
 	ExecuteId      int64
 }
 
 type EngineRepo interface {
-	TaskByID(ctx context.Context, id int64) (*Task, error)
+	TaskByID(ctx context.Context, id int32) (*Task, error)
 	AddCronJob(ctx context.Context, task *Task) (cron.EntryID, error)
-	TimingTaskList(ctx context.Context, status []taskV1.TaskStatus) ([]*Task, error)
+	TimingTaskList(ctx context.Context, status []managementV1.TaskStatus) ([]*Task, error)
 	GetCronJobList(ctx context.Context) []*CronJob
-	RemoveCronJob(ctx context.Context, taskId int64) error
+	RemoveCronJob(ctx context.Context, taskId int32) error
 }
 
 type EngineUseCase struct {
@@ -40,7 +40,7 @@ func NewEngineUseCase(repo EngineRepo, logger log.Logger) *EngineUseCase {
 	return &EngineUseCase{repo: repo, log: helper}
 }
 
-func (c *EngineUseCase) TaskByID(ctx context.Context, id int64) (*Task, error) {
+func (c *EngineUseCase) TaskByID(ctx context.Context, id int32) (*Task, error) {
 	return c.repo.TaskByID(ctx, id)
 }
 
@@ -48,7 +48,7 @@ func (c *EngineUseCase) AddCronJob(ctx context.Context, task *Task) (cron.EntryI
 	return c.repo.AddCronJob(ctx, task)
 }
 
-func (c *EngineUseCase) TimingTaskList(ctx context.Context, status []taskV1.TaskStatus) ([]*Task, error) {
+func (c *EngineUseCase) TimingTaskList(ctx context.Context, status []managementV1.TaskStatus) ([]*Task, error) {
 	return c.repo.TimingTaskList(ctx, status)
 }
 
@@ -56,7 +56,7 @@ func (c *EngineUseCase) GetCronJobList(ctx context.Context) []*CronJob {
 	return c.repo.GetCronJobList(ctx)
 }
 
-func (c *EngineUseCase) RemoveCronJob(ctx context.Context, taskId int64) error {
+func (c *EngineUseCase) RemoveCronJob(ctx context.Context, taskId int32) error {
 	return c.repo.RemoveCronJob(ctx, taskId)
 }
 

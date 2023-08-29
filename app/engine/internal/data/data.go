@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"fmt"
-	taskV1 "galileo/api/management/task/v1"
+	managementV1 "galileo/api/management/v1"
 	"galileo/app/engine/internal/conf"
 	"galileo/ent"
 	"github.com/docker/docker/client"
@@ -49,20 +49,20 @@ type Data struct {
 	entDB     *ent.Client
 	log       *log.Helper
 	redisCli  redis.Cmdable
-	taskCli   taskV1.TaskClient
+	ManageCli managementV1.ManagementClient
 	dockerCli *client.Client
 	cron      *cron.Cron
 }
 
 // NewData .
-func NewData(c *conf.Data, logger log.Logger, redisCli redis.Cmdable, taskCli taskV1.TaskClient, dockerCli *client.Client) (*Data, func(), error) {
+func NewData(c *conf.Data, logger log.Logger, redisCli redis.Cmdable, ManageCli managementV1.ManagementClient, dockerCli *client.Client) (*Data, func(), error) {
 	l := log.NewHelper(log.With(logger, "module", "engine.DataService"))
 	cronJob := cron.New(cron.WithSeconds())
 	cronJob.Start()
 	cleanup := func() {
 		l.Info("closing the data resources")
 	}
-	return &Data{log: l, redisCli: redisCli, taskCli: taskCli, cron: cronJob, dockerCli: dockerCli}, cleanup, nil
+	return &Data{log: l, redisCli: redisCli, ManageCli: ManageCli, cron: cronJob, dockerCli: dockerCli}, cleanup, nil
 }
 
 func NewEntDB(c *conf.Data) (*ent.Client, error) {
@@ -94,7 +94,7 @@ func NewEntDB(c *conf.Data) (*ent.Client, error) {
 	return cli, nil
 }
 
-func NewTaskServiceClient(sr *conf.Service, rr registry.Discovery) taskV1.TaskClient {
+func NewTaskServiceClient(sr *conf.Service, rr registry.Discovery) managementV1.ManagementClient {
 	conn, err := grpc.DialInsecure(
 		context.Background(),
 		grpc.WithEndpoint(sr.Management.Endpoint),
@@ -110,7 +110,7 @@ func NewTaskServiceClient(sr *conf.Service, rr registry.Discovery) taskV1.TaskCl
 	if err != nil {
 		panic(err)
 	}
-	c := taskV1.NewTaskClient(conn)
+	c := managementV1.NewManagementClient(conn)
 	return c
 }
 
@@ -162,8 +162,10 @@ func NewDiscovery(conf *conf.Registry) registry.Discovery {
 
 func NewDockerClient(conf *conf.Service, logger log.Logger) *client.Client {
 	logs := log.NewHelper(log.With(logger, "module", "data.docker"))
-	/* 远程连接 */
+	/* 远程连接：生产环境部署docker-hub */
+	/* 获取连接助手对象 */
 	//helper, err := connhelper.GetConnectionHelper(conf.Docker.Endpoint)
+	//logs.Info(helper)
 	//if err != nil {
 	//	logs.Fatalf("docker get connect helper error: %v", err)
 	//	return nil
@@ -178,7 +180,7 @@ func NewDockerClient(conf *conf.Service, logger log.Logger) *client.Client {
 	//	client.WithHost(helper.Host),
 	//	client.WithDialContext(helper.Dialer),
 	//)
-	/* 本地连接 */
+	/* 本地连接: 仅适用在开发环境 */
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		logs.Fatalf("docker connect error: %v", err)

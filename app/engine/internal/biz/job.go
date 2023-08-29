@@ -3,7 +3,7 @@ package biz
 import (
 	"context"
 	"fmt"
-	taskV1 "galileo/api/management/task/v1"
+	managementV1 "galileo/api/management/v1"
 	"io"
 	"net/http"
 	"strconv"
@@ -11,9 +11,9 @@ import (
 )
 
 type CronJob struct {
-	TaskId  int64 `json:"task_id,omitempty"`
-	TaskCli taskV1.TaskClient
-	Worker  string `json:"worker,omitempty"`
+	TaskId    int32 `json:"task_id,omitempty"`
+	ManageCli managementV1.ManagementClient
+	Worker    string `json:"worker,omitempty"`
 }
 
 // Run
@@ -21,9 +21,9 @@ type CronJob struct {
 func (c *CronJob) Run() {
 	// TODO: 测试任务触发（更新任务状态）
 	fmt.Println("下发测试任务: ", c.TaskId)
-	_, err := c.TaskCli.UpdateTaskStatus(context.Background(), &taskV1.UpdateTaskStatusRequest{
+	_, err := c.ManageCli.UpdateTaskStatus(context.Background(), &managementV1.UpdateTaskStatusRequest{
 		Id:     c.TaskId,
-		Status: taskV1.TaskStatus_RUNNING,
+		Status: managementV1.TaskStatus_RUNNING,
 		Worker: c.Worker,
 	})
 	if err != nil {
@@ -31,14 +31,14 @@ func (c *CronJob) Run() {
 	}
 }
 
-func JobCommand(schema, worker string, taskId int64) error {
+func JobCommand(schema, worker string, taskId int32) error {
 	// 创建HTTP客户端
 	client := &http.Client{}
 
 	// TODO: 创建发送至Worker的HTTP请求
 	url := fmt.Sprintf("%s%s/job", schema, worker)
 	/* body: taskId, token, */
-	payload := strings.NewReader("taskId=%s" + strconv.FormatInt(taskId, 10))
+	payload := strings.NewReader("taskId=%s" + strconv.FormatInt(int64(taskId), 10))
 	req, err := http.NewRequest("POST", url, payload)
 	if err != nil {
 		fmt.Println("Error Creating Request: ", err)

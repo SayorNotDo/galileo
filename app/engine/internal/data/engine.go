@@ -3,7 +3,7 @@ package data
 import (
 	"context"
 	"fmt"
-	taskV1 "galileo/api/management/task/v1"
+	managementV1 "galileo/api/management/v1"
 	"galileo/app/engine/internal/biz"
 	"galileo/pkg/errResponse"
 	"github.com/docker/docker/api/types"
@@ -29,8 +29,8 @@ func NewEngineRepo(data *Data, logger log.Logger) biz.EngineRepo {
 	}
 }
 
-func (r *engineRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) {
-	res, err := r.data.taskCli.TaskByID(ctx, &taskV1.TaskByIDRequest{Id: id})
+func (r *engineRepo) TaskByID(ctx context.Context, id int32) (*biz.Task, error) {
+	res, err := r.data.ManageCli.TaskByID(ctx, &managementV1.TaskByIDRequest{Id: id})
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (r *engineRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) 
 		Config:         res.Config,
 		Frequency:      res.Frequency,
 		ScheduleTime:   res.ScheduleTime.AsTime(),
-		TestcaseSuites: res.TestcaseSuiteId,
+		TestcaseSuites: res.TestcaseSuite,
 	}, nil
 }
 
@@ -60,9 +60,9 @@ func (r *engineRepo) AddCronJob(ctx context.Context, task *biz.Task) (cron.Entry
 	/* 构建定时任务调度时间表达式 */
 	cronExpression := fmt.Sprintf("%d %d %d %d %d *", t.Second(), t.Minute(), t.Hour(), t.Day(), t.Month())
 	entryId, err := r.data.cron.AddJob(cronExpression, &biz.CronJob{
-		TaskId:  task.Id,
-		TaskCli: r.data.taskCli,
-		Worker:  task.Worker,
+		TaskId:    task.Id,
+		ManageCli: r.data.ManageCli,
+		Worker:    task.Worker,
 	})
 	if err != nil {
 		return 0, err
@@ -70,9 +70,9 @@ func (r *engineRepo) AddCronJob(ctx context.Context, task *biz.Task) (cron.Entry
 	return entryId, nil
 }
 
-func (r *engineRepo) TimingTaskList(ctx context.Context, status []taskV1.TaskStatus) ([]*biz.Task, error) {
+func (r *engineRepo) TimingTaskList(ctx context.Context, status []managementV1.TaskStatus) ([]*biz.Task, error) {
 	/* 获取状态为待办的定时/延时类型任务列表 */
-	res, err := r.data.taskCli.ListTimingTask(ctx, &taskV1.ListTimingTaskRequest{
+	res, err := r.data.ManageCli.ListTimingTask(ctx, &managementV1.ListTimingTaskRequest{
 		Status: status,
 	})
 	if err != nil {
@@ -111,7 +111,7 @@ func (r *engineRepo) GetCronJobList(ctx context.Context) []*biz.CronJob {
 	return rv
 }
 
-func (r *engineRepo) GetCronJobByTaskId(ctx context.Context, taskId int64) (cron.Entry, error) {
+func (r *engineRepo) GetCronJobByTaskId(ctx context.Context, taskId int32) (cron.Entry, error) {
 	entries := r.data.cron.Entries()
 	for _, entry := range entries {
 		if entry.Job.(*biz.CronJob).TaskId == taskId {
@@ -121,7 +121,7 @@ func (r *engineRepo) GetCronJobByTaskId(ctx context.Context, taskId int64) (cron
 	return cron.Entry{}, errResponse.SetCustomizeErrMsg(errResponse.ReasonRecordNotFound, "entry not found")
 }
 
-func (r *engineRepo) RemoveCronJob(ctx context.Context, taskId int64) error {
+func (r *engineRepo) RemoveCronJob(ctx context.Context, taskId int32) error {
 	entry, err := r.GetCronJobByTaskId(ctx, taskId)
 	if err != nil {
 		return err
