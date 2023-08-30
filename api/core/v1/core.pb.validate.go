@@ -1683,22 +1683,22 @@ var _ interface {
 	ErrorName() string
 } = ExecuteTokenReplyValidationError{}
 
-// Validate checks the field values on DataReportTrackRequest with the rules
+// Validate checks the field values on TrackReportDataRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DataReportTrackRequest) Validate() error {
+func (m *TrackReportDataRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DataReportTrackRequest with the rules
+// ValidateAll checks the field values on TrackReportDataRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// DataReportTrackRequestMultiError, or nil if none found.
-func (m *DataReportTrackRequest) ValidateAll() error {
+// TrackReportDataRequestMultiError, or nil if none found.
+func (m *TrackReportDataRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DataReportTrackRequest) validate(all bool) error {
+func (m *TrackReportDataRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1708,19 +1708,19 @@ func (m *DataReportTrackRequest) validate(all bool) error {
 	// no validation rules for Data
 
 	if len(errors) > 0 {
-		return DataReportTrackRequestMultiError(errors)
+		return TrackReportDataRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// DataReportTrackRequestMultiError is an error wrapping multiple validation
-// errors returned by DataReportTrackRequest.ValidateAll() if the designated
+// TrackReportDataRequestMultiError is an error wrapping multiple validation
+// errors returned by TrackReportDataRequest.ValidateAll() if the designated
 // constraints aren't met.
-type DataReportTrackRequestMultiError []error
+type TrackReportDataRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DataReportTrackRequestMultiError) Error() string {
+func (m TrackReportDataRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1729,11 +1729,11 @@ func (m DataReportTrackRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DataReportTrackRequestMultiError) AllErrors() []error { return m }
+func (m TrackReportDataRequestMultiError) AllErrors() []error { return m }
 
-// DataReportTrackRequestValidationError is the validation error returned by
-// DataReportTrackRequest.Validate if the designated constraints aren't met.
-type DataReportTrackRequestValidationError struct {
+// TrackReportDataRequestValidationError is the validation error returned by
+// TrackReportDataRequest.Validate if the designated constraints aren't met.
+type TrackReportDataRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1741,24 +1741,24 @@ type DataReportTrackRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e DataReportTrackRequestValidationError) Field() string { return e.field }
+func (e TrackReportDataRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DataReportTrackRequestValidationError) Reason() string { return e.reason }
+func (e TrackReportDataRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DataReportTrackRequestValidationError) Cause() error { return e.cause }
+func (e TrackReportDataRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DataReportTrackRequestValidationError) Key() bool { return e.key }
+func (e TrackReportDataRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DataReportTrackRequestValidationError) ErrorName() string {
-	return "DataReportTrackRequestValidationError"
+func (e TrackReportDataRequestValidationError) ErrorName() string {
+	return "TrackReportDataRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e DataReportTrackRequestValidationError) Error() string {
+func (e TrackReportDataRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1770,14 +1770,14 @@ func (e DataReportTrackRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDataReportTrackRequest.%s: %s%s",
+		"invalid %sTrackReportDataRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DataReportTrackRequestValidationError{}
+var _ error = TrackReportDataRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -1785,7 +1785,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DataReportTrackRequestValidationError{}
+} = TrackReportDataRequestValidationError{}
 
 // Validate checks the field values on UpdatePasswordRequest with the rules
 // defined in the proto definition for this message. If any rules are
@@ -2024,7 +2024,7 @@ func (m *ListUserRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for PageNum
+	// no validation rules for PageToken
 
 	// no validation rules for PageSize
 
@@ -2266,9 +2266,9 @@ func (m *UserInfoRequest) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if l := utf8.RuneCountInString(m.GetNickname()); l < 1 || l > 24 {
+	if l := utf8.RuneCountInString(m.GetUsername()); l < 1 || l > 24 {
 		err := UserInfoRequestValidationError{
-			field:  "Nickname",
+			field:  "Username",
 			reason: "value length must be between 1 and 24 runes, inclusive",
 		}
 		if !all {
@@ -2450,6 +2450,80 @@ func (m *UserInfoReply) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for Username
+
+	// no validation rules for ChineseName
+
+	// no validation rules for Email
+
+	// no validation rules for Phone
+
+	// no validation rules for Avatar
+
+	// no validation rules for Active
+
+	// no validation rules for Location
+
+	if all {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserInfoReplyValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserInfoReplyValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UserInfoReplyValidationError{
+				field:  "CreatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetLastLoginTime()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserInfoReplyValidationError{
+					field:  "LastLoginTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserInfoReplyValidationError{
+					field:  "LastLoginTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetLastLoginTime()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UserInfoReplyValidationError{
+				field:  "LastLoginTime",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return UserInfoReplyMultiError(errors)
@@ -2983,38 +3057,7 @@ func (m *LoginReply) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Type
-
 	// no validation rules for Token
-
-	if all {
-		switch v := interface{}(m.GetExpiresAt()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, LoginReplyValidationError{
-					field:  "ExpiresAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, LoginReplyValidationError{
-					field:  "ExpiresAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetExpiresAt()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return LoginReplyValidationError{
-				field:  "ExpiresAt",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
 
 	if len(errors) > 0 {
 		return LoginReplyMultiError(errors)

@@ -24,7 +24,7 @@ const (
 	User_UpdateUserInfo_FullMethodName   = "/api.user.v1.User/UpdateUserInfo"
 	User_GetUserInfo_FullMethodName      = "/api.user.v1.User/GetUserInfo"
 	User_ListUser_FullMethodName         = "/api.user.v1.User/ListUser"
-	User_VerifyPassword_FullMethodName   = "/api.user.v1.User/VerifyPassword"
+	User_ValidateUser_FullMethodName     = "/api.user.v1.User/ValidateUser"
 	User_ResetPassword_FullMethodName    = "/api.user.v1.User/ResetPassword"
 	User_UpdatePassword_FullMethodName   = "/api.user.v1.User/UpdatePassword"
 	User_SoftDeleteUser_FullMethodName   = "/api.user.v1.User/SoftDeleteUser"
@@ -44,7 +44,7 @@ type UserClient interface {
 	UpdateUserInfo(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...grpc.CallOption) (*UserInfo, error)
 	ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
-	VerifyPassword(ctx context.Context, in *VerifyPasswordRequest, opts ...grpc.CallOption) (*VerifyPasswordReply, error)
+	ValidateUser(ctx context.Context, in *ValidateUserRequest, opts ...grpc.CallOption) (*ValidateUserReply, error)
 	ResetPassword(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	SoftDeleteUser(ctx context.Context, in *SoftDeleteRequest, opts ...grpc.CallOption) (*SoftDeleteReply, error)
@@ -100,9 +100,9 @@ func (c *userClient) ListUser(ctx context.Context, in *ListUserRequest, opts ...
 	return out, nil
 }
 
-func (c *userClient) VerifyPassword(ctx context.Context, in *VerifyPasswordRequest, opts ...grpc.CallOption) (*VerifyPasswordReply, error) {
-	out := new(VerifyPasswordReply)
-	err := c.cc.Invoke(ctx, User_VerifyPassword_FullMethodName, in, out, opts...)
+func (c *userClient) ValidateUser(ctx context.Context, in *ValidateUserRequest, opts ...grpc.CallOption) (*ValidateUserReply, error) {
+	out := new(ValidateUserReply)
+	err := c.cc.Invoke(ctx, User_ValidateUser_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +198,7 @@ type UserServer interface {
 	UpdateUserInfo(context.Context, *UpdateUserRequest) (*emptypb.Empty, error)
 	GetUserInfo(context.Context, *GetUserInfoRequest) (*UserInfo, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
-	VerifyPassword(context.Context, *VerifyPasswordRequest) (*VerifyPasswordReply, error)
+	ValidateUser(context.Context, *ValidateUserRequest) (*ValidateUserReply, error)
 	ResetPassword(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	UpdatePassword(context.Context, *UpdatePasswordRequest) (*emptypb.Empty, error)
 	SoftDeleteUser(context.Context, *SoftDeleteRequest) (*SoftDeleteReply, error)
@@ -227,8 +227,8 @@ func (UnimplementedUserServer) GetUserInfo(context.Context, *GetUserInfoRequest)
 func (UnimplementedUserServer) ListUser(context.Context, *ListUserRequest) (*ListUserReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUser not implemented")
 }
-func (UnimplementedUserServer) VerifyPassword(context.Context, *VerifyPasswordRequest) (*VerifyPasswordReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method VerifyPassword not implemented")
+func (UnimplementedUserServer) ValidateUser(context.Context, *ValidateUserRequest) (*ValidateUserReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateUser not implemented")
 }
 func (UnimplementedUserServer) ResetPassword(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
@@ -342,20 +342,20 @@ func _User_ListUser_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _User_VerifyPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VerifyPasswordRequest)
+func _User_ValidateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidateUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServer).VerifyPassword(ctx, in)
+		return srv.(UserServer).ValidateUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: User_VerifyPassword_FullMethodName,
+		FullMethod: User_ValidateUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).VerifyPassword(ctx, req.(*VerifyPasswordRequest))
+		return srv.(UserServer).ValidateUser(ctx, req.(*ValidateUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -546,8 +546,8 @@ var User_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _User_ListUser_Handler,
 		},
 		{
-			MethodName: "VerifyPassword",
-			Handler:    _User_VerifyPassword_Handler,
+			MethodName: "ValidateUser",
+			Handler:    _User_ValidateUser_Handler,
 		},
 		{
 			MethodName: "ResetPassword",

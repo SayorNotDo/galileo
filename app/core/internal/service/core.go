@@ -13,8 +13,8 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-/*DataReportTrack 数据上报后台接口 */
-func (c *CoreService) DataReportTrack(ctx context.Context, req *v1.DataReportTrackRequest) (*emptypb.Empty, error) {
+/*TrackReportData 数据上报后台接口 */
+func (c *CoreService) TrackReportData(ctx context.Context, req *v1.TrackReportDataRequest) (*emptypb.Empty, error) {
 	/* 数据上报接口单独鉴权逻辑 */
 	var claims *ReportClaims
 	if tr, ok := transport.FromServerContext(ctx); ok {

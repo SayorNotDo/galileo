@@ -1,6 +1,7 @@
 package biz
 
 import (
+	"github.com/google/uuid"
 	"github.com/google/wire"
 	"time"
 )
@@ -9,19 +10,21 @@ import (
 var ProviderSet = wire.NewSet(NewCoreUseCase, NewEngineUseCase, NewUserUseCase)
 
 type User struct {
-	Id          uint32
-	Phone       string
-	ChineseName string
-	Username    string
-	Nickname    string
-	Gender      string
-	Email       string
-	Role        int32
-	Password    string
-	Status      bool
-	CreatedAt   time.Time
-	DeletedAt   time.Time
-	DeletedBy   uint32
+	Id            uint32    `json:"id"`
+	UUID          uuid.UUID `json:"uuid"`
+	Username      string    `json:"username"`
+	ChineseName   string    `json:"chinese_name"`
+	Password      string    `json:"password"`
+	Avatar        string    `json:"avatar"`
+	Email         string    `json:"email"`
+	Phone         string    `json:"phone"`
+	Active        bool      `json:"active"`
+	Location      string    `json:"location"`
+	LastLoginTime time.Time `json:"last_login_time"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdateAt      time.Time `json:"update_at"`
+	DeletedAt     time.Time `json:"deleted_at"`
+	DeletedBy     uint32    `json:"deleted_by"`
 }
 
 type Group struct {

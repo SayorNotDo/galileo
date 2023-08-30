@@ -6,6 +6,7 @@ import (
 	"galileo/app/core/internal/biz"
 	"galileo/pkg/ctxdata"
 	"galileo/pkg/errResponse"
+	. "galileo/pkg/errResponse"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/samber/lo"
 	"go.opentelemetry.io/otel"
@@ -28,7 +29,14 @@ func (c *CoreService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	ctx, span := tr.Start(ctx, "login")
 	span.SpanContext()
 	defer span.End()
-	return c.uc.Login(ctx, req)
+	if len(req.Username) <= 0 || len(req.Password) <= 0 {
+		return nil, SetErrByReason(ReasonParamsError)
+	}
+	token, err := c.uc.Login(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.LoginReply{Token: token}, nil
 }
 
 func (c *CoreService) Logout(ctx context.Context, empty *empty.Empty) (*emptypb.Empty, error) {
@@ -37,6 +45,10 @@ func (c *CoreService) Logout(ctx context.Context, empty *empty.Empty) (*emptypb.
 	ctx, span := tr.Start(ctx, "logout")
 	span.SpanContext()
 	defer span.End()
+	uid := ctxdata.GetUserId(ctx)
+	if _, err := c.uc.GetUserInfo(ctx, uid); err != nil {
+		return nil, err
+	}
 	return c.uc.Logout(ctx)
 }
 
@@ -45,7 +57,7 @@ func (c *CoreService) UpdatePassword(ctx context.Context, req *v1.UpdatePassword
 }
 
 func (c *CoreService) ListUsers(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserReply, error) {
-	return c.uc.ListUser(ctx, req.PageNum, req.PageSize)
+	return c.uc.ListUser(ctx, req.PageToken, req.PageSize)
 }
 
 func (c *CoreService) UserInfo(ctx context.Context, req *v1.UserInfoRequest) (*v1.UserInfoReply, error) {
@@ -66,9 +78,23 @@ func (c *CoreService) UserInfo(ctx context.Context, req *v1.UserInfoRequest) (*v
 }
 
 func (c *CoreService) CurrentUserInfo(ctx context.Context, empty *empty.Empty) (*v1.UserInfoReply, error) {
-	//uid := ctxdata.GetUserId(ctx)
-
-	return nil, nil
+	uid := ctxdata.GetUserId(ctx)
+	ret, err := c.uc.GetUserInfo(ctx, uid)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.UserInfoReply{
+		Id:            ret.Id,
+		Username:      ret.Username,
+		ChineseName:   ret.ChineseName,
+		Email:         ret.Email,
+		Phone:         ret.Phone,
+		Avatar:        ret.Avatar,
+		Active:        ret.Active,
+		Location:      ret.Location,
+		CreatedAt:     timestamppb.New(ret.CreatedAt),
+		LastLoginTime: timestamppb.New(ret.LastLoginTime),
+	}, nil
 }
 
 func (c *CoreService) DeleteUser(ctx context.Context, req *v1.DeleteRequest) (*emptypb.Empty, error) {

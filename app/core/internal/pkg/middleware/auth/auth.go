@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/google/uuid"
 	"time"
 )
 
@@ -13,7 +14,7 @@ const (
 type CustomClaims struct {
 	ID          uint32
 	Username    string
-	AuthorityId int
+	AuthorityId uuid.UUID
 	jwt.RegisteredClaims
 }
 

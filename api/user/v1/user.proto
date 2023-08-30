@@ -15,7 +15,7 @@ service User {
   rpc UpdateUserInfo (UpdateUserRequest) returns (google.protobuf.Empty);
   rpc GetUserInfo (GetUserInfoRequest) returns (UserInfo);
   rpc ListUser (ListUserRequest) returns (ListUserReply);
-  rpc VerifyPassword(VerifyPasswordRequest) returns (VerifyPasswordReply);
+  rpc ValidateUser (ValidateUserRequest) returns (ValidateUserReply);
   rpc ResetPassword(google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc UpdatePassword(UpdatePasswordRequest) returns (google.protobuf.Empty);
   rpc SoftDeleteUser (SoftDeleteRequest) returns (SoftDeleteReply);
@@ -26,6 +26,18 @@ service User {
   rpc UpdateUserGroup(UserGroupRequest) returns (google.protobuf.Empty);
   rpc CreateUserGroup(UserGroupRequest) returns (GroupInfo);
 }
+
+message ValidateUserRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message ValidateUserReply {
+  uint32 id = 1;
+  string username = 2;
+  string UUID = 3;
+}
+
 
 message GetUserInfoRequest {
   uint32 id = 1;
@@ -107,16 +119,6 @@ message SoftDeleteReply {
   google.protobuf.Timestamp deletedAt = 3;
 }
 
-
-message VerifyPasswordRequest {
-  string hashedPassword = 1;
-  string password = 2;
-}
-
-message VerifyPasswordReply {
-  bool success = 1;
-}
-
 message HelloRequest {
   string name = 1;
 }
@@ -143,13 +145,21 @@ message CreateUserReply {
 
 message UpdateUserRequest {
   uint32 id = 1;
-  string nickname = 2;
-  string avatar = 3;
+  string username = 2;
+  string chineseName = 3;
+  string avatar = 4;
+  string location = 5;
+  string email = 6;
+  string phone = 7;
+  google.protobuf.Timestamp lastLoginTime = 8;
 }
 
 message ListUserRequest {
   int32 pageSize = 1;
   string pageToken = 2;
+
+  /* filter expression */
+  string filter = 3;
 }
 
 message ListUserReply {

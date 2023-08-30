@@ -1,6 +1,7 @@
 package biz
 
 import (
+	"github.com/google/uuid"
 	"github.com/google/wire"
 	"time"
 )
@@ -10,6 +11,7 @@ var ProviderSet = wire.NewSet(NewUserUseCase)
 
 type User struct {
 	Id            uint32    `json:"id"`
+	UUID          uuid.UUID `json:"uuid"`
 	Username      string    `json:"name"`
 	ChineseName   string    `json:"chinese_name"`
 	Password      string    `json:"password"`

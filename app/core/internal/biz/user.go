@@ -24,16 +24,15 @@ type UserRepo interface {
 	CreateUser(ctx context.Context, u *User) (*User, error)
 	UpdatePassword(ctx context.Context, password string) (bool, error)
 	SoftDeleteUser(ctx context.Context, uid uint32) (bool, error)
-	UserByUsername(ctx context.Context, username string) (*User, error)
 	SetToken(ctx context.Context, token string) (string, error)
 	DestroyToken(ctx context.Context) error
-	ListUser(ctx context.Context, pageNum, pageSize int32) ([]*v1.UserDetail, int32, error)
+	ListUser(ctx context.Context, pageToken string, pageSize int32) ([]*v1.UserDetail, int32, error)
 	GetUserProjectList(ctx context.Context) ([]*v1.ProjectInfo, error)
 	GetUserGroup(ctx context.Context, groupId int32) (*Group, error)
 	CreateUserGroup(ctx context.Context, group *Group) (*Group, error)
 	UpdateUserGroup(ctx context.Context, group *Group) error
 	GetUserGroupList(ctx context.Context) ([]*Group, error)
-	VerifyPassword(ctx context.Context, password, encryptedPassword string) (bool, error)
+	ValidateUser(ctx context.Context, username, password string) (*User, error)
 }
 
 type UserUseCase struct {
@@ -67,7 +66,7 @@ func NewUser(phone, username, password, email string) (User, error) {
 	}
 	return User{
 		Phone:    phone,
-		Nickname: username,
+		Username: username,
 		Password: password,
 		Email:    email,
 	}, nil
@@ -77,12 +76,12 @@ func newUserClaim(u *User) *auth.CustomClaims {
 	return &auth.CustomClaims{
 		ID:          u.Id,
 		Username:    u.Username,
-		AuthorityId: int(u.Role),
+		AuthorityId: u.UUID,
 		RegisteredClaims: jwt2.RegisteredClaims{
 			NotBefore: jwt2.NewNumericDate(time.Now()),
 			ExpiresAt: jwt2.NewNumericDate(time.Now().AddDate(0, 1, 0)),
 			IssuedAt:  jwt2.NewNumericDate(time.Now()),
-			Issuer:    "Galileo",
+			Issuer:    ctxdata.Issuer,
 		},
 	}
 }
@@ -155,37 +154,20 @@ func (u *UserUseCase) DeleteUser(ctx context.Context, deleteId uint32) (*emptypb
 }
 
 // Login TODO: 修复逻辑，禁止密码的传递
-func (u *UserUseCase) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginReply, error) {
-	if len(req.Username) <= 0 {
-		return nil, SetErrByReason(ReasonParamsError)
-	}
-	if len(req.Password) <= 0 {
-		return nil, SetErrByReason(ReasonParamsError)
-	}
-	user, err := u.repo.UserByUsername(ctx, req.Username)
+func (u *UserUseCase) Login(ctx context.Context, req *v1.LoginRequest) (string, error) {
+	user, err := u.repo.ValidateUser(ctx, req.Username, req.Password)
 	if err != nil {
-		return nil, err
-	}
-	if _, passErr := u.repo.VerifyPassword(ctx, req.Password, user.Password); passErr != nil {
-		return nil, passErr
+		return "", err
 	}
 	claims := newUserClaim(user)
 	token, err := auth.CreateToken(*claims, u.signingKey)
 	if err != nil {
-		return nil, SetErrByReason(ReasonParamsError)
+		return "", SetErrByReason(ReasonParamsError)
 	}
-	encryptionToken, _ := u.repo.SetToken(ctx, token)
-	return &v1.LoginReply{
-		Type:      "Bearer",
-		Token:     encryptionToken,
-		ExpiresAt: timestamppb.New(time.Unix(claims.ExpiresAt.Unix(), 0)),
-	}, nil
+	return u.repo.SetToken(ctx, token)
 }
 
-func (u *UserUseCase) Logout(ctx context.Context, uid uint32) (*emptypb.Empty, error) {
-	if _, err := u.repo.GetUserInfo(ctx, uid); err != nil {
-		return nil, err
-	}
+func (u *UserUseCase) Logout(ctx context.Context) (*emptypb.Empty, error) {
 	_ = u.repo.DestroyToken(ctx)
 	return nil, nil
 }
@@ -196,17 +178,20 @@ func (u *UserUseCase) GetUserInfo(ctx context.Context, uid uint32) (*User, error
 		return nil, err
 	}
 	return &User{
-		Id:          user.Id,
-		Nickname:    user.Nickname,
-		ChineseName: user.ChineseName,
-		Phone:       user.Phone,
-		Email:       user.Email,
-		Role:        user.Role,
+		Id:            user.Id,
+		Username:      user.Username,
+		ChineseName:   user.ChineseName,
+		Phone:         user.Phone,
+		Email:         user.Email,
+		Avatar:        user.Avatar,
+		Location:      user.Location,
+		CreatedAt:     user.CreatedAt,
+		LastLoginTime: user.LastLoginTime,
 	}, nil
 }
 
-func (u *UserUseCase) ListUser(ctx context.Context, pageNum, pageSize int32) (*v1.ListUserReply, error) {
-	user, total, err := u.repo.ListUser(ctx, pageNum, pageSize)
+func (u *UserUseCase) ListUser(ctx context.Context, pageToken string, pageSize int32) (*v1.ListUserReply, error) {
+	user, total, err := u.repo.ListUser(ctx, pageToken, pageSize)
 	if err != nil {
 		return nil, err
 	}

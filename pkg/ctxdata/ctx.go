@@ -13,6 +13,7 @@ const (
 	Username          = "x-md-global-username"
 	AuthorizationKey  = "Authorization"
 	AuthorizationType = "Bearer"
+	Issuer            = "Galileo"
 )
 
 func GetUserId(ctx context.Context) uint32 {

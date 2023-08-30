@@ -32,7 +32,7 @@ const (
 	Core_ListUserGroups_FullMethodName        = "/api.core.v1.Core/ListUserGroups"
 	Core_GetUserProjectList_FullMethodName    = "/api.core.v1.Core/GetUserProjectList"
 	Core_GetUserLatestActivity_FullMethodName = "/api.core.v1.Core/GetUserLatestActivity"
-	Core_DataReportTrack_FullMethodName       = "/api.core.v1.Core/DataReportTrack"
+	Core_TrackReportData_FullMethodName       = "/api.core.v1.Core/TrackReportData"
 	Core_ExecuteToken_FullMethodName          = "/api.core.v1.Core/ExecuteToken"
 	Core_InspectContainer_FullMethodName      = "/api.core.v1.Core/InspectContainer"
 )
@@ -53,7 +53,7 @@ type CoreClient interface {
 	ListUserGroups(ctx context.Context, in *ListUserGroupsRequest, opts ...grpc.CallOption) (*UserGroupListReply, error)
 	GetUserProjectList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserProjectListReply, error)
 	GetUserLatestActivity(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserLatestActivityReply, error)
-	DataReportTrack(ctx context.Context, in *DataReportTrackRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	TrackReportData(ctx context.Context, in *TrackReportDataRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ExecuteToken(ctx context.Context, in *ExecuteTokenRequest, opts ...grpc.CallOption) (*ExecuteTokenReply, error)
 	InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...grpc.CallOption) (*ContainerInfo, error)
 }
@@ -174,9 +174,9 @@ func (c *coreClient) GetUserLatestActivity(ctx context.Context, in *emptypb.Empt
 	return out, nil
 }
 
-func (c *coreClient) DataReportTrack(ctx context.Context, in *DataReportTrackRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *coreClient) TrackReportData(ctx context.Context, in *TrackReportDataRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Core_DataReportTrack_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Core_TrackReportData_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -217,7 +217,7 @@ type CoreServer interface {
 	ListUserGroups(context.Context, *ListUserGroupsRequest) (*UserGroupListReply, error)
 	GetUserProjectList(context.Context, *emptypb.Empty) (*UserProjectListReply, error)
 	GetUserLatestActivity(context.Context, *emptypb.Empty) (*UserLatestActivityReply, error)
-	DataReportTrack(context.Context, *DataReportTrackRequest) (*emptypb.Empty, error)
+	TrackReportData(context.Context, *TrackReportDataRequest) (*emptypb.Empty, error)
 	ExecuteToken(context.Context, *ExecuteTokenRequest) (*ExecuteTokenReply, error)
 	InspectContainer(context.Context, *InspectContainerRequest) (*ContainerInfo, error)
 	mustEmbedUnimplementedCoreServer()
@@ -263,8 +263,8 @@ func (UnimplementedCoreServer) GetUserProjectList(context.Context, *emptypb.Empt
 func (UnimplementedCoreServer) GetUserLatestActivity(context.Context, *emptypb.Empty) (*UserLatestActivityReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserLatestActivity not implemented")
 }
-func (UnimplementedCoreServer) DataReportTrack(context.Context, *DataReportTrackRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DataReportTrack not implemented")
+func (UnimplementedCoreServer) TrackReportData(context.Context, *TrackReportDataRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TrackReportData not implemented")
 }
 func (UnimplementedCoreServer) ExecuteToken(context.Context, *ExecuteTokenRequest) (*ExecuteTokenReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecuteToken not implemented")
@@ -501,20 +501,20 @@ func _Core_GetUserLatestActivity_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Core_DataReportTrack_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DataReportTrackRequest)
+func _Core_TrackReportData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TrackReportDataRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CoreServer).DataReportTrack(ctx, in)
+		return srv.(CoreServer).TrackReportData(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Core_DataReportTrack_FullMethodName,
+		FullMethod: Core_TrackReportData_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).DataReportTrack(ctx, req.(*DataReportTrackRequest))
+		return srv.(CoreServer).TrackReportData(ctx, req.(*TrackReportDataRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -611,8 +611,8 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Core_GetUserLatestActivity_Handler,
 		},
 		{
-			MethodName: "DataReportTrack",
-			Handler:    _Core_DataReportTrack_Handler,
+			MethodName: "TrackReportData",
+			Handler:    _Core_TrackReportData_Handler,
 		},
 		{
 			MethodName: "ExecuteToken",

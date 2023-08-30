@@ -71,7 +71,7 @@ var reasonMessageAll = map[string]string{
 	ReasonMissingParams:  "params missing",
 	TimeFormatError:      "时间格式错误",
 	ReasonMissingId:      "id不得为空",
-	ReasonRecordNotFound: "数据不存在",
+	ReasonRecordNotFound: "record not found",
 	ReasonRecordExists:   "record already exists",
 
 	ReasonAdministratorNotFound:      "管理员数据不存在",

@@ -21,7 +21,6 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationCoreCurrentUserInfo = "/api.core.v1.Core/CurrentUserInfo"
-const OperationCoreDataReportTrack = "/api.core.v1.Core/DataReportTrack"
 const OperationCoreDeleteUser = "/api.core.v1.Core/DeleteUser"
 const OperationCoreExecuteToken = "/api.core.v1.Core/ExecuteToken"
 const OperationCoreGetUserLatestActivity = "/api.core.v1.Core/GetUserLatestActivity"
@@ -32,13 +31,13 @@ const OperationCoreListUsers = "/api.core.v1.Core/ListUsers"
 const OperationCoreLogin = "/api.core.v1.Core/Login"
 const OperationCoreLogout = "/api.core.v1.Core/Logout"
 const OperationCoreRegister = "/api.core.v1.Core/Register"
+const OperationCoreTrackReportData = "/api.core.v1.Core/TrackReportData"
 const OperationCoreUpdatePassword = "/api.core.v1.Core/UpdatePassword"
 const OperationCoreUserGroups = "/api.core.v1.Core/UserGroups"
 const OperationCoreUserInfo = "/api.core.v1.Core/UserInfo"
 
 type CoreHTTPServer interface {
 	CurrentUserInfo(context.Context, *emptypb.Empty) (*UserInfoReply, error)
-	DataReportTrack(context.Context, *DataReportTrackRequest) (*emptypb.Empty, error)
 	DeleteUser(context.Context, *DeleteRequest) (*emptypb.Empty, error)
 	ExecuteToken(context.Context, *ExecuteTokenRequest) (*ExecuteTokenReply, error)
 	GetUserLatestActivity(context.Context, *emptypb.Empty) (*UserLatestActivityReply, error)
@@ -49,6 +48,7 @@ type CoreHTTPServer interface {
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
+	TrackReportData(context.Context, *TrackReportDataRequest) (*emptypb.Empty, error)
 	UpdatePassword(context.Context, *UpdatePasswordRequest) (*emptypb.Empty, error)
 	UserGroups(context.Context, *GroupInfoRequest) (*GroupInfo, error)
 	UserInfo(context.Context, *UserInfoRequest) (*UserInfoReply, error)
@@ -64,7 +64,7 @@ func RegisterCoreHTTPServer(s *http.Server, srv CoreHTTPServer) {
 	r.GET("v1/api/user/info", _Core_CurrentUserInfo0_HTTP_Handler(srv))
 	r.PUT("v1/api/user/password", _Core_UpdatePassword0_HTTP_Handler(srv))
 	r.DELETE("v1/api/user/{id}", _Core_DeleteUser0_HTTP_Handler(srv))
-	r.GET("v1/api/user/list/{pageNum}/{pageSize}", _Core_ListUsers0_HTTP_Handler(srv))
+	r.GET("v1/api/user/list/{pageToken}/{pageSize}", _Core_ListUsers0_HTTP_Handler(srv))
 	r.PUT("v1/api/user/group/{id}", _Core_UserGroups0_HTTP_Handler(srv))
 	r.GET("v1/api/user/group/{id}", _Core_UserGroups1_HTTP_Handler(srv))
 	r.DELETE("v1/api/user/group/{id}", _Core_UserGroups2_HTTP_Handler(srv))
@@ -72,7 +72,7 @@ func RegisterCoreHTTPServer(s *http.Server, srv CoreHTTPServer) {
 	r.GET("v1/api/user/groups", _Core_ListUserGroups0_HTTP_Handler(srv))
 	r.GET("v1/api/user/project/list", _Core_GetUserProjectList0_HTTP_Handler(srv))
 	r.GET("v1/api/user/latest-activity", _Core_GetUserLatestActivity0_HTTP_Handler(srv))
-	r.POST("data/report", _Core_DataReportTrack0_HTTP_Handler(srv))
+	r.POST("data/report", _Core_TrackReportData0_HTTP_Handler(srv))
 	r.POST("v1/api/execute-token", _Core_ExecuteToken0_HTTP_Handler(srv))
 	r.GET("v1/api/engine/container/{id}", _Core_InspectContainer0_HTTP_Handler(srv))
 }
@@ -423,18 +423,18 @@ func _Core_GetUserLatestActivity0_HTTP_Handler(srv CoreHTTPServer) func(ctx http
 	}
 }
 
-func _Core_DataReportTrack0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+func _Core_TrackReportData0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in DataReportTrackRequest
+		var in TrackReportDataRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationCoreDataReportTrack)
+		http.SetOperation(ctx, OperationCoreTrackReportData)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.DataReportTrack(ctx, req.(*DataReportTrackRequest))
+			return srv.TrackReportData(ctx, req.(*TrackReportDataRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -491,7 +491,6 @@ func _Core_InspectContainer0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Cont
 
 type CoreHTTPClient interface {
 	CurrentUserInfo(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *UserInfoReply, err error)
-	DataReportTrack(ctx context.Context, req *DataReportTrackRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	DeleteUser(ctx context.Context, req *DeleteRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	ExecuteToken(ctx context.Context, req *ExecuteTokenRequest, opts ...http.CallOption) (rsp *ExecuteTokenReply, err error)
 	GetUserLatestActivity(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *UserLatestActivityReply, err error)
@@ -502,6 +501,7 @@ type CoreHTTPClient interface {
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *LoginReply, err error)
 	Logout(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *RegisterReply, err error)
+	TrackReportData(ctx context.Context, req *TrackReportDataRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	UpdatePassword(ctx context.Context, req *UpdatePasswordRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	UserGroups(ctx context.Context, req *GroupInfoRequest, opts ...http.CallOption) (rsp *GroupInfo, err error)
 	UserInfo(ctx context.Context, req *UserInfoRequest, opts ...http.CallOption) (rsp *UserInfoReply, err error)
@@ -522,19 +522,6 @@ func (c *CoreHTTPClientImpl) CurrentUserInfo(ctx context.Context, in *emptypb.Em
 	opts = append(opts, http.Operation(OperationCoreCurrentUserInfo))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, err
-}
-
-func (c *CoreHTTPClientImpl) DataReportTrack(ctx context.Context, in *DataReportTrackRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
-	var out emptypb.Empty
-	pattern := "data/report"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationCoreDataReportTrack))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -621,7 +608,7 @@ func (c *CoreHTTPClientImpl) ListUserGroups(ctx context.Context, in *ListUserGro
 
 func (c *CoreHTTPClientImpl) ListUsers(ctx context.Context, in *ListUserRequest, opts ...http.CallOption) (*ListUserReply, error) {
 	var out ListUserReply
-	pattern := "v1/api/user/list/{pageNum}/{pageSize}"
+	pattern := "v1/api/user/list/{pageToken}/{pageSize}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCoreListUsers))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -663,6 +650,19 @@ func (c *CoreHTTPClientImpl) Register(ctx context.Context, in *RegisterRequest, 
 	pattern := "v1/api/user/register"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationCoreRegister))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *CoreHTTPClientImpl) TrackReportData(ctx context.Context, in *TrackReportDataRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "data/report"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationCoreTrackReportData))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

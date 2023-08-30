@@ -21,7 +21,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 	if err != nil {
 		return nil, err
 	}
-	ret, err := s.uc.Create(ctx, &biz.User{
+	ret, err := s.uc.CreateUser(ctx, &biz.User{
 		Username: req.Username,
 		Email:    req.Email,
 		Phone:    req.Phone,
@@ -39,7 +39,15 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 }
 
 func (s *UserService) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*emptypb.Empty, error) {
-	_, err := s.uc.Update(ctx, &biz.User{Id: req.Id, Avatar: req.Avatar})
+	_, err := s.uc.UpdateUser(ctx, &biz.User{
+		Id:          req.Id,
+		Username:    req.Username,
+		ChineseName: req.ChineseName,
+		Avatar:      req.Avatar,
+		Location:    req.Location,
+		Email:       req.Email,
+		Phone:       req.Phone,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -111,13 +119,15 @@ func (s *UserService) SoftDeleteUser(ctx context.Context, req *v1.SoftDeleteRequ
 	}, nil
 }
 
-func (s *UserService) VerifyPassword(ctx context.Context, req *v1.VerifyPasswordRequest) (*v1.VerifyPasswordReply, error) {
-	ok, err := s.uc.VerifyPassword(req.Password, req.HashedPassword)
+func (s *UserService) ValidateUser(ctx context.Context, req *v1.ValidateUserRequest) (*v1.ValidateUserReply, error) {
+	ret, err := s.uc.ValidateUser(ctx, req.Username, req.Password)
 	if err != nil {
 		return nil, err
 	}
-	return &v1.VerifyPasswordReply{
-		Success: ok,
+	return &v1.ValidateUserReply{
+		Id:       ret.Id,
+		Username: ret.Username,
+		UUID:     ret.UUID.String(),
 	}, nil
 }
 

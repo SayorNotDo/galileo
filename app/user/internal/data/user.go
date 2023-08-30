@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"galileo/app/user/internal/biz"
+	"galileo/app/user/internal/pkg/util"
 	"galileo/ent"
 	"galileo/ent/group"
 	"galileo/ent/groupmember"
@@ -101,7 +102,7 @@ func (repo *userRepo) ListUser(ctx context.Context, pageToken string, pageSize i
 	}
 	/* 生成序列化的分页状态信息 */
 	nextPageToken, err := pagination.GeneratePageToken(pagination.State{
-		Offset: offset,
+		Offset: offset + int(pageSize),
 	})
 	if err != nil {
 		return nil, 0, "", err
@@ -109,7 +110,7 @@ func (repo *userRepo) ListUser(ctx context.Context, pageToken string, pageSize i
 	return rv, int32(total), nextPageToken, nil
 }
 
-func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error) {
+func (repo *userRepo) CreateUser(ctx context.Context, u *biz.User) (*biz.User, error) {
 	createUser, err := repo.data.entDB.User.Create().
 		SetUsername(u.Username).
 		SetEmail(u.Email).
@@ -126,18 +127,39 @@ func (repo *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error
 	}, nil
 }
 
-func (repo *userRepo) Update(ctx context.Context, u *biz.User) (bool, error) {
+func (repo *userRepo) UpdateUser(ctx context.Context, u *biz.User) (bool, error) {
 	err := repo.data.entDB.User.
 		UpdateOneID(u.Id).
 		SetAvatar(u.Avatar).
 		Exec(ctx)
 	switch {
 	case ent.IsNotFound(err):
-		return false, errors.NotFound("User Not Found", err.Error())
+		return false, errors.NotFound(ReasonRecordNotFound, err.Error())
 	case err != nil:
 		return false, err
 	}
 	return true, nil
+}
+
+func (repo *userRepo) ValidateUser(ctx context.Context, username, password string) (*biz.User, error) {
+	ret, err := repo.data.entDB.User.Query().Where(user.Username(username)).Only(ctx)
+	switch {
+	case ent.IsNotFound(err):
+		return nil, SetErrByReason(ReasonRecordNotFound)
+	case err != nil:
+		return nil, err
+	}
+	if ok := util.ComparePassword(password, ret.Password); !ok {
+		return nil, SetErrByReason(ReasonUserPasswordError)
+	}
+	if err := repo.data.entDB.User.UpdateOneID(ret.ID).SetLastLoginTime(time.Now()).Exec(ctx); err != nil {
+		return nil, SetErrByReason(ReasonSystemError)
+	}
+	return &biz.User{
+		Id:       ret.ID,
+		UUID:     ret.UUID,
+		Username: ret.Username,
+	}, nil
 }
 
 func (repo *userRepo) UpdatePassword(ctx context.Context, u *biz.User) (bool, error) {

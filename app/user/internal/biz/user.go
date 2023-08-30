@@ -3,16 +3,16 @@ package biz
 import (
 	"context"
 	"galileo/app/user/internal/pkg/util"
-	. "galileo/pkg/errResponse"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
 type UserRepo interface {
 	Save(context.Context, *User) (*User, error)
 	GetUserInfo(context.Context, uint32) (*User, error)
-	Create(context.Context, *User) (*User, error)
+	CreateUser(context.Context, *User) (*User, error)
 	ListUser(ctx context.Context, pageToken string, pageSize int32) ([]*User, int32, string, error)
-	Update(context.Context, *User) (bool, error)
+	UpdateUser(context.Context, *User) (bool, error)
+	ValidateUser(ctx context.Context, username, password string) (*User, error)
 	UpdatePassword(context.Context, *User) (bool, error)
 	SoftDeleteById(context.Context, uint32, uint32) (bool, error)
 	SetToken(context.Context, string, string) (bool, error)
@@ -50,8 +50,8 @@ func (uc *UserUseCase) SoftDeleteById(ctx context.Context, uid, deleteId uint32)
 	return uc.repo.SoftDeleteById(ctx, uid, deleteId)
 }
 
-func (uc *UserUseCase) Create(ctx context.Context, user *User) (*User, error) {
-	return uc.repo.Create(ctx, user)
+func (uc *UserUseCase) CreateUser(ctx context.Context, user *User) (*User, error) {
+	return uc.repo.CreateUser(ctx, user)
 }
 
 func (uc *UserUseCase) GetUserInfo(ctx context.Context, id uint32) (*User, error) {
@@ -62,15 +62,12 @@ func (uc *UserUseCase) ListUser(ctx context.Context, pageToken string, pageSize 
 	return uc.repo.ListUser(ctx, pageToken, pageSize)
 }
 
-func (uc *UserUseCase) Update(ctx context.Context, user *User) (bool, error) {
-	return uc.repo.Update(ctx, user)
+func (uc *UserUseCase) UpdateUser(ctx context.Context, user *User) (bool, error) {
+	return uc.repo.UpdateUser(ctx, user)
 }
 
-func (uc *UserUseCase) VerifyPassword(password, hashedPassword string) (bool, error) {
-	if ok := util.ComparePassword(password, hashedPassword); !ok {
-		return false, SetErrByReason(ReasonUserPasswordError)
-	}
-	return true, nil
+func (uc *UserUseCase) ValidateUser(ctx context.Context, username, password string) (*User, error) {
+	return uc.repo.ValidateUser(ctx, username, password)
 }
 
 func (uc *UserUseCase) UpdatePassword(ctx context.Context, u *User, newPassword string) (bool, error) {
