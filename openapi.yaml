@@ -336,16 +336,20 @@ paths:
                   required: true
                   schema:
                     type: integer
-                    format: int32
-                - name: username
-                  in: query
-                  schema:
-                    type: string
+                    format: uint32
                 - name: email
                   in: query
                   schema:
                     type: string
                 - name: phone
+                  in: query
+                  schema:
+                    type: string
+                - name: avatar
+                  in: query
+                  schema:
+                    type: string
+                - name: location
                   in: query
                   schema:
                     type: string

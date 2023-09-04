@@ -35,6 +35,108 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on ResetPasswordReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ResetPasswordReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ResetPasswordReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ResetPasswordReplyMultiError, or nil if none found.
+func (m *ResetPasswordReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ResetPasswordReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ResetPasswordReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// ResetPasswordReplyMultiError is an error wrapping multiple validation errors
+// returned by ResetPasswordReply.ValidateAll() if the designated constraints
+// aren't met.
+type ResetPasswordReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ResetPasswordReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ResetPasswordReplyMultiError) AllErrors() []error { return m }
+
+// ResetPasswordReplyValidationError is the validation error returned by
+// ResetPasswordReply.Validate if the designated constraints aren't met.
+type ResetPasswordReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ResetPasswordReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ResetPasswordReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ResetPasswordReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ResetPasswordReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ResetPasswordReplyValidationError) ErrorName() string {
+	return "ResetPasswordReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ResetPasswordReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sResetPasswordReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ResetPasswordReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ResetPasswordReplyValidationError{}
+
 // Validate checks the field values on ListUserGroupsRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -2266,17 +2368,6 @@ func (m *UserInfoRequest) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if l := utf8.RuneCountInString(m.GetUsername()); l < 1 || l > 24 {
-		err := UserInfoRequestValidationError{
-			field:  "Username",
-			reason: "value length must be between 1 and 24 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if err := m._validateEmail(m.GetEmail()); err != nil {
 		err = UserInfoRequestValidationError{
 			field:  "Email",
@@ -2300,6 +2391,10 @@ func (m *UserInfoRequest) validate(all bool) error {
 		errors = append(errors, err)
 
 	}
+
+	// no validation rules for Avatar
+
+	// no validation rules for Location
 
 	if len(errors) > 0 {
 		return UserInfoRequestMultiError(errors)

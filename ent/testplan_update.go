@@ -266,7 +266,7 @@ func (tpu *TestPlanUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := tpu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(testplan.Table, testplan.Columns, sqlgraph.NewFieldSpec(testplan.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewUpdateSpec(testplan.Table, testplan.Columns, sqlgraph.NewFieldSpec(testplan.FieldID, field.TypeInt))
 	if ps := tpu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -609,7 +609,7 @@ func (tpuo *TestPlanUpdateOne) sqlSave(ctx context.Context) (_node *TestPlan, er
 	if err := tpuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(testplan.Table, testplan.Columns, sqlgraph.NewFieldSpec(testplan.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewUpdateSpec(testplan.Table, testplan.Columns, sqlgraph.NewFieldSpec(testplan.FieldID, field.TypeInt))
 	id, ok := tpuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TestPlan.id" for update`)}

@@ -26,6 +26,7 @@ const (
 	Core_UserInfo_FullMethodName              = "/api.core.v1.Core/UserInfo"
 	Core_CurrentUserInfo_FullMethodName       = "/api.core.v1.Core/CurrentUserInfo"
 	Core_UpdatePassword_FullMethodName        = "/api.core.v1.Core/UpdatePassword"
+	Core_ResetPassword_FullMethodName         = "/api.core.v1.Core/ResetPassword"
 	Core_DeleteUser_FullMethodName            = "/api.core.v1.Core/DeleteUser"
 	Core_ListUsers_FullMethodName             = "/api.core.v1.Core/ListUsers"
 	Core_UserGroups_FullMethodName            = "/api.core.v1.Core/UserGroups"
@@ -47,6 +48,7 @@ type CoreClient interface {
 	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserInfoReply, error)
 	CurrentUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfoReply, error)
 	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ResetPassword(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ResetPasswordReply, error)
 	DeleteUser(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListUsers(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
 	UserGroups(ctx context.Context, in *GroupInfoRequest, opts ...grpc.CallOption) (*GroupInfo, error)
@@ -114,6 +116,15 @@ func (c *coreClient) CurrentUserInfo(ctx context.Context, in *emptypb.Empty, opt
 func (c *coreClient) UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, Core_UpdatePassword_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) ResetPassword(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ResetPasswordReply, error) {
+	out := new(ResetPasswordReply)
+	err := c.cc.Invoke(ctx, Core_ResetPassword_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -211,6 +222,7 @@ type CoreServer interface {
 	UserInfo(context.Context, *UserInfoRequest) (*UserInfoReply, error)
 	CurrentUserInfo(context.Context, *emptypb.Empty) (*UserInfoReply, error)
 	UpdatePassword(context.Context, *UpdatePasswordRequest) (*emptypb.Empty, error)
+	ResetPassword(context.Context, *emptypb.Empty) (*ResetPasswordReply, error)
 	DeleteUser(context.Context, *DeleteRequest) (*emptypb.Empty, error)
 	ListUsers(context.Context, *ListUserRequest) (*ListUserReply, error)
 	UserGroups(context.Context, *GroupInfoRequest) (*GroupInfo, error)
@@ -244,6 +256,9 @@ func (UnimplementedCoreServer) CurrentUserInfo(context.Context, *emptypb.Empty) 
 }
 func (UnimplementedCoreServer) UpdatePassword(context.Context, *UpdatePasswordRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePassword not implemented")
+}
+func (UnimplementedCoreServer) ResetPassword(context.Context, *emptypb.Empty) (*ResetPasswordReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
 }
 func (UnimplementedCoreServer) DeleteUser(context.Context, *DeleteRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
@@ -389,6 +404,24 @@ func _Core_UpdatePassword_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CoreServer).UpdatePassword(ctx, req.(*UpdatePasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).ResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_ResetPassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).ResetPassword(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -585,6 +618,10 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdatePassword",
 			Handler:    _Core_UpdatePassword_Handler,
+		},
+		{
+			MethodName: "ResetPassword",
+			Handler:    _Core_ResetPassword_Handler,
 		},
 		{
 			MethodName: "DeleteUser",

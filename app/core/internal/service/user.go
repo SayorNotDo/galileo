@@ -36,7 +36,9 @@ func (c *CoreService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 	if err != nil {
 		return nil, err
 	}
-	return &v1.LoginReply{Token: token}, nil
+	return &v1.LoginReply{
+		Token: token,
+	}, nil
 }
 
 func (c *CoreService) Logout(ctx context.Context, empty *empty.Empty) (*emptypb.Empty, error) {
@@ -67,8 +69,23 @@ func (c *CoreService) UserInfo(ctx context.Context, req *v1.UserInfoRequest) (*v
 	case "PUT":
 		reply, err = c.uc.UpdateUserInfo(ctx, req)
 	case "GET":
-		//return c.uc.GetUserInfo(ctx)
-	case "":
+		ret, err := c.uc.GetUserInfo(ctx, req.Id)
+		if err != nil {
+			return nil, err
+		}
+		return &v1.UserInfoReply{
+			Id:            ret.Id,
+			Username:      ret.Username,
+			ChineseName:   ret.ChineseName,
+			Email:         ret.Email,
+			Phone:         ret.Phone,
+			Avatar:        ret.Avatar,
+			Active:        ret.Active,
+			Location:      ret.Location,
+			CreatedAt:     timestamppb.New(ret.CreatedAt),
+			LastLoginTime: timestamppb.New(ret.LastLoginTime),
+		}, nil
+	default:
 		return nil, errResponse.SetErrByReason(errResponse.ReasonSystemError)
 	}
 	if err != nil {

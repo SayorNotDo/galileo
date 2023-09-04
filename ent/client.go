@@ -1538,7 +1538,7 @@ func (c *TaskClient) UpdateOne(t *Task) *TaskUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *TaskClient) UpdateOneID(id int32) *TaskUpdateOne {
+func (c *TaskClient) UpdateOneID(id int) *TaskUpdateOne {
 	mutation := newTaskMutation(c.config, OpUpdateOne, withTaskID(id))
 	return &TaskUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1555,7 +1555,7 @@ func (c *TaskClient) DeleteOne(t *Task) *TaskDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *TaskClient) DeleteOneID(id int32) *TaskDeleteOne {
+func (c *TaskClient) DeleteOneID(id int) *TaskDeleteOne {
 	builder := c.Delete().Where(task.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1572,12 +1572,12 @@ func (c *TaskClient) Query() *TaskQuery {
 }
 
 // Get returns a Task entity by its id.
-func (c *TaskClient) Get(ctx context.Context, id int32) (*Task, error) {
+func (c *TaskClient) Get(ctx context.Context, id int) (*Task, error) {
 	return c.Query().Where(task.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *TaskClient) GetX(ctx context.Context, id int32) *Task {
+func (c *TaskClient) GetX(ctx context.Context, id int) *Task {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1656,7 +1656,7 @@ func (c *TestPlanClient) UpdateOne(tp *TestPlan) *TestPlanUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *TestPlanClient) UpdateOneID(id int32) *TestPlanUpdateOne {
+func (c *TestPlanClient) UpdateOneID(id int) *TestPlanUpdateOne {
 	mutation := newTestPlanMutation(c.config, OpUpdateOne, withTestPlanID(id))
 	return &TestPlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1673,7 +1673,7 @@ func (c *TestPlanClient) DeleteOne(tp *TestPlan) *TestPlanDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *TestPlanClient) DeleteOneID(id int32) *TestPlanDeleteOne {
+func (c *TestPlanClient) DeleteOneID(id int) *TestPlanDeleteOne {
 	builder := c.Delete().Where(testplan.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1690,12 +1690,12 @@ func (c *TestPlanClient) Query() *TestPlanQuery {
 }
 
 // Get returns a TestPlan entity by its id.
-func (c *TestPlanClient) Get(ctx context.Context, id int32) (*TestPlan, error) {
+func (c *TestPlanClient) Get(ctx context.Context, id int) (*TestPlan, error) {
 	return c.Query().Where(testplan.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *TestPlanClient) GetX(ctx context.Context, id int32) *TestPlan {
+func (c *TestPlanClient) GetX(ctx context.Context, id int) *TestPlan {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

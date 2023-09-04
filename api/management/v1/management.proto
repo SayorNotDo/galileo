@@ -237,7 +237,7 @@ message progressDetail {
 }
 
 message UpdateTaskStatusRequest {
-  int32 id = 1;
+  int64 id = 1;
   taskStatus status = 2;
   string worker = 3;
 }
@@ -280,13 +280,13 @@ enum taskStatus {
 }
 
 message CreateTaskReply {
-  int32 id = 1;
+  int64 id = 1;
   taskStatus status = 2;
   google.protobuf.Timestamp createdAt = 3;
 }
 
 message UpdateTaskRequest {
-  int32 id = 1;
+  int64 id = 1;
   string name = 2;
   uint32 assignee = 3;
   int32 type = 4;
@@ -308,7 +308,7 @@ message DeleteTaskRequest {}
 message DeleteTaskReply {}
 
 message TaskByIDRequest {
-  int32 id = 1;
+  int64 id = 1;
 }
 
 message TaskByNameRequest {
@@ -333,7 +333,7 @@ message GetTaskReply {
 }
 
 message TaskInfo {
-  int32 id = 1;
+  int64 id = 1;
   string name = 2;
   int32 rank = 3;
   int32 type = 4;

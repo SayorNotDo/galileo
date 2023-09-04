@@ -116,6 +116,15 @@ func (s *EngineService) AddCronJob(ctx context.Context, req *v1.AddCronJobReques
 	}, nil
 }
 
+// AddDelayedJob
+/* 添加延时任务到delayed对立 */
+func (s *EngineService) AddDelayedJob(ctx context.Context, req *v1.AddDelayedJobRequest) {
+	/* 构建Task对象 */
+	//task := &biz.Task{
+	//	Id: req.TaskId,
+	//}
+}
+
 func (s *EngineService) UpdateCronJob(ctx context.Context, req *v1.UpdateCronJobRequest) (*empty.Empty, error) {
 	/* 构建更新 Task */
 	task := &biz.Task{

@@ -168,7 +168,9 @@ func (u *UserUseCase) Login(ctx context.Context, req *v1.LoginRequest) (string, 
 }
 
 func (u *UserUseCase) Logout(ctx context.Context) (*emptypb.Empty, error) {
-	_ = u.repo.DestroyToken(ctx)
+	if err := u.repo.DestroyToken(ctx); err != nil {
+		return nil, err
+	}
 	return nil, nil
 }
 
@@ -184,6 +186,7 @@ func (u *UserUseCase) GetUserInfo(ctx context.Context, uid uint32) (*User, error
 		Phone:         user.Phone,
 		Email:         user.Email,
 		Avatar:        user.Avatar,
+		Active:        user.Active,
 		Location:      user.Location,
 		CreatedAt:     user.CreatedAt,
 		LastLoginTime: user.LastLoginTime,

@@ -10315,7 +10315,7 @@ type TaskMutation struct {
 	config
 	op                   Op
 	typ                  string
-	id                   *int32
+	id                   *int
 	name                 *string
 	created_at           *time.Time
 	created_by           *uint32
@@ -10375,7 +10375,7 @@ func newTaskMutation(c config, op Op, opts ...taskOption) *TaskMutation {
 }
 
 // withTaskID sets the ID field of the mutation.
-func withTaskID(id int32) taskOption {
+func withTaskID(id int) taskOption {
 	return func(m *TaskMutation) {
 		var (
 			err   error
@@ -10425,15 +10425,9 @@ func (m TaskMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of Task entities.
-func (m *TaskMutation) SetID(id int32) {
-	m.id = &id
-}
-
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *TaskMutation) ID() (id int32, exists bool) {
+func (m *TaskMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -10444,12 +10438,12 @@ func (m *TaskMutation) ID() (id int32, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *TaskMutation) IDs(ctx context.Context) ([]int32, error) {
+func (m *TaskMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int32{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -12463,7 +12457,7 @@ type TestPlanMutation struct {
 	config
 	op                Op
 	typ               string
-	id                *int32
+	id                *int
 	name              *string
 	created_at        *time.Time
 	created_by        *uint32
@@ -12507,7 +12501,7 @@ func newTestPlanMutation(c config, op Op, opts ...testplanOption) *TestPlanMutat
 }
 
 // withTestPlanID sets the ID field of the mutation.
-func withTestPlanID(id int32) testplanOption {
+func withTestPlanID(id int) testplanOption {
 	return func(m *TestPlanMutation) {
 		var (
 			err   error
@@ -12557,15 +12551,9 @@ func (m TestPlanMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of TestPlan entities.
-func (m *TestPlanMutation) SetID(id int32) {
-	m.id = &id
-}
-
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *TestPlanMutation) ID() (id int32, exists bool) {
+func (m *TestPlanMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -12576,12 +12564,12 @@ func (m *TestPlanMutation) ID() (id int32, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *TestPlanMutation) IDs(ctx context.Context) ([]int32, error) {
+func (m *TestPlanMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int32{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):

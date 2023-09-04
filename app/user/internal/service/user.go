@@ -17,10 +17,12 @@ import (
 )
 
 func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest) (*v1.CreateUserReply, error) {
+	/* 对密码进行MD5加密 */
 	hashedPassword, err := util.HashPassword(req.Password)
 	if err != nil {
 		return nil, err
 	}
+	/* 创建用户 */
 	ret, err := s.uc.CreateUser(ctx, &biz.User{
 		Username: req.Username,
 		Email:    req.Email,

@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	Engine_RunJob_FullMethodName           = "/api.engine.v1.Engine/RunJob"
 	Engine_AddCronJob_FullMethodName       = "/api.engine.v1.Engine/AddCronJob"
+	Engine_AddDelayedJob_FullMethodName    = "/api.engine.v1.Engine/AddDelayedJob"
 	Engine_UpdateCronJob_FullMethodName    = "/api.engine.v1.Engine/UpdateCronJob"
 	Engine_CreateContainer_FullMethodName  = "/api.engine.v1.Engine/CreateContainer"
 	Engine_ListContainers_FullMethodName   = "/api.engine.v1.Engine/ListContainers"
@@ -34,6 +35,7 @@ const (
 type EngineClient interface {
 	RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobReply, error)
 	AddCronJob(ctx context.Context, in *AddCronJobRequest, opts ...grpc.CallOption) (*AddCronJobReply, error)
+	AddDelayedJob(ctx context.Context, in *AddDelayedJobRequest, opts ...grpc.CallOption) (*AddDelayedJobReply, error)
 	UpdateCronJob(ctx context.Context, in *UpdateCronJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreateContainer(ctx context.Context, in *CreateContainerRequest, opts ...grpc.CallOption) (*CreateContainerReply, error)
 	ListContainers(ctx context.Context, in *ListContainerRequest, opts ...grpc.CallOption) (*ListContainersReply, error)
@@ -60,6 +62,15 @@ func (c *engineClient) RunJob(ctx context.Context, in *RunJobRequest, opts ...gr
 func (c *engineClient) AddCronJob(ctx context.Context, in *AddCronJobRequest, opts ...grpc.CallOption) (*AddCronJobReply, error) {
 	out := new(AddCronJobReply)
 	err := c.cc.Invoke(ctx, Engine_AddCronJob_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *engineClient) AddDelayedJob(ctx context.Context, in *AddDelayedJobRequest, opts ...grpc.CallOption) (*AddDelayedJobReply, error) {
+	out := new(AddDelayedJobReply)
+	err := c.cc.Invoke(ctx, Engine_AddDelayedJob_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -108,6 +119,7 @@ func (c *engineClient) InspectContainer(ctx context.Context, in *InspectContaine
 type EngineServer interface {
 	RunJob(context.Context, *RunJobRequest) (*RunJobReply, error)
 	AddCronJob(context.Context, *AddCronJobRequest) (*AddCronJobReply, error)
+	AddDelayedJob(context.Context, *AddDelayedJobRequest) (*AddDelayedJobReply, error)
 	UpdateCronJob(context.Context, *UpdateCronJobRequest) (*emptypb.Empty, error)
 	CreateContainer(context.Context, *CreateContainerRequest) (*CreateContainerReply, error)
 	ListContainers(context.Context, *ListContainerRequest) (*ListContainersReply, error)
@@ -124,6 +136,9 @@ func (UnimplementedEngineServer) RunJob(context.Context, *RunJobRequest) (*RunJo
 }
 func (UnimplementedEngineServer) AddCronJob(context.Context, *AddCronJobRequest) (*AddCronJobReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddCronJob not implemented")
+}
+func (UnimplementedEngineServer) AddDelayedJob(context.Context, *AddDelayedJobRequest) (*AddDelayedJobReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddDelayedJob not implemented")
 }
 func (UnimplementedEngineServer) UpdateCronJob(context.Context, *UpdateCronJobRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCronJob not implemented")
@@ -182,6 +197,24 @@ func _Engine_AddCronJob_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(EngineServer).AddCronJob(ctx, req.(*AddCronJobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Engine_AddDelayedJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddDelayedJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServer).AddDelayedJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Engine_AddDelayedJob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServer).AddDelayedJob(ctx, req.(*AddDelayedJobRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -272,6 +305,10 @@ var Engine_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddCronJob",
 			Handler:    _Engine_AddCronJob_Handler,
+		},
+		{
+			MethodName: "AddDelayedJob",
+			Handler:    _Engine_AddDelayedJob_Handler,
 		},
 		{
 			MethodName: "UpdateCronJob",

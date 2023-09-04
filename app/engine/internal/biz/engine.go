@@ -9,7 +9,7 @@ import (
 )
 
 type Task struct {
-	Id             int32
+	Id             int64
 	Name           string
 	Rank           int8
 	Type           int8
@@ -23,11 +23,11 @@ type Task struct {
 }
 
 type EngineRepo interface {
-	TaskByID(ctx context.Context, id int32) (*Task, error)
+	TaskByID(ctx context.Context, id int64) (*Task, error)
 	AddCronJob(ctx context.Context, task *Task) (cron.EntryID, error)
 	TimingTaskList(ctx context.Context, status []managementV1.TaskStatus) ([]*Task, error)
 	GetCronJobList(ctx context.Context) []*CronJob
-	RemoveCronJob(ctx context.Context, taskId int32) error
+	RemoveCronJob(ctx context.Context, taskId int64) error
 }
 
 type EngineUseCase struct {
@@ -40,7 +40,7 @@ func NewEngineUseCase(repo EngineRepo, logger log.Logger) *EngineUseCase {
 	return &EngineUseCase{repo: repo, log: helper}
 }
 
-func (c *EngineUseCase) TaskByID(ctx context.Context, id int32) (*Task, error) {
+func (c *EngineUseCase) TaskByID(ctx context.Context, id int64) (*Task, error) {
 	return c.repo.TaskByID(ctx, id)
 }
 
@@ -56,7 +56,7 @@ func (c *EngineUseCase) GetCronJobList(ctx context.Context) []*CronJob {
 	return c.repo.GetCronJobList(ctx)
 }
 
-func (c *EngineUseCase) RemoveCronJob(ctx context.Context, taskId int32) error {
+func (c *EngineUseCase) RemoveCronJob(ctx context.Context, taskId int64) error {
 	return c.repo.RemoveCronJob(ctx, taskId)
 }
 

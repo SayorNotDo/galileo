@@ -22,16 +22,15 @@ func (Task) Annotations() []schema.Annotation {
 // Fields of the Task.
 func (Task) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int32("id"),
-		field.String("name").Unique().NotEmpty(),
-		field.Time("created_at").Default(time.Now).Immutable(),
-		field.Uint32("created_by").Immutable(),
-		field.Uint32("assignee").Optional(),                         // 任务经办人
-		field.Int8("type").Default(0),                               // 任务类型：实时任务 0、延时任务 1、定时任务 2、响应式任务 3
-		field.String("frequency").Optional(),                        // 定时任务的频率，仅用于定时任务
-		field.Time("schedule_time").Optional(),                      // 预期调度时间: 实时任务为空，延时任务取年月日时分秒，定时任务取 时分秒+频率
-		field.String("worker").Optional(),                           // 任务执行机器
-		field.String("config").Optional(),                           // 任务配置
+		field.String("name").Unique().NotEmpty().Comment("任务名称"),
+		field.Time("created_at").Default(time.Now).Immutable().Comment("任务创建时间"),
+		field.Uint32("created_by").Immutable().Comment("任务创建人"),
+		field.Uint32("assignee").Optional().Comment("任务经办人"),
+		field.Int8("type").Default(0).Comment("任务类型：实时任务 0、延时任务 1、定时任务 2、响应式任务 3"),
+		field.String("frequency").Optional().Comment("定时任务的频率，仅用于定时任务"),
+		field.Time("schedule_time").Optional().Comment("预期调度时间: 实时任务为空，延时任务取年月日时分秒，定时任务取 时分秒+频率"),
+		field.String("worker").Optional().Comment("任务执行机器"),
+		field.String("config").Optional().Comment("任务配置"),
 		field.Int8("rank").Default(0),                               // 任务优先级
 		field.Int8("status").Default(0),                             // 任务状态
 		field.Time("start_time").Optional(),                         // 任务开始时间

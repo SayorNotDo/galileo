@@ -11,7 +11,7 @@ import (
 
 // Task is a Task model.
 type Task struct {
-	Id              int32
+	Id              int64
 	Name            string
 	TestPlanId      int32
 	Rank            int8

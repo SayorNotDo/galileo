@@ -14,11 +14,24 @@ option java_package = "api.engine.v1";
 service Engine {
   rpc RunJob(RunJobRequest) returns (RunJobReply);
   rpc AddCronJob(AddCronJobRequest) returns (AddCronJobReply);
+  rpc AddDelayedJob(AddDelayedJobRequest) returns (AddDelayedJobReply);
   rpc UpdateCronJob(UpdateCronJobRequest) returns (google.protobuf.Empty);
   rpc CreateContainer(CreateContainerRequest) returns (CreateContainerReply);
   rpc ListContainers(ListContainerRequest) returns (ListContainersReply);
   rpc InspectContainer(InspectContainerRequest) returns (InspectContainerReply);
 }
+
+message Job {
+  int64 taskId = 1;
+
+}
+
+message AddDelayedJobRequest {
+  int64 taskId = 1;
+  google.protobuf.Timestamp delayedTime = 2;
+}
+
+message AddDelayedJobReply {}
 
 message InspectContainerRequest {
   string id = 1;
@@ -53,8 +66,8 @@ message Container {
   repeated string cmd = 5;
   string created = 6;
   message ExposedPorts {
-      string port = 1;
-      string type = 2;
+    string port = 1;
+    string type = 2;
   }
   repeated ExposedPorts exposedPorts = 7;
   map<string, string> labels = 8;
@@ -82,10 +95,10 @@ message Container {
 
 
 message UpdateCronJobRequest {
-  int32 taskId = 1;
+  int64 taskId = 1;
   int32 type = 2;
   google.protobuf.Timestamp scheduleTime = 3;
-  frequency frequency = 4;
+  Frequency frequency = 4;
 }
 
 message UpdateCronJobReply {
@@ -93,13 +106,13 @@ message UpdateCronJobReply {
 }
 
 message AddCronJobRequest {
-  int32 taskId = 1;
+  int64 taskId = 1;
   int32  type = 2;
   google.protobuf.Timestamp scheduleTime = 3;
-  frequency frequency = 4;
+  Frequency frequency = 4;
 }
 
-enum frequency {
+enum Frequency {
   DAILY = 0;
   WEEKLY = 1;
   MONTHLY = 2;
@@ -117,7 +130,7 @@ message CreateContainerReply {
 }
 
 message RunJobRequest {
-  int32 taskId = 1;
+  int64 taskId = 1;
   string worker = 2;
   string schema = 3;
   int32 type = 4;

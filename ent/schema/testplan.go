@@ -22,7 +22,6 @@ func (TestPlan) Annotations() []schema.Annotation {
 // Fields of the TestPlan.
 func (TestPlan) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int32("id"),
 		field.String("name").Unique().NotEmpty(),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("created_by").Immutable(),

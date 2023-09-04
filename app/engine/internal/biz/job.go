@@ -4,14 +4,16 @@ import (
 	"context"
 	"fmt"
 	managementV1 "galileo/api/management/v1"
+	"galileo/pkg/errResponse"
 	"io"
+	"net"
 	"net/http"
 	"strconv"
 	"strings"
 )
 
 type CronJob struct {
-	TaskId    int32 `json:"task_id,omitempty"`
+	TaskId    int64 `json:"task_id,omitempty"`
 	ManageCli managementV1.ManagementClient
 	Worker    string `json:"worker,omitempty"`
 }
@@ -31,13 +33,26 @@ func (c *CronJob) Run() {
 	}
 }
 
-func JobCommand(schema, worker string, taskId int32) error {
+// JobCommand send a job command to the executor through http request
+func JobCommand(schema, worker string, taskId int64) error {
 	// 创建HTTP客户端
 	client := &http.Client{}
 
 	// TODO: 创建发送至Worker的HTTP请求
+	/* 验证参数worker是否为合法 */
+	params := strings.Split(worker, ":")
+	ip := params[0]
+	port := params[1]
+	if net.ParseIP(ip) == nil {
+		return errResponse.SetCustomizeErrMsg(errResponse.ReasonParamsError, "Invalid IP address")
+	}
+	if _, err := net.LookupPort("tcp", port); err != nil {
+		return errResponse.SetCustomizeErrMsg(errResponse.ReasonParamsError, "Invalid Port")
+	}
+	/* 拼接请求地址: schema://ip:port/job */
 	url := fmt.Sprintf("%s%s/job", schema, worker)
-	/* body: taskId, token, */
+
+	/* 构建请求体 taskId, token */
 	payload := strings.NewReader("taskId=%s" + strconv.FormatInt(int64(taskId), 10))
 	req, err := http.NewRequest("POST", url, payload)
 	if err != nil {
@@ -59,7 +74,7 @@ func JobCommand(schema, worker string, taskId int32) error {
 		}
 	}(resp.Body)
 
-	// 读取响应内容
+	// 获取响应内容
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("Error Reading Response: ", err)

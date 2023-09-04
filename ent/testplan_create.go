@@ -156,12 +156,6 @@ func (tpc *TestPlanCreate) SetProjectID(i int32) *TestPlanCreate {
 	return tpc
 }
 
-// SetID sets the "id" field.
-func (tpc *TestPlanCreate) SetID(i int32) *TestPlanCreate {
-	tpc.mutation.SetID(i)
-	return tpc
-}
-
 // Mutation returns the TestPlanMutation object of the builder.
 func (tpc *TestPlanCreate) Mutation() *TestPlanMutation {
 	return tpc.mutation
@@ -248,10 +242,8 @@ func (tpc *TestPlanCreate) sqlSave(ctx context.Context) (*TestPlan, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != _node.ID {
-		id := _spec.ID.Value.(int64)
-		_node.ID = int32(id)
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	tpc.mutation.id = &_node.ID
 	tpc.mutation.done = true
 	return _node, nil
@@ -260,12 +252,8 @@ func (tpc *TestPlanCreate) sqlSave(ctx context.Context) (*TestPlan, error) {
 func (tpc *TestPlanCreate) createSpec() (*TestPlan, *sqlgraph.CreateSpec) {
 	var (
 		_node = &TestPlan{config: tpc.config}
-		_spec = sqlgraph.NewCreateSpec(testplan.Table, sqlgraph.NewFieldSpec(testplan.FieldID, field.TypeInt32))
+		_spec = sqlgraph.NewCreateSpec(testplan.Table, sqlgraph.NewFieldSpec(testplan.FieldID, field.TypeInt))
 	)
-	if id, ok := tpc.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = id
-	}
 	if value, ok := tpc.mutation.Name(); ok {
 		_spec.SetField(testplan.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -358,9 +346,9 @@ func (tpcb *TestPlanCreateBulk) Save(ctx context.Context) ([]*TestPlan, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+				if specs[i].ID.Value != nil {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int32(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

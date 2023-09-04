@@ -50,6 +50,7 @@ service Core {
       body: "*"
     };
   }
+  rpc ResetPassword(google.protobuf.Empty) returns (ResetPasswordReply);
   rpc DeleteUser (DeleteRequest) returns (google.protobuf.Empty){
     option (google.api.http) = {
       delete: "v1/api/user/{id}"
@@ -65,14 +66,14 @@ service Core {
       post: "v1/api/user/group"
       body: "*"
       additional_bindings {
-        put: "v1/api/user/group/{id}"
+        put: "v1/api/user/groups/{id}"
         body: "*"
       }
       additional_bindings {
-        get: "v1/api/user/group/{id}"
+        get: "v1/api/user/groups/{id}"
       }
       additional_bindings {
-        delete: "v1/api/user/group/{id}"
+        delete: "v1/api/user/groups/{id}"
       }
     };
   }
@@ -109,6 +110,8 @@ service Core {
     };
   }
 }
+
+message ResetPasswordReply {}
 
 message ListUserGroupsRequest {
   string parent = 1;
@@ -220,10 +223,11 @@ message ListUserReply {
 }
 
 message UserInfoRequest {
-  int32 id = 1;
-  string username = 2 [(validate.rules).string = {min_len:1, max_len:24}];
+  uint32 id = 1;
   string email = 3 [(validate.rules).string.email = true];
   string phone = 4 [(validate.rules).string.len = 11];
+  string avatar = 5;
+  string location = 6;
 }
 
 message UserInfoReply {

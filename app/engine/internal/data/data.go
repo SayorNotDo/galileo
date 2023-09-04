@@ -7,7 +7,10 @@ import (
 	"fmt"
 	managementV1 "galileo/api/management/v1"
 	"galileo/app/engine/internal/conf"
+	"galileo/app/engine/pkg/constant"
 	"galileo/ent"
+	"github.com/RichardKnop/machinery/v1"
+	machineryConf "github.com/RichardKnop/machinery/v1/config"
 	"github.com/docker/docker/client"
 	"github.com/go-kratos/kratos/contrib/registry/consul/v2"
 	"github.com/go-kratos/kratos/v2/log"
@@ -36,6 +39,7 @@ var ProviderSet = wire.NewSet(
 	NewRedis,
 	NewDockerClient,
 	NewRegistrar,
+	NewMachinery,
 	NewDiscovery,
 	NewTaskServiceClient,
 )
@@ -52,6 +56,7 @@ type Data struct {
 	ManageCli managementV1.ManagementClient
 	dockerCli *client.Client
 	cron      *cron.Cron
+	machinery *machinery.Server
 }
 
 // NewData .
@@ -133,6 +138,30 @@ func NewRedis(conf *conf.Data, logger log.Logger) redis.Cmdable {
 	}
 	RedisCli = rdb
 	return rdb
+}
+
+func NewMachinery(conf *conf.Data, logger log.Logger) *machinery.Server {
+	logs := log.NewHelper(log.With(logger, "module", "engineService/data/machinery"))
+
+	cnf := &machineryConf.Config{
+		Broker:        conf.Redis.Addr,
+		DefaultQueue:  constant.DefaultQueue,
+		ResultBackend: conf.Redis.Addr,
+		Lock:          conf.Redis.Addr,
+	}
+
+	server, err := machinery.NewServer(cnf)
+	if err != nil {
+		logs.Fatalf("redis connect error: %v", err)
+	}
+
+	worker := server.NewWorker("scheduler", 1)
+
+	errorsChan := make(chan error, 1)
+
+	worker.LaunchAsync(errorsChan)
+
+	return server
 }
 
 func NewRegistrar(conf *conf.Registry) registry.Registrar {

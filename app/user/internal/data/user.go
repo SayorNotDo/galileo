@@ -131,6 +131,7 @@ func (repo *userRepo) UpdateUser(ctx context.Context, u *biz.User) (bool, error)
 	err := repo.data.entDB.User.
 		UpdateOneID(u.Id).
 		SetAvatar(u.Avatar).
+		SetLocation(u.Location).
 		Exec(ctx)
 	switch {
 	case ent.IsNotFound(err):
