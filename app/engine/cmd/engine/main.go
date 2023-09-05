@@ -6,6 +6,7 @@ import (
 	"galileo/pkg/utils/bootstrap"
 	"github.com/go-kratos/kratos/v2/encoding/json"
 	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/tx7do/kratos-transport/transport/asynq"
 	"google.golang.org/protobuf/encoding/protojson"
 
 	"github.com/go-kratos/kratos/v2"
@@ -54,7 +55,7 @@ func loadConfig() (*conf.Bootstrap, *conf.Registry) {
 	return &bc, &rc
 }
 
-func newApp(logger log.Logger, gs *grpc.Server, rr registry.Registrar) *kratos.App {
+func newApp(logger log.Logger, gs *grpc.Server, aq *asynq.Server, rr registry.Registrar) *kratos.App {
 	return kratos.New(
 		kratos.ID(Service.GetInstanceId()),
 		kratos.Name(Service.Name),
@@ -63,6 +64,7 @@ func newApp(logger log.Logger, gs *grpc.Server, rr registry.Registrar) *kratos.A
 		kratos.Logger(logger),
 		kratos.Server(
 			gs,
+			aq,
 		),
 		kratos.Registrar(rr),
 	)

@@ -38,8 +38,9 @@ func wireApp(confServer *conf.Server, confData *conf.Data, confService *conf.Ser
 	dockerUseCase := biz.NewDockerUseCase(dockerRepo, logger)
 	engineService := service.NewEngineService(engineUseCase, dockerUseCase, logger)
 	grpcServer := server.NewGRPCServer(confServer, engineService, logger)
+	asynqServer := server.NewAsynqServer(confData, logger)
 	registrar := data.NewRegistrar(registry)
-	app := newApp(logger, grpcServer, registrar)
+	app := newApp(logger, grpcServer, asynqServer, registrar)
 	return app, func() {
 		cleanup()
 	}, nil

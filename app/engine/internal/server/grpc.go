@@ -4,12 +4,12 @@ import (
 	v1 "galileo/api/engine/v1"
 	"galileo/app/engine/internal/conf"
 	"galileo/app/engine/internal/service"
-	"github.com/go-kratos/kratos/v2/middleware/logging"
-	"github.com/go-kratos/kratos/v2/middleware/metadata"
-	"github.com/go-kratos/kratos/v2/middleware/tracing"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/logging"
+	"github.com/go-kratos/kratos/v2/middleware/metadata"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 )
 
@@ -34,7 +34,5 @@ func NewGRPCServer(c *conf.Server, engine *service.EngineService, logger log.Log
 	}
 	srv := grpc.NewServer(opts...)
 	v1.RegisterEngineServer(srv, engine)
-	/* 开启定时任务调度器 */
-	//go engine.Cron(context.Background())
 	return srv
 }
