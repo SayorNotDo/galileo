@@ -21,8 +21,8 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	Engine_AddDefaultJob_FullMethodName    = "/api.engine.v1.Engine/AddDefaultJob"
-	Engine_RunJob_FullMethodName           = "/api.engine.v1.Engine/RunJob"
 	Engine_AddCronJob_FullMethodName       = "/api.engine.v1.Engine/AddCronJob"
+	Engine_AddPeriodicJob_FullMethodName   = "/api.engine.v1.Engine/AddPeriodicJob"
 	Engine_AddDelayedJob_FullMethodName    = "/api.engine.v1.Engine/AddDelayedJob"
 	Engine_UpdateCronJob_FullMethodName    = "/api.engine.v1.Engine/UpdateCronJob"
 	Engine_CreateContainer_FullMethodName  = "/api.engine.v1.Engine/CreateContainer"
@@ -36,10 +36,11 @@ const (
 type EngineClient interface {
 	// 任务调度相关
 	AddDefaultJob(ctx context.Context, in *AddDefaultJobRequest, opts ...grpc.CallOption) (*AddDefaultJobReply, error)
-	RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobReply, error)
 	AddCronJob(ctx context.Context, in *AddCronJobRequest, opts ...grpc.CallOption) (*AddCronJobReply, error)
+	AddPeriodicJob(ctx context.Context, in *AddPeriodicJobRequest, opts ...grpc.CallOption) (*AddPeriodicJobReply, error)
 	AddDelayedJob(ctx context.Context, in *AddDelayedJobRequest, opts ...grpc.CallOption) (*AddDelayedJobReply, error)
 	UpdateCronJob(ctx context.Context, in *UpdateCronJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 容器相关
 	CreateContainer(ctx context.Context, in *CreateContainerRequest, opts ...grpc.CallOption) (*CreateContainerReply, error)
 	ListContainers(ctx context.Context, in *ListContainerRequest, opts ...grpc.CallOption) (*ListContainersReply, error)
 	InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...grpc.CallOption) (*InspectContainerReply, error)
@@ -62,18 +63,18 @@ func (c *engineClient) AddDefaultJob(ctx context.Context, in *AddDefaultJobReque
 	return out, nil
 }
 
-func (c *engineClient) RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobReply, error) {
-	out := new(RunJobReply)
-	err := c.cc.Invoke(ctx, Engine_RunJob_FullMethodName, in, out, opts...)
+func (c *engineClient) AddCronJob(ctx context.Context, in *AddCronJobRequest, opts ...grpc.CallOption) (*AddCronJobReply, error) {
+	out := new(AddCronJobReply)
+	err := c.cc.Invoke(ctx, Engine_AddCronJob_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *engineClient) AddCronJob(ctx context.Context, in *AddCronJobRequest, opts ...grpc.CallOption) (*AddCronJobReply, error) {
-	out := new(AddCronJobReply)
-	err := c.cc.Invoke(ctx, Engine_AddCronJob_FullMethodName, in, out, opts...)
+func (c *engineClient) AddPeriodicJob(ctx context.Context, in *AddPeriodicJobRequest, opts ...grpc.CallOption) (*AddPeriodicJobReply, error) {
+	out := new(AddPeriodicJobReply)
+	err := c.cc.Invoke(ctx, Engine_AddPeriodicJob_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -131,10 +132,11 @@ func (c *engineClient) InspectContainer(ctx context.Context, in *InspectContaine
 type EngineServer interface {
 	// 任务调度相关
 	AddDefaultJob(context.Context, *AddDefaultJobRequest) (*AddDefaultJobReply, error)
-	RunJob(context.Context, *RunJobRequest) (*RunJobReply, error)
 	AddCronJob(context.Context, *AddCronJobRequest) (*AddCronJobReply, error)
+	AddPeriodicJob(context.Context, *AddPeriodicJobRequest) (*AddPeriodicJobReply, error)
 	AddDelayedJob(context.Context, *AddDelayedJobRequest) (*AddDelayedJobReply, error)
 	UpdateCronJob(context.Context, *UpdateCronJobRequest) (*emptypb.Empty, error)
+	// 容器相关
 	CreateContainer(context.Context, *CreateContainerRequest) (*CreateContainerReply, error)
 	ListContainers(context.Context, *ListContainerRequest) (*ListContainersReply, error)
 	InspectContainer(context.Context, *InspectContainerRequest) (*InspectContainerReply, error)
@@ -148,11 +150,11 @@ type UnimplementedEngineServer struct {
 func (UnimplementedEngineServer) AddDefaultJob(context.Context, *AddDefaultJobRequest) (*AddDefaultJobReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddDefaultJob not implemented")
 }
-func (UnimplementedEngineServer) RunJob(context.Context, *RunJobRequest) (*RunJobReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RunJob not implemented")
-}
 func (UnimplementedEngineServer) AddCronJob(context.Context, *AddCronJobRequest) (*AddCronJobReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddCronJob not implemented")
+}
+func (UnimplementedEngineServer) AddPeriodicJob(context.Context, *AddPeriodicJobRequest) (*AddPeriodicJobReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddPeriodicJob not implemented")
 }
 func (UnimplementedEngineServer) AddDelayedJob(context.Context, *AddDelayedJobRequest) (*AddDelayedJobReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddDelayedJob not implemented")
@@ -200,24 +202,6 @@ func _Engine_AddDefaultJob_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Engine_RunJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RunJobRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EngineServer).RunJob(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Engine_RunJob_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EngineServer).RunJob(ctx, req.(*RunJobRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Engine_AddCronJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddCronJobRequest)
 	if err := dec(in); err != nil {
@@ -232,6 +216,24 @@ func _Engine_AddCronJob_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(EngineServer).AddCronJob(ctx, req.(*AddCronJobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Engine_AddPeriodicJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddPeriodicJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServer).AddPeriodicJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Engine_AddPeriodicJob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServer).AddPeriodicJob(ctx, req.(*AddPeriodicJobRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -338,12 +340,12 @@ var Engine_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Engine_AddDefaultJob_Handler,
 		},
 		{
-			MethodName: "RunJob",
-			Handler:    _Engine_RunJob_Handler,
-		},
-		{
 			MethodName: "AddCronJob",
 			Handler:    _Engine_AddCronJob_Handler,
+		},
+		{
+			MethodName: "AddPeriodicJob",
+			Handler:    _Engine_AddPeriodicJob_Handler,
 		},
 		{
 			MethodName: "AddDelayedJob",

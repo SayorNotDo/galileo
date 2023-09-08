@@ -3,9 +3,7 @@ package service
 import (
 	"context"
 	v1 "galileo/api/engine/v1"
-	managementV1 "galileo/api/management/v1"
 	"galileo/app/engine/internal/biz"
-	. "galileo/pkg/errResponse"
 	"galileo/pkg/utils/snowflake"
 	"github.com/golang/protobuf/ptypes/empty"
 	"time"
@@ -19,7 +17,7 @@ func (s *EngineService) AddPeriodicJob(ctx context.Context, req *v1.AddCronJobRe
 		Id:           req.TaskId,
 		Type:         int8(req.Type),
 		ScheduleTime: req.ScheduleTime.AsTime(),
-		Frequency:    managementV1.Frequency(req.Frequency),
+		Frequency:    int8(req.Frequency),
 	}
 	/* 增加定时任务到调度列表 */
 	_, err := s.uc.AddCronJob(ctx, task)
@@ -41,7 +39,7 @@ func (s *EngineService) AddPeriodicJob(ctx context.Context, req *v1.AddCronJobRe
 /* 添加默认任务到default队列 */
 func (s *EngineService) AddDefaultJob(ctx context.Context, req *v1.AddDefaultJobRequest) (*v1.AddDefaultJobReply, error) {
 	/* 构建默认任务的Payload */
-	payload, err := biz.NewDefaultJobPayload(req.TaskId, req.Worker)
+	payload, err := biz.NewDefaultJobPayload(req.TaskId, req.Worker, req.Config)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +71,7 @@ func (s *EngineService) UpdateCronJob(ctx context.Context, req *v1.UpdateCronJob
 		Id:           req.TaskId,
 		Type:         int8(req.Type),
 		ScheduleTime: req.ScheduleTime.AsTime(),
-		Frequency:    managementV1.Frequency(req.Frequency),
+		Frequency:    int8(req.Frequency),
 	}
 	/* 更新定时任务逻辑：旧任务移除 */
 	err := s.uc.RemoveCronJob(ctx, task.Id)
@@ -85,25 +83,4 @@ func (s *EngineService) UpdateCronJob(ctx context.Context, req *v1.UpdateCronJob
 		return nil, err
 	}
 	return nil, nil
-}
-
-func (s *EngineService) RunJob(ctx context.Context, req *v1.RunJobRequest) (*v1.RunJobReply, error) {
-	res, err := s.uc.TaskByID(ctx, req.TaskId)
-	if err != nil {
-		return nil, SetCustomizeErrMsg(ReasonRecordNotFound, err.Error())
-	}
-	if err := biz.JobCommand(req.Schema, req.Worker, req.TaskId); err != nil {
-		return nil, err
-	}
-	/* 雪花算法生成执行ID */
-	if req.Type == 0 {
-		sn, err := snowflake.NewSnowflake(int64(0), int64(0))
-		if err != nil {
-			return nil, err
-		}
-		res.ExecuteId = sn.NextVal()
-	}
-	return &v1.RunJobReply{
-		ExecuteId: res.ExecuteId,
-	}, nil
 }

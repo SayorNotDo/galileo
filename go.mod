@@ -28,6 +28,7 @@ require (
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/websocket v1.5.0
 	github.com/hashicorp/consul/api v1.20.0
+	github.com/hibiken/asynq v0.24.1
 	github.com/nacos-group/nacos-sdk-go v1.1.4
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.27.10
@@ -114,7 +115,6 @@ require (
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl/v2 v2.13.0 // indirect
 	github.com/hashicorp/serf v0.10.1 // indirect
-	github.com/hibiken/asynq v0.24.1 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect

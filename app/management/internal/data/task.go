@@ -196,6 +196,22 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.TaskInf
 }
 
 func (r *taskRepo) ExecuteTask(ctx context.Context, taskId int64, worker uint32, config string) error {
+	/* 获取待执行任务的信息 */
+	executeTask, err := r.TaskByID(ctx, taskId)
+	if err != nil {
+		return err
+	}
+	switch executeTask.Type {
+	case DEFAULT:
+		ret, err := r.data.engineCli.AddDefaultJob(ctx, &engineV1.AddDefaultJobRequest{
+			TaskId: taskId,
+			Worker: worker,
+		})
+	case DELAYED:
+	case PERIODIC:
+	}
+	/* 基于任务类型调用Engine的Job服务添加至不同队列 */
+	/* 保存Job记录至数据库 */
 	return nil
 }
 func (r *taskRepo) SoftDeleteTask(ctx context.Context, uid uint32, taskId int64) (bool, error) {

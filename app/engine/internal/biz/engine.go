@@ -16,7 +16,7 @@ type Task struct {
 	Status         managementV1.TaskStatus
 	Worker         string
 	Config         string
-	Frequency      managementV1.Frequency
+	Frequency      int8
 	ScheduleTime   time.Time
 	TestcaseSuites []int32
 	ExecuteId      int64

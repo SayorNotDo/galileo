@@ -14,11 +14,12 @@ option java_package = "api.engine.v1";
 service Engine {
   /* 任务调度相关 */
   rpc AddDefaultJob(AddDefaultJobRequest) returns (AddDefaultJobReply);
-  rpc RunJob(RunJobRequest) returns (RunJobReply);
   rpc AddCronJob(AddCronJobRequest) returns (AddCronJobReply);
   rpc AddPeriodicJob(AddPeriodicJobRequest) returns (AddPeriodicJobReply);
   rpc AddDelayedJob(AddDelayedJobRequest) returns (AddDelayedJobReply);
   rpc UpdateCronJob(UpdateCronJobRequest) returns (google.protobuf.Empty);
+
+  /* 容器相关 */
   rpc CreateContainer(CreateContainerRequest) returns (CreateContainerReply);
   rpc ListContainers(ListContainerRequest) returns (ListContainersReply);
   rpc InspectContainer(InspectContainerRequest) returns (InspectContainerReply);
@@ -30,23 +31,25 @@ message Job {
 
 message AddDefaultJobRequest {
   int64 taskId = 1;
-  int64 worker = 2;
+  uint32 worker = 2;
+  bytes config = 3;
 }
 
 message AddDefaultJobReply {}
 
 message AddPeriodicJobRequest {
   int64 taskId = 1;
-  int32  type = 2;
-  google.protobuf.Timestamp scheduleTime = 3;
-  Frequency frequency = 4;
+  uint32 worker = 2;
+  int32  type = 3;
+  google.protobuf.Timestamp scheduleTime = 4;
+  Frequency frequency = 5;
 }
 
 message AddPeriodicJobReply {}
 
 message AddDelayedJobRequest {
   int64 taskId = 1;
-  int64 worker = 2;
+  uint32 worker = 2;
   google.protobuf.Timestamp delayedTime = 3;
 }
 
@@ -146,16 +149,5 @@ message CreateContainerRequest {}
 message CreateContainerReply {
   string id = 1;
   string warning = 2;
-}
-
-message RunJobRequest {
-  int64 taskId = 1;
-  string worker = 2;
-  string schema = 3;
-  int32 type = 4;
-}
-
-message RunJobReply {
-  int64 executeId = 1;
 }
 
