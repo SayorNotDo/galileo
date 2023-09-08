@@ -28,6 +28,9 @@ type EngineRepo interface {
 	TimingTaskList(ctx context.Context, status []managementV1.TaskStatus) ([]*Task, error)
 	GetCronJobList(ctx context.Context) []*CronJob
 	RemoveCronJob(ctx context.Context, taskId int64) error
+	AddPeriodicJob(ctx context.Context, payload []byte, expression string) (*Job, error)
+	AddDefaultJob(ctx context.Context, payload []byte) (*Job, error)
+	AddDelayedJob(ctx context.Context, payload []byte, delay time.Duration) (*Job, error)
 }
 
 type EngineUseCase struct {
@@ -38,6 +41,18 @@ type EngineUseCase struct {
 func NewEngineUseCase(repo EngineRepo, logger log.Logger) *EngineUseCase {
 	helper := log.NewHelper(log.With(logger, "module", "engine.useCase"))
 	return &EngineUseCase{repo: repo, log: helper}
+}
+
+func (c *EngineUseCase) AddPeriodicJob(ctx context.Context, payload []byte, expression string) (*Job, error) {
+	return c.repo.AddPeriodicJob(ctx, payload, expression)
+}
+
+func (c *EngineUseCase) AddDefaultJob(ctx context.Context, payload []byte) (*Job, error) {
+	return c.repo.AddDefaultJob(ctx, payload)
+}
+
+func (c *EngineUseCase) AddDelayedJob(ctx context.Context, payload []byte, delay time.Duration) (*Job, error) {
+	return c.repo.AddDelayedJob(ctx, payload, delay)
 }
 
 func (c *EngineUseCase) TaskByID(ctx context.Context, id int64) (*Task, error) {
@@ -58,8 +73,4 @@ func (c *EngineUseCase) GetCronJobList(ctx context.Context) []*CronJob {
 
 func (c *EngineUseCase) RemoveCronJob(ctx context.Context, taskId int64) error {
 	return c.repo.RemoveCronJob(ctx, taskId)
-}
-
-func (c *EngineUseCase) ParseDockerfile(ctx context.Context, fp string) (map[string]interface{}, error) {
-	return nil, nil
 }

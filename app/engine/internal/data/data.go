@@ -19,6 +19,7 @@ import (
 	"github.com/google/wire"
 	consulAPI "github.com/hashicorp/consul/api"
 	"github.com/redis/go-redis/v9"
+	"github.com/tx7do/kratos-transport/transport/asynq"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
@@ -40,7 +41,7 @@ var ProviderSet = wire.NewSet(
 )
 
 var (
-	RedisCli redis.Cmdable
+	_ redis.Cmdable
 )
 
 // Data .
@@ -50,15 +51,16 @@ type Data struct {
 	redisCli  redis.Cmdable
 	ManageCli managementV1.ManagementClient
 	dockerCli *client.Client
+	asynqSrv  *asynq.Server
 }
 
 // NewData .
-func NewData(c *conf.Data, logger log.Logger, redisCli redis.Cmdable, ManageCli managementV1.ManagementClient, dockerCli *client.Client) (*Data, func(), error) {
+func NewData(c *conf.Data, logger log.Logger, redisCli redis.Cmdable, ManageCli managementV1.ManagementClient, dockerCli *client.Client, srv *asynq.Server) (*Data, func(), error) {
 	l := log.NewHelper(log.With(logger, "module", "engine.DataService"))
 	cleanup := func() {
 		l.Info("closing the data resources")
 	}
-	return &Data{log: l, redisCli: redisCli, ManageCli: ManageCli, dockerCli: dockerCli}, cleanup, nil
+	return &Data{log: l, redisCli: redisCli, ManageCli: ManageCli, dockerCli: dockerCli, asynqSrv: srv}, cleanup, nil
 }
 
 func NewEntDB(c *conf.Data) (*ent.Client, error) {
@@ -111,7 +113,7 @@ func NewTaskServiceClient(sr *conf.Service, rr registry.Discovery) managementV1.
 }
 
 func NewRedis(conf *conf.Data, logger log.Logger) redis.Cmdable {
-	logs := log.NewHelper(log.With(logger, "module", "engineService/data/redis"))
+	logs := log.NewHelper(log.With(logger, "module", "engineService.data.redis"))
 	rdb := redis.NewClient(&redis.Options{
 		Addr:         conf.Redis.Addr,
 		Password:     conf.Redis.Password,
@@ -127,7 +129,7 @@ func NewRedis(conf *conf.Data, logger log.Logger) redis.Cmdable {
 	if err != nil {
 		logs.Fatalf("redis connect error: %v", err)
 	}
-	RedisCli = rdb
+	_ = rdb
 	return rdb
 }
 

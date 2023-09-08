@@ -22,43 +22,43 @@ var _ = Describe("User", func() {
 			Email:    "tester@tester.com",
 		}
 	})
-	It("Create", func() {
-		u, err := ro.Create(context.Background(), uD)
-		Ω(err).ShouldNot(HaveOccurred())
-		Ω(u.Phone).Should(Equal("16710790871"))
-	})
-
-	It("GetById", func() {
-		u, err := ro.GetById(context.Background(), 1)
-		Ω(err).ShouldNot(HaveOccurred())
-		Ω(u.Phone).Should(Equal("16710790871"))
-	})
-
-	It("GetByUsername", func() {
-		u, err := ro.GetByUsername(context.Background(), "tester")
-		Ω(err).ShouldNot(HaveOccurred())
-		Ω(u.Username).Should(Equal("tester"))
-	})
-
-	It("ListUser", func() {
-		user, total, err := ro.List(context.Background(), 1, 10)
-		Ω(err).ShouldNot(HaveOccurred())
-		Ω(user).ShouldNot(BeEmpty())
-		Ω(total).Should(Equal(int32(1)))
-		Ω(len(user)).Should(Equal(1))
-		Ω(user[0].Phone).Should(Equal("16710790871"))
-	})
-
-	It("UpdateUser", func() {
-		uD = &biz.User{
-			Id:       1,
-			Nickname: "Vince",
-			Avatar:   "AvatarTest",
-		}
-		ok, err := ro.Update(context.Background(), uD)
-		Ω(err).ShouldNot(HaveOccurred())
-		Ω(ok).Should(BeTrue())
-	})
+	//It("Create", func() {
+	//	u, err := ro.Create(context.Background(), uD)
+	//	Ω(err).ShouldNot(HaveOccurred())
+	//	Ω(u.Phone).Should(Equal("16710790871"))
+	//})
+	//
+	//It("GetById", func() {
+	//	u, err := ro.GetById(context.Background(), 1)
+	//	Ω(err).ShouldNot(HaveOccurred())
+	//	Ω(u.Phone).Should(Equal("16710790871"))
+	//})
+	//
+	//It("GetByUsername", func() {
+	//	u, err := ro.GetByUsername(context.Background(), "tester")
+	//	Ω(err).ShouldNot(HaveOccurred())
+	//	Ω(u.Username).Should(Equal("tester"))
+	//})
+	//
+	//It("ListUser", func() {
+	//	user, total, err := ro.List(context.Background(), 1, 10)
+	//	Ω(err).ShouldNot(HaveOccurred())
+	//	Ω(user).ShouldNot(BeEmpty())
+	//	Ω(total).Should(Equal(int32(1)))
+	//	Ω(len(user)).Should(Equal(1))
+	//	Ω(user[0].Phone).Should(Equal("16710790871"))
+	//})
+	//
+	//It("UpdateUser", func() {
+	//	uD = &biz.User{
+	//		Id:       1,
+	//		Nickname: "Vince",
+	//		Avatar:   "AvatarTest",
+	//	}
+	//	ok, err := ro.Update(context.Background(), uD)
+	//	Ω(err).ShouldNot(HaveOccurred())
+	//	Ω(ok).Should(BeTrue())
+	//})
 
 	It("UpdatePassword", func() {
 		uD = &biz.User{

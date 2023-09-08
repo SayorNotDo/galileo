@@ -62,3 +62,7 @@ func ContainerMessageBody(c *Container) *v1.Container {
 		ExposedPorts: portsMap,
 	}
 }
+
+func (c *EngineUseCase) ParseDockerfile(ctx context.Context, fp string) (map[string]interface{}, error) {
+	return nil, nil
+}

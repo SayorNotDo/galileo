@@ -75,15 +75,15 @@ func (tc *TaskCreate) SetNillableType(i *int8) *TaskCreate {
 }
 
 // SetFrequency sets the "frequency" field.
-func (tc *TaskCreate) SetFrequency(s string) *TaskCreate {
-	tc.mutation.SetFrequency(s)
+func (tc *TaskCreate) SetFrequency(i int8) *TaskCreate {
+	tc.mutation.SetFrequency(i)
 	return tc
 }
 
 // SetNillableFrequency sets the "frequency" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableFrequency(s *string) *TaskCreate {
-	if s != nil {
-		tc.SetFrequency(*s)
+func (tc *TaskCreate) SetNillableFrequency(i *int8) *TaskCreate {
+	if i != nil {
+		tc.SetFrequency(*i)
 	}
 	return tc
 }
@@ -98,34 +98,6 @@ func (tc *TaskCreate) SetScheduleTime(t time.Time) *TaskCreate {
 func (tc *TaskCreate) SetNillableScheduleTime(t *time.Time) *TaskCreate {
 	if t != nil {
 		tc.SetScheduleTime(*t)
-	}
-	return tc
-}
-
-// SetWorker sets the "worker" field.
-func (tc *TaskCreate) SetWorker(s string) *TaskCreate {
-	tc.mutation.SetWorker(s)
-	return tc
-}
-
-// SetNillableWorker sets the "worker" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableWorker(s *string) *TaskCreate {
-	if s != nil {
-		tc.SetWorker(*s)
-	}
-	return tc
-}
-
-// SetConfig sets the "config" field.
-func (tc *TaskCreate) SetConfig(s string) *TaskCreate {
-	tc.mutation.SetConfig(s)
-	return tc
-}
-
-// SetNillableConfig sets the "config" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableConfig(s *string) *TaskCreate {
-	if s != nil {
-		tc.SetConfig(*s)
 	}
 	return tc
 }
@@ -285,36 +257,28 @@ func (tc *TaskCreate) SetNillableDescription(s *string) *TaskCreate {
 }
 
 // SetTestplanID sets the "testplan_id" field.
-func (tc *TaskCreate) SetTestplanID(i int32) *TaskCreate {
+func (tc *TaskCreate) SetTestplanID(i int64) *TaskCreate {
 	tc.mutation.SetTestplanID(i)
 	return tc
 }
 
 // SetNillableTestplanID sets the "testplan_id" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableTestplanID(i *int32) *TaskCreate {
+func (tc *TaskCreate) SetNillableTestplanID(i *int64) *TaskCreate {
 	if i != nil {
 		tc.SetTestplanID(*i)
 	}
 	return tc
 }
 
-// SetExecuteID sets the "execute_id" field.
-func (tc *TaskCreate) SetExecuteID(i int64) *TaskCreate {
-	tc.mutation.SetExecuteID(i)
-	return tc
-}
-
-// SetNillableExecuteID sets the "execute_id" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableExecuteID(i *int64) *TaskCreate {
-	if i != nil {
-		tc.SetExecuteID(*i)
-	}
-	return tc
-}
-
 // SetTestcaseSuite sets the "testcase_suite" field.
-func (tc *TaskCreate) SetTestcaseSuite(i []int32) *TaskCreate {
+func (tc *TaskCreate) SetTestcaseSuite(i []int64) *TaskCreate {
 	tc.mutation.SetTestcaseSuite(i)
+	return tc
+}
+
+// SetID sets the "id" field.
+func (tc *TaskCreate) SetID(i int64) *TaskCreate {
+	tc.mutation.SetID(i)
 	return tc
 }
 
@@ -396,9 +360,6 @@ func (tc *TaskCreate) check() error {
 	if _, ok := tc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Task.status"`)}
 	}
-	if _, ok := tc.mutation.TestcaseSuite(); !ok {
-		return &ValidationError{Name: "testcase_suite", err: errors.New(`ent: missing required field "Task.testcase_suite"`)}
-	}
 	return nil
 }
 
@@ -413,8 +374,10 @@ func (tc *TaskCreate) sqlSave(ctx context.Context) (*Task, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int64(id)
+	}
 	tc.mutation.id = &_node.ID
 	tc.mutation.done = true
 	return _node, nil
@@ -423,8 +386,12 @@ func (tc *TaskCreate) sqlSave(ctx context.Context) (*Task, error) {
 func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Task{config: tc.config}
-		_spec = sqlgraph.NewCreateSpec(task.Table, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(task.Table, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt64))
 	)
+	if id, ok := tc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := tc.mutation.Name(); ok {
 		_spec.SetField(task.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -446,20 +413,12 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_node.Type = value
 	}
 	if value, ok := tc.mutation.Frequency(); ok {
-		_spec.SetField(task.FieldFrequency, field.TypeString, value)
+		_spec.SetField(task.FieldFrequency, field.TypeInt8, value)
 		_node.Frequency = value
 	}
 	if value, ok := tc.mutation.ScheduleTime(); ok {
 		_spec.SetField(task.FieldScheduleTime, field.TypeTime, value)
 		_node.ScheduleTime = value
-	}
-	if value, ok := tc.mutation.Worker(); ok {
-		_spec.SetField(task.FieldWorker, field.TypeString, value)
-		_node.Worker = value
-	}
-	if value, ok := tc.mutation.Config(); ok {
-		_spec.SetField(task.FieldConfig, field.TypeString, value)
-		_node.Config = value
 	}
 	if value, ok := tc.mutation.Rank(); ok {
 		_spec.SetField(task.FieldRank, field.TypeInt8, value)
@@ -506,12 +465,8 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_node.Description = value
 	}
 	if value, ok := tc.mutation.TestplanID(); ok {
-		_spec.SetField(task.FieldTestplanID, field.TypeInt32, value)
+		_spec.SetField(task.FieldTestplanID, field.TypeInt64, value)
 		_node.TestplanID = value
-	}
-	if value, ok := tc.mutation.ExecuteID(); ok {
-		_spec.SetField(task.FieldExecuteID, field.TypeInt64, value)
-		_node.ExecuteID = value
 	}
 	if value, ok := tc.mutation.TestcaseSuite(); ok {
 		_spec.SetField(task.FieldTestcaseSuite, field.TypeJSON, value)
@@ -561,9 +516,9 @@ func (tcb *TaskCreateBulk) Save(ctx context.Context) ([]*Task, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

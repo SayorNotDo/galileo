@@ -8,6 +8,7 @@ import (
 	"galileo/ent/container"
 	"galileo/ent/group"
 	"galileo/ent/groupmember"
+	"galileo/ent/job"
 	"galileo/ent/project"
 	"galileo/ent/projectmember"
 	"galileo/ent/schema"
@@ -103,6 +104,16 @@ func init() {
 	groupmemberDescCreatedAt := groupmemberFields[4].Descriptor()
 	// groupmember.DefaultCreatedAt holds the default value on creation for the created_at field.
 	groupmember.DefaultCreatedAt = groupmemberDescCreatedAt.Default.(func() time.Time)
+	jobFields := schema.Job{}.Fields()
+	_ = jobFields
+	// jobDescCreatedAt is the schema descriptor for created_at field.
+	jobDescCreatedAt := jobFields[1].Descriptor()
+	// job.DefaultCreatedAt holds the default value on creation for the created_at field.
+	job.DefaultCreatedAt = jobDescCreatedAt.Default.(func() time.Time)
+	// jobDescUpdatedAt is the schema descriptor for updated_at field.
+	jobDescUpdatedAt := jobFields[3].Descriptor()
+	// job.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	job.UpdateDefaultUpdatedAt = jobDescUpdatedAt.UpdateDefault.(func() time.Time)
 	projectFields := schema.Project{}.Fields()
 	_ = projectFields
 	// projectDescName is the schema descriptor for name field.
@@ -142,49 +153,49 @@ func init() {
 	taskFields := schema.Task{}.Fields()
 	_ = taskFields
 	// taskDescName is the schema descriptor for name field.
-	taskDescName := taskFields[0].Descriptor()
+	taskDescName := taskFields[1].Descriptor()
 	// task.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	task.NameValidator = taskDescName.Validators[0].(func(string) error)
 	// taskDescCreatedAt is the schema descriptor for created_at field.
-	taskDescCreatedAt := taskFields[1].Descriptor()
+	taskDescCreatedAt := taskFields[2].Descriptor()
 	// task.DefaultCreatedAt holds the default value on creation for the created_at field.
 	task.DefaultCreatedAt = taskDescCreatedAt.Default.(func() time.Time)
 	// taskDescType is the schema descriptor for type field.
-	taskDescType := taskFields[4].Descriptor()
+	taskDescType := taskFields[5].Descriptor()
 	// task.DefaultType holds the default value on creation for the type field.
 	task.DefaultType = taskDescType.Default.(int8)
 	// taskDescRank is the schema descriptor for rank field.
-	taskDescRank := taskFields[9].Descriptor()
+	taskDescRank := taskFields[8].Descriptor()
 	// task.DefaultRank holds the default value on creation for the rank field.
 	task.DefaultRank = taskDescRank.Default.(int8)
 	// taskDescStatus is the schema descriptor for status field.
-	taskDescStatus := taskFields[10].Descriptor()
+	taskDescStatus := taskFields[9].Descriptor()
 	// task.DefaultStatus holds the default value on creation for the status field.
 	task.DefaultStatus = taskDescStatus.Default.(int8)
 	// taskDescUpdatedAt is the schema descriptor for updated_at field.
-	taskDescUpdatedAt := taskFields[13].Descriptor()
+	taskDescUpdatedAt := taskFields[12].Descriptor()
 	// task.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	task.UpdateDefaultUpdatedAt = taskDescUpdatedAt.UpdateDefault.(func() time.Time)
 	testplanFields := schema.TestPlan{}.Fields()
 	_ = testplanFields
 	// testplanDescName is the schema descriptor for name field.
-	testplanDescName := testplanFields[0].Descriptor()
+	testplanDescName := testplanFields[1].Descriptor()
 	// testplan.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	testplan.NameValidator = testplanDescName.Validators[0].(func(string) error)
 	// testplanDescCreatedAt is the schema descriptor for created_at field.
-	testplanDescCreatedAt := testplanFields[1].Descriptor()
+	testplanDescCreatedAt := testplanFields[2].Descriptor()
 	// testplan.DefaultCreatedAt holds the default value on creation for the created_at field.
 	testplan.DefaultCreatedAt = testplanDescCreatedAt.Default.(func() time.Time)
 	// testplanDescUpdatedAt is the schema descriptor for updated_at field.
-	testplanDescUpdatedAt := testplanFields[3].Descriptor()
+	testplanDescUpdatedAt := testplanFields[4].Descriptor()
 	// testplan.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	testplan.UpdateDefaultUpdatedAt = testplanDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// testplanDescStatus is the schema descriptor for status field.
-	testplanDescStatus := testplanFields[9].Descriptor()
+	testplanDescStatus := testplanFields[10].Descriptor()
 	// testplan.DefaultStatus holds the default value on creation for the status field.
 	testplan.DefaultStatus = testplanDescStatus.Default.(int8)
 	// testplanDescProjectID is the schema descriptor for project_id field.
-	testplanDescProjectID := testplanFields[11].Descriptor()
+	testplanDescProjectID := testplanFields[12].Descriptor()
 	// testplan.ProjectIDValidator is a validator for the "project_id" field. It is called by the builders before save.
 	testplan.ProjectIDValidator = testplanDescProjectID.Validators[0].(func(int32) error)
 	testcaseFields := schema.Testcase{}.Fields()

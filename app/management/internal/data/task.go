@@ -8,10 +8,13 @@ import (
 	. "galileo/app/management/internal/pkg/constant"
 	"galileo/ent"
 	"galileo/ent/task"
+	"galileo/ent/testplan"
+	"galileo/ent/user"
 	. "galileo/pkg/errResponse"
 	. "galileo/pkg/factory"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/redis/go-redis/v9"
+	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 
@@ -40,7 +43,6 @@ func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (bool, error)
 		SetAssignee(task.Assignee).
 		SetTestcaseSuite(task.TestcaseSuite).
 		SetDeadline(task.Deadline).
-		SetConfig(task.Config).
 		Save(ctx)
 	if err != nil {
 		return false, err
@@ -50,7 +52,6 @@ func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (bool, error)
 			TaskId:       ret.ID,
 			Type:         int32(ret.Type),
 			ScheduleTime: timestamppb.New(ret.ScheduleTime),
-			Frequency:    engineV1.Frequency(engineV1.Frequency_value[ret.Frequency]),
 		})
 		if err != nil {
 			return false, err
@@ -59,64 +60,93 @@ func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (bool, error)
 	return true, nil
 }
 
-func (r *taskRepo) TaskByName(ctx context.Context, name string) (*biz.Task, error) {
-	queryTask, err := r.data.entDB.Task.Query().Where(task.Name(name)).Only(ctx)
+func (r *taskRepo) TaskByName(ctx context.Context, name string) (*biz.TaskInfo, error) {
+	/* 通过Name查询DeletedBy、DeletedAt为空的记录 */
+	queryTask, err := r.data.entDB.Task.Query().
+		Where(
+			task.Name(name),
+			task.DeletedByIsNil(),
+			task.DeletedAtIsNil(),
+		).
+		Only(ctx)
 	switch {
 	case ent.IsNotFound(err):
 		return nil, errors.NotFound(ReasonRecordNotFound, err.Error())
 	case err != nil:
 		return nil, err
 	}
-	testcaseSuite := queryTask.TestcaseSuite
-	return &biz.Task{
+	return &biz.TaskInfo{
 		Id:            queryTask.ID,
 		Name:          queryTask.Name,
 		Rank:          queryTask.Rank,
 		Status:        taskV1.TaskStatus(queryTask.Status),
 		Type:          queryTask.Type,
-		CreatedAt:     queryTask.CreatedAt,
-		CreatedBy:     queryTask.CreatedBy,
 		StartTime:     queryTask.StartTime,
-		TestcaseSuite: testcaseSuite,
+		TestcaseSuite: queryTask.TestcaseSuite,
 	}, nil
 }
 
-func (r *taskRepo) TaskByID(ctx context.Context, id int32) (*biz.Task, error) {
-	queryTask, err := r.data.entDB.Task.Query().Where(task.ID(id)).Only(ctx)
+func (r *taskRepo) TaskByID(ctx context.Context, id int64) (*biz.TaskInfo, error) {
+	var queryTask *biz.TaskInfo
+	ret, err := r.data.entDB.Task.Query().Where(task.ID(id)).Only(ctx)
 	switch {
 	case ent.IsNotFound(err):
 		return nil, errors.NotFound(ReasonRecordNotFound, err.Error())
 	case err != nil:
 		return nil, err
 	}
-	testcaseSuite := queryTask.TestcaseSuite
-	return &biz.Task{
-		Id:            queryTask.ID,
-		Name:          queryTask.Name,
-		Rank:          queryTask.Rank,
-		Status:        taskV1.TaskStatus(queryTask.Status),
-		Type:          queryTask.Type,
-		CreatedAt:     queryTask.CreatedAt,
-		CreatedBy:     queryTask.CreatedBy,
-		StartTime:     queryTask.StartTime,
-		TestcaseSuite: testcaseSuite,
-	}, nil
+	queryTask = &biz.TaskInfo{
+		Id:              ret.ID,
+		Name:            ret.Name,
+		Rank:            ret.Rank,
+		Type:            ret.Type,
+		Frequency:       ret.Frequency,
+		ScheduleTime:    ret.ScheduleTime,
+		Status:          taskV1.TaskStatus(ret.Status),
+		CreatedAt:       ret.CreatedAt,
+		UpdatedAt:       ret.UpdatedAt,
+		StatusUpdatedAt: ret.StatusUpdatedAt,
+		StartTime:       ret.StartTime,
+		Deadline:        ret.Deadline,
+		Description:     ret.Description,
+		TestcaseSuite:   ret.TestcaseSuite,
+	}
+	planName, err := r.data.entDB.TestPlan.Query().Where(testplan.ID(ret.TestplanID)).Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	queryTask.Testplan = planName.Name
+	/* TODO: 获取测试用例集合的具体信息 */
+	users, err := r.data.entDB.User.Query().Where(user.IDIn(ret.CreatedBy, ret.Assignee, ret.UpdatedBy)).All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	lo.ForEach(users, func(item *ent.User, _ int) {
+		switch item.ID {
+		case ret.CreatedBy:
+			queryTask.CreatedBy = item.Username
+		case ret.Assignee:
+			queryTask.Assignee = item.Username
+		case ret.UpdatedBy:
+			queryTask.UpdatedBy = item.Username
+		}
+	})
+	return queryTask, nil
 }
 
-func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, error) {
-	/* 创建事务 */
+func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.TaskInfo, error) {
+	/* 创建SQL事务 */
 	tx, err := r.data.entDB.Tx(ctx)
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonSystemError, err.Error())
 	}
-	/* 写入任务 */
+
+	/* 创建任务记录 */
 	createTask, err := tx.Task.Create().
 		SetName(task.Name).
 		SetType(task.Type).
 		SetRank(task.Rank).
 		SetAssignee(task.Assignee).
-		SetConfig(task.Config).
-		SetWorker(task.Worker).
 		SetScheduleTime(task.ScheduleTime).
 		SetFrequency(task.Frequency).
 		SetStartTime(task.StartTime).
@@ -129,38 +159,46 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.Task, e
 	if err != nil {
 		return nil, rollback(tx, err)
 	}
+
 	/* 当创建的任务为延时任务、定时任务时，调用Engine服务添加到定时任务列表 */
-	if createTask.Type == 1 || createTask.Type == 2 {
+	// TODO: 重构延时任务、定时任务添加逻辑
+	switch createTask.Type {
+	case DELAYED:
+		/* 添加延时任务 */
+	case PERIODIC:
 		/* 添加定时任务 */
-		res, err := r.data.engineCli.AddCronJob(ctx, &engineV1.AddCronJobRequest{
-			TaskId:       createTask.ID,
-			Type:         int32(createTask.Type),
-			ScheduleTime: timestamppb.New(createTask.ScheduleTime),
-			Frequency:    engineV1.Frequency(taskV1.Frequency_value[createTask.Frequency]),
-		})
-		if err != nil {
-			return nil, rollback(tx, err)
-		}
-		/* 添加成功后基于返回更新对应任务的ExecuteId */
-		if _, err := tx.Task.UpdateOneID(createTask.ID).
-			SetExecuteID(res.ExecuteId).
-			SetUpdatedBy(createTask.CreatedBy).
-			Save(ctx); err != nil {
-			return nil, rollback(tx, err)
-		}
+		//_, err := r.data.engineCli.AddCronJob(ctx, &engineV1.AddCronJobRequest{
+		//	TaskId:       createTask.ID,
+		//	Type:         int32(createTask.Type),
+		//	ScheduleTime: timestamppb.New(createTask.ScheduleTime),
+		//	Frequency:    engineV1.Frequency(taskV1.Frequency_value[createTask.Frequency]),
+		//})
+		//if err != nil {
+		//	return nil, rollback(tx, err)
+		//}
+		///* 添加成功后基于返回更新对应任务的ExecuteId */
+		//if _, err := tx.Task.UpdateOneID(createTask.ID).
+		//	Save(ctx); err != nil {
+		//	return nil, rollback(tx, err)
+		//}
 	}
+
 	/* 提交事务，失败则回滚 */
 	if err := tx.Commit(); err != nil {
 		return nil, rollback(tx, err)
 	}
-	return &biz.Task{
+	return &biz.TaskInfo{
 		Id:        createTask.ID,
-		CreatedAt: createTask.CreatedAt,
+		Name:      createTask.Name,
 		Status:    taskV1.TaskStatus(createTask.Status),
+		CreatedAt: createTask.CreatedAt,
 	}, nil
 }
 
-func (r *taskRepo) SoftDeleteTask(ctx context.Context, uid uint32, taskId int32) (bool, error) {
+func (r *taskRepo) ExecuteTask(ctx context.Context, taskId int64, worker uint32, config string) error {
+	return nil
+}
+func (r *taskRepo) SoftDeleteTask(ctx context.Context, uid uint32, taskId int64) (bool, error) {
 	err := r.data.entDB.Task.UpdateOneID(taskId).
 		SetDeletedAt(time.Now()).
 		SetDeletedBy(uid).
@@ -171,38 +209,7 @@ func (r *taskRepo) SoftDeleteTask(ctx context.Context, uid uint32, taskId int32)
 	return true, nil
 }
 
-func (r *taskRepo) TaskDetailById(ctx context.Context, id int32) (*biz.Task, error) {
-	queryTask, err := r.data.entDB.Task.Query().Where(task.ID(id)).Only(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return &biz.Task{
-		Id:              queryTask.ID,
-		Name:            queryTask.Name,
-		Type:            queryTask.Type,
-		Rank:            queryTask.Rank,
-		Status:          taskV1.TaskStatus(queryTask.Status),
-		CreatedAt:       queryTask.CreatedAt,
-		CreatedBy:       queryTask.CreatedBy,
-		Assignee:        queryTask.Assignee,
-		Worker:          queryTask.Worker,
-		Config:          queryTask.Config,
-		Frequency:       queryTask.Frequency,
-		ScheduleTime:    queryTask.ScheduleTime,
-		UpdatedAt:       queryTask.UpdatedAt,
-		UpdatedBy:       queryTask.UpdatedBy,
-		StatusUpdatedAt: queryTask.StatusUpdatedAt,
-		CompletedAt:     queryTask.CompletedAt,
-		StartTime:       queryTask.StartTime,
-		Deadline:        queryTask.Deadline,
-		DeletedAt:       queryTask.DeletedAt,
-		DeletedBy:       queryTask.DeletedBy,
-		Description:     queryTask.Description,
-		ExecuteId:       queryTask.ExecuteID,
-	}, nil
-}
-
-func (r *taskRepo) IsTaskDeleted(ctx context.Context, id int32) (bool, error) {
+func (r *taskRepo) IsTaskDeleted(ctx context.Context, id int64) (bool, error) {
 	queryTask, err := r.data.entDB.Task.Query().Where(task.ID(id)).Only(ctx)
 	if err != nil {
 		return false, err
@@ -213,7 +220,7 @@ func (r *taskRepo) IsTaskDeleted(ctx context.Context, id int32) (bool, error) {
 	return false, err
 }
 
-func (r *taskRepo) ListTimingTask(ctx context.Context, status []taskV1.TaskStatus) ([]*taskV1.TaskInfo, error) {
+func (r *taskRepo) ListTimingTask(ctx context.Context, status []taskV1.TaskStatus) ([]*taskV1.Task, error) {
 	var numList []int8
 	/* 枚举状态值转化为Int8类型 */
 	for _, t := range status {
@@ -227,18 +234,15 @@ func (r *taskRepo) ListTimingTask(ctx context.Context, status []taskV1.TaskStatu
 	if err != nil {
 		return nil, err
 	}
-	rv := make([]*taskV1.TaskInfo, 0)
+	rv := make([]*taskV1.Task, 0)
 	for _, v := range ret {
-		rv = append(rv, &taskV1.TaskInfo{
+		rv = append(rv, &taskV1.Task{
 			Id:           v.ID,
 			Name:         v.Name,
 			Rank:         int32(v.Rank),
 			Type:         int32(v.Type),
-			Assignee:     v.Assignee,
 			Status:       taskV1.TaskStatus(v.Status),
-			Worker:       v.Worker,
 			ScheduleTime: timestamppb.New(v.ScheduleTime),
-			Frequency:    taskV1.Frequency(taskV1.Frequency_value[v.Frequency]),
 			Deadline:     timestamppb.New(v.Deadline),
 			StartTime:    timestamppb.New(v.StartTime),
 		})
@@ -270,13 +274,24 @@ func (r *taskRepo) RedisLRangeTask(ctx context.Context, key string) ([]string, e
 	return valList, nil
 }
 
-func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (*biz.Task, error) {
+func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (*biz.TaskInfo, error) {
+	/*
+		任务的状态：
+		1.NEW
+		2.PENDING
+		3.RUNNING
+		4.PAUSED
+		5.CLOSED
+		6.EXCEPTION
+		7.CANCELLED
+		8.FINISHED
+	*/
 	/* 创建事务 */
 	tx, err := r.data.entDB.Tx(ctx)
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonSystemError, err.Error())
 	}
-	/* 更新任务的状态、开始时间、状态更新时间 */
+	/* 修改任务的状态、开始时间、状态更新时间 */
 	ret, err := tx.Task.UpdateOneID(updateTask.Id).
 		SetStatus(int8(updateTask.Status.Number())).
 		SetStartTime(updateTask.StartTime).
@@ -288,30 +303,22 @@ func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (
 	case err != nil:
 		return nil, rollback(tx, err)
 	}
-	// 当设置状态为RUNNING时，调用Engine服务进行测试任务的下发，参数：taskId，Worker
+	/* 当设置状态为RUNNING时，调用Engine服务进行测试任务的下发，参数：taskId，Worker */
 	switch updateTask.Status {
 	case taskV1.TaskStatus_RUNNING:
-		reply, err := r.data.engineCli.RunJob(ctx,
+		_, err := r.data.engineCli.RunJob(ctx,
 			&engineV1.RunJobRequest{
 				TaskId: updateTask.Id,
-				Worker: updateTask.Worker,
 				Schema: "http://",
 				Type:   int32(updateTask.Type),
 			})
 		if err != nil {
 			return nil, rollback(tx, err)
 		}
-		/* 下发测试任务成功后更新execute_id、worker */
-		_, err = tx.Task.UpdateOneID(updateTask.Id).
-			SetExecuteID(reply.ExecuteId).
-			SetWorker(updateTask.Worker).
-			Save(ctx)
-		if err != nil {
-			return nil, rollback(tx, err)
-		}
+	/* 当设置状态为EXCEPTION时 */
 	/* 当设置状态为FINISHED时，设置Redis缓存过期时间 */
 	case taskV1.TaskStatus_FINISHED:
-		key := NewTaskProgressKey(updateTask.Name, updateTask.ExecuteId)
+		key := NewTaskProgressKey(updateTask.Name, 0)
 		err := r.SetTaskInfoExpiration(ctx, key, int64(TaskExpiration))
 		if err != nil {
 			return nil, rollback(tx, err)
@@ -321,7 +328,7 @@ func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (
 	if err := tx.Commit(); err != nil {
 		return nil, rollback(tx, err)
 	}
-	return &biz.Task{
+	return &biz.TaskInfo{
 		Status:          taskV1.TaskStatus(ret.Status),
 		StatusUpdatedAt: ret.StatusUpdatedAt,
 	}, nil

@@ -54,7 +54,6 @@ service Management {
     };
   };
   rpc ListProject (ListProjectRequest) returns (ListProjectReply);
-
   rpc GetUserProjectList (google.protobuf.Empty) returns (ListProjectReply);
 
   /* testcase module */
@@ -78,7 +77,6 @@ service Management {
     };
   };
   rpc ListTestcase (ListTestcaseRequest) returns (ListTestcaseReply);
-//  rpc UploadTestcaseFile (google.protobuf.Empty) returns (UploadTestcaseReply);
   rpc DebugTestcase (DebugTestcaseRequest) returns (DebugTestcaseReply){
     option(google.api.http) = {
       post: "v1/api/management/testcase/debug"
@@ -99,11 +97,16 @@ service Management {
   }
   rpc GetTestcaseSuite (GetTestcaseSuiteRequest) returns (GetTestcaseSuiteReply) {}
 
-  /* task module */
+  /* 创建任务接口 */
   rpc CreateTask (CreateTaskRequest) returns (CreateTaskReply){
     option(google.api.http) = {
       post: "v1/api/management/task"
       body: "*"
+    };
+  };
+  rpc GetTask (TaskByIDRequest) returns (Task){
+    option(google.api.http) = {
+      get: "v1/api/management/task/{id}"
     };
   };
   rpc UpdateTask (UpdateTaskRequest) returns (google.protobuf.Empty){
@@ -113,17 +116,9 @@ service Management {
     };
   };
   rpc DeleteTask (DeleteTaskRequest) returns (DeleteTaskReply);
-  rpc TaskByID (TaskByIDRequest) returns (GetTaskReply){
-    option(google.api.http) = {
-      get: "v1/api/management/task/{id}"
-    };
-  };
-  rpc TaskByName (TaskByNameRequest) returns (GetTaskReply) {
-    option(google.api.http) = {
-      get: "v1/api/management/task/{name}"
-    };
-  }
+
   rpc ListTimingTask (ListTimingTaskRequest) returns (ListTimingTaskReply);
+
   rpc UpdateTaskStatus (UpdateTaskStatusRequest) returns (UpdateTaskStatusReply){
     option(google.api.http) = {
       put: "v1/api/management/task/status"
@@ -133,6 +128,13 @@ service Management {
   rpc GetTaskProgress (TaskProgressRequest) returns (TaskProgressReply) {
     option(google.api.http) = {
       get: "v1/api/management/task/{id}/progress"
+    };
+  };
+
+  rpc ExecuteTask(ExecuteTaskRequest) returns (google.protobuf.Empty) {
+    option(google.api.http) = {
+      post: "v1/api/management/task/execute"
+      body: "*"
     };
   };
 
@@ -218,10 +220,11 @@ message ListApiRequest {
   int32 pageNum = 1;
   int32 pageSize = 2;
 }
+
 message ListApiReply {}
 
 message TaskProgressRequest {
-  int32 id = 1;
+  int64 id = 1;
 }
 
 message TaskProgressReply {
@@ -238,37 +241,64 @@ message progressDetail {
 
 message UpdateTaskStatusRequest {
   int64 id = 1;
-  taskStatus status = 2;
-  string worker = 3;
+  TaskStatus status = 2;
 }
 
 message UpdateTaskStatusReply {
-  taskStatus status = 1;
+  TaskStatus status = 1;
   google.protobuf.Timestamp statusUpdatedAt = 2;
 }
+
+/***************** Task *****************/
 
 message CreateTaskRequest {
   string name = 1;
   int32 rank = 2;
-  int32 type = 3;
-  frequency frequency = 4;
-  google.protobuf.Timestamp scheduleTime = 5;
-  string worker = 6;
-  string config = 7;
+  uint32 assignee = 3;
+  int32 type = 4;
+  int32 frequency = 5;
+  google.protobuf.Timestamp scheduleTime = 6;
   string description = 8;
-  uint32 assignee = 9;
   google.protobuf.Timestamp deadline = 11;
-  repeated int32 testcaseSuiteId = 12;
-  int32 testPlanId = 13;
+  repeated int64 testcaseSuiteId = 12;
+  int64 testPlanId = 13;
 }
 
-enum frequency {
-  DAILY = 0;
-  WEEKLY = 1;
-  MONTHLY = 2;
+message CreateTaskReply {
+  int64 id = 1;
+  string name = 2;
+  TaskStatus status = 3;
+  google.protobuf.Timestamp createdAt = 4;
 }
 
-enum taskStatus {
+message ExecuteTaskRequest {
+  int64 taskId = 1;
+  string config = 2;
+  uint32 worker = 3;
+}
+
+message Task {
+  int64 id = 13;
+  string name = 1;
+  int32 rank = 2;
+  string assignee = 3;
+  int32 type = 4;
+  int32 frequency = 5;
+  google.protobuf.Timestamp scheduleTime = 6;
+  string description = 7;
+  TaskStatus status = 8;
+  google.protobuf.Timestamp startTime = 9;
+  google.protobuf.Timestamp completedAt = 10;
+  google.protobuf.Timestamp updatedAt = 11;
+  string updatedBy = 12;
+  google.protobuf.Timestamp createdAt = 14;
+  string createdBy = 15;
+  google.protobuf.Timestamp statusUpdatedAt = 16;
+  google.protobuf.Timestamp deadline = 17;
+  string testplan = 18;
+}
+
+enum TaskStatus {
   NEW = 0;
   PENDING = 1;
   RUNNING = 2;
@@ -279,12 +309,6 @@ enum taskStatus {
   FINISHED = 7;
 }
 
-message CreateTaskReply {
-  int64 id = 1;
-  taskStatus status = 2;
-  google.protobuf.Timestamp createdAt = 3;
-}
-
 message UpdateTaskRequest {
   int64 id = 1;
   string name = 2;
@@ -292,16 +316,12 @@ message UpdateTaskRequest {
   int32 type = 4;
   int32 rank = 5;
   string config = 6;
-  frequency frequency = 7;
+  int32 frequency = 7;
   google.protobuf.Timestamp scheduleTime = 8;
   google.protobuf.Timestamp deadline = 10;
   string description = 11;
-  repeated int32 testcaseSuiteId = 12;
+  repeated int64 testcaseSuiteId = 12;
   string worker = 13;
-}
-
-message UpdateTaskReply {
-  bool success = 1;
 }
 
 message DeleteTaskRequest {}
@@ -311,49 +331,12 @@ message TaskByIDRequest {
   int64 id = 1;
 }
 
-message TaskByNameRequest {
-  string name = 1;
-}
-
-message GetTaskReply {
-  string name = 1;
-  int32 rank = 2;
-  int32 type = 3;
-  string description = 4;
-  repeated int32 testcaseSuite = 5;
-  taskStatus status = 6;
-  string config = 7;
-  frequency frequency = 8;
-  google.protobuf.Timestamp startTime = 11;
-  google.protobuf.Timestamp scheduleTime = 9;
-  google.protobuf.Timestamp deadline = 10;
-  uint32 assignee = 12;
-  string worker = 13;
-  int32 id = 14;
-}
-
-message TaskInfo {
-  int64 id = 1;
-  string name = 2;
-  int32 rank = 3;
-  int32 type = 4;
-  taskStatus status = 5;
-  string worker = 6;
-  google.protobuf.Timestamp scheduleTime = 7;
-  google.protobuf.Timestamp startTime = 8;
-  google.protobuf.Timestamp deadline = 10;
-  uint32 assignee = 12;
-  frequency frequency = 13;
-  string config = 14;
-  repeated int32 testcaseSuiteId = 15;
-}
-
 message ListTimingTaskRequest {
-  repeated taskStatus status = 1;
+  repeated TaskStatus status = 1;
 }
 
 message ListTimingTaskReply {
-  repeated TaskInfo taskList = 1;
+  repeated Task taskList = 1;
 }
 
 message GetTestcaseSuiteRequest {
@@ -543,11 +526,11 @@ enum Status {
 }
 
 message GetTestPlanRequest {
-  int32 id = 1;
+  int64 id = 1;
 }
 
 message GetTestPlanReply {
-  int32 id = 1;
+  int64 id = 1;
   string name = 2;
   google.protobuf.Timestamp createdAt = 3;
   uint32 createdBy = 4;
@@ -592,5 +575,5 @@ message CreateTestPlanRequest {
 }
 
 message CreateTestPlanReply {
-  int32 id = 1;
+  int64 id = 1;
 }

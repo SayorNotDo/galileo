@@ -30,6 +30,9 @@ type Group func(*sql.Selector)
 // GroupMember is the predicate function for groupmember builders.
 type GroupMember func(*sql.Selector)
 
+// Job is the predicate function for job builders.
+type Job func(*sql.Selector)
+
 // Project is the predicate function for project builders.
 type Project func(*sql.Selector)
 

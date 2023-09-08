@@ -25,10 +25,6 @@ const (
 	FieldFrequency = "frequency"
 	// FieldScheduleTime holds the string denoting the schedule_time field in the database.
 	FieldScheduleTime = "schedule_time"
-	// FieldWorker holds the string denoting the worker field in the database.
-	FieldWorker = "worker"
-	// FieldConfig holds the string denoting the config field in the database.
-	FieldConfig = "config"
 	// FieldRank holds the string denoting the rank field in the database.
 	FieldRank = "rank"
 	// FieldStatus holds the string denoting the status field in the database.
@@ -53,8 +49,6 @@ const (
 	FieldDescription = "description"
 	// FieldTestplanID holds the string denoting the testplan_id field in the database.
 	FieldTestplanID = "testplan_id"
-	// FieldExecuteID holds the string denoting the execute_id field in the database.
-	FieldExecuteID = "execute_id"
 	// FieldTestcaseSuite holds the string denoting the testcase_suite field in the database.
 	FieldTestcaseSuite = "testcase_suite"
 	// Table holds the table name of the task in the database.
@@ -71,8 +65,6 @@ var Columns = []string{
 	FieldType,
 	FieldFrequency,
 	FieldScheduleTime,
-	FieldWorker,
-	FieldConfig,
 	FieldRank,
 	FieldStatus,
 	FieldStartTime,
@@ -85,7 +77,6 @@ var Columns = []string{
 	FieldDeletedBy,
 	FieldDescription,
 	FieldTestplanID,
-	FieldExecuteID,
 	FieldTestcaseSuite,
 }
 

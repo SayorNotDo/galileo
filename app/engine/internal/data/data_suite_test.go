@@ -11,12 +11,3 @@ func TestData(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Data Suite")
 }
-
-var cleaner func()
-
-var _ = BeforeSuite(func() {
-})
-
-var _ = AfterSuite(func() {
-	cleaner()
-})

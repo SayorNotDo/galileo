@@ -20,6 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
+	Engine_AddDefaultJob_FullMethodName    = "/api.engine.v1.Engine/AddDefaultJob"
 	Engine_RunJob_FullMethodName           = "/api.engine.v1.Engine/RunJob"
 	Engine_AddCronJob_FullMethodName       = "/api.engine.v1.Engine/AddCronJob"
 	Engine_AddDelayedJob_FullMethodName    = "/api.engine.v1.Engine/AddDelayedJob"
@@ -33,6 +34,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EngineClient interface {
+	// 任务调度相关
+	AddDefaultJob(ctx context.Context, in *AddDefaultJobRequest, opts ...grpc.CallOption) (*AddDefaultJobReply, error)
 	RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobReply, error)
 	AddCronJob(ctx context.Context, in *AddCronJobRequest, opts ...grpc.CallOption) (*AddCronJobReply, error)
 	AddDelayedJob(ctx context.Context, in *AddDelayedJobRequest, opts ...grpc.CallOption) (*AddDelayedJobReply, error)
@@ -48,6 +51,15 @@ type engineClient struct {
 
 func NewEngineClient(cc grpc.ClientConnInterface) EngineClient {
 	return &engineClient{cc}
+}
+
+func (c *engineClient) AddDefaultJob(ctx context.Context, in *AddDefaultJobRequest, opts ...grpc.CallOption) (*AddDefaultJobReply, error) {
+	out := new(AddDefaultJobReply)
+	err := c.cc.Invoke(ctx, Engine_AddDefaultJob_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *engineClient) RunJob(ctx context.Context, in *RunJobRequest, opts ...grpc.CallOption) (*RunJobReply, error) {
@@ -117,6 +129,8 @@ func (c *engineClient) InspectContainer(ctx context.Context, in *InspectContaine
 // All implementations must embed UnimplementedEngineServer
 // for forward compatibility
 type EngineServer interface {
+	// 任务调度相关
+	AddDefaultJob(context.Context, *AddDefaultJobRequest) (*AddDefaultJobReply, error)
 	RunJob(context.Context, *RunJobRequest) (*RunJobReply, error)
 	AddCronJob(context.Context, *AddCronJobRequest) (*AddCronJobReply, error)
 	AddDelayedJob(context.Context, *AddDelayedJobRequest) (*AddDelayedJobReply, error)
@@ -131,6 +145,9 @@ type EngineServer interface {
 type UnimplementedEngineServer struct {
 }
 
+func (UnimplementedEngineServer) AddDefaultJob(context.Context, *AddDefaultJobRequest) (*AddDefaultJobReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddDefaultJob not implemented")
+}
 func (UnimplementedEngineServer) RunJob(context.Context, *RunJobRequest) (*RunJobReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RunJob not implemented")
 }
@@ -163,6 +180,24 @@ type UnsafeEngineServer interface {
 
 func RegisterEngineServer(s grpc.ServiceRegistrar, srv EngineServer) {
 	s.RegisterService(&Engine_ServiceDesc, srv)
+}
+
+func _Engine_AddDefaultJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddDefaultJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServer).AddDefaultJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Engine_AddDefaultJob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServer).AddDefaultJob(ctx, req.(*AddDefaultJobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Engine_RunJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -298,6 +333,10 @@ var Engine_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "api.engine.v1.Engine",
 	HandlerType: (*EngineServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AddDefaultJob",
+			Handler:    _Engine_AddDefaultJob_Handler,
+		},
 		{
 			MethodName: "RunJob",
 			Handler:    _Engine_RunJob_Handler,

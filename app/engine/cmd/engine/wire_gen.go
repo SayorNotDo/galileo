@@ -28,7 +28,8 @@ func wireApp(confServer *conf.Server, confData *conf.Data, confService *conf.Ser
 	discovery := data.NewDiscovery(registry)
 	managementClient := data.NewTaskServiceClient(confService, discovery)
 	client := data.NewDockerClient(confService, logger)
-	dataData, cleanup, err := data.NewData(confData, logger, cmdable, managementClient, client)
+	asynqServer := server.NewAsynqServer(confData, logger)
+	dataData, cleanup, err := data.NewData(confData, logger, cmdable, managementClient, client, asynqServer)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -38,7 +39,6 @@ func wireApp(confServer *conf.Server, confData *conf.Data, confService *conf.Ser
 	dockerUseCase := biz.NewDockerUseCase(dockerRepo, logger)
 	engineService := service.NewEngineService(engineUseCase, dockerUseCase, logger)
 	grpcServer := server.NewGRPCServer(confServer, engineService, logger)
-	asynqServer := server.NewAsynqServer(confData, logger)
 	registrar := data.NewRegistrar(registry)
 	app := newApp(logger, grpcServer, asynqServer, registrar)
 	return app, func() {

@@ -84,16 +84,23 @@ func (tu *TaskUpdate) AddType(i int8) *TaskUpdate {
 }
 
 // SetFrequency sets the "frequency" field.
-func (tu *TaskUpdate) SetFrequency(s string) *TaskUpdate {
-	tu.mutation.SetFrequency(s)
+func (tu *TaskUpdate) SetFrequency(i int8) *TaskUpdate {
+	tu.mutation.ResetFrequency()
+	tu.mutation.SetFrequency(i)
 	return tu
 }
 
 // SetNillableFrequency sets the "frequency" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableFrequency(s *string) *TaskUpdate {
-	if s != nil {
-		tu.SetFrequency(*s)
+func (tu *TaskUpdate) SetNillableFrequency(i *int8) *TaskUpdate {
+	if i != nil {
+		tu.SetFrequency(*i)
 	}
+	return tu
+}
+
+// AddFrequency adds i to the "frequency" field.
+func (tu *TaskUpdate) AddFrequency(i int8) *TaskUpdate {
+	tu.mutation.AddFrequency(i)
 	return tu
 }
 
@@ -120,46 +127,6 @@ func (tu *TaskUpdate) SetNillableScheduleTime(t *time.Time) *TaskUpdate {
 // ClearScheduleTime clears the value of the "schedule_time" field.
 func (tu *TaskUpdate) ClearScheduleTime() *TaskUpdate {
 	tu.mutation.ClearScheduleTime()
-	return tu
-}
-
-// SetWorker sets the "worker" field.
-func (tu *TaskUpdate) SetWorker(s string) *TaskUpdate {
-	tu.mutation.SetWorker(s)
-	return tu
-}
-
-// SetNillableWorker sets the "worker" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableWorker(s *string) *TaskUpdate {
-	if s != nil {
-		tu.SetWorker(*s)
-	}
-	return tu
-}
-
-// ClearWorker clears the value of the "worker" field.
-func (tu *TaskUpdate) ClearWorker() *TaskUpdate {
-	tu.mutation.ClearWorker()
-	return tu
-}
-
-// SetConfig sets the "config" field.
-func (tu *TaskUpdate) SetConfig(s string) *TaskUpdate {
-	tu.mutation.SetConfig(s)
-	return tu
-}
-
-// SetNillableConfig sets the "config" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableConfig(s *string) *TaskUpdate {
-	if s != nil {
-		tu.SetConfig(*s)
-	}
-	return tu
-}
-
-// ClearConfig clears the value of the "config" field.
-func (tu *TaskUpdate) ClearConfig() *TaskUpdate {
-	tu.mutation.ClearConfig()
 	return tu
 }
 
@@ -392,14 +359,14 @@ func (tu *TaskUpdate) ClearDescription() *TaskUpdate {
 }
 
 // SetTestplanID sets the "testplan_id" field.
-func (tu *TaskUpdate) SetTestplanID(i int32) *TaskUpdate {
+func (tu *TaskUpdate) SetTestplanID(i int64) *TaskUpdate {
 	tu.mutation.ResetTestplanID()
 	tu.mutation.SetTestplanID(i)
 	return tu
 }
 
 // SetNillableTestplanID sets the "testplan_id" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableTestplanID(i *int32) *TaskUpdate {
+func (tu *TaskUpdate) SetNillableTestplanID(i *int64) *TaskUpdate {
 	if i != nil {
 		tu.SetTestplanID(*i)
 	}
@@ -407,7 +374,7 @@ func (tu *TaskUpdate) SetNillableTestplanID(i *int32) *TaskUpdate {
 }
 
 // AddTestplanID adds i to the "testplan_id" field.
-func (tu *TaskUpdate) AddTestplanID(i int32) *TaskUpdate {
+func (tu *TaskUpdate) AddTestplanID(i int64) *TaskUpdate {
 	tu.mutation.AddTestplanID(i)
 	return tu
 }
@@ -418,42 +385,21 @@ func (tu *TaskUpdate) ClearTestplanID() *TaskUpdate {
 	return tu
 }
 
-// SetExecuteID sets the "execute_id" field.
-func (tu *TaskUpdate) SetExecuteID(i int64) *TaskUpdate {
-	tu.mutation.ResetExecuteID()
-	tu.mutation.SetExecuteID(i)
-	return tu
-}
-
-// SetNillableExecuteID sets the "execute_id" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableExecuteID(i *int64) *TaskUpdate {
-	if i != nil {
-		tu.SetExecuteID(*i)
-	}
-	return tu
-}
-
-// AddExecuteID adds i to the "execute_id" field.
-func (tu *TaskUpdate) AddExecuteID(i int64) *TaskUpdate {
-	tu.mutation.AddExecuteID(i)
-	return tu
-}
-
-// ClearExecuteID clears the value of the "execute_id" field.
-func (tu *TaskUpdate) ClearExecuteID() *TaskUpdate {
-	tu.mutation.ClearExecuteID()
-	return tu
-}
-
 // SetTestcaseSuite sets the "testcase_suite" field.
-func (tu *TaskUpdate) SetTestcaseSuite(i []int32) *TaskUpdate {
+func (tu *TaskUpdate) SetTestcaseSuite(i []int64) *TaskUpdate {
 	tu.mutation.SetTestcaseSuite(i)
 	return tu
 }
 
 // AppendTestcaseSuite appends i to the "testcase_suite" field.
-func (tu *TaskUpdate) AppendTestcaseSuite(i []int32) *TaskUpdate {
+func (tu *TaskUpdate) AppendTestcaseSuite(i []int64) *TaskUpdate {
 	tu.mutation.AppendTestcaseSuite(i)
+	return tu
+}
+
+// ClearTestcaseSuite clears the value of the "testcase_suite" field.
+func (tu *TaskUpdate) ClearTestcaseSuite() *TaskUpdate {
+	tu.mutation.ClearTestcaseSuite()
 	return tu
 }
 
@@ -512,7 +458,7 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := tu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt64))
 	if ps := tu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -539,28 +485,19 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddField(task.FieldType, field.TypeInt8, value)
 	}
 	if value, ok := tu.mutation.Frequency(); ok {
-		_spec.SetField(task.FieldFrequency, field.TypeString, value)
+		_spec.SetField(task.FieldFrequency, field.TypeInt8, value)
+	}
+	if value, ok := tu.mutation.AddedFrequency(); ok {
+		_spec.AddField(task.FieldFrequency, field.TypeInt8, value)
 	}
 	if tu.mutation.FrequencyCleared() {
-		_spec.ClearField(task.FieldFrequency, field.TypeString)
+		_spec.ClearField(task.FieldFrequency, field.TypeInt8)
 	}
 	if value, ok := tu.mutation.ScheduleTime(); ok {
 		_spec.SetField(task.FieldScheduleTime, field.TypeTime, value)
 	}
 	if tu.mutation.ScheduleTimeCleared() {
 		_spec.ClearField(task.FieldScheduleTime, field.TypeTime)
-	}
-	if value, ok := tu.mutation.Worker(); ok {
-		_spec.SetField(task.FieldWorker, field.TypeString, value)
-	}
-	if tu.mutation.WorkerCleared() {
-		_spec.ClearField(task.FieldWorker, field.TypeString)
-	}
-	if value, ok := tu.mutation.Config(); ok {
-		_spec.SetField(task.FieldConfig, field.TypeString, value)
-	}
-	if tu.mutation.ConfigCleared() {
-		_spec.ClearField(task.FieldConfig, field.TypeString)
 	}
 	if value, ok := tu.mutation.Rank(); ok {
 		_spec.SetField(task.FieldRank, field.TypeInt8, value)
@@ -635,22 +572,13 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.ClearField(task.FieldDescription, field.TypeString)
 	}
 	if value, ok := tu.mutation.TestplanID(); ok {
-		_spec.SetField(task.FieldTestplanID, field.TypeInt32, value)
+		_spec.SetField(task.FieldTestplanID, field.TypeInt64, value)
 	}
 	if value, ok := tu.mutation.AddedTestplanID(); ok {
-		_spec.AddField(task.FieldTestplanID, field.TypeInt32, value)
+		_spec.AddField(task.FieldTestplanID, field.TypeInt64, value)
 	}
 	if tu.mutation.TestplanIDCleared() {
-		_spec.ClearField(task.FieldTestplanID, field.TypeInt32)
-	}
-	if value, ok := tu.mutation.ExecuteID(); ok {
-		_spec.SetField(task.FieldExecuteID, field.TypeInt64, value)
-	}
-	if value, ok := tu.mutation.AddedExecuteID(); ok {
-		_spec.AddField(task.FieldExecuteID, field.TypeInt64, value)
-	}
-	if tu.mutation.ExecuteIDCleared() {
-		_spec.ClearField(task.FieldExecuteID, field.TypeInt64)
+		_spec.ClearField(task.FieldTestplanID, field.TypeInt64)
 	}
 	if value, ok := tu.mutation.TestcaseSuite(); ok {
 		_spec.SetField(task.FieldTestcaseSuite, field.TypeJSON, value)
@@ -659,6 +587,9 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, task.FieldTestcaseSuite, value)
 		})
+	}
+	if tu.mutation.TestcaseSuiteCleared() {
+		_spec.ClearField(task.FieldTestcaseSuite, field.TypeJSON)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -735,16 +666,23 @@ func (tuo *TaskUpdateOne) AddType(i int8) *TaskUpdateOne {
 }
 
 // SetFrequency sets the "frequency" field.
-func (tuo *TaskUpdateOne) SetFrequency(s string) *TaskUpdateOne {
-	tuo.mutation.SetFrequency(s)
+func (tuo *TaskUpdateOne) SetFrequency(i int8) *TaskUpdateOne {
+	tuo.mutation.ResetFrequency()
+	tuo.mutation.SetFrequency(i)
 	return tuo
 }
 
 // SetNillableFrequency sets the "frequency" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableFrequency(s *string) *TaskUpdateOne {
-	if s != nil {
-		tuo.SetFrequency(*s)
+func (tuo *TaskUpdateOne) SetNillableFrequency(i *int8) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetFrequency(*i)
 	}
+	return tuo
+}
+
+// AddFrequency adds i to the "frequency" field.
+func (tuo *TaskUpdateOne) AddFrequency(i int8) *TaskUpdateOne {
+	tuo.mutation.AddFrequency(i)
 	return tuo
 }
 
@@ -771,46 +709,6 @@ func (tuo *TaskUpdateOne) SetNillableScheduleTime(t *time.Time) *TaskUpdateOne {
 // ClearScheduleTime clears the value of the "schedule_time" field.
 func (tuo *TaskUpdateOne) ClearScheduleTime() *TaskUpdateOne {
 	tuo.mutation.ClearScheduleTime()
-	return tuo
-}
-
-// SetWorker sets the "worker" field.
-func (tuo *TaskUpdateOne) SetWorker(s string) *TaskUpdateOne {
-	tuo.mutation.SetWorker(s)
-	return tuo
-}
-
-// SetNillableWorker sets the "worker" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableWorker(s *string) *TaskUpdateOne {
-	if s != nil {
-		tuo.SetWorker(*s)
-	}
-	return tuo
-}
-
-// ClearWorker clears the value of the "worker" field.
-func (tuo *TaskUpdateOne) ClearWorker() *TaskUpdateOne {
-	tuo.mutation.ClearWorker()
-	return tuo
-}
-
-// SetConfig sets the "config" field.
-func (tuo *TaskUpdateOne) SetConfig(s string) *TaskUpdateOne {
-	tuo.mutation.SetConfig(s)
-	return tuo
-}
-
-// SetNillableConfig sets the "config" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableConfig(s *string) *TaskUpdateOne {
-	if s != nil {
-		tuo.SetConfig(*s)
-	}
-	return tuo
-}
-
-// ClearConfig clears the value of the "config" field.
-func (tuo *TaskUpdateOne) ClearConfig() *TaskUpdateOne {
-	tuo.mutation.ClearConfig()
 	return tuo
 }
 
@@ -1043,14 +941,14 @@ func (tuo *TaskUpdateOne) ClearDescription() *TaskUpdateOne {
 }
 
 // SetTestplanID sets the "testplan_id" field.
-func (tuo *TaskUpdateOne) SetTestplanID(i int32) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) SetTestplanID(i int64) *TaskUpdateOne {
 	tuo.mutation.ResetTestplanID()
 	tuo.mutation.SetTestplanID(i)
 	return tuo
 }
 
 // SetNillableTestplanID sets the "testplan_id" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableTestplanID(i *int32) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) SetNillableTestplanID(i *int64) *TaskUpdateOne {
 	if i != nil {
 		tuo.SetTestplanID(*i)
 	}
@@ -1058,7 +956,7 @@ func (tuo *TaskUpdateOne) SetNillableTestplanID(i *int32) *TaskUpdateOne {
 }
 
 // AddTestplanID adds i to the "testplan_id" field.
-func (tuo *TaskUpdateOne) AddTestplanID(i int32) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) AddTestplanID(i int64) *TaskUpdateOne {
 	tuo.mutation.AddTestplanID(i)
 	return tuo
 }
@@ -1069,42 +967,21 @@ func (tuo *TaskUpdateOne) ClearTestplanID() *TaskUpdateOne {
 	return tuo
 }
 
-// SetExecuteID sets the "execute_id" field.
-func (tuo *TaskUpdateOne) SetExecuteID(i int64) *TaskUpdateOne {
-	tuo.mutation.ResetExecuteID()
-	tuo.mutation.SetExecuteID(i)
-	return tuo
-}
-
-// SetNillableExecuteID sets the "execute_id" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableExecuteID(i *int64) *TaskUpdateOne {
-	if i != nil {
-		tuo.SetExecuteID(*i)
-	}
-	return tuo
-}
-
-// AddExecuteID adds i to the "execute_id" field.
-func (tuo *TaskUpdateOne) AddExecuteID(i int64) *TaskUpdateOne {
-	tuo.mutation.AddExecuteID(i)
-	return tuo
-}
-
-// ClearExecuteID clears the value of the "execute_id" field.
-func (tuo *TaskUpdateOne) ClearExecuteID() *TaskUpdateOne {
-	tuo.mutation.ClearExecuteID()
-	return tuo
-}
-
 // SetTestcaseSuite sets the "testcase_suite" field.
-func (tuo *TaskUpdateOne) SetTestcaseSuite(i []int32) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) SetTestcaseSuite(i []int64) *TaskUpdateOne {
 	tuo.mutation.SetTestcaseSuite(i)
 	return tuo
 }
 
 // AppendTestcaseSuite appends i to the "testcase_suite" field.
-func (tuo *TaskUpdateOne) AppendTestcaseSuite(i []int32) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) AppendTestcaseSuite(i []int64) *TaskUpdateOne {
 	tuo.mutation.AppendTestcaseSuite(i)
+	return tuo
+}
+
+// ClearTestcaseSuite clears the value of the "testcase_suite" field.
+func (tuo *TaskUpdateOne) ClearTestcaseSuite() *TaskUpdateOne {
+	tuo.mutation.ClearTestcaseSuite()
 	return tuo
 }
 
@@ -1176,7 +1053,7 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if err := tuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt64))
 	id, ok := tuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Task.id" for update`)}
@@ -1220,28 +1097,19 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 		_spec.AddField(task.FieldType, field.TypeInt8, value)
 	}
 	if value, ok := tuo.mutation.Frequency(); ok {
-		_spec.SetField(task.FieldFrequency, field.TypeString, value)
+		_spec.SetField(task.FieldFrequency, field.TypeInt8, value)
+	}
+	if value, ok := tuo.mutation.AddedFrequency(); ok {
+		_spec.AddField(task.FieldFrequency, field.TypeInt8, value)
 	}
 	if tuo.mutation.FrequencyCleared() {
-		_spec.ClearField(task.FieldFrequency, field.TypeString)
+		_spec.ClearField(task.FieldFrequency, field.TypeInt8)
 	}
 	if value, ok := tuo.mutation.ScheduleTime(); ok {
 		_spec.SetField(task.FieldScheduleTime, field.TypeTime, value)
 	}
 	if tuo.mutation.ScheduleTimeCleared() {
 		_spec.ClearField(task.FieldScheduleTime, field.TypeTime)
-	}
-	if value, ok := tuo.mutation.Worker(); ok {
-		_spec.SetField(task.FieldWorker, field.TypeString, value)
-	}
-	if tuo.mutation.WorkerCleared() {
-		_spec.ClearField(task.FieldWorker, field.TypeString)
-	}
-	if value, ok := tuo.mutation.Config(); ok {
-		_spec.SetField(task.FieldConfig, field.TypeString, value)
-	}
-	if tuo.mutation.ConfigCleared() {
-		_spec.ClearField(task.FieldConfig, field.TypeString)
 	}
 	if value, ok := tuo.mutation.Rank(); ok {
 		_spec.SetField(task.FieldRank, field.TypeInt8, value)
@@ -1316,22 +1184,13 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 		_spec.ClearField(task.FieldDescription, field.TypeString)
 	}
 	if value, ok := tuo.mutation.TestplanID(); ok {
-		_spec.SetField(task.FieldTestplanID, field.TypeInt32, value)
+		_spec.SetField(task.FieldTestplanID, field.TypeInt64, value)
 	}
 	if value, ok := tuo.mutation.AddedTestplanID(); ok {
-		_spec.AddField(task.FieldTestplanID, field.TypeInt32, value)
+		_spec.AddField(task.FieldTestplanID, field.TypeInt64, value)
 	}
 	if tuo.mutation.TestplanIDCleared() {
-		_spec.ClearField(task.FieldTestplanID, field.TypeInt32)
-	}
-	if value, ok := tuo.mutation.ExecuteID(); ok {
-		_spec.SetField(task.FieldExecuteID, field.TypeInt64, value)
-	}
-	if value, ok := tuo.mutation.AddedExecuteID(); ok {
-		_spec.AddField(task.FieldExecuteID, field.TypeInt64, value)
-	}
-	if tuo.mutation.ExecuteIDCleared() {
-		_spec.ClearField(task.FieldExecuteID, field.TypeInt64)
+		_spec.ClearField(task.FieldTestplanID, field.TypeInt64)
 	}
 	if value, ok := tuo.mutation.TestcaseSuite(); ok {
 		_spec.SetField(task.FieldTestcaseSuite, field.TypeJSON, value)
@@ -1340,6 +1199,9 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, task.FieldTestcaseSuite, value)
 		})
+	}
+	if tuo.mutation.TestcaseSuiteCleared() {
+		_spec.ClearField(task.FieldTestcaseSuite, field.TypeJSON)
 	}
 	_node = &Task{config: tuo.config}
 	_spec.Assign = _node.assignValues

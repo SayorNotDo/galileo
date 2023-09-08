@@ -14,6 +14,7 @@ import (
 	"galileo/ent/container"
 	"galileo/ent/group"
 	"galileo/ent/groupmember"
+	"galileo/ent/job"
 	"galileo/ent/project"
 	"galileo/ent/projectmember"
 	"galileo/ent/task"
@@ -87,6 +88,7 @@ func columnChecker(table string) func(string) error {
 		container.Table:     container.ValidColumn,
 		group.Table:         group.ValidColumn,
 		groupmember.Table:   groupmember.ValidColumn,
+		job.Table:           job.ValidColumn,
 		project.Table:       project.ValidColumn,
 		projectmember.Table: projectmember.ValidColumn,
 		task.Table:          task.ValidColumn,

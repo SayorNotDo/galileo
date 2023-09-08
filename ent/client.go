@@ -18,6 +18,7 @@ import (
 	"galileo/ent/container"
 	"galileo/ent/group"
 	"galileo/ent/groupmember"
+	"galileo/ent/job"
 	"galileo/ent/project"
 	"galileo/ent/projectmember"
 	"galileo/ent/task"
@@ -52,6 +53,8 @@ type Client struct {
 	Group *GroupClient
 	// GroupMember is the client for interacting with the GroupMember builders.
 	GroupMember *GroupMemberClient
+	// Job is the client for interacting with the Job builders.
+	Job *JobClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
 	// ProjectMember is the client for interacting with the ProjectMember builders.
@@ -87,6 +90,7 @@ func (c *Client) init() {
 	c.Container = NewContainerClient(c.config)
 	c.Group = NewGroupClient(c.config)
 	c.GroupMember = NewGroupMemberClient(c.config)
+	c.Job = NewJobClient(c.config)
 	c.Project = NewProjectClient(c.config)
 	c.ProjectMember = NewProjectMemberClient(c.config)
 	c.Task = NewTaskClient(c.config)
@@ -184,6 +188,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Container:     NewContainerClient(cfg),
 		Group:         NewGroupClient(cfg),
 		GroupMember:   NewGroupMemberClient(cfg),
+		Job:           NewJobClient(cfg),
 		Project:       NewProjectClient(cfg),
 		ProjectMember: NewProjectMemberClient(cfg),
 		Task:          NewTaskClient(cfg),
@@ -218,6 +223,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Container:     NewContainerClient(cfg),
 		Group:         NewGroupClient(cfg),
 		GroupMember:   NewGroupMemberClient(cfg),
+		Job:           NewJobClient(cfg),
 		Project:       NewProjectClient(cfg),
 		ProjectMember: NewProjectMemberClient(cfg),
 		Task:          NewTaskClient(cfg),
@@ -255,7 +261,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Api, c.ApiCategory, c.ApiHistory, c.ApiStatistics, c.ApiTag, c.Container,
-		c.Group, c.GroupMember, c.Project, c.ProjectMember, c.Task, c.TestPlan,
+		c.Group, c.GroupMember, c.Job, c.Project, c.ProjectMember, c.Task, c.TestPlan,
 		c.Testcase, c.TestcaseSuite, c.User,
 	} {
 		n.Use(hooks...)
@@ -267,7 +273,7 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Api, c.ApiCategory, c.ApiHistory, c.ApiStatistics, c.ApiTag, c.Container,
-		c.Group, c.GroupMember, c.Project, c.ProjectMember, c.Task, c.TestPlan,
+		c.Group, c.GroupMember, c.Job, c.Project, c.ProjectMember, c.Task, c.TestPlan,
 		c.Testcase, c.TestcaseSuite, c.User,
 	} {
 		n.Intercept(interceptors...)
@@ -293,6 +299,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Group.mutate(ctx, m)
 	case *GroupMemberMutation:
 		return c.GroupMember.mutate(ctx, m)
+	case *JobMutation:
+		return c.Job.mutate(ctx, m)
 	case *ProjectMutation:
 		return c.Project.mutate(ctx, m)
 	case *ProjectMemberMutation:
@@ -1256,6 +1264,124 @@ func (c *GroupMemberClient) mutate(ctx context.Context, m *GroupMemberMutation) 
 	}
 }
 
+// JobClient is a client for the Job schema.
+type JobClient struct {
+	config
+}
+
+// NewJobClient returns a client for the Job from the given config.
+func NewJobClient(c config) *JobClient {
+	return &JobClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `job.Hooks(f(g(h())))`.
+func (c *JobClient) Use(hooks ...Hook) {
+	c.hooks.Job = append(c.hooks.Job, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `job.Intercept(f(g(h())))`.
+func (c *JobClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Job = append(c.inters.Job, interceptors...)
+}
+
+// Create returns a builder for creating a Job entity.
+func (c *JobClient) Create() *JobCreate {
+	mutation := newJobMutation(c.config, OpCreate)
+	return &JobCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Job entities.
+func (c *JobClient) CreateBulk(builders ...*JobCreate) *JobCreateBulk {
+	return &JobCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Job.
+func (c *JobClient) Update() *JobUpdate {
+	mutation := newJobMutation(c.config, OpUpdate)
+	return &JobUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *JobClient) UpdateOne(j *Job) *JobUpdateOne {
+	mutation := newJobMutation(c.config, OpUpdateOne, withJob(j))
+	return &JobUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *JobClient) UpdateOneID(id int64) *JobUpdateOne {
+	mutation := newJobMutation(c.config, OpUpdateOne, withJobID(id))
+	return &JobUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Job.
+func (c *JobClient) Delete() *JobDelete {
+	mutation := newJobMutation(c.config, OpDelete)
+	return &JobDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *JobClient) DeleteOne(j *Job) *JobDeleteOne {
+	return c.DeleteOneID(j.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *JobClient) DeleteOneID(id int64) *JobDeleteOne {
+	builder := c.Delete().Where(job.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &JobDeleteOne{builder}
+}
+
+// Query returns a query builder for Job.
+func (c *JobClient) Query() *JobQuery {
+	return &JobQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeJob},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Job entity by its id.
+func (c *JobClient) Get(ctx context.Context, id int64) (*Job, error) {
+	return c.Query().Where(job.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *JobClient) GetX(ctx context.Context, id int64) *Job {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *JobClient) Hooks() []Hook {
+	return c.hooks.Job
+}
+
+// Interceptors returns the client interceptors.
+func (c *JobClient) Interceptors() []Interceptor {
+	return c.inters.Job
+}
+
+func (c *JobClient) mutate(ctx context.Context, m *JobMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&JobCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&JobUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&JobUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&JobDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Job mutation op: %q", m.Op())
+	}
+}
+
 // ProjectClient is a client for the Project schema.
 type ProjectClient struct {
 	config
@@ -1538,7 +1664,7 @@ func (c *TaskClient) UpdateOne(t *Task) *TaskUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *TaskClient) UpdateOneID(id int) *TaskUpdateOne {
+func (c *TaskClient) UpdateOneID(id int64) *TaskUpdateOne {
 	mutation := newTaskMutation(c.config, OpUpdateOne, withTaskID(id))
 	return &TaskUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1555,7 +1681,7 @@ func (c *TaskClient) DeleteOne(t *Task) *TaskDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *TaskClient) DeleteOneID(id int) *TaskDeleteOne {
+func (c *TaskClient) DeleteOneID(id int64) *TaskDeleteOne {
 	builder := c.Delete().Where(task.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1572,12 +1698,12 @@ func (c *TaskClient) Query() *TaskQuery {
 }
 
 // Get returns a Task entity by its id.
-func (c *TaskClient) Get(ctx context.Context, id int) (*Task, error) {
+func (c *TaskClient) Get(ctx context.Context, id int64) (*Task, error) {
 	return c.Query().Where(task.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *TaskClient) GetX(ctx context.Context, id int) *Task {
+func (c *TaskClient) GetX(ctx context.Context, id int64) *Task {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1656,7 +1782,7 @@ func (c *TestPlanClient) UpdateOne(tp *TestPlan) *TestPlanUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *TestPlanClient) UpdateOneID(id int) *TestPlanUpdateOne {
+func (c *TestPlanClient) UpdateOneID(id int64) *TestPlanUpdateOne {
 	mutation := newTestPlanMutation(c.config, OpUpdateOne, withTestPlanID(id))
 	return &TestPlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1673,7 +1799,7 @@ func (c *TestPlanClient) DeleteOne(tp *TestPlan) *TestPlanDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *TestPlanClient) DeleteOneID(id int) *TestPlanDeleteOne {
+func (c *TestPlanClient) DeleteOneID(id int64) *TestPlanDeleteOne {
 	builder := c.Delete().Where(testplan.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1690,12 +1816,12 @@ func (c *TestPlanClient) Query() *TestPlanQuery {
 }
 
 // Get returns a TestPlan entity by its id.
-func (c *TestPlanClient) Get(ctx context.Context, id int) (*TestPlan, error) {
+func (c *TestPlanClient) Get(ctx context.Context, id int64) (*TestPlan, error) {
 	return c.Query().Where(testplan.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *TestPlanClient) GetX(ctx context.Context, id int) *TestPlan {
+func (c *TestPlanClient) GetX(ctx context.Context, id int64) *TestPlan {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -2086,12 +2212,12 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 type (
 	hooks struct {
 		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Container, Group,
-		GroupMember, Project, ProjectMember, Task, TestPlan, Testcase, TestcaseSuite,
-		User []ent.Hook
+		GroupMember, Job, Project, ProjectMember, Task, TestPlan, Testcase,
+		TestcaseSuite, User []ent.Hook
 	}
 	inters struct {
 		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Container, Group,
-		GroupMember, Project, ProjectMember, Task, TestPlan, Testcase, TestcaseSuite,
-		User []ent.Interceptor
+		GroupMember, Job, Project, ProjectMember, Task, TestPlan, Testcase,
+		TestcaseSuite, User []ent.Interceptor
 	}
 )

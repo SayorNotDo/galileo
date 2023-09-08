@@ -16,53 +16,48 @@ import (
 type Task struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
-	// Name holds the value of the "name" field.
+	// 任务ID
+	ID int64 `json:"id,omitempty"`
+	// 任务名称
 	Name string `json:"name,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
+	// 任务创建时间
 	CreatedAt time.Time `json:"created_at,omitempty"`
-	// CreatedBy holds the value of the "created_by" field.
+	// 任务创建人
 	CreatedBy uint32 `json:"created_by,omitempty"`
-	// Assignee holds the value of the "assignee" field.
+	// 任务经办人
 	Assignee uint32 `json:"assignee,omitempty"`
-	// Type holds the value of the "type" field.
+	// 任务类型：实时任务 0、延时任务 1、定时任务 2、响应式任务 3
 	Type int8 `json:"type,omitempty"`
-	// Frequency holds the value of the "frequency" field.
-	Frequency string `json:"frequency,omitempty"`
-	// ScheduleTime holds the value of the "schedule_time" field.
+	// 定时任务的频率，仅用于定时任务
+	Frequency int8 `json:"frequency,omitempty"`
+	// 预期调度时间: 实时任务为空，延时任务取年月日时分秒，定时任务取 时分秒+频率
 	ScheduleTime time.Time `json:"schedule_time,omitempty"`
-	// Worker holds the value of the "worker" field.
-	Worker string `json:"worker,omitempty"`
-	// Config holds the value of the "config" field.
-	Config string `json:"config,omitempty"`
-	// Rank holds the value of the "rank" field.
+	// 任务优先级
 	Rank int8 `json:"rank,omitempty"`
-	// Status holds the value of the "status" field.
+	// 任务状态
 	Status int8 `json:"status,omitempty"`
-	// StartTime holds the value of the "start_time" field.
+	// 任务开始时间
 	StartTime time.Time `json:"start_time,omitempty"`
-	// CompletedAt holds the value of the "completed_at" field.
+	// 任务完成时间
 	CompletedAt time.Time `json:"completed_at,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
+	// 数据库记录更新时间
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	// UpdatedBy holds the value of the "updated_by" field.
+	// 任务更新人
 	UpdatedBy uint32 `json:"updated_by,omitempty"`
-	// StatusUpdatedAt holds the value of the "status_updated_at" field.
+	// 任务状态更新时间
 	StatusUpdatedAt time.Time `json:"status_updated_at,omitempty"`
-	// Deadline holds the value of the "deadline" field.
+	// 任务截止日期
 	Deadline time.Time `json:"deadline,omitempty"`
-	// DeletedAt holds the value of the "deleted_at" field.
+	// 任务删除时间
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
-	// DeletedBy holds the value of the "deleted_by" field.
+	// 任务删除人
 	DeletedBy uint32 `json:"deleted_by,omitempty"`
-	// Description holds the value of the "description" field.
+	// 任务描述
 	Description string `json:"description,omitempty"`
-	// TestplanID holds the value of the "testplan_id" field.
-	TestplanID int32 `json:"testplan_id,omitempty"`
-	// ExecuteID holds the value of the "execute_id" field.
-	ExecuteID int64 `json:"execute_id,omitempty"`
-	// TestcaseSuite holds the value of the "testcase_suite" field.
-	TestcaseSuite []int32 `json:"testcase_suite,omitempty"`
+	// 任务所属的测试计划
+	TestplanID int64 `json:"testplan_id,omitempty"`
+	// 测试用例集合
+	TestcaseSuite []int64 `json:"testcase_suite,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -72,9 +67,9 @@ func (*Task) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case task.FieldTestcaseSuite:
 			values[i] = new([]byte)
-		case task.FieldID, task.FieldCreatedBy, task.FieldAssignee, task.FieldType, task.FieldRank, task.FieldStatus, task.FieldUpdatedBy, task.FieldDeletedBy, task.FieldTestplanID, task.FieldExecuteID:
+		case task.FieldID, task.FieldCreatedBy, task.FieldAssignee, task.FieldType, task.FieldFrequency, task.FieldRank, task.FieldStatus, task.FieldUpdatedBy, task.FieldDeletedBy, task.FieldTestplanID:
 			values[i] = new(sql.NullInt64)
-		case task.FieldName, task.FieldFrequency, task.FieldWorker, task.FieldConfig, task.FieldDescription:
+		case task.FieldName, task.FieldDescription:
 			values[i] = new(sql.NullString)
 		case task.FieldCreatedAt, task.FieldScheduleTime, task.FieldStartTime, task.FieldCompletedAt, task.FieldUpdatedAt, task.FieldStatusUpdatedAt, task.FieldDeadline, task.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -98,7 +93,7 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			t.ID = int(value.Int64)
+			t.ID = int64(value.Int64)
 		case task.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -130,28 +125,16 @@ func (t *Task) assignValues(columns []string, values []any) error {
 				t.Type = int8(value.Int64)
 			}
 		case task.FieldFrequency:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field frequency", values[i])
 			} else if value.Valid {
-				t.Frequency = value.String
+				t.Frequency = int8(value.Int64)
 			}
 		case task.FieldScheduleTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field schedule_time", values[i])
 			} else if value.Valid {
 				t.ScheduleTime = value.Time
-			}
-		case task.FieldWorker:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field worker", values[i])
-			} else if value.Valid {
-				t.Worker = value.String
-			}
-		case task.FieldConfig:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field config", values[i])
-			} else if value.Valid {
-				t.Config = value.String
 			}
 		case task.FieldRank:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -223,13 +206,7 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field testplan_id", values[i])
 			} else if value.Valid {
-				t.TestplanID = int32(value.Int64)
-			}
-		case task.FieldExecuteID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field execute_id", values[i])
-			} else if value.Valid {
-				t.ExecuteID = value.Int64
+				t.TestplanID = value.Int64
 			}
 		case task.FieldTestcaseSuite:
 			if value, ok := values[i].(*[]byte); !ok {
@@ -283,16 +260,10 @@ func (t *Task) String() string {
 	builder.WriteString(fmt.Sprintf("%v", t.Type))
 	builder.WriteString(", ")
 	builder.WriteString("frequency=")
-	builder.WriteString(t.Frequency)
+	builder.WriteString(fmt.Sprintf("%v", t.Frequency))
 	builder.WriteString(", ")
 	builder.WriteString("schedule_time=")
 	builder.WriteString(t.ScheduleTime.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("worker=")
-	builder.WriteString(t.Worker)
-	builder.WriteString(", ")
-	builder.WriteString("config=")
-	builder.WriteString(t.Config)
 	builder.WriteString(", ")
 	builder.WriteString("rank=")
 	builder.WriteString(fmt.Sprintf("%v", t.Rank))
@@ -329,9 +300,6 @@ func (t *Task) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("testplan_id=")
 	builder.WriteString(fmt.Sprintf("%v", t.TestplanID))
-	builder.WriteString(", ")
-	builder.WriteString("execute_id=")
-	builder.WriteString(fmt.Sprintf("%v", t.ExecuteID))
 	builder.WriteString(", ")
 	builder.WriteString("testcase_suite=")
 	builder.WriteString(fmt.Sprintf("%v", t.TestcaseSuite))

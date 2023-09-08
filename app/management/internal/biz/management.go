@@ -12,7 +12,7 @@ import (
 type ManagementRepo interface {
 	CreateTestPlan(context.Context, *TestPlan) (*TestPlan, error)
 	UpdateTestPlan(context.Context, *TestPlan) error
-	GetTestPlanById(ctx context.Context, id int32) (*TestPlan, error)
+	GetTestPlanById(ctx context.Context, id int64) (*TestPlan, error)
 }
 
 type BaseInfo struct {
@@ -23,7 +23,7 @@ type BaseInfo struct {
 }
 
 type TestPlan struct {
-	Id              int32
+	Id              int64
 	Name            string
 	CreatedAt       time.Time
 	CreatedBy       uint32
@@ -56,7 +56,7 @@ func (uc *ManagementUseCase) CreateTestPlan(ctx context.Context, testPlan *TestP
 	return uc.repo.CreateTestPlan(ctx, testPlan)
 }
 
-func (uc *ManagementUseCase) GetTestPlanById(ctx context.Context, id int32) (*TestPlan, error) {
+func (uc *ManagementUseCase) GetTestPlanById(ctx context.Context, id int64) (*TestPlan, error) {
 	return uc.repo.GetTestPlanById(ctx, id)
 }
 

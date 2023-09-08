@@ -5,7 +5,9 @@ import (
 	managementV1 "galileo/api/management/v1"
 	"galileo/app/engine/internal/biz"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/hibiken/asynq"
 	"github.com/robfig/cron/v3"
+	"time"
 )
 
 type engineRepo struct {
@@ -18,6 +20,31 @@ func NewEngineRepo(data *Data, logger log.Logger) biz.EngineRepo {
 		data: data,
 		log:  log.NewHelper(log.With(logger, "module", "engine.Repo")),
 	}
+}
+
+func (r *engineRepo) AddPeriodicJob(ctx context.Context, payload []byte, expression string) (*biz.Job, error) {
+	err := r.data.asynqSrv.NewPeriodicTask(expression, biz.TypePeriodicJob, payload)
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+func (r *engineRepo) AddDefaultJob(ctx context.Context, payload []byte) (*biz.Job, error) {
+	err := r.data.asynqSrv.NewTask(biz.TypeDefaultJob, payload)
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+func (r *engineRepo) AddDelayedJob(ctx context.Context, payload []byte, delay time.Duration) (*biz.Job, error) {
+	/* typeName、 payload、 delayTime */
+	err := r.data.asynqSrv.NewTask(biz.TypeDelayedJob, payload, asynq.ProcessIn(delay))
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
 }
 
 func (r *engineRepo) TaskByID(ctx context.Context, id int64) (*biz.Task, error) {
@@ -124,49 +151,4 @@ func (r *engineRepo) RemoveCronJob(ctx context.Context, taskId int64) error {
 	//}
 	//r.data.cron.Remove(entry.ID)
 	return nil
-}
-
-func (r *engineRepo) BuildContainer(ctx context.Context, b *biz.Container) (*biz.Container, error) {
-	///* TODO: 容器构建过程 */
-	///* 创建Docker客户端 */
-	//cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	//if err != nil {
-	//	return nil, err
-	//}
-	///* 定义容器配置 */
-	//containerConfig := &container.Config{
-	//	Image: b.Image,
-	//	Cmd:   b.Cmd,
-	//}
-	///* 拉取容器镜像 */
-	//reader, err := cli.ImagePull(ctx, "docker.io/library/alpine", types.ImagePullOptions{})
-	//if err != nil {
-	//	return nil, err
-	//}
-	//_, _ = io.Copy(os.Stdout, reader)
-	///* 创建容器 */
-	//resp, err := cli.ContainerCreate(ctx, containerConfig, nil, nil, nil, "")
-	//if err != nil {
-	//	return nil, err
-	//}
-	///* 启动容器 */
-	//if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
-	//	return nil, err
-	//}
-	//statusCh, errCh := cli.ContainerWait(ctx, resp.ID, container.WaitConditionNotRunning)
-	//select {
-	//case err := <-errCh:
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//case <-statusCh:
-	//}
-	///* 容器输出 */
-	//out, err := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{ShowStdout: true})
-	//if err != nil {
-	//	return nil, err
-	//}
-	//stdcopy.StdCopy(os.Stdout, os.Stderr, out)
-	//return &biz.Container{Id: resp.ID}, nil
-	return nil, nil
 }

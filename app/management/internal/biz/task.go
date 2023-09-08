@@ -2,55 +2,70 @@ package biz
 
 import (
 	"context"
+	"errors"
 	engineV1 "galileo/api/engine/v1"
 	v1 "galileo/api/management/v1"
-	"time"
-
 	"github.com/go-kratos/kratos/v2/log"
+	"time"
 )
 
 // Task is a Task model.
 type Task struct {
+	Id            int64
+	Name          string
+	TestPlanId    int64
+	Rank          int8
+	Type          int8
+	Status        v1.TaskStatus
+	CreatedBy     uint32
+	Assignee      uint32
+	Frequency     int8
+	ScheduleTime  time.Time
+	UpdatedBy     uint32
+	CompletedAt   time.Time
+	DeletedAt     time.Time
+	StartTime     time.Time
+	Deadline      time.Time
+	DeletedBy     uint32
+	Description   string
+	TestcaseSuite []int64
+}
+
+type TaskInfo struct {
 	Id              int64
 	Name            string
-	TestPlanId      int32
 	Rank            int8
 	Type            int8
+	Frequency       int8
+	ScheduleTime    time.Time
 	Status          v1.TaskStatus
 	CreatedAt       time.Time
-	CreatedBy       uint32
-	Assignee        uint32
-	Worker          string
-	Config          string
-	Frequency       string
-	ScheduleTime    time.Time
+	CreatedBy       string
+	Assignee        string
 	UpdatedAt       time.Time
-	UpdatedBy       uint32
+	UpdatedBy       string
 	StatusUpdatedAt time.Time
-	CompletedAt     time.Time
-	DeletedAt       time.Time
 	StartTime       time.Time
 	Deadline        time.Time
-	DeletedBy       uint32
 	Description     string
-	TestcaseSuite   []int32
-	ExecuteId       int64
+	Testplan        string
+	TestcaseSuite   []int64
 }
 
 // TaskRepo is a Task repo.
 type TaskRepo interface {
-	ListTimingTask(ctx context.Context, status []v1.TaskStatus) ([]*v1.TaskInfo, error)
-	CreateTask(ctx context.Context, task *Task) (*Task, error)
-	TaskByName(ctx context.Context, name string) (*Task, error)
-	TaskByID(ctx context.Context, id int32) (*Task, error)
+	ListTimingTask(ctx context.Context, status []v1.TaskStatus) ([]*v1.Task, error)
+	CreateTask(ctx context.Context, task *Task) (*TaskInfo, error)
+	ExecuteTask(ctx context.Context, taskId int64, worker uint32, config string) error
+	TaskByName(ctx context.Context, name string) (*TaskInfo, error)
+	TaskByID(ctx context.Context, id int64) (*TaskInfo, error)
 	UpdateTask(ctx context.Context, task *Task) (bool, error)
-	UpdateTaskStatus(ctx context.Context, updateTask *Task) (*Task, error)
-	TaskDetailById(ctx context.Context, id int32) (*Task, error)
+	UpdateTaskStatus(ctx context.Context, updateTask *Task) (*TaskInfo, error)
 	RedisLRangeTask(ctx context.Context, key string) ([]string, error)
 	SetTaskInfoExpiration(ctx context.Context, key string, expiration int64) error
 }
 
-// TaskUseCase is a Task useCase.
+// TaskUseCase is a Task use case.
 type TaskUseCase struct {
 	engine engineV1.EngineClient
 	repo   TaskRepo
@@ -66,27 +81,48 @@ func NewTaskUseCase(repo TaskRepo, engine engineV1.EngineClient, logger log.Logg
 	}
 }
 
-func (uc *TaskUseCase) CreateTask(ctx context.Context, task *Task) (*Task, error) {
+func NewTask(name string, rank, taskType int32, description string, testcaseSuite []int64, assignee uint32, deadline time.Time) (Task, error) {
+	if len(name) <= 0 {
+		return Task{}, errors.New("task name must not be empty")
+	} else if rank < 0 || taskType < 0 {
+		return Task{}, errors.New("invalid parameter")
+	}
+	return Task{
+		Name:          name,
+		Rank:          int8(rank),
+		Type:          int8(taskType),
+		Description:   description,
+		TestcaseSuite: testcaseSuite,
+		Assignee:      assignee,
+		Deadline:      deadline,
+	}, nil
+}
+
+func (uc *TaskUseCase) CreateTask(ctx context.Context, task *Task) (*TaskInfo, error) {
 	return uc.repo.CreateTask(ctx, task)
 }
 
-func (uc *TaskUseCase) TaskByName(ctx context.Context, name string) (*Task, error) {
+func (uc *TaskUseCase) ExecuteTask(ctx context.Context, taskId int64, worker uint32, config string) error {
+	return uc.repo.ExecuteTask(ctx, taskId, worker, config)
+}
+
+func (uc *TaskUseCase) TaskByName(ctx context.Context, name string) (*TaskInfo, error) {
 	return uc.repo.TaskByName(ctx, name)
 }
 
-func (uc *TaskUseCase) TaskByID(ctx context.Context, id int32) (*Task, error) {
-	return uc.repo.TaskDetailById(ctx, id)
+func (uc *TaskUseCase) TaskByID(ctx context.Context, id int64) (*TaskInfo, error) {
+	return uc.repo.TaskByID(ctx, id)
 }
 
 func (uc *TaskUseCase) UpdateTask(ctx context.Context, task *Task) (bool, error) {
 	return uc.repo.UpdateTask(ctx, task)
 }
 
-func (uc *TaskUseCase) UpdateTaskStatus(ctx context.Context, updateTask *Task) (*Task, error) {
+func (uc *TaskUseCase) UpdateTaskStatus(ctx context.Context, updateTask *Task) (*TaskInfo, error) {
 	return uc.repo.UpdateTaskStatus(ctx, updateTask)
 }
 
-func (uc *TaskUseCase) ListTimingTask(ctx context.Context, status []v1.TaskStatus) ([]*v1.TaskInfo, error) {
+func (uc *TaskUseCase) ListTimingTask(ctx context.Context, status []v1.TaskStatus) ([]*v1.Task, error) {
 	return uc.repo.ListTimingTask(ctx, status)
 }
 

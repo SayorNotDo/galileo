@@ -28,6 +28,8 @@ type Tx struct {
 	Group *GroupClient
 	// GroupMember is the client for interacting with the GroupMember builders.
 	GroupMember *GroupMemberClient
+	// Job is the client for interacting with the Job builders.
+	Job *JobClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
 	// ProjectMember is the client for interacting with the ProjectMember builders.
@@ -181,6 +183,7 @@ func (tx *Tx) init() {
 	tx.Container = NewContainerClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
 	tx.GroupMember = NewGroupMemberClient(tx.config)
+	tx.Job = NewJobClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
 	tx.ProjectMember = NewProjectMemberClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)

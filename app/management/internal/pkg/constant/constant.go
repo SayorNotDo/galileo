@@ -7,3 +7,9 @@ const (
 	TaskProgressKey = "taskProgress"
 	TaskExpiration  = time.Hour * 24 * 30
 )
+
+const (
+	DEFAULT = iota
+	DELAYED
+	PERIODIC
+)
