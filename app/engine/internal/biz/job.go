@@ -113,6 +113,7 @@ func HandleDefaultJob(ctx context.Context, task *asynq.Task) error {
 	if err != nil {
 		return err
 	}
+	/* 数据库写入Job记录 */
 	return nil
 }
 

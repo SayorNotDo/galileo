@@ -56,7 +56,7 @@ type TaskInfo struct {
 type TaskRepo interface {
 	ListTimingTask(ctx context.Context, status []v1.TaskStatus) ([]*v1.Task, error)
 	CreateTask(ctx context.Context, task *Task) (*TaskInfo, error)
-	ExecuteTask(ctx context.Context, taskId int64, worker uint32, config string) error
+	ExecuteTask(ctx context.Context, taskId int64, worker uint32, config []byte) error
 	TaskByName(ctx context.Context, name string) (*TaskInfo, error)
 	TaskByID(ctx context.Context, id int64) (*TaskInfo, error)
 	UpdateTask(ctx context.Context, task *Task) (bool, error)
@@ -102,7 +102,7 @@ func (uc *TaskUseCase) CreateTask(ctx context.Context, task *Task) (*TaskInfo, e
 	return uc.repo.CreateTask(ctx, task)
 }
 
-func (uc *TaskUseCase) ExecuteTask(ctx context.Context, taskId int64, worker uint32, config string) error {
+func (uc *TaskUseCase) ExecuteTask(ctx context.Context, taskId int64, worker uint32, config []byte) error {
 	return uc.repo.ExecuteTask(ctx, taskId, worker, config)
 }
 

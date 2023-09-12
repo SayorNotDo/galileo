@@ -48,14 +48,15 @@ func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (bool, error)
 		return false, err
 	}
 	if ret.Type == 1 || ret.Type == 2 {
-		_, err := r.data.engineCli.UpdateCronJob(ctx, &engineV1.UpdateCronJobRequest{
-			TaskId:       ret.ID,
-			Type:         int32(ret.Type),
-			ScheduleTime: timestamppb.New(ret.ScheduleTime),
-		})
-		if err != nil {
-			return false, err
-		}
+		/* TODO: 更新调度器中的定时任务逻辑 */
+		//_, err := r.data.engineCli.UpdateCronJob(ctx, &engineV1.UpdateCronJobRequest{
+		//	TaskId:       ret.ID,
+		//	Type:         int32(ret.Type),
+		//	ScheduleTime: timestamppb.New(ret.ScheduleTime),
+		//})
+		//if err != nil {
+		//	return false, err
+		//}
 	}
 	return true, nil
 }
@@ -195,7 +196,7 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.TaskInf
 	}, nil
 }
 
-func (r *taskRepo) ExecuteTask(ctx context.Context, taskId int64, worker uint32, config string) error {
+func (r *taskRepo) ExecuteTask(ctx context.Context, taskId int64, worker uint32, config []byte) error {
 	/* 获取待执行任务的信息 */
 	executeTask, err := r.TaskByID(ctx, taskId)
 	if err != nil {
@@ -203,10 +204,14 @@ func (r *taskRepo) ExecuteTask(ctx context.Context, taskId int64, worker uint32,
 	}
 	switch executeTask.Type {
 	case DEFAULT:
-		ret, err := r.data.engineCli.AddDefaultJob(ctx, &engineV1.AddDefaultJobRequest{
+		_, err := r.data.engineCli.AddDefaultJob(ctx, &engineV1.AddDefaultJobRequest{
 			TaskId: taskId,
 			Worker: worker,
+			Config: config,
 		})
+		if err != nil {
+			return err
+		}
 	case DELAYED:
 	case PERIODIC:
 	}
@@ -322,15 +327,6 @@ func (r *taskRepo) UpdateTaskStatus(ctx context.Context, updateTask *biz.Task) (
 	/* 当设置状态为RUNNING时，调用Engine服务进行测试任务的下发，参数：taskId，Worker */
 	switch updateTask.Status {
 	case taskV1.TaskStatus_RUNNING:
-		_, err := r.data.engineCli.RunJob(ctx,
-			&engineV1.RunJobRequest{
-				TaskId: updateTask.Id,
-				Schema: "http://",
-				Type:   int32(updateTask.Type),
-			})
-		if err != nil {
-			return nil, rollback(tx, err)
-		}
 	/* 当设置状态为EXCEPTION时 */
 	/* 当设置状态为FINISHED时，设置Redis缓存过期时间 */
 	case taskV1.TaskStatus_FINISHED:

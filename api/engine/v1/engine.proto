@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
 
@@ -14,10 +13,8 @@ option java_package = "api.engine.v1";
 service Engine {
   /* 任务调度相关 */
   rpc AddDefaultJob(AddDefaultJobRequest) returns (AddDefaultJobReply);
-  rpc AddCronJob(AddCronJobRequest) returns (AddCronJobReply);
   rpc AddPeriodicJob(AddPeriodicJobRequest) returns (AddPeriodicJobReply);
   rpc AddDelayedJob(AddDelayedJobRequest) returns (AddDelayedJobReply);
-  rpc UpdateCronJob(UpdateCronJobRequest) returns (google.protobuf.Empty);
 
   /* 容器相关 */
   rpc CreateContainer(CreateContainerRequest) returns (CreateContainerReply);
@@ -45,7 +42,9 @@ message AddPeriodicJobRequest {
   Frequency frequency = 5;
 }
 
-message AddPeriodicJobReply {}
+message AddPeriodicJobReply {
+
+}
 
 message AddDelayedJobRequest {
   int64 taskId = 1;
@@ -115,33 +114,15 @@ message Container {
   string domainname = 14;
 }
 
-
-message UpdateCronJobRequest {
-  int64 taskId = 1;
-  int32 type = 2;
-  google.protobuf.Timestamp scheduleTime = 3;
-  Frequency frequency = 4;
-}
-
 message UpdateCronJobReply {
   int64 executeId = 1;
 }
 
-message AddCronJobRequest {
-  int64 taskId = 1;
-  int32  type = 2;
-  google.protobuf.Timestamp scheduleTime = 3;
-  Frequency frequency = 4;
-}
 
 enum Frequency {
   DAILY = 0;
   WEEKLY = 1;
   MONTHLY = 2;
-}
-
-message AddCronJobReply {
-  int64 executeId = 1;
 }
 
 message CreateContainerRequest {}

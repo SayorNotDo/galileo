@@ -14,13 +14,13 @@ type EngineService struct {
 	v1.UnimplementedEngineServer
 
 	dc  *biz.DockerUseCase
-	uc  *biz.EngineUseCase
+	sc  *biz.SchedulerUseCase
 	log *log.Helper
 }
 
-func NewEngineService(uc *biz.EngineUseCase, dc *biz.DockerUseCase, logger log.Logger) *EngineService {
+func NewEngineService(ec *biz.SchedulerUseCase, dc *biz.DockerUseCase, logger log.Logger) *EngineService {
 	return &EngineService{
-		uc:  uc,
+		sc:  ec,
 		dc:  dc,
 		log: log.NewHelper(log.With(logger, "module", "engine.Service")),
 	}

@@ -4,7 +4,6 @@ import (
 	"context"
 	v1 "galileo/api/engine/v1"
 	"github.com/docker/docker/api/types"
-	"github.com/go-kratos/kratos/v2/log"
 )
 
 type DockerRepo interface {
@@ -13,16 +12,6 @@ type DockerRepo interface {
 	CreateContainer(ctx context.Context, container *Container) (id string, warnings []string, err error)
 	ParseComposeFile(ctx context.Context, fp []byte) ([]*ContainerConfig, error)
 	GetDockerInfo(ctx context.Context)
-}
-
-type DockerUseCase struct {
-	repo DockerRepo
-	log  *log.Helper
-}
-
-func NewDockerUseCase(repo DockerRepo, logger log.Logger) *DockerUseCase {
-	helper := log.NewHelper(log.With(logger, "module", "docker.useCase"))
-	return &DockerUseCase{repo: repo, log: helper}
 }
 
 func (dc *DockerUseCase) ListContainers(ctx context.Context, options types.ContainerListOptions) ([]*Container, error) {
@@ -63,6 +52,6 @@ func ContainerMessageBody(c *Container) *v1.Container {
 	}
 }
 
-func (c *EngineUseCase) ParseDockerfile(ctx context.Context, fp string) (map[string]interface{}, error) {
+func (dc *DockerUseCase) ParseDockerfile(ctx context.Context, fp string) (map[string]interface{}, error) {
 	return nil, nil
 }
