@@ -25,6 +25,7 @@ func (Job) Fields() []ent.Field {
 		field.UUID("uuid", uuid.UUID{}).Comment("Job execute ID"),
 		field.String("config").Optional().Comment("配置信息"),
 		field.Int64("task_id").Comment("关联的任务ID"),
+		field.Bool("active").Comment("Job 执行情况"),
 	}
 }
 

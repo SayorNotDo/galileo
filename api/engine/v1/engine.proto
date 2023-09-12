@@ -15,6 +15,7 @@ service Engine {
   rpc AddDefaultJob(AddDefaultJobRequest) returns (AddDefaultJobReply);
   rpc AddPeriodicJob(AddPeriodicJobRequest) returns (AddPeriodicJobReply);
   rpc AddDelayedJob(AddDelayedJobRequest) returns (AddDelayedJobReply);
+  rpc RemoveJob(RemoveJobRequest) returns (RemoveJobReply);
 
   /* 容器相关 */
   rpc CreateContainer(CreateContainerRequest) returns (CreateContainerReply);
@@ -25,6 +26,12 @@ service Engine {
 message Job {
   int64 taskId = 1;
 }
+
+message RemoveJobRequest {
+  int64 id = 1;
+}
+
+message RemoveJobReply {}
 
 message AddDefaultJobRequest {
   int64 taskId = 1;

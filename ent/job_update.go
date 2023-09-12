@@ -147,6 +147,12 @@ func (ju *JobUpdate) AddTaskID(i int64) *JobUpdate {
 	return ju
 }
 
+// SetActive sets the "active" field.
+func (ju *JobUpdate) SetActive(b bool) *JobUpdate {
+	ju.mutation.SetActive(b)
+	return ju
+}
+
 // Mutation returns the JobMutation object of the builder.
 func (ju *JobUpdate) Mutation() *JobMutation {
 	return ju.mutation
@@ -241,6 +247,9 @@ func (ju *JobUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := ju.mutation.AddedTaskID(); ok {
 		_spec.AddField(job.FieldTaskID, field.TypeInt64, value)
+	}
+	if value, ok := ju.mutation.Active(); ok {
+		_spec.SetField(job.FieldActive, field.TypeBool, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ju.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -380,6 +389,12 @@ func (juo *JobUpdateOne) AddTaskID(i int64) *JobUpdateOne {
 	return juo
 }
 
+// SetActive sets the "active" field.
+func (juo *JobUpdateOne) SetActive(b bool) *JobUpdateOne {
+	juo.mutation.SetActive(b)
+	return juo
+}
+
 // Mutation returns the JobMutation object of the builder.
 func (juo *JobUpdateOne) Mutation() *JobMutation {
 	return juo.mutation
@@ -504,6 +519,9 @@ func (juo *JobUpdateOne) sqlSave(ctx context.Context) (_node *Job, err error) {
 	}
 	if value, ok := juo.mutation.AddedTaskID(); ok {
 		_spec.AddField(job.FieldTaskID, field.TypeInt64, value)
+	}
+	if value, ok := juo.mutation.Active(); ok {
+		_spec.SetField(job.FieldActive, field.TypeBool, value)
 	}
 	_node = &Job{config: juo.config}
 	_spec.Assign = _node.assignValues

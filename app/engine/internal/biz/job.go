@@ -47,10 +47,23 @@ type Config struct {
 	Params   []byte `json:"params"`
 }
 
+func NewScheduleExpression(scheduleTime time.Time, frequency string) (expression string) {
+	switch frequency {
+	case "DAILY":
+		expression = fmt.Sprintf("0 %d %d * * ?", scheduleTime.Minute(), scheduleTime.Hour())
+	case "WEEKLY":
+		expression = fmt.Sprintf("0 %d %d * %d ?", scheduleTime.Minute(), scheduleTime.Hour(), scheduleTime.Weekday())
+	case "MONTHLY":
+		expression = fmt.Sprintf("0 %d %d %d * ?", scheduleTime.Minute(), scheduleTime.Hour(), scheduleTime.Day())
+	}
+	return
+}
+
 func NewPeriodicJobPayload(task int64, worker uint32, schedule string) ([]byte, error) {
 	payload, err := json.Marshal(PeriodicJobPayload{
-		Task:   task,
-		Worker: worker,
+		Task:     task,
+		Worker:   worker,
+		Schedule: schedule,
 	})
 	if err != nil {
 		return nil, err

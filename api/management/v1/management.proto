@@ -104,39 +104,32 @@ service Management {
       body: "*"
     };
   };
-  rpc GetTask (TaskByIDRequest) returns (Task){
-    option(google.api.http) = {
-      get: "v1/api/management/task/{id}"
-    };
-  };
-  rpc UpdateTask (UpdateTaskRequest) returns (google.protobuf.Empty){
-    option(google.api.http) = {
-      put: "v1/api/management/task"
-      body: "*"
-    };
-  };
-  rpc DeleteTask (DeleteTaskRequest) returns (DeleteTaskReply);
-
-  rpc ListTimingTask (ListTimingTaskRequest) returns (ListTimingTaskReply);
-
-  rpc UpdateTaskStatus (UpdateTaskStatusRequest) returns (UpdateTaskStatusReply){
-    option(google.api.http) = {
-      put: "v1/api/management/task/status"
-      body: "*"
-    };
-  };
-  rpc GetTaskProgress (TaskProgressRequest) returns (TaskProgressReply) {
-    option(google.api.http) = {
-      get: "v1/api/management/task/{id}/progress"
-    };
-  };
-
   rpc ExecuteTask(ExecuteTaskRequest) returns (google.protobuf.Empty) {
     option(google.api.http) = {
       post: "v1/api/management/task/execute"
       body: "*"
     };
   };
+  rpc TaskInfo (TaskInfoRequest) returns (Task){
+    option(google.api.http) = {
+      get: "v1/api/management/task/{id}"
+      additional_bindings: {
+        put: "v1/api/management/task/{id}"
+        body: "*"
+      }
+    };
+  };
+  rpc DeleteTask (DeleteTaskRequest) returns (DeleteTaskReply);
+
+  rpc ListTimingTask (ListTimingTaskRequest) returns (ListTimingTaskReply);
+
+  rpc GetTaskProgress (TaskProgressRequest) returns (TaskProgressReply) {
+    option(google.api.http) = {
+      get: "v1/api/management/task/{id}/progress"
+    };
+  };
+
+
 
   /* API */
   rpc CreateApi (CreateApiRequest) returns (CreateApiReply){
@@ -239,16 +232,6 @@ message progressDetail {
   int32 unknown = 4;
 }
 
-message UpdateTaskStatusRequest {
-  int64 id = 1;
-  TaskStatus status = 2;
-}
-
-message UpdateTaskStatusReply {
-  TaskStatus status = 1;
-  google.protobuf.Timestamp statusUpdatedAt = 2;
-}
-
 /***************** Task *****************/
 
 message CreateTaskRequest {
@@ -309,8 +292,12 @@ enum TaskStatus {
   FINISHED = 7;
 }
 
-message UpdateTaskRequest {
+message DeleteTaskRequest {}
+message DeleteTaskReply {}
+
+message TaskInfoRequest {
   int64 id = 1;
+
   string name = 2;
   uint32 assignee = 3;
   int32 type = 4;
@@ -318,17 +305,9 @@ message UpdateTaskRequest {
   string config = 6;
   int32 frequency = 7;
   google.protobuf.Timestamp scheduleTime = 8;
-  google.protobuf.Timestamp deadline = 10;
-  string description = 11;
-  repeated int64 testcaseSuiteId = 12;
-  string worker = 13;
-}
-
-message DeleteTaskRequest {}
-message DeleteTaskReply {}
-
-message TaskByIDRequest {
-  int64 id = 1;
+  google.protobuf.Timestamp deadline = 9;
+  string description = 10;
+  repeated int64 testcaseSuiteId = 11;
 }
 
 message ListTimingTaskRequest {

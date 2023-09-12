@@ -100,6 +100,11 @@ func TaskID(v int64) predicate.Job {
 	return predicate.Job(sql.FieldEQ(FieldTaskID, v))
 }
 
+// Active applies equality check predicate on the "active" field. It's identical to ActiveEQ.
+func Active(v bool) predicate.Job {
+	return predicate.Job(sql.FieldEQ(FieldActive, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Job {
 	return predicate.Job(sql.FieldEQ(FieldCreatedAt, v))
@@ -513,6 +518,16 @@ func TaskIDLT(v int64) predicate.Job {
 // TaskIDLTE applies the LTE predicate on the "task_id" field.
 func TaskIDLTE(v int64) predicate.Job {
 	return predicate.Job(sql.FieldLTE(FieldTaskID, v))
+}
+
+// ActiveEQ applies the EQ predicate on the "active" field.
+func ActiveEQ(v bool) predicate.Job {
+	return predicate.Job(sql.FieldEQ(FieldActive, v))
+}
+
+// ActiveNEQ applies the NEQ predicate on the "active" field.
+func ActiveNEQ(v bool) predicate.Job {
+	return predicate.Job(sql.FieldNEQ(FieldActive, v))
 }
 
 // And groups predicates with the AND operator between them.

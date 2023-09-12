@@ -46,10 +46,18 @@ type TaskInfo struct {
 	UpdatedBy       string
 	StatusUpdatedAt time.Time
 	StartTime       time.Time
+	CompletedAt     time.Time
 	Deadline        time.Time
 	Description     string
 	Testplan        string
 	TestcaseSuite   []int64
+}
+
+// TaskUseCase is a Task use case.
+type TaskUseCase struct {
+	engine engineV1.EngineClient
+	repo   TaskRepo
+	log    *log.Helper
 }
 
 // TaskRepo is a Task repo.
@@ -58,18 +66,11 @@ type TaskRepo interface {
 	CreateTask(ctx context.Context, task *Task) (*TaskInfo, error)
 	ExecuteTask(ctx context.Context, taskId int64, worker uint32, config []byte) error
 	TaskByName(ctx context.Context, name string) (*TaskInfo, error)
-	TaskByID(ctx context.Context, id int64) (*TaskInfo, error)
-	UpdateTask(ctx context.Context, task *Task) (bool, error)
+	GetTask(ctx context.Context, id int64) (*TaskInfo, error)
+	UpdateTask(ctx context.Context, task *Task) (*TaskInfo, error)
 	UpdateTaskStatus(ctx context.Context, updateTask *Task) (*TaskInfo, error)
 	RedisLRangeTask(ctx context.Context, key string) ([]string, error)
 	SetTaskInfoExpiration(ctx context.Context, key string, expiration int64) error
-}
-
-// TaskUseCase is a Task use case.
-type TaskUseCase struct {
-	engine engineV1.EngineClient
-	repo   TaskRepo
-	log    *log.Helper
 }
 
 // NewTaskUseCase new a Task useCase.
@@ -110,11 +111,11 @@ func (uc *TaskUseCase) TaskByName(ctx context.Context, name string) (*TaskInfo, 
 	return uc.repo.TaskByName(ctx, name)
 }
 
-func (uc *TaskUseCase) TaskByID(ctx context.Context, id int64) (*TaskInfo, error) {
-	return uc.repo.TaskByID(ctx, id)
+func (uc *TaskUseCase) GetTask(ctx context.Context, id int64) (*TaskInfo, error) {
+	return uc.repo.GetTask(ctx, id)
 }
 
-func (uc *TaskUseCase) UpdateTask(ctx context.Context, task *Task) (bool, error) {
+func (uc *TaskUseCase) UpdateTask(ctx context.Context, task *Task) (*TaskInfo, error) {
 	return uc.repo.UpdateTask(ctx, task)
 }
 

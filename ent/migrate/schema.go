@@ -189,6 +189,7 @@ var (
 		{Name: "uuid", Type: field.TypeUUID},
 		{Name: "config", Type: field.TypeString, Nullable: true},
 		{Name: "task_id", Type: field.TypeInt64},
+		{Name: "active", Type: field.TypeBool},
 	}
 	// JobsTable holds the schema information for the "jobs" table.
 	JobsTable = &schema.Table{

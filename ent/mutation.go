@@ -7966,6 +7966,7 @@ type JobMutation struct {
 	_config       *string
 	task_id       *int64
 	addtask_id    *int64
+	active        *bool
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*Job, error)
@@ -8520,6 +8521,42 @@ func (m *JobMutation) ResetTaskID() {
 	m.addtask_id = nil
 }
 
+// SetActive sets the "active" field.
+func (m *JobMutation) SetActive(b bool) {
+	m.active = &b
+}
+
+// Active returns the value of the "active" field in the mutation.
+func (m *JobMutation) Active() (r bool, exists bool) {
+	v := m.active
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldActive returns the old "active" field's value of the Job entity.
+// If the Job object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *JobMutation) OldActive(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldActive is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldActive requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldActive: %w", err)
+	}
+	return oldValue.Active, nil
+}
+
+// ResetActive resets all changes to the "active" field.
+func (m *JobMutation) ResetActive() {
+	m.active = nil
+}
+
 // Where appends a list predicates to the JobMutation builder.
 func (m *JobMutation) Where(ps ...predicate.Job) {
 	m.predicates = append(m.predicates, ps...)
@@ -8554,7 +8591,7 @@ func (m *JobMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *JobMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.created_at != nil {
 		fields = append(fields, job.FieldCreatedAt)
 	}
@@ -8582,6 +8619,9 @@ func (m *JobMutation) Fields() []string {
 	if m.task_id != nil {
 		fields = append(fields, job.FieldTaskID)
 	}
+	if m.active != nil {
+		fields = append(fields, job.FieldActive)
+	}
 	return fields
 }
 
@@ -8608,6 +8648,8 @@ func (m *JobMutation) Field(name string) (ent.Value, bool) {
 		return m.Config()
 	case job.FieldTaskID:
 		return m.TaskID()
+	case job.FieldActive:
+		return m.Active()
 	}
 	return nil, false
 }
@@ -8635,6 +8677,8 @@ func (m *JobMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldConfig(ctx)
 	case job.FieldTaskID:
 		return m.OldTaskID(ctx)
+	case job.FieldActive:
+		return m.OldActive(ctx)
 	}
 	return nil, fmt.Errorf("unknown Job field %s", name)
 }
@@ -8706,6 +8750,13 @@ func (m *JobMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTaskID(v)
+		return nil
+	case job.FieldActive:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetActive(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Job field %s", name)
@@ -8854,6 +8905,9 @@ func (m *JobMutation) ResetField(name string) error {
 		return nil
 	case job.FieldTaskID:
 		m.ResetTaskID()
+		return nil
+	case job.FieldActive:
+		m.ResetActive()
 		return nil
 	}
 	return fmt.Errorf("unknown Job field %s", name)

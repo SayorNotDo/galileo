@@ -36,6 +36,8 @@ type Job struct {
 	Config string `json:"config,omitempty"`
 	// 关联的任务ID
 	TaskID int64 `json:"task_id,omitempty"`
+	// Job 执行情况
+	Active bool `json:"active,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -43,6 +45,8 @@ func (*Job) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case job.FieldActive:
+			values[i] = new(sql.NullBool)
 		case job.FieldID, job.FieldCreatedBy, job.FieldWorker, job.FieldDeletedBy, job.FieldTaskID:
 			values[i] = new(sql.NullInt64)
 		case job.FieldConfig:
@@ -126,6 +130,12 @@ func (j *Job) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				j.TaskID = value.Int64
 			}
+		case job.FieldActive:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field active", values[i])
+			} else if value.Valid {
+				j.Active = value.Bool
+			}
 		}
 	}
 	return nil
@@ -180,6 +190,9 @@ func (j *Job) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("task_id=")
 	builder.WriteString(fmt.Sprintf("%v", j.TaskID))
+	builder.WriteString(", ")
+	builder.WriteString("active=")
+	builder.WriteString(fmt.Sprintf("%v", j.Active))
 	builder.WriteByte(')')
 	return builder.String()
 }

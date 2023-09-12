@@ -34,8 +34,18 @@ func NewTaskRepo(data *Data, logger log.Logger) biz.TaskRepo {
 	}
 }
 
-func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (bool, error) {
-	ret, err := r.data.entDB.Task.UpdateOneID(task.Id).
+func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (*biz.TaskInfo, error) {
+	/* 创建事务 */
+	queryTask, err := r.GetTask(ctx, task.Id)
+	if err != nil {
+		return nil, err
+	}
+	if queryTask.Type != task.Type {
+		/* TODO：基于原任务类型与修改后的任务类型，更新调度器中的任务记录 */
+		/* 移除调度器中未执行的任务 */
+		/* 基于修改后的任务类型处理逻辑 */
+	}
+	_, err = r.data.entDB.Task.UpdateOneID(task.Id).
 		SetName(task.Name).
 		SetRank(task.Rank).
 		SetType(task.Type).
@@ -45,20 +55,9 @@ func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (bool, error)
 		SetDeadline(task.Deadline).
 		Save(ctx)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
-	if ret.Type == 1 || ret.Type == 2 {
-		/* TODO: 更新调度器中的定时任务逻辑 */
-		//_, err := r.data.engineCli.UpdateCronJob(ctx, &engineV1.UpdateCronJobRequest{
-		//	TaskId:       ret.ID,
-		//	Type:         int32(ret.Type),
-		//	ScheduleTime: timestamppb.New(ret.ScheduleTime),
-		//})
-		//if err != nil {
-		//	return false, err
-		//}
-	}
-	return true, nil
+	return nil, nil
 }
 
 func (r *taskRepo) TaskByName(ctx context.Context, name string) (*biz.TaskInfo, error) {
@@ -87,7 +86,7 @@ func (r *taskRepo) TaskByName(ctx context.Context, name string) (*biz.TaskInfo, 
 	}, nil
 }
 
-func (r *taskRepo) TaskByID(ctx context.Context, id int64) (*biz.TaskInfo, error) {
+func (r *taskRepo) GetTask(ctx context.Context, id int64) (*biz.TaskInfo, error) {
 	var queryTask *biz.TaskInfo
 	ret, err := r.data.entDB.Task.Query().Where(task.ID(id)).Only(ctx)
 	switch {
@@ -112,11 +111,15 @@ func (r *taskRepo) TaskByID(ctx context.Context, id int64) (*biz.TaskInfo, error
 		Description:     ret.Description,
 		TestcaseSuite:   ret.TestcaseSuite,
 	}
+	/* 获取任务关联的测试计划相关信息 */
 	planName, err := r.data.entDB.TestPlan.Query().Where(testplan.ID(ret.TestplanID)).Only(ctx)
-	if err != nil {
+	switch {
+	case ent.IsNotFound(err):
+	case err != nil:
 		return nil, err
+	default:
+		queryTask.Testplan = planName.Name
 	}
-	queryTask.Testplan = planName.Name
 	/* TODO: 获取测试用例集合的具体信息 */
 	users, err := r.data.entDB.User.Query().Where(user.IDIn(ret.CreatedBy, ret.Assignee, ret.UpdatedBy)).All(ctx)
 	if err != nil {
@@ -198,7 +201,7 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.TaskInf
 
 func (r *taskRepo) ExecuteTask(ctx context.Context, taskId int64, worker uint32, config []byte) error {
 	/* 获取待执行任务的信息 */
-	executeTask, err := r.TaskByID(ctx, taskId)
+	executeTask, err := r.GetTask(ctx, taskId)
 	if err != nil {
 		return err
 	}

@@ -41,13 +41,11 @@ const (
 	Management_CreateTestcaseSuite_FullMethodName = "/api.management.v1.Management/CreateTestcaseSuite"
 	Management_GetTestcaseSuite_FullMethodName    = "/api.management.v1.Management/GetTestcaseSuite"
 	Management_CreateTask_FullMethodName          = "/api.management.v1.Management/CreateTask"
-	Management_GetTask_FullMethodName             = "/api.management.v1.Management/GetTask"
-	Management_UpdateTask_FullMethodName          = "/api.management.v1.Management/UpdateTask"
+	Management_ExecuteTask_FullMethodName         = "/api.management.v1.Management/ExecuteTask"
+	Management_TaskInfo_FullMethodName            = "/api.management.v1.Management/TaskInfo"
 	Management_DeleteTask_FullMethodName          = "/api.management.v1.Management/DeleteTask"
 	Management_ListTimingTask_FullMethodName      = "/api.management.v1.Management/ListTimingTask"
-	Management_UpdateTaskStatus_FullMethodName    = "/api.management.v1.Management/UpdateTaskStatus"
 	Management_GetTaskProgress_FullMethodName     = "/api.management.v1.Management/GetTaskProgress"
-	Management_ExecuteTask_FullMethodName         = "/api.management.v1.Management/ExecuteTask"
 	Management_CreateApi_FullMethodName           = "/api.management.v1.Management/CreateApi"
 	Management_UpdateApi_FullMethodName           = "/api.management.v1.Management/UpdateApi"
 	Management_DeleteApi_FullMethodName           = "/api.management.v1.Management/DeleteApi"
@@ -84,13 +82,11 @@ type ManagementClient interface {
 	GetTestcaseSuite(ctx context.Context, in *GetTestcaseSuiteRequest, opts ...grpc.CallOption) (*GetTestcaseSuiteReply, error)
 	// 创建任务接口
 	CreateTask(ctx context.Context, in *CreateTaskRequest, opts ...grpc.CallOption) (*CreateTaskReply, error)
-	GetTask(ctx context.Context, in *TaskByIDRequest, opts ...grpc.CallOption) (*Task, error)
-	UpdateTask(ctx context.Context, in *UpdateTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ExecuteTask(ctx context.Context, in *ExecuteTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	TaskInfo(ctx context.Context, in *TaskInfoRequest, opts ...grpc.CallOption) (*Task, error)
 	DeleteTask(ctx context.Context, in *DeleteTaskRequest, opts ...grpc.CallOption) (*DeleteTaskReply, error)
 	ListTimingTask(ctx context.Context, in *ListTimingTaskRequest, opts ...grpc.CallOption) (*ListTimingTaskReply, error)
-	UpdateTaskStatus(ctx context.Context, in *UpdateTaskStatusRequest, opts ...grpc.CallOption) (*UpdateTaskStatusReply, error)
 	GetTaskProgress(ctx context.Context, in *TaskProgressRequest, opts ...grpc.CallOption) (*TaskProgressReply, error)
-	ExecuteTask(ctx context.Context, in *ExecuteTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// API
 	CreateApi(ctx context.Context, in *CreateApiRequest, opts ...grpc.CallOption) (*CreateApiReply, error)
 	UpdateApi(ctx context.Context, in *UpdateApiRequest, opts ...grpc.CallOption) (*UpdateApiReply, error)
@@ -297,18 +293,18 @@ func (c *managementClient) CreateTask(ctx context.Context, in *CreateTaskRequest
 	return out, nil
 }
 
-func (c *managementClient) GetTask(ctx context.Context, in *TaskByIDRequest, opts ...grpc.CallOption) (*Task, error) {
-	out := new(Task)
-	err := c.cc.Invoke(ctx, Management_GetTask_FullMethodName, in, out, opts...)
+func (c *managementClient) ExecuteTask(ctx context.Context, in *ExecuteTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Management_ExecuteTask_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *managementClient) UpdateTask(ctx context.Context, in *UpdateTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Management_UpdateTask_FullMethodName, in, out, opts...)
+func (c *managementClient) TaskInfo(ctx context.Context, in *TaskInfoRequest, opts ...grpc.CallOption) (*Task, error) {
+	out := new(Task)
+	err := c.cc.Invoke(ctx, Management_TaskInfo_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -333,27 +329,9 @@ func (c *managementClient) ListTimingTask(ctx context.Context, in *ListTimingTas
 	return out, nil
 }
 
-func (c *managementClient) UpdateTaskStatus(ctx context.Context, in *UpdateTaskStatusRequest, opts ...grpc.CallOption) (*UpdateTaskStatusReply, error) {
-	out := new(UpdateTaskStatusReply)
-	err := c.cc.Invoke(ctx, Management_UpdateTaskStatus_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *managementClient) GetTaskProgress(ctx context.Context, in *TaskProgressRequest, opts ...grpc.CallOption) (*TaskProgressReply, error) {
 	out := new(TaskProgressReply)
 	err := c.cc.Invoke(ctx, Management_GetTaskProgress_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *managementClient) ExecuteTask(ctx context.Context, in *ExecuteTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, Management_ExecuteTask_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -442,13 +420,11 @@ type ManagementServer interface {
 	GetTestcaseSuite(context.Context, *GetTestcaseSuiteRequest) (*GetTestcaseSuiteReply, error)
 	// 创建任务接口
 	CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskReply, error)
-	GetTask(context.Context, *TaskByIDRequest) (*Task, error)
-	UpdateTask(context.Context, *UpdateTaskRequest) (*emptypb.Empty, error)
+	ExecuteTask(context.Context, *ExecuteTaskRequest) (*emptypb.Empty, error)
+	TaskInfo(context.Context, *TaskInfoRequest) (*Task, error)
 	DeleteTask(context.Context, *DeleteTaskRequest) (*DeleteTaskReply, error)
 	ListTimingTask(context.Context, *ListTimingTaskRequest) (*ListTimingTaskReply, error)
-	UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error)
 	GetTaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error)
-	ExecuteTask(context.Context, *ExecuteTaskRequest) (*emptypb.Empty, error)
 	// API
 	CreateApi(context.Context, *CreateApiRequest) (*CreateApiReply, error)
 	UpdateApi(context.Context, *UpdateApiRequest) (*UpdateApiReply, error)
@@ -526,11 +502,11 @@ func (UnimplementedManagementServer) GetTestcaseSuite(context.Context, *GetTestc
 func (UnimplementedManagementServer) CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTask not implemented")
 }
-func (UnimplementedManagementServer) GetTask(context.Context, *TaskByIDRequest) (*Task, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTask not implemented")
+func (UnimplementedManagementServer) ExecuteTask(context.Context, *ExecuteTaskRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExecuteTask not implemented")
 }
-func (UnimplementedManagementServer) UpdateTask(context.Context, *UpdateTaskRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateTask not implemented")
+func (UnimplementedManagementServer) TaskInfo(context.Context, *TaskInfoRequest) (*Task, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TaskInfo not implemented")
 }
 func (UnimplementedManagementServer) DeleteTask(context.Context, *DeleteTaskRequest) (*DeleteTaskReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTask not implemented")
@@ -538,14 +514,8 @@ func (UnimplementedManagementServer) DeleteTask(context.Context, *DeleteTaskRequ
 func (UnimplementedManagementServer) ListTimingTask(context.Context, *ListTimingTaskRequest) (*ListTimingTaskReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTimingTask not implemented")
 }
-func (UnimplementedManagementServer) UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateTaskStatus not implemented")
-}
 func (UnimplementedManagementServer) GetTaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTaskProgress not implemented")
-}
-func (UnimplementedManagementServer) ExecuteTask(context.Context, *ExecuteTaskRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ExecuteTask not implemented")
 }
 func (UnimplementedManagementServer) CreateApi(context.Context, *CreateApiRequest) (*CreateApiReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateApi not implemented")
@@ -956,38 +926,38 @@ func _Management_CreateTask_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Management_GetTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TaskByIDRequest)
+func _Management_ExecuteTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExecuteTaskRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ManagementServer).GetTask(ctx, in)
+		return srv.(ManagementServer).ExecuteTask(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Management_GetTask_FullMethodName,
+		FullMethod: Management_ExecuteTask_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagementServer).GetTask(ctx, req.(*TaskByIDRequest))
+		return srv.(ManagementServer).ExecuteTask(ctx, req.(*ExecuteTaskRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Management_UpdateTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateTaskRequest)
+func _Management_TaskInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ManagementServer).UpdateTask(ctx, in)
+		return srv.(ManagementServer).TaskInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Management_UpdateTask_FullMethodName,
+		FullMethod: Management_TaskInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagementServer).UpdateTask(ctx, req.(*UpdateTaskRequest))
+		return srv.(ManagementServer).TaskInfo(ctx, req.(*TaskInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1028,24 +998,6 @@ func _Management_ListTimingTask_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Management_UpdateTaskStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateTaskStatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagementServer).UpdateTaskStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Management_UpdateTaskStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagementServer).UpdateTaskStatus(ctx, req.(*UpdateTaskStatusRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Management_GetTaskProgress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TaskProgressRequest)
 	if err := dec(in); err != nil {
@@ -1060,24 +1012,6 @@ func _Management_GetTaskProgress_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ManagementServer).GetTaskProgress(ctx, req.(*TaskProgressRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Management_ExecuteTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ExecuteTaskRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ManagementServer).ExecuteTask(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Management_ExecuteTask_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagementServer).ExecuteTask(ctx, req.(*ExecuteTaskRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1282,12 +1216,12 @@ var Management_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Management_CreateTask_Handler,
 		},
 		{
-			MethodName: "GetTask",
-			Handler:    _Management_GetTask_Handler,
+			MethodName: "ExecuteTask",
+			Handler:    _Management_ExecuteTask_Handler,
 		},
 		{
-			MethodName: "UpdateTask",
-			Handler:    _Management_UpdateTask_Handler,
+			MethodName: "TaskInfo",
+			Handler:    _Management_TaskInfo_Handler,
 		},
 		{
 			MethodName: "DeleteTask",
@@ -1298,16 +1232,8 @@ var Management_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Management_ListTimingTask_Handler,
 		},
 		{
-			MethodName: "UpdateTaskStatus",
-			Handler:    _Management_UpdateTaskStatus_Handler,
-		},
-		{
 			MethodName: "GetTaskProgress",
 			Handler:    _Management_GetTaskProgress_Handler,
-		},
-		{
-			MethodName: "ExecuteTask",
-			Handler:    _Management_ExecuteTask_Handler,
 		},
 		{
 			MethodName: "CreateApi",

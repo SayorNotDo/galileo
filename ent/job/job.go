@@ -29,6 +29,8 @@ const (
 	FieldConfig = "config"
 	// FieldTaskID holds the string denoting the task_id field in the database.
 	FieldTaskID = "task_id"
+	// FieldActive holds the string denoting the active field in the database.
+	FieldActive = "active"
 	// Table holds the table name of the job in the database.
 	Table = "jobs"
 )
@@ -45,6 +47,7 @@ var Columns = []string{
 	FieldUUID,
 	FieldConfig,
 	FieldTaskID,
+	FieldActive,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

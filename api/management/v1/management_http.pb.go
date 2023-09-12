@@ -30,16 +30,14 @@ const OperationManagementCreateTestcaseSuite = "/api.management.v1.Management/Cr
 const OperationManagementDebugTestcase = "/api.management.v1.Management/DebugTestcase"
 const OperationManagementExecuteTask = "/api.management.v1.Management/ExecuteTask"
 const OperationManagementGetProject = "/api.management.v1.Management/GetProject"
-const OperationManagementGetTask = "/api.management.v1.Management/GetTask"
 const OperationManagementGetTaskProgress = "/api.management.v1.Management/GetTaskProgress"
 const OperationManagementGetTestPlaById = "/api.management.v1.Management/GetTestPlaById"
 const OperationManagementGetTestcaseById = "/api.management.v1.Management/GetTestcaseById"
 const OperationManagementListApi = "/api.management.v1.Management/ListApi"
 const OperationManagementLoadFramework = "/api.management.v1.Management/LoadFramework"
+const OperationManagementTaskInfo = "/api.management.v1.Management/TaskInfo"
 const OperationManagementUpdateApi = "/api.management.v1.Management/UpdateApi"
 const OperationManagementUpdateProject = "/api.management.v1.Management/UpdateProject"
-const OperationManagementUpdateTask = "/api.management.v1.Management/UpdateTask"
-const OperationManagementUpdateTaskStatus = "/api.management.v1.Management/UpdateTaskStatus"
 const OperationManagementUpdateTestPlan = "/api.management.v1.Management/UpdateTestPlan"
 const OperationManagementUpdateTestcase = "/api.management.v1.Management/UpdateTestcase"
 
@@ -58,16 +56,14 @@ type ManagementHTTPServer interface {
 	DebugTestcase(context.Context, *DebugTestcaseRequest) (*DebugTestcaseReply, error)
 	ExecuteTask(context.Context, *ExecuteTaskRequest) (*emptypb.Empty, error)
 	GetProject(context.Context, *GetProjectRequest) (*ProjectInfo, error)
-	GetTask(context.Context, *TaskByIDRequest) (*Task, error)
 	GetTaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error)
 	GetTestPlaById(context.Context, *GetTestPlanRequest) (*GetTestPlanReply, error)
 	GetTestcaseById(context.Context, *GetTestcaseRequest) (*GetTestcaseReply, error)
 	ListApi(context.Context, *ListApiRequest) (*ListApiReply, error)
 	LoadFramework(context.Context, *LoadFrameworkRequest) (*LoadFrameworkReply, error)
+	TaskInfo(context.Context, *TaskInfoRequest) (*Task, error)
 	UpdateApi(context.Context, *UpdateApiRequest) (*UpdateApiReply, error)
 	UpdateProject(context.Context, *UpdateProjectRequest) (*emptypb.Empty, error)
-	UpdateTask(context.Context, *UpdateTaskRequest) (*emptypb.Empty, error)
-	UpdateTaskStatus(context.Context, *UpdateTaskStatusRequest) (*UpdateTaskStatusReply, error)
 	UpdateTestPlan(context.Context, *UpdateTestPlanRequest) (*emptypb.Empty, error)
 	UpdateTestcase(context.Context, *UpdateTestcaseRequest) (*UpdateTestcaseReply, error)
 }
@@ -88,11 +84,10 @@ func RegisterManagementHTTPServer(s *http.Server, srv ManagementHTTPServer) {
 	r.POST("v1/api/management/testcase/loadFramework", _Management_LoadFramework0_HTTP_Handler(srv))
 	r.POST("v1/api/management/case-suite", _Management_CreateTestcaseSuite0_HTTP_Handler(srv))
 	r.POST("v1/api/management/task", _Management_CreateTask0_HTTP_Handler(srv))
-	r.GET("v1/api/management/task/{id}", _Management_GetTask0_HTTP_Handler(srv))
-	r.PUT("v1/api/management/task", _Management_UpdateTask0_HTTP_Handler(srv))
-	r.PUT("v1/api/management/task/status", _Management_UpdateTaskStatus0_HTTP_Handler(srv))
-	r.GET("v1/api/management/task/{id}/progress", _Management_GetTaskProgress0_HTTP_Handler(srv))
 	r.POST("v1/api/management/task/execute", _Management_ExecuteTask0_HTTP_Handler(srv))
+	r.PUT("v1/api/management/task/{id}", _Management_TaskInfo0_HTTP_Handler(srv))
+	r.GET("v1/api/management/task/{id}", _Management_TaskInfo1_HTTP_Handler(srv))
+	r.GET("v1/api/management/task/{id}/progress", _Management_GetTaskProgress0_HTTP_Handler(srv))
 	r.POST("v1/api/management/interface", _Management_CreateApi0_HTTP_Handler(srv))
 	r.PUT("v1/api/management/interface", _Management_UpdateApi0_HTTP_Handler(srv))
 	r.GET("v1/api/management/interface/list/{pageNum}/{pageSize}", _Management_ListApi0_HTTP_Handler(srv))
@@ -403,40 +398,18 @@ func _Management_CreateTask0_HTTP_Handler(srv ManagementHTTPServer) func(ctx htt
 	}
 }
 
-func _Management_GetTask0_HTTP_Handler(srv ManagementHTTPServer) func(ctx http.Context) error {
+func _Management_ExecuteTask0_HTTP_Handler(srv ManagementHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in TaskByIDRequest
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationManagementGetTask)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.GetTask(ctx, req.(*TaskByIDRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*Task)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _Management_UpdateTask0_HTTP_Handler(srv ManagementHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in UpdateTaskRequest
+		var in ExecuteTaskRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationManagementUpdateTask)
+		http.SetOperation(ctx, OperationManagementExecuteTask)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UpdateTask(ctx, req.(*UpdateTaskRequest))
+			return srv.ExecuteTask(ctx, req.(*ExecuteTaskRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -447,24 +420,49 @@ func _Management_UpdateTask0_HTTP_Handler(srv ManagementHTTPServer) func(ctx htt
 	}
 }
 
-func _Management_UpdateTaskStatus0_HTTP_Handler(srv ManagementHTTPServer) func(ctx http.Context) error {
+func _Management_TaskInfo0_HTTP_Handler(srv ManagementHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in UpdateTaskStatusRequest
+		var in TaskInfoRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationManagementUpdateTaskStatus)
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationManagementTaskInfo)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UpdateTaskStatus(ctx, req.(*UpdateTaskStatusRequest))
+			return srv.TaskInfo(ctx, req.(*TaskInfoRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*UpdateTaskStatusReply)
+		reply := out.(*Task)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Management_TaskInfo1_HTTP_Handler(srv ManagementHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in TaskInfoRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationManagementTaskInfo)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.TaskInfo(ctx, req.(*TaskInfoRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*Task)
 		return ctx.Result(200, reply)
 	}
 }
@@ -487,28 +485,6 @@ func _Management_GetTaskProgress0_HTTP_Handler(srv ManagementHTTPServer) func(ct
 			return err
 		}
 		reply := out.(*TaskProgressReply)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _Management_ExecuteTask0_HTTP_Handler(srv ManagementHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in ExecuteTaskRequest
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationManagementExecuteTask)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.ExecuteTask(ctx, req.(*ExecuteTaskRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*emptypb.Empty)
 		return ctx.Result(200, reply)
 	}
 }
@@ -590,16 +566,14 @@ type ManagementHTTPClient interface {
 	DebugTestcase(ctx context.Context, req *DebugTestcaseRequest, opts ...http.CallOption) (rsp *DebugTestcaseReply, err error)
 	ExecuteTask(ctx context.Context, req *ExecuteTaskRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	GetProject(ctx context.Context, req *GetProjectRequest, opts ...http.CallOption) (rsp *ProjectInfo, err error)
-	GetTask(ctx context.Context, req *TaskByIDRequest, opts ...http.CallOption) (rsp *Task, err error)
 	GetTaskProgress(ctx context.Context, req *TaskProgressRequest, opts ...http.CallOption) (rsp *TaskProgressReply, err error)
 	GetTestPlaById(ctx context.Context, req *GetTestPlanRequest, opts ...http.CallOption) (rsp *GetTestPlanReply, err error)
 	GetTestcaseById(ctx context.Context, req *GetTestcaseRequest, opts ...http.CallOption) (rsp *GetTestcaseReply, err error)
 	ListApi(ctx context.Context, req *ListApiRequest, opts ...http.CallOption) (rsp *ListApiReply, err error)
 	LoadFramework(ctx context.Context, req *LoadFrameworkRequest, opts ...http.CallOption) (rsp *LoadFrameworkReply, err error)
+	TaskInfo(ctx context.Context, req *TaskInfoRequest, opts ...http.CallOption) (rsp *Task, err error)
 	UpdateApi(ctx context.Context, req *UpdateApiRequest, opts ...http.CallOption) (rsp *UpdateApiReply, err error)
 	UpdateProject(ctx context.Context, req *UpdateProjectRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
-	UpdateTask(ctx context.Context, req *UpdateTaskRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
-	UpdateTaskStatus(ctx context.Context, req *UpdateTaskStatusRequest, opts ...http.CallOption) (rsp *UpdateTaskStatusReply, err error)
 	UpdateTestPlan(ctx context.Context, req *UpdateTestPlanRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	UpdateTestcase(ctx context.Context, req *UpdateTestcaseRequest, opts ...http.CallOption) (rsp *UpdateTestcaseReply, err error)
 }
@@ -742,19 +716,6 @@ func (c *ManagementHTTPClientImpl) GetProject(ctx context.Context, in *GetProjec
 	return &out, err
 }
 
-func (c *ManagementHTTPClientImpl) GetTask(ctx context.Context, in *TaskByIDRequest, opts ...http.CallOption) (*Task, error) {
-	var out Task
-	pattern := "v1/api/management/task/{id}"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationManagementGetTask))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, err
-}
-
 func (c *ManagementHTTPClientImpl) GetTaskProgress(ctx context.Context, in *TaskProgressRequest, opts ...http.CallOption) (*TaskProgressReply, error) {
 	var out TaskProgressReply
 	pattern := "v1/api/management/task/{id}/progress"
@@ -820,6 +781,19 @@ func (c *ManagementHTTPClientImpl) LoadFramework(ctx context.Context, in *LoadFr
 	return &out, err
 }
 
+func (c *ManagementHTTPClientImpl) TaskInfo(ctx context.Context, in *TaskInfoRequest, opts ...http.CallOption) (*Task, error) {
+	var out Task
+	pattern := "v1/api/management/task/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationManagementTaskInfo))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
 func (c *ManagementHTTPClientImpl) UpdateApi(ctx context.Context, in *UpdateApiRequest, opts ...http.CallOption) (*UpdateApiReply, error) {
 	var out UpdateApiReply
 	pattern := "v1/api/management/interface"
@@ -838,32 +812,6 @@ func (c *ManagementHTTPClientImpl) UpdateProject(ctx context.Context, in *Update
 	pattern := "v1/api/management/project"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationManagementUpdateProject))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, err
-}
-
-func (c *ManagementHTTPClientImpl) UpdateTask(ctx context.Context, in *UpdateTaskRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
-	var out emptypb.Empty
-	pattern := "v1/api/management/task"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationManagementUpdateTask))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, err
-}
-
-func (c *ManagementHTTPClientImpl) UpdateTaskStatus(ctx context.Context, in *UpdateTaskStatusRequest, opts ...http.CallOption) (*UpdateTaskStatusReply, error) {
-	var out UpdateTaskStatusReply
-	pattern := "v1/api/management/task/status"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationManagementUpdateTaskStatus))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {

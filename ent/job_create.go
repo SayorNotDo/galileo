@@ -107,6 +107,12 @@ func (jc *JobCreate) SetTaskID(i int64) *JobCreate {
 	return jc
 }
 
+// SetActive sets the "active" field.
+func (jc *JobCreate) SetActive(b bool) *JobCreate {
+	jc.mutation.SetActive(b)
+	return jc
+}
+
 // SetID sets the "id" field.
 func (jc *JobCreate) SetID(i int64) *JobCreate {
 	jc.mutation.SetID(i)
@@ -173,6 +179,9 @@ func (jc *JobCreate) check() error {
 	}
 	if _, ok := jc.mutation.TaskID(); !ok {
 		return &ValidationError{Name: "task_id", err: errors.New(`ent: missing required field "Job.task_id"`)}
+	}
+	if _, ok := jc.mutation.Active(); !ok {
+		return &ValidationError{Name: "active", err: errors.New(`ent: missing required field "Job.active"`)}
 	}
 	return nil
 }
@@ -241,6 +250,10 @@ func (jc *JobCreate) createSpec() (*Job, *sqlgraph.CreateSpec) {
 	if value, ok := jc.mutation.TaskID(); ok {
 		_spec.SetField(job.FieldTaskID, field.TypeInt64, value)
 		_node.TaskID = value
+	}
+	if value, ok := jc.mutation.Active(); ok {
+		_spec.SetField(job.FieldActive, field.TypeBool, value)
+		_node.Active = value
 	}
 	return _node, _spec
 }
