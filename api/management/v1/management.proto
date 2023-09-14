@@ -28,7 +28,7 @@ service Management {
       body: "*"
     };
   }
-  rpc GetTestPlaById (GetTestPlanRequest) returns (GetTestPlanReply) {
+  rpc GetTestPlan (GetTestPlanRequest) returns (GetTestPlanReply) {
     option (google.api.http) = {
       get: "v1/api/management/testplan/{id}"
     };
@@ -255,7 +255,7 @@ message CreateTaskReply {
 }
 
 message ExecuteTaskRequest {
-  int64 taskId = 1;
+  int64 taskID = 1;
   string config = 2;
   uint32 worker = 3;
 }

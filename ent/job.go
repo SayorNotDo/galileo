@@ -32,6 +32,8 @@ type Job struct {
 	DeletedBy uint32 `json:"deleted_by,omitempty"`
 	// Job execute ID
 	UUID uuid.UUID `json:"uuid,omitempty"`
+	// Entry ID
+	EntryID string `json:"entry_id,omitempty"`
 	// 配置信息
 	Config string `json:"config,omitempty"`
 	// 关联的任务ID
@@ -49,7 +51,7 @@ func (*Job) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case job.FieldID, job.FieldCreatedBy, job.FieldWorker, job.FieldDeletedBy, job.FieldTaskID:
 			values[i] = new(sql.NullInt64)
-		case job.FieldConfig:
+		case job.FieldEntryID, job.FieldConfig:
 			values[i] = new(sql.NullString)
 		case job.FieldCreatedAt, job.FieldUpdatedAt, job.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -118,6 +120,12 @@ func (j *Job) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				j.UUID = *value
 			}
+		case job.FieldEntryID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field entry_id", values[i])
+			} else if value.Valid {
+				j.EntryID = value.String
+			}
 		case job.FieldConfig:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field config", values[i])
@@ -184,6 +192,9 @@ func (j *Job) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("uuid=")
 	builder.WriteString(fmt.Sprintf("%v", j.UUID))
+	builder.WriteString(", ")
+	builder.WriteString("entry_id=")
+	builder.WriteString(j.EntryID)
 	builder.WriteString(", ")
 	builder.WriteString("config=")
 	builder.WriteString(j.Config)

@@ -60,7 +60,7 @@ func (r *taskRepo) UpdateTask(ctx context.Context, task *biz.Task) (*biz.TaskInf
 	return nil, nil
 }
 
-func (r *taskRepo) TaskByName(ctx context.Context, name string) (*biz.TaskInfo, error) {
+func (r *taskRepo) QueryTaskByName(ctx context.Context, name string) (*biz.TaskInfo, error) {
 	/* 通过Name查询DeletedBy、DeletedAt为空的记录 */
 	queryTask, err := r.data.entDB.Task.Query().
 		Where(
@@ -164,29 +164,6 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.TaskInf
 		return nil, rollback(tx, err)
 	}
 
-	/* 当创建的任务为延时任务、定时任务时，调用Engine服务添加到定时任务列表 */
-	// TODO: 重构延时任务、定时任务添加逻辑
-	switch createTask.Type {
-	case DELAYED:
-		/* 添加延时任务 */
-	case PERIODIC:
-		/* 添加定时任务 */
-		//_, err := r.data.engineCli.AddCronJob(ctx, &engineV1.AddCronJobRequest{
-		//	TaskId:       createTask.ID,
-		//	Type:         int32(createTask.Type),
-		//	ScheduleTime: timestamppb.New(createTask.ScheduleTime),
-		//	Frequency:    engineV1.Frequency(taskV1.Frequency_value[createTask.Frequency]),
-		//})
-		//if err != nil {
-		//	return nil, rollback(tx, err)
-		//}
-		///* 添加成功后基于返回更新对应任务的ExecuteId */
-		//if _, err := tx.Task.UpdateOneID(createTask.ID).
-		//	Save(ctx); err != nil {
-		//	return nil, rollback(tx, err)
-		//}
-	}
-
 	/* 提交事务，失败则回滚 */
 	if err := tx.Commit(); err != nil {
 		return nil, rollback(tx, err)
@@ -201,10 +178,12 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.TaskInf
 
 func (r *taskRepo) ExecuteTask(ctx context.Context, taskId int64, worker uint32, config []byte) error {
 	/* 获取待执行任务的信息 */
+	r.log.Debugf("ExecuteTask taskId: %d, worker: %d, config: %v", taskId, worker, config)
 	executeTask, err := r.GetTask(ctx, taskId)
 	if err != nil {
 		return err
 	}
+
 	switch executeTask.Type {
 	case DEFAULT:
 		_, err := r.data.engineCli.AddDefaultJob(ctx, &engineV1.AddDefaultJobRequest{
@@ -215,11 +194,25 @@ func (r *taskRepo) ExecuteTask(ctx context.Context, taskId int64, worker uint32,
 		if err != nil {
 			return err
 		}
-	case DELAYED:
-	case PERIODIC:
-	}
+	/* 当创建的任务为延时任务、定时任务时，调用Engine服务添加到定时任务列表 */
+	// TODO: 重构延时任务、定时任务添加逻辑
 	/* 基于任务类型调用Engine的Job服务添加至不同队列 */
-	/* 保存Job记录至数据库 */
+	case DELAYED:
+		/* 添加延时任务 */
+		if _, err := r.data.engineCli.AddDelayedJob(ctx, &engineV1.AddDelayedJobRequest{
+			TaskID:      taskId,
+			Worker:      worker,
+			Config:      config,
+			DelayedTime: timestamppb.New(time.Now().Add(time.Second * 30)),
+		}); err != nil {
+			return err
+		}
+	case PERIODIC:
+		/* 添加定时任务 */
+		if _, err := r.data.engineCli.AddPeriodicJob(ctx, &engineV1.AddPeriodicJobRequest{}); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 func (r *taskRepo) SoftDeleteTask(ctx context.Context, uid uint32, taskId int64) (bool, error) {

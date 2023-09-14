@@ -3,10 +3,10 @@ package main
 import (
 	"flag"
 	"galileo/app/engine/internal/conf"
+	"galileo/pkg/asynq"
 	"galileo/pkg/utils/bootstrap"
 	"github.com/go-kratos/kratos/v2/encoding/json"
 	"github.com/go-kratos/kratos/v2/registry"
-	"github.com/tx7do/kratos-transport/transport/asynq"
 	"google.golang.org/protobuf/encoding/protojson"
 
 	"github.com/go-kratos/kratos/v2"

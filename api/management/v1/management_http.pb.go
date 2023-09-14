@@ -31,7 +31,7 @@ const OperationManagementDebugTestcase = "/api.management.v1.Management/DebugTes
 const OperationManagementExecuteTask = "/api.management.v1.Management/ExecuteTask"
 const OperationManagementGetProject = "/api.management.v1.Management/GetProject"
 const OperationManagementGetTaskProgress = "/api.management.v1.Management/GetTaskProgress"
-const OperationManagementGetTestPlaById = "/api.management.v1.Management/GetTestPlaById"
+const OperationManagementGetTestPlan = "/api.management.v1.Management/GetTestPlan"
 const OperationManagementGetTestcaseById = "/api.management.v1.Management/GetTestcaseById"
 const OperationManagementListApi = "/api.management.v1.Management/ListApi"
 const OperationManagementLoadFramework = "/api.management.v1.Management/LoadFramework"
@@ -57,7 +57,7 @@ type ManagementHTTPServer interface {
 	ExecuteTask(context.Context, *ExecuteTaskRequest) (*emptypb.Empty, error)
 	GetProject(context.Context, *GetProjectRequest) (*ProjectInfo, error)
 	GetTaskProgress(context.Context, *TaskProgressRequest) (*TaskProgressReply, error)
-	GetTestPlaById(context.Context, *GetTestPlanRequest) (*GetTestPlanReply, error)
+	GetTestPlan(context.Context, *GetTestPlanRequest) (*GetTestPlanReply, error)
 	GetTestcaseById(context.Context, *GetTestcaseRequest) (*GetTestcaseReply, error)
 	ListApi(context.Context, *ListApiRequest) (*ListApiReply, error)
 	LoadFramework(context.Context, *LoadFrameworkRequest) (*LoadFrameworkReply, error)
@@ -73,7 +73,7 @@ func RegisterManagementHTTPServer(s *http.Server, srv ManagementHTTPServer) {
 	r.GET("v1/api/management/info", _Management_BaseInformation0_HTTP_Handler(srv))
 	r.POST("v1/api/management/testplan", _Management_CreateTestPlan0_HTTP_Handler(srv))
 	r.PUT("v1/api/management/testplan", _Management_UpdateTestPlan0_HTTP_Handler(srv))
-	r.GET("v1/api/management/testplan/{id}", _Management_GetTestPlaById0_HTTP_Handler(srv))
+	r.GET("v1/api/management/testplan/{id}", _Management_GetTestPlan0_HTTP_Handler(srv))
 	r.POST("v1/api/management/project", _Management_CreateProject0_HTTP_Handler(srv))
 	r.PUT("v1/api/management/project", _Management_UpdateProject0_HTTP_Handler(srv))
 	r.GET("v1/api/management/project/{id}", _Management_GetProject0_HTTP_Handler(srv))
@@ -156,7 +156,7 @@ func _Management_UpdateTestPlan0_HTTP_Handler(srv ManagementHTTPServer) func(ctx
 	}
 }
 
-func _Management_GetTestPlaById0_HTTP_Handler(srv ManagementHTTPServer) func(ctx http.Context) error {
+func _Management_GetTestPlan0_HTTP_Handler(srv ManagementHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetTestPlanRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -165,9 +165,9 @@ func _Management_GetTestPlaById0_HTTP_Handler(srv ManagementHTTPServer) func(ctx
 		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationManagementGetTestPlaById)
+		http.SetOperation(ctx, OperationManagementGetTestPlan)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.GetTestPlaById(ctx, req.(*GetTestPlanRequest))
+			return srv.GetTestPlan(ctx, req.(*GetTestPlanRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -567,7 +567,7 @@ type ManagementHTTPClient interface {
 	ExecuteTask(ctx context.Context, req *ExecuteTaskRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	GetProject(ctx context.Context, req *GetProjectRequest, opts ...http.CallOption) (rsp *ProjectInfo, err error)
 	GetTaskProgress(ctx context.Context, req *TaskProgressRequest, opts ...http.CallOption) (rsp *TaskProgressReply, err error)
-	GetTestPlaById(ctx context.Context, req *GetTestPlanRequest, opts ...http.CallOption) (rsp *GetTestPlanReply, err error)
+	GetTestPlan(ctx context.Context, req *GetTestPlanRequest, opts ...http.CallOption) (rsp *GetTestPlanReply, err error)
 	GetTestcaseById(ctx context.Context, req *GetTestcaseRequest, opts ...http.CallOption) (rsp *GetTestcaseReply, err error)
 	ListApi(ctx context.Context, req *ListApiRequest, opts ...http.CallOption) (rsp *ListApiReply, err error)
 	LoadFramework(ctx context.Context, req *LoadFrameworkRequest, opts ...http.CallOption) (rsp *LoadFrameworkReply, err error)
@@ -729,11 +729,11 @@ func (c *ManagementHTTPClientImpl) GetTaskProgress(ctx context.Context, in *Task
 	return &out, err
 }
 
-func (c *ManagementHTTPClientImpl) GetTestPlaById(ctx context.Context, in *GetTestPlanRequest, opts ...http.CallOption) (*GetTestPlanReply, error) {
+func (c *ManagementHTTPClientImpl) GetTestPlan(ctx context.Context, in *GetTestPlanRequest, opts ...http.CallOption) (*GetTestPlanReply, error) {
 	var out GetTestPlanReply
 	pattern := "v1/api/management/testplan/{id}"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationManagementGetTestPlaById))
+	opts = append(opts, http.Operation(OperationManagementGetTestPlan))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

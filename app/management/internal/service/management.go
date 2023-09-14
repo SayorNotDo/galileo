@@ -52,8 +52,8 @@ func (s *ManagementService) UpdateTestPlan(ctx context.Context, req *v1.UpdateTe
 	return nil, nil
 }
 
-func (s *ManagementService) GetTestPlanById(ctx context.Context, req *v1.GetTestPlanRequest) (*v1.GetTestPlanReply, error) {
-	ret, err := s.uc.GetTestPlanById(ctx, req.Id)
+func (s *ManagementService) GetTestPlan(ctx context.Context, req *v1.GetTestPlanRequest) (*v1.GetTestPlanReply, error) {
+	ret, err := s.uc.GetTestPlan(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}

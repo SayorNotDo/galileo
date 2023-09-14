@@ -114,6 +114,26 @@ func (ju *JobUpdate) SetUUID(u uuid.UUID) *JobUpdate {
 	return ju
 }
 
+// SetEntryID sets the "entry_id" field.
+func (ju *JobUpdate) SetEntryID(s string) *JobUpdate {
+	ju.mutation.SetEntryID(s)
+	return ju
+}
+
+// SetNillableEntryID sets the "entry_id" field if the given value is not nil.
+func (ju *JobUpdate) SetNillableEntryID(s *string) *JobUpdate {
+	if s != nil {
+		ju.SetEntryID(*s)
+	}
+	return ju
+}
+
+// ClearEntryID clears the value of the "entry_id" field.
+func (ju *JobUpdate) ClearEntryID() *JobUpdate {
+	ju.mutation.ClearEntryID()
+	return ju
+}
+
 // SetConfig sets the "config" field.
 func (ju *JobUpdate) SetConfig(s string) *JobUpdate {
 	ju.mutation.SetConfig(s)
@@ -236,6 +256,12 @@ func (ju *JobUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ju.mutation.UUID(); ok {
 		_spec.SetField(job.FieldUUID, field.TypeUUID, value)
 	}
+	if value, ok := ju.mutation.EntryID(); ok {
+		_spec.SetField(job.FieldEntryID, field.TypeString, value)
+	}
+	if ju.mutation.EntryIDCleared() {
+		_spec.ClearField(job.FieldEntryID, field.TypeString)
+	}
 	if value, ok := ju.mutation.Config(); ok {
 		_spec.SetField(job.FieldConfig, field.TypeString, value)
 	}
@@ -353,6 +379,26 @@ func (juo *JobUpdateOne) ClearDeletedBy() *JobUpdateOne {
 // SetUUID sets the "uuid" field.
 func (juo *JobUpdateOne) SetUUID(u uuid.UUID) *JobUpdateOne {
 	juo.mutation.SetUUID(u)
+	return juo
+}
+
+// SetEntryID sets the "entry_id" field.
+func (juo *JobUpdateOne) SetEntryID(s string) *JobUpdateOne {
+	juo.mutation.SetEntryID(s)
+	return juo
+}
+
+// SetNillableEntryID sets the "entry_id" field if the given value is not nil.
+func (juo *JobUpdateOne) SetNillableEntryID(s *string) *JobUpdateOne {
+	if s != nil {
+		juo.SetEntryID(*s)
+	}
+	return juo
+}
+
+// ClearEntryID clears the value of the "entry_id" field.
+func (juo *JobUpdateOne) ClearEntryID() *JobUpdateOne {
+	juo.mutation.ClearEntryID()
 	return juo
 }
 
@@ -507,6 +553,12 @@ func (juo *JobUpdateOne) sqlSave(ctx context.Context) (_node *Job, err error) {
 	}
 	if value, ok := juo.mutation.UUID(); ok {
 		_spec.SetField(job.FieldUUID, field.TypeUUID, value)
+	}
+	if value, ok := juo.mutation.EntryID(); ok {
+		_spec.SetField(job.FieldEntryID, field.TypeString, value)
+	}
+	if juo.mutation.EntryIDCleared() {
+		_spec.ClearField(job.FieldEntryID, field.TypeString)
 	}
 	if value, ok := juo.mutation.Config(); ok {
 		_spec.SetField(job.FieldConfig, field.TypeString, value)

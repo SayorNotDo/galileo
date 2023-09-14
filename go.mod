@@ -37,9 +37,9 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/redis/go-redis/extra/redisotel/v9 v9.0.5
 	github.com/redis/go-redis/v9 v9.1.0
-	github.com/robfig/cron/v3 v3.0.1
 	github.com/samber/lo v1.38.1
-	github.com/tx7do/kratos-transport/transport/asynq v1.0.1
+	github.com/stretchr/testify v1.8.4
+	github.com/tx7do/kratos-transport v1.0.12
 	go.etcd.io/etcd/client/v3 v3.5.7
 	go.opentelemetry.io/otel v1.17.0
 	go.opentelemetry.io/otel/exporters/jaeger v1.13.0
@@ -139,10 +139,13 @@ require (
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/runc v1.1.7 // indirect
+	github.com/openzipkin/zipkin-go v0.4.2 // indirect
 	github.com/pierrec/lz4/v4 v4.1.17 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rakyll/statik v0.1.7 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/redis/go-redis/extra/rediscmd/v9 v9.0.5 // indirect
+	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rogpeppe/go-internal v1.10.1-0.20230508101108-a4f6fabd84c5 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/cast v1.5.1 // indirect
@@ -153,9 +156,13 @@ require (
 	github.com/zclconf/go-cty v1.8.0 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.7 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.7 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.17.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.17.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.17.0 // indirect
+	go.opentelemetry.io/otel/exporters/zipkin v1.17.0 // indirect
 	go.opentelemetry.io/otel/metric v1.17.0 // indirect
+	go.opentelemetry.io/proto/otlp v1.0.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	go.uber.org/goleak v1.2.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.17.0 // indirect
 	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1 // indirect

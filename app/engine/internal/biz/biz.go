@@ -37,8 +37,9 @@ type Job struct {
 	DeletedAt time.Time `json:"deleted_at"`
 	DeletedBy string    `json:"deleted_by"`
 	UUID      uuid.UUID `json:"uuid"`
+	EntryID   string    `json:"entry_id"`
 	Config    *Config   `json:"config"`
-	TaskId    int64     `json:"task_id"`
+	TaskID    int64     `json:"task_id"`
 }
 
 type SchedulerUseCase struct {

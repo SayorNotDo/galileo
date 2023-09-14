@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 
 
@@ -12,9 +13,9 @@ option java_package = "api.engine.v1";
 
 service Engine {
   /* 任务调度相关 */
-  rpc AddDefaultJob(AddDefaultJobRequest) returns (AddDefaultJobReply);
+  rpc AddDefaultJob(AddDefaultJobRequest) returns (google.protobuf.Empty);
   rpc AddPeriodicJob(AddPeriodicJobRequest) returns (AddPeriodicJobReply);
-  rpc AddDelayedJob(AddDelayedJobRequest) returns (AddDelayedJobReply);
+  rpc AddDelayedJob(AddDelayedJobRequest) returns (google.protobuf.Empty);
   rpc RemoveJob(RemoveJobRequest) returns (RemoveJobReply);
 
   /* 容器相关 */
@@ -39,8 +40,6 @@ message AddDefaultJobRequest {
   bytes config = 3;
 }
 
-message AddDefaultJobReply {}
-
 message AddPeriodicJobRequest {
   int64 taskId = 1;
   uint32 worker = 2;
@@ -54,12 +53,11 @@ message AddPeriodicJobReply {
 }
 
 message AddDelayedJobRequest {
-  int64 taskId = 1;
+  int64 taskID = 1;
   uint32 worker = 2;
-  google.protobuf.Timestamp delayedTime = 3;
+  bytes config = 3;
+  google.protobuf.Timestamp delayedTime = 4;
 }
-
-message AddDelayedJobReply {}
 
 message InspectContainerRequest {
   string id = 1;

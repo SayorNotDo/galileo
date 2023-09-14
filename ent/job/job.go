@@ -25,6 +25,8 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldUUID holds the string denoting the uuid field in the database.
 	FieldUUID = "uuid"
+	// FieldEntryID holds the string denoting the entry_id field in the database.
+	FieldEntryID = "entry_id"
 	// FieldConfig holds the string denoting the config field in the database.
 	FieldConfig = "config"
 	// FieldTaskID holds the string denoting the task_id field in the database.
@@ -45,6 +47,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldUUID,
+	FieldEntryID,
 	FieldConfig,
 	FieldTaskID,
 	FieldActive,

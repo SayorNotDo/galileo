@@ -90,6 +90,11 @@ func UUID(v uuid.UUID) predicate.Job {
 	return predicate.Job(sql.FieldEQ(FieldUUID, v))
 }
 
+// EntryID applies equality check predicate on the "entry_id" field. It's identical to EntryIDEQ.
+func EntryID(v string) predicate.Job {
+	return predicate.Job(sql.FieldEQ(FieldEntryID, v))
+}
+
 // Config applies equality check predicate on the "config" field. It's identical to ConfigEQ.
 func Config(v string) predicate.Job {
 	return predicate.Job(sql.FieldEQ(FieldConfig, v))
@@ -403,6 +408,81 @@ func UUIDLT(v uuid.UUID) predicate.Job {
 // UUIDLTE applies the LTE predicate on the "uuid" field.
 func UUIDLTE(v uuid.UUID) predicate.Job {
 	return predicate.Job(sql.FieldLTE(FieldUUID, v))
+}
+
+// EntryIDEQ applies the EQ predicate on the "entry_id" field.
+func EntryIDEQ(v string) predicate.Job {
+	return predicate.Job(sql.FieldEQ(FieldEntryID, v))
+}
+
+// EntryIDNEQ applies the NEQ predicate on the "entry_id" field.
+func EntryIDNEQ(v string) predicate.Job {
+	return predicate.Job(sql.FieldNEQ(FieldEntryID, v))
+}
+
+// EntryIDIn applies the In predicate on the "entry_id" field.
+func EntryIDIn(vs ...string) predicate.Job {
+	return predicate.Job(sql.FieldIn(FieldEntryID, vs...))
+}
+
+// EntryIDNotIn applies the NotIn predicate on the "entry_id" field.
+func EntryIDNotIn(vs ...string) predicate.Job {
+	return predicate.Job(sql.FieldNotIn(FieldEntryID, vs...))
+}
+
+// EntryIDGT applies the GT predicate on the "entry_id" field.
+func EntryIDGT(v string) predicate.Job {
+	return predicate.Job(sql.FieldGT(FieldEntryID, v))
+}
+
+// EntryIDGTE applies the GTE predicate on the "entry_id" field.
+func EntryIDGTE(v string) predicate.Job {
+	return predicate.Job(sql.FieldGTE(FieldEntryID, v))
+}
+
+// EntryIDLT applies the LT predicate on the "entry_id" field.
+func EntryIDLT(v string) predicate.Job {
+	return predicate.Job(sql.FieldLT(FieldEntryID, v))
+}
+
+// EntryIDLTE applies the LTE predicate on the "entry_id" field.
+func EntryIDLTE(v string) predicate.Job {
+	return predicate.Job(sql.FieldLTE(FieldEntryID, v))
+}
+
+// EntryIDContains applies the Contains predicate on the "entry_id" field.
+func EntryIDContains(v string) predicate.Job {
+	return predicate.Job(sql.FieldContains(FieldEntryID, v))
+}
+
+// EntryIDHasPrefix applies the HasPrefix predicate on the "entry_id" field.
+func EntryIDHasPrefix(v string) predicate.Job {
+	return predicate.Job(sql.FieldHasPrefix(FieldEntryID, v))
+}
+
+// EntryIDHasSuffix applies the HasSuffix predicate on the "entry_id" field.
+func EntryIDHasSuffix(v string) predicate.Job {
+	return predicate.Job(sql.FieldHasSuffix(FieldEntryID, v))
+}
+
+// EntryIDIsNil applies the IsNil predicate on the "entry_id" field.
+func EntryIDIsNil() predicate.Job {
+	return predicate.Job(sql.FieldIsNull(FieldEntryID))
+}
+
+// EntryIDNotNil applies the NotNil predicate on the "entry_id" field.
+func EntryIDNotNil() predicate.Job {
+	return predicate.Job(sql.FieldNotNull(FieldEntryID))
+}
+
+// EntryIDEqualFold applies the EqualFold predicate on the "entry_id" field.
+func EntryIDEqualFold(v string) predicate.Job {
+	return predicate.Job(sql.FieldEqualFold(FieldEntryID, v))
+}
+
+// EntryIDContainsFold applies the ContainsFold predicate on the "entry_id" field.
+func EntryIDContainsFold(v string) predicate.Job {
+	return predicate.Job(sql.FieldContainsFold(FieldEntryID, v))
 }
 
 // ConfigEQ applies the EQ predicate on the "config" field.

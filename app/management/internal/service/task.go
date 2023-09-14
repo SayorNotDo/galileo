@@ -42,13 +42,13 @@ func (s *ManagementService) CreateTask(ctx context.Context, req *v1.CreateTaskRe
 	}
 	s.logger.Debug("createTask: %v", createTask)
 
-	/* 查询数据库中是否存在同名任务 */
-	if queryTask, _ := s.sc.TaskByName(ctx, createTask.Name); queryTask != nil {
+	/* 查询数据库中是否存在同名任务（同名且未删除） */
+	if queryTask, _ := s.sc.QueryTaskByName(ctx, createTask.Name); queryTask != nil {
 		return nil, SetCustomizeErrMsg(ReasonParamsError, "duplicated task name")
 	}
 
 	/* 当传入的测试计划ID不为空时，查询测试计划是否存在 */
-	if queryPlan, _ := s.uc.GetTestPlanById(ctx, req.TestPlanId); queryPlan == nil {
+	if queryPlan, _ := s.uc.GetTestPlan(ctx, req.TestPlanId); queryPlan == nil {
 		return nil, SetCustomizeErrMsg(ReasonParamsError, "test plan is not exists")
 	}
 	createTask.TestPlanId = req.TestPlanId
@@ -68,7 +68,7 @@ func (s *ManagementService) CreateTask(ctx context.Context, req *v1.CreateTaskRe
 
 // ExecuteTask 执行任务
 func (s *ManagementService) ExecuteTask(ctx context.Context, req *v1.ExecuteTaskRequest) (*empty.Empty, error) {
-	err := s.sc.ExecuteTask(ctx, req.TaskId, req.Worker, []byte(req.Config))
+	err := s.sc.ExecuteTask(ctx, req.TaskID, req.Worker, []byte(req.Config))
 	if err != nil {
 		return nil, err
 	}

@@ -12,7 +12,7 @@ import (
 type ManagementRepo interface {
 	CreateTestPlan(context.Context, *TestPlan) (*TestPlan, error)
 	UpdateTestPlan(context.Context, *TestPlan) error
-	GetTestPlanById(ctx context.Context, id int64) (*TestPlan, error)
+	GetTestPlan(ctx context.Context, id int64) (*TestPlan, error)
 }
 
 type BaseInfo struct {
@@ -43,8 +43,9 @@ type ManagementUseCase struct {
 	logger *log.Helper
 }
 
-func NewManagementUseCase(logger log.Logger) *ManagementUseCase {
+func NewManagementUseCase(logger log.Logger, repo ManagementRepo) *ManagementUseCase {
 	return &ManagementUseCase{
+		repo:   repo,
 		logger: log.NewHelper(log.With(logger, "module", "management.UseCase")),
 	}
 }
@@ -56,8 +57,8 @@ func (uc *ManagementUseCase) CreateTestPlan(ctx context.Context, testPlan *TestP
 	return uc.repo.CreateTestPlan(ctx, testPlan)
 }
 
-func (uc *ManagementUseCase) GetTestPlanById(ctx context.Context, id int64) (*TestPlan, error) {
-	return uc.repo.GetTestPlanById(ctx, id)
+func (uc *ManagementUseCase) GetTestPlan(ctx context.Context, id int64) (*TestPlan, error) {
+	return uc.repo.GetTestPlan(ctx, id)
 }
 
 func (uc *ManagementUseCase) UpdateTestPlan(ctx context.Context, testPlan *TestPlan) error {

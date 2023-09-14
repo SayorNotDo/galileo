@@ -187,6 +187,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "uuid", Type: field.TypeUUID},
+		{Name: "entry_id", Type: field.TypeString, Nullable: true},
 		{Name: "config", Type: field.TypeString, Nullable: true},
 		{Name: "task_id", Type: field.TypeInt64},
 		{Name: "active", Type: field.TypeBool},

@@ -10,19 +10,19 @@ import (
 	"time"
 )
 
-type ManagementRepo struct {
+type managementRepo struct {
 	data *Data
 	log  *log.Helper
 }
 
-func NewManagementRepo(data *Data, logger log.Logger) *ManagementRepo {
-	return &ManagementRepo{
+func NewManagementRepo(data *Data, logger log.Logger) biz.ManagementRepo {
+	return &managementRepo{
 		data: data,
 		log:  log.NewHelper(log.With(logger, "module", "management.Repo")),
 	}
 }
 
-func (r *ManagementRepo) CreateTestPlan(ctx context.Context, plan *biz.TestPlan) (*biz.TestPlan, error) {
+func (r *managementRepo) CreateTestPlan(ctx context.Context, plan *biz.TestPlan) (*biz.TestPlan, error) {
 	tx, err := r.data.entDB.Tx(ctx)
 	if err != nil {
 		return nil, SetCustomizeErrMsg(ReasonSystemError, err.Error())
@@ -45,7 +45,7 @@ func (r *ManagementRepo) CreateTestPlan(ctx context.Context, plan *biz.TestPlan)
 	}, nil
 }
 
-func (r *ManagementRepo) UpdateTestPlan(ctx context.Context, plan *biz.TestPlan) error {
+func (r *managementRepo) UpdateTestPlan(ctx context.Context, plan *biz.TestPlan) error {
 	tx, err := r.data.entDB.Tx(ctx)
 	if err != nil {
 		return SetCustomizeErrMsg(ReasonSystemError, err.Error())
@@ -85,4 +85,8 @@ func (r *ManagementRepo) UpdateTestPlan(ctx context.Context, plan *biz.TestPlan)
 		return rollback(tx, err)
 	}
 	return nil
+}
+
+func (r *managementRepo) GetTestPlan(ctx context.Context, planID int64) (*biz.TestPlan, error) {
+	return &biz.TestPlan{}, nil
 }

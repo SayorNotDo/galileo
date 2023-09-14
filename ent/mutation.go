@@ -7963,6 +7963,7 @@ type JobMutation struct {
 	deleted_by    *uint32
 	adddeleted_by *int32
 	uuid          *uuid.UUID
+	entry_id      *string
 	_config       *string
 	task_id       *int64
 	addtask_id    *int64
@@ -8416,6 +8417,55 @@ func (m *JobMutation) ResetUUID() {
 	m.uuid = nil
 }
 
+// SetEntryID sets the "entry_id" field.
+func (m *JobMutation) SetEntryID(s string) {
+	m.entry_id = &s
+}
+
+// EntryID returns the value of the "entry_id" field in the mutation.
+func (m *JobMutation) EntryID() (r string, exists bool) {
+	v := m.entry_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEntryID returns the old "entry_id" field's value of the Job entity.
+// If the Job object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *JobMutation) OldEntryID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEntryID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEntryID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEntryID: %w", err)
+	}
+	return oldValue.EntryID, nil
+}
+
+// ClearEntryID clears the value of the "entry_id" field.
+func (m *JobMutation) ClearEntryID() {
+	m.entry_id = nil
+	m.clearedFields[job.FieldEntryID] = struct{}{}
+}
+
+// EntryIDCleared returns if the "entry_id" field was cleared in this mutation.
+func (m *JobMutation) EntryIDCleared() bool {
+	_, ok := m.clearedFields[job.FieldEntryID]
+	return ok
+}
+
+// ResetEntryID resets all changes to the "entry_id" field.
+func (m *JobMutation) ResetEntryID() {
+	m.entry_id = nil
+	delete(m.clearedFields, job.FieldEntryID)
+}
+
 // SetConfig sets the "config" field.
 func (m *JobMutation) SetConfig(s string) {
 	m._config = &s
@@ -8591,7 +8641,7 @@ func (m *JobMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *JobMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, job.FieldCreatedAt)
 	}
@@ -8612,6 +8662,9 @@ func (m *JobMutation) Fields() []string {
 	}
 	if m.uuid != nil {
 		fields = append(fields, job.FieldUUID)
+	}
+	if m.entry_id != nil {
+		fields = append(fields, job.FieldEntryID)
 	}
 	if m._config != nil {
 		fields = append(fields, job.FieldConfig)
@@ -8644,6 +8697,8 @@ func (m *JobMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedBy()
 	case job.FieldUUID:
 		return m.UUID()
+	case job.FieldEntryID:
+		return m.EntryID()
 	case job.FieldConfig:
 		return m.Config()
 	case job.FieldTaskID:
@@ -8673,6 +8728,8 @@ func (m *JobMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldDeletedBy(ctx)
 	case job.FieldUUID:
 		return m.OldUUID(ctx)
+	case job.FieldEntryID:
+		return m.OldEntryID(ctx)
 	case job.FieldConfig:
 		return m.OldConfig(ctx)
 	case job.FieldTaskID:
@@ -8736,6 +8793,13 @@ func (m *JobMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUUID(v)
+		return nil
+	case job.FieldEntryID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEntryID(v)
 		return nil
 	case job.FieldConfig:
 		v, ok := value.(string)
@@ -8845,6 +8909,9 @@ func (m *JobMutation) ClearedFields() []string {
 	if m.FieldCleared(job.FieldDeletedBy) {
 		fields = append(fields, job.FieldDeletedBy)
 	}
+	if m.FieldCleared(job.FieldEntryID) {
+		fields = append(fields, job.FieldEntryID)
+	}
 	if m.FieldCleared(job.FieldConfig) {
 		fields = append(fields, job.FieldConfig)
 	}
@@ -8867,6 +8934,9 @@ func (m *JobMutation) ClearField(name string) error {
 		return nil
 	case job.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case job.FieldEntryID:
+		m.ClearEntryID()
 		return nil
 	case job.FieldConfig:
 		m.ClearConfig()
@@ -8899,6 +8969,9 @@ func (m *JobMutation) ResetField(name string) error {
 		return nil
 	case job.FieldUUID:
 		m.ResetUUID()
+		return nil
+	case job.FieldEntryID:
+		m.ResetEntryID()
 		return nil
 	case job.FieldConfig:
 		m.ResetConfig()

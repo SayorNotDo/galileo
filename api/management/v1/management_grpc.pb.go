@@ -23,7 +23,7 @@ const (
 	Management_BaseInformation_FullMethodName     = "/api.management.v1.Management/BaseInformation"
 	Management_CreateTestPlan_FullMethodName      = "/api.management.v1.Management/CreateTestPlan"
 	Management_UpdateTestPlan_FullMethodName      = "/api.management.v1.Management/UpdateTestPlan"
-	Management_GetTestPlaById_FullMethodName      = "/api.management.v1.Management/GetTestPlaById"
+	Management_GetTestPlan_FullMethodName         = "/api.management.v1.Management/GetTestPlan"
 	Management_CreateProject_FullMethodName       = "/api.management.v1.Management/CreateProject"
 	Management_UpdateProject_FullMethodName       = "/api.management.v1.Management/UpdateProject"
 	Management_DeleteProject_FullMethodName       = "/api.management.v1.Management/DeleteProject"
@@ -61,7 +61,7 @@ type ManagementClient interface {
 	BaseInformation(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*BaseInfoReply, error)
 	CreateTestPlan(ctx context.Context, in *CreateTestPlanRequest, opts ...grpc.CallOption) (*CreateTestPlanReply, error)
 	UpdateTestPlan(ctx context.Context, in *UpdateTestPlanRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetTestPlaById(ctx context.Context, in *GetTestPlanRequest, opts ...grpc.CallOption) (*GetTestPlanReply, error)
+	GetTestPlan(ctx context.Context, in *GetTestPlanRequest, opts ...grpc.CallOption) (*GetTestPlanReply, error)
 	// project module
 	CreateProject(ctx context.Context, in *CreateProjectRequest, opts ...grpc.CallOption) (*CreateProjectReply, error)
 	UpdateProject(ctx context.Context, in *UpdateProjectRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -131,9 +131,9 @@ func (c *managementClient) UpdateTestPlan(ctx context.Context, in *UpdateTestPla
 	return out, nil
 }
 
-func (c *managementClient) GetTestPlaById(ctx context.Context, in *GetTestPlanRequest, opts ...grpc.CallOption) (*GetTestPlanReply, error) {
+func (c *managementClient) GetTestPlan(ctx context.Context, in *GetTestPlanRequest, opts ...grpc.CallOption) (*GetTestPlanReply, error) {
 	out := new(GetTestPlanReply)
-	err := c.cc.Invoke(ctx, Management_GetTestPlaById_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Management_GetTestPlan_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -399,7 +399,7 @@ type ManagementServer interface {
 	BaseInformation(context.Context, *emptypb.Empty) (*BaseInfoReply, error)
 	CreateTestPlan(context.Context, *CreateTestPlanRequest) (*CreateTestPlanReply, error)
 	UpdateTestPlan(context.Context, *UpdateTestPlanRequest) (*emptypb.Empty, error)
-	GetTestPlaById(context.Context, *GetTestPlanRequest) (*GetTestPlanReply, error)
+	GetTestPlan(context.Context, *GetTestPlanRequest) (*GetTestPlanReply, error)
 	// project module
 	CreateProject(context.Context, *CreateProjectRequest) (*CreateProjectReply, error)
 	UpdateProject(context.Context, *UpdateProjectRequest) (*emptypb.Empty, error)
@@ -448,8 +448,8 @@ func (UnimplementedManagementServer) CreateTestPlan(context.Context, *CreateTest
 func (UnimplementedManagementServer) UpdateTestPlan(context.Context, *UpdateTestPlanRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTestPlan not implemented")
 }
-func (UnimplementedManagementServer) GetTestPlaById(context.Context, *GetTestPlanRequest) (*GetTestPlanReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTestPlaById not implemented")
+func (UnimplementedManagementServer) GetTestPlan(context.Context, *GetTestPlanRequest) (*GetTestPlanReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTestPlan not implemented")
 }
 func (UnimplementedManagementServer) CreateProject(context.Context, *CreateProjectRequest) (*CreateProjectReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProject not implemented")
@@ -602,20 +602,20 @@ func _Management_UpdateTestPlan_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Management_GetTestPlaById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Management_GetTestPlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTestPlanRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ManagementServer).GetTestPlaById(ctx, in)
+		return srv.(ManagementServer).GetTestPlan(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Management_GetTestPlaById_FullMethodName,
+		FullMethod: Management_GetTestPlan_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ManagementServer).GetTestPlaById(ctx, req.(*GetTestPlanRequest))
+		return srv.(ManagementServer).GetTestPlan(ctx, req.(*GetTestPlanRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1144,8 +1144,8 @@ var Management_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Management_UpdateTestPlan_Handler,
 		},
 		{
-			MethodName: "GetTestPlaById",
-			Handler:    _Management_GetTestPlaById_Handler,
+			MethodName: "GetTestPlan",
+			Handler:    _Management_GetTestPlan_Handler,
 		},
 		{
 			MethodName: "CreateProject",

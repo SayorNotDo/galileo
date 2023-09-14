@@ -135,7 +135,7 @@ func (repo *dockerRepo) ParseComposeFile(ctx context.Context, fp []byte) ([]*biz
 	return nil, nil
 }
 
-func (r *engineRepo) BuildContainer(ctx context.Context, b *biz.Container) (*biz.Container, error) {
+func (repo *dockerRepo) BuildContainer(ctx context.Context, b *biz.Container) (*biz.Container, error) {
 	///* TODO: 容器构建过程 */
 	///* 创建Docker客户端 */
 	//cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())

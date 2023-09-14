@@ -1,7 +1,6 @@
 package biz
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -26,6 +25,7 @@ const (
 type DelayedJobPayload struct {
 	Task      int64         `json:"task"`
 	Worker    uint32        `json:"worker"`
+	Config    []byte        `json:"config"`
 	DelayTime time.Duration `json:"delay_time"`
 }
 
@@ -71,45 +71,34 @@ func NewPeriodicJobPayload(task int64, worker uint32, schedule string) ([]byte, 
 	return payload, nil
 }
 
-func NewDefaultJobPayload(task int64, worker uint32, config []byte) ([]byte, error) {
-	payload, err := json.Marshal(DefaultJobPayload{
+func NewDefaultJobPayload(task int64, worker uint32, config []byte) *DefaultJobPayload {
+	return &DefaultJobPayload{
 		Task:   task,
 		Worker: worker,
 		Config: config,
-	})
-	if err != nil {
-		return nil, err
 	}
-	return payload, nil
 }
 
-func NewDelayedJobPayload(task int64, worker uint32, delayTime time.Duration) ([]byte, error) {
-	payload, err := json.Marshal(DelayedJobPayload{
+func NewDelayedJobPayload(task int64, worker uint32, config []byte, delayTime time.Duration) *DelayedJobPayload {
+	return &DelayedJobPayload{
 		Task:      task,
 		Worker:    worker,
 		DelayTime: delayTime,
-	})
-	if err != nil {
-		return nil, err
+		Config:    config,
 	}
-	return payload, nil
 }
 
-func HandlePeriodicJob(ctx context.Context, task *asynq.Task) error {
+func HandlePeriodicJob(jobType string, task *asynq.Task) error {
 	var p PeriodicJobPayload
 	if err := json.Unmarshal(task.Payload(), &p); err != nil {
 		return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
 	}
-	log.Printf("DelayedJob: task_id=%d, worker_id=%d", p.Task, p.Worker)
+	log.Printf("DelayedJob: type=%s, task_id=%d, worker_id=%d", jobType, p.Task, p.Worker)
 	return nil
 }
 
-func HandleDefaultJob(ctx context.Context, task *asynq.Task) error {
-	var p DefaultJobPayload
-	if err := json.Unmarshal(task.Payload(), &p); err != nil {
-		return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
-	}
-	log.Printf("DelayedJob: task_id=%d, worker_id=%d", p.Task, p.Worker)
+func HandleDefaultJob(jobType string, payload *DefaultJobPayload) error {
+	log.Printf("DelayedJob: jobType: %s, task_id=%d, worker_id=%d", jobType, payload.Task, payload.Worker)
 	/* Default Task */
 	/* 定义重试策略 */
 	retryStrategy := []retry.Option{
@@ -118,7 +107,7 @@ func HandleDefaultJob(ctx context.Context, task *asynq.Task) error {
 		retry.LastErrorOnly(true),
 	}
 	err := retry.Do(func() error {
-		if err := JobRunCommand(p.Task, p.Worker, p.Config); err != nil {
+		if err := JobRunCommand(payload.Task, payload.Worker, payload.Config); err != nil {
 			return err
 		}
 		return nil
@@ -130,12 +119,8 @@ func HandleDefaultJob(ctx context.Context, task *asynq.Task) error {
 	return nil
 }
 
-func HandleDelayedJob(ctx context.Context, task *asynq.Task) error {
-	var p DelayedJobPayload
-	if err := json.Unmarshal(task.Payload(), &p); err != nil {
-		return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
-	}
-	log.Printf("DelayedJob: task_id=%d, worker_id=%d", p.Task, p.Worker)
+func HandleDelayedJob(jobType string, payload *DelayedJobPayload) error {
+	log.Printf("DelayedJob: task_id=%d, worker_id=%d", payload.Task, payload.Worker)
 	/* Delay Task */
 	return nil
 }

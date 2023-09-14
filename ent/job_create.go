@@ -87,6 +87,20 @@ func (jc *JobCreate) SetUUID(u uuid.UUID) *JobCreate {
 	return jc
 }
 
+// SetEntryID sets the "entry_id" field.
+func (jc *JobCreate) SetEntryID(s string) *JobCreate {
+	jc.mutation.SetEntryID(s)
+	return jc
+}
+
+// SetNillableEntryID sets the "entry_id" field if the given value is not nil.
+func (jc *JobCreate) SetNillableEntryID(s *string) *JobCreate {
+	if s != nil {
+		jc.SetEntryID(*s)
+	}
+	return jc
+}
+
 // SetConfig sets the "config" field.
 func (jc *JobCreate) SetConfig(s string) *JobCreate {
 	jc.mutation.SetConfig(s)
@@ -242,6 +256,10 @@ func (jc *JobCreate) createSpec() (*Job, *sqlgraph.CreateSpec) {
 	if value, ok := jc.mutation.UUID(); ok {
 		_spec.SetField(job.FieldUUID, field.TypeUUID, value)
 		_node.UUID = value
+	}
+	if value, ok := jc.mutation.EntryID(); ok {
+		_spec.SetField(job.FieldEntryID, field.TypeString, value)
+		_node.EntryID = value
 	}
 	if value, ok := jc.mutation.Config(); ok {
 		_spec.SetField(job.FieldConfig, field.TypeString, value)

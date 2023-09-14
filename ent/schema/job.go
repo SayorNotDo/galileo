@@ -23,6 +23,7 @@ func (Job) Fields() []ent.Field {
 		field.Time("deleted_at").Optional().Comment("删除时间"),
 		field.Uint32("deleted_by").Optional().Comment("删除操作执行人"),
 		field.UUID("uuid", uuid.UUID{}).Comment("Job execute ID"),
+		field.String("entry_id").Optional().Comment("Entry ID"),
 		field.String("config").Optional().Comment("配置信息"),
 		field.Int64("task_id").Comment("关联的任务ID"),
 		field.Bool("active").Comment("Job 执行情况"),

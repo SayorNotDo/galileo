@@ -65,7 +65,7 @@ type TaskRepo interface {
 	ListTimingTask(ctx context.Context, status []v1.TaskStatus) ([]*v1.Task, error)
 	CreateTask(ctx context.Context, task *Task) (*TaskInfo, error)
 	ExecuteTask(ctx context.Context, taskId int64, worker uint32, config []byte) error
-	TaskByName(ctx context.Context, name string) (*TaskInfo, error)
+	QueryTaskByName(ctx context.Context, name string) (*TaskInfo, error)
 	GetTask(ctx context.Context, id int64) (*TaskInfo, error)
 	UpdateTask(ctx context.Context, task *Task) (*TaskInfo, error)
 	UpdateTaskStatus(ctx context.Context, updateTask *Task) (*TaskInfo, error)
@@ -107,8 +107,8 @@ func (uc *TaskUseCase) ExecuteTask(ctx context.Context, taskId int64, worker uin
 	return uc.repo.ExecuteTask(ctx, taskId, worker, config)
 }
 
-func (uc *TaskUseCase) TaskByName(ctx context.Context, name string) (*TaskInfo, error) {
-	return uc.repo.TaskByName(ctx, name)
+func (uc *TaskUseCase) QueryTaskByName(ctx context.Context, name string) (*TaskInfo, error) {
+	return uc.repo.QueryTaskByName(ctx, name)
 }
 
 func (uc *TaskUseCase) GetTask(ctx context.Context, id int64) (*TaskInfo, error) {
