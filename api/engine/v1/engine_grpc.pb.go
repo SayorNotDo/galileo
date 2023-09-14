@@ -35,9 +35,9 @@ const (
 type EngineClient interface {
 	// 任务调度相关
 	AddDefaultJob(ctx context.Context, in *AddDefaultJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	AddPeriodicJob(ctx context.Context, in *AddPeriodicJobRequest, opts ...grpc.CallOption) (*AddPeriodicJobReply, error)
+	AddPeriodicJob(ctx context.Context, in *AddPeriodicJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	AddDelayedJob(ctx context.Context, in *AddDelayedJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	RemoveJob(ctx context.Context, in *RemoveJobRequest, opts ...grpc.CallOption) (*RemoveJobReply, error)
+	RemoveJob(ctx context.Context, in *RemoveJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 容器相关
 	CreateContainer(ctx context.Context, in *CreateContainerRequest, opts ...grpc.CallOption) (*CreateContainerReply, error)
 	ListContainers(ctx context.Context, in *ListContainerRequest, opts ...grpc.CallOption) (*ListContainersReply, error)
@@ -61,8 +61,8 @@ func (c *engineClient) AddDefaultJob(ctx context.Context, in *AddDefaultJobReque
 	return out, nil
 }
 
-func (c *engineClient) AddPeriodicJob(ctx context.Context, in *AddPeriodicJobRequest, opts ...grpc.CallOption) (*AddPeriodicJobReply, error) {
-	out := new(AddPeriodicJobReply)
+func (c *engineClient) AddPeriodicJob(ctx context.Context, in *AddPeriodicJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, Engine_AddPeriodicJob_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -79,8 +79,8 @@ func (c *engineClient) AddDelayedJob(ctx context.Context, in *AddDelayedJobReque
 	return out, nil
 }
 
-func (c *engineClient) RemoveJob(ctx context.Context, in *RemoveJobRequest, opts ...grpc.CallOption) (*RemoveJobReply, error) {
-	out := new(RemoveJobReply)
+func (c *engineClient) RemoveJob(ctx context.Context, in *RemoveJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, Engine_RemoveJob_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -121,9 +121,9 @@ func (c *engineClient) InspectContainer(ctx context.Context, in *InspectContaine
 type EngineServer interface {
 	// 任务调度相关
 	AddDefaultJob(context.Context, *AddDefaultJobRequest) (*emptypb.Empty, error)
-	AddPeriodicJob(context.Context, *AddPeriodicJobRequest) (*AddPeriodicJobReply, error)
+	AddPeriodicJob(context.Context, *AddPeriodicJobRequest) (*emptypb.Empty, error)
 	AddDelayedJob(context.Context, *AddDelayedJobRequest) (*emptypb.Empty, error)
-	RemoveJob(context.Context, *RemoveJobRequest) (*RemoveJobReply, error)
+	RemoveJob(context.Context, *RemoveJobRequest) (*emptypb.Empty, error)
 	// 容器相关
 	CreateContainer(context.Context, *CreateContainerRequest) (*CreateContainerReply, error)
 	ListContainers(context.Context, *ListContainerRequest) (*ListContainersReply, error)
@@ -138,13 +138,13 @@ type UnimplementedEngineServer struct {
 func (UnimplementedEngineServer) AddDefaultJob(context.Context, *AddDefaultJobRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddDefaultJob not implemented")
 }
-func (UnimplementedEngineServer) AddPeriodicJob(context.Context, *AddPeriodicJobRequest) (*AddPeriodicJobReply, error) {
+func (UnimplementedEngineServer) AddPeriodicJob(context.Context, *AddPeriodicJobRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddPeriodicJob not implemented")
 }
 func (UnimplementedEngineServer) AddDelayedJob(context.Context, *AddDelayedJobRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddDelayedJob not implemented")
 }
-func (UnimplementedEngineServer) RemoveJob(context.Context, *RemoveJobRequest) (*RemoveJobReply, error) {
+func (UnimplementedEngineServer) RemoveJob(context.Context, *RemoveJobRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveJob not implemented")
 }
 func (UnimplementedEngineServer) CreateContainer(context.Context, *CreateContainerRequest) (*CreateContainerReply, error) {

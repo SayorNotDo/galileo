@@ -11,11 +11,17 @@ func NewAsynqServer(c *conf.Data, logger log.Logger) *asynq.Server {
 	l := log.NewHelper(log.With(logger, "module", "engine.asynq"))
 	srv := asynq.NewServer(
 		asynq.WithAddress(c.Redis.Addr),
+		asynq.WithQueues(map[string]int{
+			"critical": 6,
+			"default":  3,
+			"low":      1,
+		}),
+		asynq.WithRedisDatabase(1),
 	)
 	var err error
 	err = asynq.RegisterSubscriber(srv, biz.TypeDelayedJob, biz.HandleDelayedJob)
 	err = asynq.RegisterSubscriber(srv, biz.TypeDefaultJob, biz.HandleDefaultJob)
-	//err = asynq.RegisterSubscriber(srv, biz.TypePeriodicJob, biz.HandlePeriodicJob)
+	err = asynq.RegisterSubscriber(srv, biz.TypePeriodicJob, biz.HandlePeriodicJob)
 	if err != nil {
 		l.Info("RegisterSubscriber failed: ", err)
 		panic(err)

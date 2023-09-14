@@ -8,6 +8,7 @@ data:
     driver: mysql
     source: root:test1234@tcp(127.0.0.1:3306)/galileo?charset=utf8mb4&parseTime=true&loc=Local
   redis:
+    db: 1
     addr: 127.0.0.1:6379
     dial_timeout: 1s
     read_timeout: 0.2s

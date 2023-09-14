@@ -10,20 +10,17 @@ import (
 
 // AddPeriodicJob
 /* 添加任务到调度列表 */
-func (s *EngineService) AddPeriodicJob(ctx context.Context, req *v1.AddPeriodicJobRequest) (*v1.AddPeriodicJobReply, error) {
+func (s *EngineService) AddPeriodicJob(ctx context.Context, req *v1.AddPeriodicJobRequest) (*emptypb.Empty, error) {
 	/* 生成定时规则 */
 	expression := biz.NewScheduleExpression(req.ScheduleTime.AsTime(), req.Frequency.String())
 	/* 生成定时任务payload */
-	payload, err := biz.NewPeriodicJobPayload(req.TaskId, req.Worker, expression)
-	if err != nil {
-		return nil, err
-	}
+	payload := biz.NewPeriodicJobPayload(req.TaskId, req.Worker, expression)
 	/* 增加定时任务到调度列表 */
-	_, err = s.sc.AddPeriodicJob(ctx, payload, expression)
+	_, err := s.sc.AddPeriodicJob(ctx, payload, expression)
 	if err != nil {
 		return nil, err
 	}
-	return &v1.AddPeriodicJobReply{}, nil
+	return &emptypb.Empty{}, nil
 }
 
 // AddDefaultJob
@@ -50,5 +47,12 @@ func (s *EngineService) AddDelayedJob(ctx context.Context, req *v1.AddDelayedJob
 	if err != nil {
 		return nil, err
 	}
+
 	return &emptypb.Empty{}, nil
+}
+
+func (s *EngineService) RemoveJob(ctx context.Context, req *v1.RemoveJobRequest) (*emptypb.Empty, error) {
+	/* 获取对应ID的Job信息 */
+	/* 基于对应的任务类型调用不同的biz方法 */
+	return nil, nil
 }

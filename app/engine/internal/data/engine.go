@@ -21,7 +21,7 @@ func NewEngineRepo(data *Data, logger log.Logger) biz.SchedulerRepo {
 	}
 }
 
-func (r *schedulerRepo) AddPeriodicJob(ctx context.Context, payload []byte, expression string) (*biz.Job, error) {
+func (r *schedulerRepo) AddPeriodicJob(ctx context.Context, payload *biz.PeriodicJobPayload, expression string) (*biz.Job, error) {
 	entryId, err := r.data.asynqSrv.NewPeriodicTask(expression, biz.TypePeriodicJob, payload)
 	if err != nil {
 		return nil, err
@@ -54,9 +54,20 @@ func (r *schedulerRepo) RemovePeriodicJob(ctx context.Context, entryId string) e
 	return r.data.asynqSrv.RemovePeriodicTask(entryId)
 }
 
-func (r *schedulerRepo) RemoveDelayedJob(ctx context.Context) error {
+func (r *schedulerRepo) RemoveDelayedJob(ctx context.Context, qName, jobID string) error {
+	/* TODO：Redis通过删除对应的键值对实现延时任务的删除 */
+	scheduledKey := biz.ScheduledKey(qName)
+	if err := r.data.redisCli.ZRem(ctx, scheduledKey, jobID).Err(); err != nil {
+		return err
+	}
+	jobKey := biz.JobKey(qName, jobID)
+	if err := r.data.redisCli.Del(ctx, jobKey).Err(); err != nil {
+		return err
+	}
 	return nil
 }
+
+func (r *schedulerRepo) ListDelayedJob(ctx context.Context) {}
 
 func (r *schedulerRepo) CreateJob(ctx context.Context, task *biz.Job) (*biz.Job, error) {
 	uid := ctxdata.UserIdFromMetaData(ctx)

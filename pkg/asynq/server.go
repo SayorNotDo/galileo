@@ -210,9 +210,6 @@ func (s *Server) RemovePeriodicTask(entryID string) error {
 	return nil
 }
 
-// RemoveDelayedTask remove delayed task
-/* TODO：Redis通过删除对应的键值对实现延时任务的删除 */
-
 // Start  server
 func (s *Server) Start(ctx context.Context) error {
 	if s.err != nil {

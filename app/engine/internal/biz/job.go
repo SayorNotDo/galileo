@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"galileo/pkg/errResponse"
 	"github.com/avast/retry-go"
-	"github.com/hibiken/asynq"
 	"io"
 	"log"
 	"net"
@@ -14,12 +13,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-)
-
-const (
-	TypeDefaultJob  = "job:default"
-	TypeDelayedJob  = "job:delayed"
-	TypePeriodicJob = "job:periodic"
 )
 
 type DelayedJobPayload struct {
@@ -59,16 +52,12 @@ func NewScheduleExpression(scheduleTime time.Time, frequency string) (expression
 	return
 }
 
-func NewPeriodicJobPayload(task int64, worker uint32, schedule string) ([]byte, error) {
-	payload, err := json.Marshal(PeriodicJobPayload{
+func NewPeriodicJobPayload(task int64, worker uint32, schedule string) *PeriodicJobPayload {
+	return &PeriodicJobPayload{
 		Task:     task,
 		Worker:   worker,
 		Schedule: schedule,
-	})
-	if err != nil {
-		return nil, err
 	}
-	return payload, nil
 }
 
 func NewDefaultJobPayload(task int64, worker uint32, config []byte) *DefaultJobPayload {
@@ -88,12 +77,8 @@ func NewDelayedJobPayload(task int64, worker uint32, config []byte, delayTime ti
 	}
 }
 
-func HandlePeriodicJob(jobType string, task *asynq.Task) error {
-	var p PeriodicJobPayload
-	if err := json.Unmarshal(task.Payload(), &p); err != nil {
-		return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
-	}
-	log.Printf("DelayedJob: type=%s, task_id=%d, worker_id=%d", jobType, p.Task, p.Worker)
+func HandlePeriodicJob(jobType string, payload *PeriodicJobPayload) error {
+	log.Printf("DelayedJob: type=%s, task_id=%d, worker_id=%d", jobType, payload.Task, payload.Worker)
 	return nil
 }
 

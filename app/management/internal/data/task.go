@@ -203,7 +203,7 @@ func (r *taskRepo) ExecuteTask(ctx context.Context, taskId int64, worker uint32,
 			TaskID:      taskId,
 			Worker:      worker,
 			Config:      config,
-			DelayedTime: timestamppb.New(time.Now().Add(time.Second * 30)),
+			DelayedTime: timestamppb.New(time.Now().Add(time.Second * 60)),
 		}); err != nil {
 			return err
 		}
