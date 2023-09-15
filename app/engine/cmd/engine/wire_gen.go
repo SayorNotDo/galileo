@@ -24,20 +24,24 @@ import (
 
 // wireApp init kratos application.
 func wireApp(confServer *conf.Server, confData *conf.Data, confService *conf.Service, registry *conf.Registry, logger log.Logger) (*kratos.App, func(), error) {
-	cmdable := data.NewRedis(confData, logger)
-	discovery := data.NewDiscovery(registry)
-	managementClient := data.NewTaskServiceClient(confService, discovery)
-	client := data.NewDockerClient(confService, logger)
-	asynqServer := server.NewAsynqServer(confData, logger)
-	dataData, cleanup, err := data.NewData(confData, logger, cmdable, managementClient, client, asynqServer)
+	client, err := data.NewEntDB(confData)
 	if err != nil {
 		return nil, nil, err
 	}
-	engineRepo := data.NewEngineRepo(dataData, logger)
-	engineUseCase := biz.NewEngineUseCase(engineRepo, logger)
+	redisClient := data.NewRedis(confData, logger)
+	discovery := data.NewDiscovery(registry)
+	managementClient := data.NewTaskServiceClient(confService, discovery)
+	clientClient := data.NewDockerClient(confService, logger)
+	asynqServer := server.NewAsynqServer(confData, logger)
+	dataData, cleanup, err := data.NewData(confData, client, logger, redisClient, managementClient, clientClient, asynqServer)
+	if err != nil {
+		return nil, nil, err
+	}
+	schedulerRepo := data.NewEngineRepo(dataData, logger)
+	schedulerUseCase := biz.NewEngineUseCase(schedulerRepo, logger)
 	dockerRepo := data.NewDockerRepo(dataData, logger)
 	dockerUseCase := biz.NewDockerUseCase(dockerRepo, logger)
-	engineService := service.NewEngineService(engineUseCase, dockerUseCase, logger)
+	engineService := service.NewEngineService(schedulerUseCase, dockerUseCase, logger)
 	grpcServer := server.NewGRPCServer(confServer, engineService, logger)
 	registrar := data.NewRegistrar(registry)
 	app := newApp(logger, grpcServer, asynqServer, registrar)

@@ -34,9 +34,25 @@ type PeriodicJobPayload struct {
 	Schedule string `json:"schedule"`
 }
 
+type Job struct {
+	ID        int64     `json:"id"`
+	Payload   []byte    `json:"payload"`
+	Type      string    `json:"type"`
+	CreatedAt time.Time `json:"created_at"`
+	CreatedBy string    `json:"created_by"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Worker    uint32    `json:"workers"`
+	DeletedAt time.Time `json:"deleted_at"`
+	DeletedBy string    `json:"deleted_by"`
+	EntryID   string    `json:"entry_id"`
+	Config    []byte    `json:"config"`
+	TaskID    int64     `json:"task_id"`
+	Active    bool      `json:"active"`
+}
+
 type Config struct {
 	Port     int    `json:"port"`
-	Protocol string `json:"schema"`
+	Protocol string `json:"protocol	"`
 	Params   []byte `json:"params"`
 }
 
@@ -100,13 +116,13 @@ func HandleDefaultJob(jobType string, payload *DefaultJobPayload) error {
 	if err != nil {
 		return err
 	}
-	/* 数据库写入Job记录 */
 	return nil
 }
 
 func HandleDelayedJob(jobType string, payload *DelayedJobPayload) error {
 	log.Printf("DelayedJob: task_id=%d, worker_id=%d", payload.Task, payload.Worker)
-	/* Delay Task */
+	/* Delay Task 执行逻辑 */
+	/* 完成任务下发后修改对应任务的active字段值 */
 	return nil
 }
 

@@ -49,3 +49,11 @@ func UserIdFromMetaData(ctx context.Context) uint32 {
 	}
 	return uint32(uid)
 }
+
+func UserIdToMetaData(ctx context.Context, uid uint32) context.Context {
+	return metadata.AppendToClientContext(ctx, UserIdKey, strconv.Itoa(int(uid)))
+}
+
+func UsernameToMetadata(ctx context.Context, username string) context.Context {
+	return metadata.AppendToClientContext(ctx, Username, username)
+}

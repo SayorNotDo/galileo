@@ -7956,15 +7956,16 @@ type JobMutation struct {
 	created_at    *time.Time
 	created_by    *uint32
 	addcreated_by *int32
+	payload       *[]byte
+	_type         *string
 	updated_at    *time.Time
 	worker        *uint32
 	addworker     *int32
 	deleted_at    *time.Time
 	deleted_by    *uint32
 	adddeleted_by *int32
-	uuid          *uuid.UUID
 	entry_id      *string
-	_config       *string
+	_config       *[]byte
 	task_id       *int64
 	addtask_id    *int64
 	active        *bool
@@ -8170,6 +8171,104 @@ func (m *JobMutation) ResetCreatedBy() {
 	m.addcreated_by = nil
 }
 
+// SetPayload sets the "payload" field.
+func (m *JobMutation) SetPayload(b []byte) {
+	m.payload = &b
+}
+
+// Payload returns the value of the "payload" field in the mutation.
+func (m *JobMutation) Payload() (r []byte, exists bool) {
+	v := m.payload
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPayload returns the old "payload" field's value of the Job entity.
+// If the Job object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *JobMutation) OldPayload(ctx context.Context) (v []byte, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPayload is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPayload requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPayload: %w", err)
+	}
+	return oldValue.Payload, nil
+}
+
+// ClearPayload clears the value of the "payload" field.
+func (m *JobMutation) ClearPayload() {
+	m.payload = nil
+	m.clearedFields[job.FieldPayload] = struct{}{}
+}
+
+// PayloadCleared returns if the "payload" field was cleared in this mutation.
+func (m *JobMutation) PayloadCleared() bool {
+	_, ok := m.clearedFields[job.FieldPayload]
+	return ok
+}
+
+// ResetPayload resets all changes to the "payload" field.
+func (m *JobMutation) ResetPayload() {
+	m.payload = nil
+	delete(m.clearedFields, job.FieldPayload)
+}
+
+// SetType sets the "type" field.
+func (m *JobMutation) SetType(s string) {
+	m._type = &s
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *JobMutation) GetType() (r string, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the Job entity.
+// If the Job object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *JobMutation) OldType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ClearType clears the value of the "type" field.
+func (m *JobMutation) ClearType() {
+	m._type = nil
+	m.clearedFields[job.FieldType] = struct{}{}
+}
+
+// TypeCleared returns if the "type" field was cleared in this mutation.
+func (m *JobMutation) TypeCleared() bool {
+	_, ok := m.clearedFields[job.FieldType]
+	return ok
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *JobMutation) ResetType() {
+	m._type = nil
+	delete(m.clearedFields, job.FieldType)
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (m *JobMutation) SetUpdatedAt(t time.Time) {
 	m.updated_at = &t
@@ -8201,9 +8300,22 @@ func (m *JobMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error)
 	return oldValue.UpdatedAt, nil
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *JobMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[job.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *JobMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[job.FieldUpdatedAt]
+	return ok
+}
+
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *JobMutation) ResetUpdatedAt() {
 	m.updated_at = nil
+	delete(m.clearedFields, job.FieldUpdatedAt)
 }
 
 // SetWorker sets the "worker" field.
@@ -8381,42 +8493,6 @@ func (m *JobMutation) ResetDeletedBy() {
 	delete(m.clearedFields, job.FieldDeletedBy)
 }
 
-// SetUUID sets the "uuid" field.
-func (m *JobMutation) SetUUID(u uuid.UUID) {
-	m.uuid = &u
-}
-
-// UUID returns the value of the "uuid" field in the mutation.
-func (m *JobMutation) UUID() (r uuid.UUID, exists bool) {
-	v := m.uuid
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUUID returns the old "uuid" field's value of the Job entity.
-// If the Job object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *JobMutation) OldUUID(ctx context.Context) (v uuid.UUID, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUUID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUUID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUUID: %w", err)
-	}
-	return oldValue.UUID, nil
-}
-
-// ResetUUID resets all changes to the "uuid" field.
-func (m *JobMutation) ResetUUID() {
-	m.uuid = nil
-}
-
 // SetEntryID sets the "entry_id" field.
 func (m *JobMutation) SetEntryID(s string) {
 	m.entry_id = &s
@@ -8467,12 +8543,12 @@ func (m *JobMutation) ResetEntryID() {
 }
 
 // SetConfig sets the "config" field.
-func (m *JobMutation) SetConfig(s string) {
-	m._config = &s
+func (m *JobMutation) SetConfig(b []byte) {
+	m._config = &b
 }
 
 // Config returns the value of the "config" field in the mutation.
-func (m *JobMutation) Config() (r string, exists bool) {
+func (m *JobMutation) Config() (r []byte, exists bool) {
 	v := m._config
 	if v == nil {
 		return
@@ -8483,7 +8559,7 @@ func (m *JobMutation) Config() (r string, exists bool) {
 // OldConfig returns the old "config" field's value of the Job entity.
 // If the Job object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *JobMutation) OldConfig(ctx context.Context) (v string, err error) {
+func (m *JobMutation) OldConfig(ctx context.Context) (v []byte, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldConfig is only allowed on UpdateOne operations")
 	}
@@ -8641,12 +8717,18 @@ func (m *JobMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *JobMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, job.FieldCreatedAt)
 	}
 	if m.created_by != nil {
 		fields = append(fields, job.FieldCreatedBy)
+	}
+	if m.payload != nil {
+		fields = append(fields, job.FieldPayload)
+	}
+	if m._type != nil {
+		fields = append(fields, job.FieldType)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, job.FieldUpdatedAt)
@@ -8659,9 +8741,6 @@ func (m *JobMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, job.FieldDeletedBy)
-	}
-	if m.uuid != nil {
-		fields = append(fields, job.FieldUUID)
 	}
 	if m.entry_id != nil {
 		fields = append(fields, job.FieldEntryID)
@@ -8687,6 +8766,10 @@ func (m *JobMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case job.FieldCreatedBy:
 		return m.CreatedBy()
+	case job.FieldPayload:
+		return m.Payload()
+	case job.FieldType:
+		return m.GetType()
 	case job.FieldUpdatedAt:
 		return m.UpdatedAt()
 	case job.FieldWorker:
@@ -8695,8 +8778,6 @@ func (m *JobMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case job.FieldDeletedBy:
 		return m.DeletedBy()
-	case job.FieldUUID:
-		return m.UUID()
 	case job.FieldEntryID:
 		return m.EntryID()
 	case job.FieldConfig:
@@ -8718,6 +8799,10 @@ func (m *JobMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldCreatedAt(ctx)
 	case job.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
+	case job.FieldPayload:
+		return m.OldPayload(ctx)
+	case job.FieldType:
+		return m.OldType(ctx)
 	case job.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
 	case job.FieldWorker:
@@ -8726,8 +8811,6 @@ func (m *JobMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldDeletedAt(ctx)
 	case job.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
-	case job.FieldUUID:
-		return m.OldUUID(ctx)
 	case job.FieldEntryID:
 		return m.OldEntryID(ctx)
 	case job.FieldConfig:
@@ -8759,6 +8842,20 @@ func (m *JobMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCreatedBy(v)
 		return nil
+	case job.FieldPayload:
+		v, ok := value.([]byte)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPayload(v)
+		return nil
+	case job.FieldType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
 	case job.FieldUpdatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -8787,13 +8884,6 @@ func (m *JobMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDeletedBy(v)
 		return nil
-	case job.FieldUUID:
-		v, ok := value.(uuid.UUID)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUUID(v)
-		return nil
 	case job.FieldEntryID:
 		v, ok := value.(string)
 		if !ok {
@@ -8802,7 +8892,7 @@ func (m *JobMutation) SetField(name string, value ent.Value) error {
 		m.SetEntryID(v)
 		return nil
 	case job.FieldConfig:
-		v, ok := value.(string)
+		v, ok := value.([]byte)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -8903,6 +8993,15 @@ func (m *JobMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *JobMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(job.FieldPayload) {
+		fields = append(fields, job.FieldPayload)
+	}
+	if m.FieldCleared(job.FieldType) {
+		fields = append(fields, job.FieldType)
+	}
+	if m.FieldCleared(job.FieldUpdatedAt) {
+		fields = append(fields, job.FieldUpdatedAt)
+	}
 	if m.FieldCleared(job.FieldDeletedAt) {
 		fields = append(fields, job.FieldDeletedAt)
 	}
@@ -8929,6 +9028,15 @@ func (m *JobMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *JobMutation) ClearField(name string) error {
 	switch name {
+	case job.FieldPayload:
+		m.ClearPayload()
+		return nil
+	case job.FieldType:
+		m.ClearType()
+		return nil
+	case job.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
 	case job.FieldDeletedAt:
 		m.ClearDeletedAt()
 		return nil
@@ -8955,6 +9063,12 @@ func (m *JobMutation) ResetField(name string) error {
 	case job.FieldCreatedBy:
 		m.ResetCreatedBy()
 		return nil
+	case job.FieldPayload:
+		m.ResetPayload()
+		return nil
+	case job.FieldType:
+		m.ResetType()
+		return nil
 	case job.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
@@ -8966,9 +9080,6 @@ func (m *JobMutation) ResetField(name string) error {
 		return nil
 	case job.FieldDeletedBy:
 		m.ResetDeletedBy()
-		return nil
-	case job.FieldUUID:
-		m.ResetUUID()
 		return nil
 	case job.FieldEntryID:
 		m.ResetEntryID()

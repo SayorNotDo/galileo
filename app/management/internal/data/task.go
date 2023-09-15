@@ -10,6 +10,7 @@ import (
 	"galileo/ent/task"
 	"galileo/ent/testplan"
 	"galileo/ent/user"
+	"galileo/pkg/ctxdata"
 	. "galileo/pkg/errResponse"
 	. "galileo/pkg/factory"
 	"github.com/go-kratos/kratos/v2/errors"
@@ -178,6 +179,7 @@ func (r *taskRepo) CreateTask(ctx context.Context, task *biz.Task) (*biz.TaskInf
 
 func (r *taskRepo) ExecuteTask(ctx context.Context, taskId int64, worker uint32, config []byte) error {
 	/* 获取待执行任务的信息 */
+	r.log.Debugf("------------->>>>> get user id: %v", ctxdata.GetUserId(ctx))
 	r.log.Debugf("ExecuteTask taskId: %d, worker: %d, config: %v", taskId, worker, config)
 	executeTask, err := r.GetTask(ctx, taskId)
 	if err != nil {

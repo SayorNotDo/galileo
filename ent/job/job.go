@@ -15,6 +15,10 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldCreatedBy holds the string denoting the created_by field in the database.
 	FieldCreatedBy = "created_by"
+	// FieldPayload holds the string denoting the payload field in the database.
+	FieldPayload = "payload"
+	// FieldType holds the string denoting the type field in the database.
+	FieldType = "type"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
 	// FieldWorker holds the string denoting the worker field in the database.
@@ -23,8 +27,6 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
 	FieldDeletedBy = "deleted_by"
-	// FieldUUID holds the string denoting the uuid field in the database.
-	FieldUUID = "uuid"
 	// FieldEntryID holds the string denoting the entry_id field in the database.
 	FieldEntryID = "entry_id"
 	// FieldConfig holds the string denoting the config field in the database.
@@ -34,7 +36,7 @@ const (
 	// FieldActive holds the string denoting the active field in the database.
 	FieldActive = "active"
 	// Table holds the table name of the job in the database.
-	Table = "jobs"
+	Table = "job"
 )
 
 // Columns holds all SQL columns for job fields.
@@ -42,11 +44,12 @@ var Columns = []string{
 	FieldID,
 	FieldCreatedAt,
 	FieldCreatedBy,
+	FieldPayload,
+	FieldType,
 	FieldUpdatedAt,
 	FieldWorker,
 	FieldDeletedAt,
 	FieldDeletedBy,
-	FieldUUID,
 	FieldEntryID,
 	FieldConfig,
 	FieldTaskID,
@@ -68,4 +71,6 @@ var (
 	DefaultCreatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultActive holds the default value on creation for the "active" field.
+	DefaultActive bool
 )

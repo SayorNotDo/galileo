@@ -7,7 +7,6 @@ import (
 
 type SchedulerRepo interface {
 	ListTimingJob(ctx context.Context) ([]*Job, error)
-	CreateJob(ctx context.Context, job *Job) (*Job, error)
 	AddPeriodicJob(ctx context.Context, payload *PeriodicJobPayload, expression string) (*Job, error)
 	AddDefaultJob(ctx context.Context, payload *DefaultJobPayload) (*Job, error)
 	AddDelayedJob(ctx context.Context, payload *DelayedJobPayload, delay time.Duration) (*Job, error)
@@ -30,10 +29,10 @@ func (sc *SchedulerUseCase) RemoveDelayedJob(ctx context.Context, qName, jobID s
 	return sc.repo.RemoveDelayedJob(ctx, qName, jobID)
 }
 
-func (sc *SchedulerUseCase) CreateJob(ctx context.Context, job *Job) (*Job, error) {
-	return sc.repo.CreateJob(ctx, job)
+func (sc *SchedulerUseCase) GetJob(ctx context.Context, jobID string) (*Job, error) {
+	return nil, nil
 }
 
-func (sc *SchedulerUseCase) TimingTaskJob(ctx context.Context) ([]*Job, error) {
+func (sc *SchedulerUseCase) ListTimingJob(ctx context.Context) ([]*Job, error) {
 	return sc.repo.ListTimingJob(ctx)
 }

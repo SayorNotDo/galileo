@@ -24,6 +24,10 @@ import (
 	"strings"
 )
 
+const (
+	tokenKey = "token"
+)
+
 // NewHTTPServer new an HTTP server.
 func NewHTTPServer(c *conf.Server, ac *conf.Auth, s *service.CoreService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
@@ -91,7 +95,7 @@ func setHeaderInfo() middleware.Middleware {
 					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
 				}
 				jwtToken := auth[1]
-				token, _ := data.RedisCli.Get(ctx, "token:"+jwtToken).Result()
+				token, _ := data.RedisCli.Get(ctx, tokenKey+":"+jwtToken).Result()
 				if token == "" {
 					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
 				}
@@ -112,8 +116,9 @@ func setUserInfo() middleware.Middleware {
 			}
 			claimInfo := claim.(jwt2.MapClaims)
 			userId := uint32(claimInfo["ID"].(float64))
+			username := claimInfo["Username"].(string)
 			ctx = context.WithValue(ctx, ctxdata.UserIdKey, userId)
-			ctx = context.WithValue(ctx, ctxdata.Username, claimInfo["Username"])
+			ctx = context.WithValue(ctx, ctxdata.Username, username)
 			return handler(ctx, req)
 		}
 	}

@@ -111,9 +111,13 @@ func init() {
 	// job.DefaultCreatedAt holds the default value on creation for the created_at field.
 	job.DefaultCreatedAt = jobDescCreatedAt.Default.(func() time.Time)
 	// jobDescUpdatedAt is the schema descriptor for updated_at field.
-	jobDescUpdatedAt := jobFields[3].Descriptor()
+	jobDescUpdatedAt := jobFields[5].Descriptor()
 	// job.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	job.UpdateDefaultUpdatedAt = jobDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// jobDescActive is the schema descriptor for active field.
+	jobDescActive := jobFields[12].Descriptor()
+	// job.DefaultActive holds the default value on creation for the active field.
+	job.DefaultActive = jobDescActive.Default.(bool)
 	projectFields := schema.Project{}.Fields()
 	_ = projectFields
 	// projectDescName is the schema descriptor for name field.

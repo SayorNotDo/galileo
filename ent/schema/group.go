@@ -2,6 +2,8 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	"regexp"
 	"time"
@@ -10,6 +12,12 @@ import (
 // Group holds the schema definition for the Group entity.
 type Group struct {
 	ent.Schema
+}
+
+func (Group) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entsql.Annotation{Table: "group"},
+	}
 }
 
 // Fields of the Group.

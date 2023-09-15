@@ -3,7 +3,6 @@ package biz
 import (
 	managementV1 "galileo/api/management/v1"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/google/uuid"
 	"github.com/google/wire"
 	"time"
 )
@@ -26,20 +25,6 @@ type Task struct {
 	ScheduleTime   time.Time
 	TestcaseSuites []int32
 	ExecuteId      int64
-}
-
-type Job struct {
-	Id        int64     `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	CreatedBy string    `json:"created_by"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Worker    uint32    `json:"workers"`
-	DeletedAt time.Time `json:"deleted_at"`
-	DeletedBy string    `json:"deleted_by"`
-	UUID      uuid.UUID `json:"uuid"`
-	EntryID   string    `json:"entry_id"`
-	Config    *Config   `json:"config"`
-	TaskID    int64     `json:"task_id"`
 }
 
 type SchedulerUseCase struct {

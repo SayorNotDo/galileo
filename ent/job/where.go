@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/google/uuid"
 )
 
 // ID filters vertices based on their ID field.
@@ -65,6 +64,16 @@ func CreatedBy(v uint32) predicate.Job {
 	return predicate.Job(sql.FieldEQ(FieldCreatedBy, v))
 }
 
+// Payload applies equality check predicate on the "payload" field. It's identical to PayloadEQ.
+func Payload(v []byte) predicate.Job {
+	return predicate.Job(sql.FieldEQ(FieldPayload, v))
+}
+
+// Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
+func Type(v string) predicate.Job {
+	return predicate.Job(sql.FieldEQ(FieldType, v))
+}
+
 // UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
 func UpdatedAt(v time.Time) predicate.Job {
 	return predicate.Job(sql.FieldEQ(FieldUpdatedAt, v))
@@ -85,18 +94,13 @@ func DeletedBy(v uint32) predicate.Job {
 	return predicate.Job(sql.FieldEQ(FieldDeletedBy, v))
 }
 
-// UUID applies equality check predicate on the "uuid" field. It's identical to UUIDEQ.
-func UUID(v uuid.UUID) predicate.Job {
-	return predicate.Job(sql.FieldEQ(FieldUUID, v))
-}
-
 // EntryID applies equality check predicate on the "entry_id" field. It's identical to EntryIDEQ.
 func EntryID(v string) predicate.Job {
 	return predicate.Job(sql.FieldEQ(FieldEntryID, v))
 }
 
 // Config applies equality check predicate on the "config" field. It's identical to ConfigEQ.
-func Config(v string) predicate.Job {
+func Config(v []byte) predicate.Job {
 	return predicate.Job(sql.FieldEQ(FieldConfig, v))
 }
 
@@ -190,6 +194,131 @@ func CreatedByLTE(v uint32) predicate.Job {
 	return predicate.Job(sql.FieldLTE(FieldCreatedBy, v))
 }
 
+// PayloadEQ applies the EQ predicate on the "payload" field.
+func PayloadEQ(v []byte) predicate.Job {
+	return predicate.Job(sql.FieldEQ(FieldPayload, v))
+}
+
+// PayloadNEQ applies the NEQ predicate on the "payload" field.
+func PayloadNEQ(v []byte) predicate.Job {
+	return predicate.Job(sql.FieldNEQ(FieldPayload, v))
+}
+
+// PayloadIn applies the In predicate on the "payload" field.
+func PayloadIn(vs ...[]byte) predicate.Job {
+	return predicate.Job(sql.FieldIn(FieldPayload, vs...))
+}
+
+// PayloadNotIn applies the NotIn predicate on the "payload" field.
+func PayloadNotIn(vs ...[]byte) predicate.Job {
+	return predicate.Job(sql.FieldNotIn(FieldPayload, vs...))
+}
+
+// PayloadGT applies the GT predicate on the "payload" field.
+func PayloadGT(v []byte) predicate.Job {
+	return predicate.Job(sql.FieldGT(FieldPayload, v))
+}
+
+// PayloadGTE applies the GTE predicate on the "payload" field.
+func PayloadGTE(v []byte) predicate.Job {
+	return predicate.Job(sql.FieldGTE(FieldPayload, v))
+}
+
+// PayloadLT applies the LT predicate on the "payload" field.
+func PayloadLT(v []byte) predicate.Job {
+	return predicate.Job(sql.FieldLT(FieldPayload, v))
+}
+
+// PayloadLTE applies the LTE predicate on the "payload" field.
+func PayloadLTE(v []byte) predicate.Job {
+	return predicate.Job(sql.FieldLTE(FieldPayload, v))
+}
+
+// PayloadIsNil applies the IsNil predicate on the "payload" field.
+func PayloadIsNil() predicate.Job {
+	return predicate.Job(sql.FieldIsNull(FieldPayload))
+}
+
+// PayloadNotNil applies the NotNil predicate on the "payload" field.
+func PayloadNotNil() predicate.Job {
+	return predicate.Job(sql.FieldNotNull(FieldPayload))
+}
+
+// TypeEQ applies the EQ predicate on the "type" field.
+func TypeEQ(v string) predicate.Job {
+	return predicate.Job(sql.FieldEQ(FieldType, v))
+}
+
+// TypeNEQ applies the NEQ predicate on the "type" field.
+func TypeNEQ(v string) predicate.Job {
+	return predicate.Job(sql.FieldNEQ(FieldType, v))
+}
+
+// TypeIn applies the In predicate on the "type" field.
+func TypeIn(vs ...string) predicate.Job {
+	return predicate.Job(sql.FieldIn(FieldType, vs...))
+}
+
+// TypeNotIn applies the NotIn predicate on the "type" field.
+func TypeNotIn(vs ...string) predicate.Job {
+	return predicate.Job(sql.FieldNotIn(FieldType, vs...))
+}
+
+// TypeGT applies the GT predicate on the "type" field.
+func TypeGT(v string) predicate.Job {
+	return predicate.Job(sql.FieldGT(FieldType, v))
+}
+
+// TypeGTE applies the GTE predicate on the "type" field.
+func TypeGTE(v string) predicate.Job {
+	return predicate.Job(sql.FieldGTE(FieldType, v))
+}
+
+// TypeLT applies the LT predicate on the "type" field.
+func TypeLT(v string) predicate.Job {
+	return predicate.Job(sql.FieldLT(FieldType, v))
+}
+
+// TypeLTE applies the LTE predicate on the "type" field.
+func TypeLTE(v string) predicate.Job {
+	return predicate.Job(sql.FieldLTE(FieldType, v))
+}
+
+// TypeContains applies the Contains predicate on the "type" field.
+func TypeContains(v string) predicate.Job {
+	return predicate.Job(sql.FieldContains(FieldType, v))
+}
+
+// TypeHasPrefix applies the HasPrefix predicate on the "type" field.
+func TypeHasPrefix(v string) predicate.Job {
+	return predicate.Job(sql.FieldHasPrefix(FieldType, v))
+}
+
+// TypeHasSuffix applies the HasSuffix predicate on the "type" field.
+func TypeHasSuffix(v string) predicate.Job {
+	return predicate.Job(sql.FieldHasSuffix(FieldType, v))
+}
+
+// TypeIsNil applies the IsNil predicate on the "type" field.
+func TypeIsNil() predicate.Job {
+	return predicate.Job(sql.FieldIsNull(FieldType))
+}
+
+// TypeNotNil applies the NotNil predicate on the "type" field.
+func TypeNotNil() predicate.Job {
+	return predicate.Job(sql.FieldNotNull(FieldType))
+}
+
+// TypeEqualFold applies the EqualFold predicate on the "type" field.
+func TypeEqualFold(v string) predicate.Job {
+	return predicate.Job(sql.FieldEqualFold(FieldType, v))
+}
+
+// TypeContainsFold applies the ContainsFold predicate on the "type" field.
+func TypeContainsFold(v string) predicate.Job {
+	return predicate.Job(sql.FieldContainsFold(FieldType, v))
+}
+
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.Job {
 	return predicate.Job(sql.FieldEQ(FieldUpdatedAt, v))
@@ -228,6 +357,16 @@ func UpdatedAtLT(v time.Time) predicate.Job {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.Job {
 	return predicate.Job(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.Job {
+	return predicate.Job(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.Job {
+	return predicate.Job(sql.FieldNotNull(FieldUpdatedAt))
 }
 
 // WorkerEQ applies the EQ predicate on the "worker" field.
@@ -370,46 +509,6 @@ func DeletedByNotNil() predicate.Job {
 	return predicate.Job(sql.FieldNotNull(FieldDeletedBy))
 }
 
-// UUIDEQ applies the EQ predicate on the "uuid" field.
-func UUIDEQ(v uuid.UUID) predicate.Job {
-	return predicate.Job(sql.FieldEQ(FieldUUID, v))
-}
-
-// UUIDNEQ applies the NEQ predicate on the "uuid" field.
-func UUIDNEQ(v uuid.UUID) predicate.Job {
-	return predicate.Job(sql.FieldNEQ(FieldUUID, v))
-}
-
-// UUIDIn applies the In predicate on the "uuid" field.
-func UUIDIn(vs ...uuid.UUID) predicate.Job {
-	return predicate.Job(sql.FieldIn(FieldUUID, vs...))
-}
-
-// UUIDNotIn applies the NotIn predicate on the "uuid" field.
-func UUIDNotIn(vs ...uuid.UUID) predicate.Job {
-	return predicate.Job(sql.FieldNotIn(FieldUUID, vs...))
-}
-
-// UUIDGT applies the GT predicate on the "uuid" field.
-func UUIDGT(v uuid.UUID) predicate.Job {
-	return predicate.Job(sql.FieldGT(FieldUUID, v))
-}
-
-// UUIDGTE applies the GTE predicate on the "uuid" field.
-func UUIDGTE(v uuid.UUID) predicate.Job {
-	return predicate.Job(sql.FieldGTE(FieldUUID, v))
-}
-
-// UUIDLT applies the LT predicate on the "uuid" field.
-func UUIDLT(v uuid.UUID) predicate.Job {
-	return predicate.Job(sql.FieldLT(FieldUUID, v))
-}
-
-// UUIDLTE applies the LTE predicate on the "uuid" field.
-func UUIDLTE(v uuid.UUID) predicate.Job {
-	return predicate.Job(sql.FieldLTE(FieldUUID, v))
-}
-
 // EntryIDEQ applies the EQ predicate on the "entry_id" field.
 func EntryIDEQ(v string) predicate.Job {
 	return predicate.Job(sql.FieldEQ(FieldEntryID, v))
@@ -486,58 +585,43 @@ func EntryIDContainsFold(v string) predicate.Job {
 }
 
 // ConfigEQ applies the EQ predicate on the "config" field.
-func ConfigEQ(v string) predicate.Job {
+func ConfigEQ(v []byte) predicate.Job {
 	return predicate.Job(sql.FieldEQ(FieldConfig, v))
 }
 
 // ConfigNEQ applies the NEQ predicate on the "config" field.
-func ConfigNEQ(v string) predicate.Job {
+func ConfigNEQ(v []byte) predicate.Job {
 	return predicate.Job(sql.FieldNEQ(FieldConfig, v))
 }
 
 // ConfigIn applies the In predicate on the "config" field.
-func ConfigIn(vs ...string) predicate.Job {
+func ConfigIn(vs ...[]byte) predicate.Job {
 	return predicate.Job(sql.FieldIn(FieldConfig, vs...))
 }
 
 // ConfigNotIn applies the NotIn predicate on the "config" field.
-func ConfigNotIn(vs ...string) predicate.Job {
+func ConfigNotIn(vs ...[]byte) predicate.Job {
 	return predicate.Job(sql.FieldNotIn(FieldConfig, vs...))
 }
 
 // ConfigGT applies the GT predicate on the "config" field.
-func ConfigGT(v string) predicate.Job {
+func ConfigGT(v []byte) predicate.Job {
 	return predicate.Job(sql.FieldGT(FieldConfig, v))
 }
 
 // ConfigGTE applies the GTE predicate on the "config" field.
-func ConfigGTE(v string) predicate.Job {
+func ConfigGTE(v []byte) predicate.Job {
 	return predicate.Job(sql.FieldGTE(FieldConfig, v))
 }
 
 // ConfigLT applies the LT predicate on the "config" field.
-func ConfigLT(v string) predicate.Job {
+func ConfigLT(v []byte) predicate.Job {
 	return predicate.Job(sql.FieldLT(FieldConfig, v))
 }
 
 // ConfigLTE applies the LTE predicate on the "config" field.
-func ConfigLTE(v string) predicate.Job {
+func ConfigLTE(v []byte) predicate.Job {
 	return predicate.Job(sql.FieldLTE(FieldConfig, v))
-}
-
-// ConfigContains applies the Contains predicate on the "config" field.
-func ConfigContains(v string) predicate.Job {
-	return predicate.Job(sql.FieldContains(FieldConfig, v))
-}
-
-// ConfigHasPrefix applies the HasPrefix predicate on the "config" field.
-func ConfigHasPrefix(v string) predicate.Job {
-	return predicate.Job(sql.FieldHasPrefix(FieldConfig, v))
-}
-
-// ConfigHasSuffix applies the HasSuffix predicate on the "config" field.
-func ConfigHasSuffix(v string) predicate.Job {
-	return predicate.Job(sql.FieldHasSuffix(FieldConfig, v))
 }
 
 // ConfigIsNil applies the IsNil predicate on the "config" field.
@@ -548,16 +632,6 @@ func ConfigIsNil() predicate.Job {
 // ConfigNotNil applies the NotNil predicate on the "config" field.
 func ConfigNotNil() predicate.Job {
 	return predicate.Job(sql.FieldNotNull(FieldConfig))
-}
-
-// ConfigEqualFold applies the EqualFold predicate on the "config" field.
-func ConfigEqualFold(v string) predicate.Job {
-	return predicate.Job(sql.FieldEqualFold(FieldConfig, v))
-}
-
-// ConfigContainsFold applies the ContainsFold predicate on the "config" field.
-func ConfigContainsFold(v string) predicate.Job {
-	return predicate.Job(sql.FieldContainsFold(FieldConfig, v))
 }
 
 // TaskIDEQ applies the EQ predicate on the "task_id" field.

@@ -64,10 +64,7 @@ func NewHTTPServer(tr *conf.Trace, c *conf.Server, ac *conf.Auth, management *se
 				// set global ctx
 				setUserInfo(),
 			).Match(NewWhiteListMatcher()).Build(),
-			metadata.Server(
-				metadata.WithPropagatedPrefix("x-md-global", "userId"),
-				metadata.WithPropagatedPrefix("x-md-global", "username"),
-			),
+			metadata.Server(),
 		),
 		http.Filter(handlers.CORS(
 			handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Accept"}),
@@ -152,6 +149,8 @@ func setUserInfo() middleware.Middleware {
 			username := claimInfo["Username"].(string)
 			ctx = context.WithValue(ctx, ctxdata.UserIdKey, userId)
 			ctx = context.WithValue(ctx, ctxdata.Username, username)
+			ctx = ctxdata.UserIdToMetaData(ctx, userId)
+			ctx = ctxdata.UsernameToMetadata(ctx, username)
 			return handler(ctx, req)
 		}
 	}

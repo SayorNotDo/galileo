@@ -13,7 +13,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 )
 
 // JobUpdate is the builder for updating Job entities.
@@ -29,22 +28,47 @@ func (ju *JobUpdate) Where(ps ...predicate.Job) *JobUpdate {
 	return ju
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (ju *JobUpdate) SetCreatedBy(u uint32) *JobUpdate {
-	ju.mutation.ResetCreatedBy()
-	ju.mutation.SetCreatedBy(u)
+// SetPayload sets the "payload" field.
+func (ju *JobUpdate) SetPayload(b []byte) *JobUpdate {
+	ju.mutation.SetPayload(b)
 	return ju
 }
 
-// AddCreatedBy adds u to the "created_by" field.
-func (ju *JobUpdate) AddCreatedBy(u int32) *JobUpdate {
-	ju.mutation.AddCreatedBy(u)
+// ClearPayload clears the value of the "payload" field.
+func (ju *JobUpdate) ClearPayload() *JobUpdate {
+	ju.mutation.ClearPayload()
+	return ju
+}
+
+// SetType sets the "type" field.
+func (ju *JobUpdate) SetType(s string) *JobUpdate {
+	ju.mutation.SetType(s)
+	return ju
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (ju *JobUpdate) SetNillableType(s *string) *JobUpdate {
+	if s != nil {
+		ju.SetType(*s)
+	}
+	return ju
+}
+
+// ClearType clears the value of the "type" field.
+func (ju *JobUpdate) ClearType() *JobUpdate {
+	ju.mutation.ClearType()
 	return ju
 }
 
 // SetUpdatedAt sets the "updated_at" field.
 func (ju *JobUpdate) SetUpdatedAt(t time.Time) *JobUpdate {
 	ju.mutation.SetUpdatedAt(t)
+	return ju
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (ju *JobUpdate) ClearUpdatedAt() *JobUpdate {
+	ju.mutation.ClearUpdatedAt()
 	return ju
 }
 
@@ -108,12 +132,6 @@ func (ju *JobUpdate) ClearDeletedBy() *JobUpdate {
 	return ju
 }
 
-// SetUUID sets the "uuid" field.
-func (ju *JobUpdate) SetUUID(u uuid.UUID) *JobUpdate {
-	ju.mutation.SetUUID(u)
-	return ju
-}
-
 // SetEntryID sets the "entry_id" field.
 func (ju *JobUpdate) SetEntryID(s string) *JobUpdate {
 	ju.mutation.SetEntryID(s)
@@ -135,16 +153,8 @@ func (ju *JobUpdate) ClearEntryID() *JobUpdate {
 }
 
 // SetConfig sets the "config" field.
-func (ju *JobUpdate) SetConfig(s string) *JobUpdate {
-	ju.mutation.SetConfig(s)
-	return ju
-}
-
-// SetNillableConfig sets the "config" field if the given value is not nil.
-func (ju *JobUpdate) SetNillableConfig(s *string) *JobUpdate {
-	if s != nil {
-		ju.SetConfig(*s)
-	}
+func (ju *JobUpdate) SetConfig(b []byte) *JobUpdate {
+	ju.mutation.SetConfig(b)
 	return ju
 }
 
@@ -170,6 +180,14 @@ func (ju *JobUpdate) AddTaskID(i int64) *JobUpdate {
 // SetActive sets the "active" field.
 func (ju *JobUpdate) SetActive(b bool) *JobUpdate {
 	ju.mutation.SetActive(b)
+	return ju
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (ju *JobUpdate) SetNillableActive(b *bool) *JobUpdate {
+	if b != nil {
+		ju.SetActive(*b)
+	}
 	return ju
 }
 
@@ -208,7 +226,7 @@ func (ju *JobUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ju *JobUpdate) defaults() {
-	if _, ok := ju.mutation.UpdatedAt(); !ok {
+	if _, ok := ju.mutation.UpdatedAt(); !ok && !ju.mutation.UpdatedAtCleared() {
 		v := job.UpdateDefaultUpdatedAt()
 		ju.mutation.SetUpdatedAt(v)
 	}
@@ -223,14 +241,23 @@ func (ju *JobUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := ju.mutation.CreatedBy(); ok {
-		_spec.SetField(job.FieldCreatedBy, field.TypeUint32, value)
+	if value, ok := ju.mutation.Payload(); ok {
+		_spec.SetField(job.FieldPayload, field.TypeBytes, value)
 	}
-	if value, ok := ju.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(job.FieldCreatedBy, field.TypeUint32, value)
+	if ju.mutation.PayloadCleared() {
+		_spec.ClearField(job.FieldPayload, field.TypeBytes)
+	}
+	if value, ok := ju.mutation.GetType(); ok {
+		_spec.SetField(job.FieldType, field.TypeString, value)
+	}
+	if ju.mutation.TypeCleared() {
+		_spec.ClearField(job.FieldType, field.TypeString)
 	}
 	if value, ok := ju.mutation.UpdatedAt(); ok {
 		_spec.SetField(job.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if ju.mutation.UpdatedAtCleared() {
+		_spec.ClearField(job.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := ju.mutation.Worker(); ok {
 		_spec.SetField(job.FieldWorker, field.TypeUint32, value)
@@ -253,9 +280,6 @@ func (ju *JobUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if ju.mutation.DeletedByCleared() {
 		_spec.ClearField(job.FieldDeletedBy, field.TypeUint32)
 	}
-	if value, ok := ju.mutation.UUID(); ok {
-		_spec.SetField(job.FieldUUID, field.TypeUUID, value)
-	}
 	if value, ok := ju.mutation.EntryID(); ok {
 		_spec.SetField(job.FieldEntryID, field.TypeString, value)
 	}
@@ -263,10 +287,10 @@ func (ju *JobUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.ClearField(job.FieldEntryID, field.TypeString)
 	}
 	if value, ok := ju.mutation.Config(); ok {
-		_spec.SetField(job.FieldConfig, field.TypeString, value)
+		_spec.SetField(job.FieldConfig, field.TypeBytes, value)
 	}
 	if ju.mutation.ConfigCleared() {
-		_spec.ClearField(job.FieldConfig, field.TypeString)
+		_spec.ClearField(job.FieldConfig, field.TypeBytes)
 	}
 	if value, ok := ju.mutation.TaskID(); ok {
 		_spec.SetField(job.FieldTaskID, field.TypeInt64, value)
@@ -297,22 +321,47 @@ type JobUpdateOne struct {
 	mutation *JobMutation
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (juo *JobUpdateOne) SetCreatedBy(u uint32) *JobUpdateOne {
-	juo.mutation.ResetCreatedBy()
-	juo.mutation.SetCreatedBy(u)
+// SetPayload sets the "payload" field.
+func (juo *JobUpdateOne) SetPayload(b []byte) *JobUpdateOne {
+	juo.mutation.SetPayload(b)
 	return juo
 }
 
-// AddCreatedBy adds u to the "created_by" field.
-func (juo *JobUpdateOne) AddCreatedBy(u int32) *JobUpdateOne {
-	juo.mutation.AddCreatedBy(u)
+// ClearPayload clears the value of the "payload" field.
+func (juo *JobUpdateOne) ClearPayload() *JobUpdateOne {
+	juo.mutation.ClearPayload()
+	return juo
+}
+
+// SetType sets the "type" field.
+func (juo *JobUpdateOne) SetType(s string) *JobUpdateOne {
+	juo.mutation.SetType(s)
+	return juo
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (juo *JobUpdateOne) SetNillableType(s *string) *JobUpdateOne {
+	if s != nil {
+		juo.SetType(*s)
+	}
+	return juo
+}
+
+// ClearType clears the value of the "type" field.
+func (juo *JobUpdateOne) ClearType() *JobUpdateOne {
+	juo.mutation.ClearType()
 	return juo
 }
 
 // SetUpdatedAt sets the "updated_at" field.
 func (juo *JobUpdateOne) SetUpdatedAt(t time.Time) *JobUpdateOne {
 	juo.mutation.SetUpdatedAt(t)
+	return juo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (juo *JobUpdateOne) ClearUpdatedAt() *JobUpdateOne {
+	juo.mutation.ClearUpdatedAt()
 	return juo
 }
 
@@ -376,12 +425,6 @@ func (juo *JobUpdateOne) ClearDeletedBy() *JobUpdateOne {
 	return juo
 }
 
-// SetUUID sets the "uuid" field.
-func (juo *JobUpdateOne) SetUUID(u uuid.UUID) *JobUpdateOne {
-	juo.mutation.SetUUID(u)
-	return juo
-}
-
 // SetEntryID sets the "entry_id" field.
 func (juo *JobUpdateOne) SetEntryID(s string) *JobUpdateOne {
 	juo.mutation.SetEntryID(s)
@@ -403,16 +446,8 @@ func (juo *JobUpdateOne) ClearEntryID() *JobUpdateOne {
 }
 
 // SetConfig sets the "config" field.
-func (juo *JobUpdateOne) SetConfig(s string) *JobUpdateOne {
-	juo.mutation.SetConfig(s)
-	return juo
-}
-
-// SetNillableConfig sets the "config" field if the given value is not nil.
-func (juo *JobUpdateOne) SetNillableConfig(s *string) *JobUpdateOne {
-	if s != nil {
-		juo.SetConfig(*s)
-	}
+func (juo *JobUpdateOne) SetConfig(b []byte) *JobUpdateOne {
+	juo.mutation.SetConfig(b)
 	return juo
 }
 
@@ -438,6 +473,14 @@ func (juo *JobUpdateOne) AddTaskID(i int64) *JobUpdateOne {
 // SetActive sets the "active" field.
 func (juo *JobUpdateOne) SetActive(b bool) *JobUpdateOne {
 	juo.mutation.SetActive(b)
+	return juo
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (juo *JobUpdateOne) SetNillableActive(b *bool) *JobUpdateOne {
+	if b != nil {
+		juo.SetActive(*b)
+	}
 	return juo
 }
 
@@ -489,7 +532,7 @@ func (juo *JobUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (juo *JobUpdateOne) defaults() {
-	if _, ok := juo.mutation.UpdatedAt(); !ok {
+	if _, ok := juo.mutation.UpdatedAt(); !ok && !juo.mutation.UpdatedAtCleared() {
 		v := job.UpdateDefaultUpdatedAt()
 		juo.mutation.SetUpdatedAt(v)
 	}
@@ -521,14 +564,23 @@ func (juo *JobUpdateOne) sqlSave(ctx context.Context) (_node *Job, err error) {
 			}
 		}
 	}
-	if value, ok := juo.mutation.CreatedBy(); ok {
-		_spec.SetField(job.FieldCreatedBy, field.TypeUint32, value)
+	if value, ok := juo.mutation.Payload(); ok {
+		_spec.SetField(job.FieldPayload, field.TypeBytes, value)
 	}
-	if value, ok := juo.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(job.FieldCreatedBy, field.TypeUint32, value)
+	if juo.mutation.PayloadCleared() {
+		_spec.ClearField(job.FieldPayload, field.TypeBytes)
+	}
+	if value, ok := juo.mutation.GetType(); ok {
+		_spec.SetField(job.FieldType, field.TypeString, value)
+	}
+	if juo.mutation.TypeCleared() {
+		_spec.ClearField(job.FieldType, field.TypeString)
 	}
 	if value, ok := juo.mutation.UpdatedAt(); ok {
 		_spec.SetField(job.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if juo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(job.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := juo.mutation.Worker(); ok {
 		_spec.SetField(job.FieldWorker, field.TypeUint32, value)
@@ -551,9 +603,6 @@ func (juo *JobUpdateOne) sqlSave(ctx context.Context) (_node *Job, err error) {
 	if juo.mutation.DeletedByCleared() {
 		_spec.ClearField(job.FieldDeletedBy, field.TypeUint32)
 	}
-	if value, ok := juo.mutation.UUID(); ok {
-		_spec.SetField(job.FieldUUID, field.TypeUUID, value)
-	}
 	if value, ok := juo.mutation.EntryID(); ok {
 		_spec.SetField(job.FieldEntryID, field.TypeString, value)
 	}
@@ -561,10 +610,10 @@ func (juo *JobUpdateOne) sqlSave(ctx context.Context) (_node *Job, err error) {
 		_spec.ClearField(job.FieldEntryID, field.TypeString)
 	}
 	if value, ok := juo.mutation.Config(); ok {
-		_spec.SetField(job.FieldConfig, field.TypeString, value)
+		_spec.SetField(job.FieldConfig, field.TypeBytes, value)
 	}
 	if juo.mutation.ConfigCleared() {
-		_spec.ClearField(job.FieldConfig, field.TypeString)
+		_spec.ClearField(job.FieldConfig, field.TypeBytes)
 	}
 	if value, ok := juo.mutation.TaskID(); ok {
 		_spec.SetField(job.FieldTaskID, field.TypeInt64, value)

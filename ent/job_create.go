@@ -11,7 +11,6 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 )
 
 // JobCreate is the builder for creating a Job entity.
@@ -41,9 +40,37 @@ func (jc *JobCreate) SetCreatedBy(u uint32) *JobCreate {
 	return jc
 }
 
+// SetPayload sets the "payload" field.
+func (jc *JobCreate) SetPayload(b []byte) *JobCreate {
+	jc.mutation.SetPayload(b)
+	return jc
+}
+
+// SetType sets the "type" field.
+func (jc *JobCreate) SetType(s string) *JobCreate {
+	jc.mutation.SetType(s)
+	return jc
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (jc *JobCreate) SetNillableType(s *string) *JobCreate {
+	if s != nil {
+		jc.SetType(*s)
+	}
+	return jc
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (jc *JobCreate) SetUpdatedAt(t time.Time) *JobCreate {
 	jc.mutation.SetUpdatedAt(t)
+	return jc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (jc *JobCreate) SetNillableUpdatedAt(t *time.Time) *JobCreate {
+	if t != nil {
+		jc.SetUpdatedAt(*t)
+	}
 	return jc
 }
 
@@ -81,12 +108,6 @@ func (jc *JobCreate) SetNillableDeletedBy(u *uint32) *JobCreate {
 	return jc
 }
 
-// SetUUID sets the "uuid" field.
-func (jc *JobCreate) SetUUID(u uuid.UUID) *JobCreate {
-	jc.mutation.SetUUID(u)
-	return jc
-}
-
 // SetEntryID sets the "entry_id" field.
 func (jc *JobCreate) SetEntryID(s string) *JobCreate {
 	jc.mutation.SetEntryID(s)
@@ -102,16 +123,8 @@ func (jc *JobCreate) SetNillableEntryID(s *string) *JobCreate {
 }
 
 // SetConfig sets the "config" field.
-func (jc *JobCreate) SetConfig(s string) *JobCreate {
-	jc.mutation.SetConfig(s)
-	return jc
-}
-
-// SetNillableConfig sets the "config" field if the given value is not nil.
-func (jc *JobCreate) SetNillableConfig(s *string) *JobCreate {
-	if s != nil {
-		jc.SetConfig(*s)
-	}
+func (jc *JobCreate) SetConfig(b []byte) *JobCreate {
+	jc.mutation.SetConfig(b)
 	return jc
 }
 
@@ -124,6 +137,14 @@ func (jc *JobCreate) SetTaskID(i int64) *JobCreate {
 // SetActive sets the "active" field.
 func (jc *JobCreate) SetActive(b bool) *JobCreate {
 	jc.mutation.SetActive(b)
+	return jc
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (jc *JobCreate) SetNillableActive(b *bool) *JobCreate {
+	if b != nil {
+		jc.SetActive(*b)
+	}
 	return jc
 }
 
@@ -172,6 +193,10 @@ func (jc *JobCreate) defaults() {
 		v := job.DefaultCreatedAt()
 		jc.mutation.SetCreatedAt(v)
 	}
+	if _, ok := jc.mutation.Active(); !ok {
+		v := job.DefaultActive
+		jc.mutation.SetActive(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -182,14 +207,8 @@ func (jc *JobCreate) check() error {
 	if _, ok := jc.mutation.CreatedBy(); !ok {
 		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Job.created_by"`)}
 	}
-	if _, ok := jc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Job.updated_at"`)}
-	}
 	if _, ok := jc.mutation.Worker(); !ok {
 		return &ValidationError{Name: "worker", err: errors.New(`ent: missing required field "Job.worker"`)}
-	}
-	if _, ok := jc.mutation.UUID(); !ok {
-		return &ValidationError{Name: "uuid", err: errors.New(`ent: missing required field "Job.uuid"`)}
 	}
 	if _, ok := jc.mutation.TaskID(); !ok {
 		return &ValidationError{Name: "task_id", err: errors.New(`ent: missing required field "Job.task_id"`)}
@@ -237,6 +256,14 @@ func (jc *JobCreate) createSpec() (*Job, *sqlgraph.CreateSpec) {
 		_spec.SetField(job.FieldCreatedBy, field.TypeUint32, value)
 		_node.CreatedBy = value
 	}
+	if value, ok := jc.mutation.Payload(); ok {
+		_spec.SetField(job.FieldPayload, field.TypeBytes, value)
+		_node.Payload = value
+	}
+	if value, ok := jc.mutation.GetType(); ok {
+		_spec.SetField(job.FieldType, field.TypeString, value)
+		_node.Type = value
+	}
 	if value, ok := jc.mutation.UpdatedAt(); ok {
 		_spec.SetField(job.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
@@ -253,16 +280,12 @@ func (jc *JobCreate) createSpec() (*Job, *sqlgraph.CreateSpec) {
 		_spec.SetField(job.FieldDeletedBy, field.TypeUint32, value)
 		_node.DeletedBy = value
 	}
-	if value, ok := jc.mutation.UUID(); ok {
-		_spec.SetField(job.FieldUUID, field.TypeUUID, value)
-		_node.UUID = value
-	}
 	if value, ok := jc.mutation.EntryID(); ok {
 		_spec.SetField(job.FieldEntryID, field.TypeString, value)
 		_node.EntryID = value
 	}
 	if value, ok := jc.mutation.Config(); ok {
-		_spec.SetField(job.FieldConfig, field.TypeString, value)
+		_spec.SetField(job.FieldConfig, field.TypeBytes, value)
 		_node.Config = value
 	}
 	if value, ok := jc.mutation.TaskID(); ok {

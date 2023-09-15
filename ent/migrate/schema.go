@@ -133,8 +133,8 @@ var (
 		Columns:    ContainerColumns,
 		PrimaryKey: []*schema.Column{ContainerColumns[0]},
 	}
-	// GroupsColumns holds the columns for the "groups" table.
-	GroupsColumns = []*schema.Column{
+	// GroupColumns holds the columns for the "group" table.
+	GroupColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt32, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "avatar", Type: field.TypeString, Nullable: true, Size: 2147483647},
@@ -147,11 +147,11 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
 		{Name: "headcount", Type: field.TypeInt32},
 	}
-	// GroupsTable holds the schema information for the "groups" table.
-	GroupsTable = &schema.Table{
-		Name:       "groups",
-		Columns:    GroupsColumns,
-		PrimaryKey: []*schema.Column{GroupsColumns[0]},
+	// GroupTable holds the schema information for the "group" table.
+	GroupTable = &schema.Table{
+		Name:       "group",
+		Columns:    GroupColumns,
+		PrimaryKey: []*schema.Column{GroupColumns[0]},
 	}
 	// GroupMemberColumns holds the columns for the "group_member" table.
 	GroupMemberColumns = []*schema.Column{
@@ -177,26 +177,27 @@ var (
 			},
 		},
 	}
-	// JobsColumns holds the columns for the "jobs" table.
-	JobsColumns = []*schema.Column{
+	// JobColumns holds the columns for the "job" table.
+	JobColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
-		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "payload", Type: field.TypeBytes, Nullable: true},
+		{Name: "type", Type: field.TypeString, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "worker", Type: field.TypeUint32},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
-		{Name: "uuid", Type: field.TypeUUID},
 		{Name: "entry_id", Type: field.TypeString, Nullable: true},
-		{Name: "config", Type: field.TypeString, Nullable: true},
+		{Name: "config", Type: field.TypeBytes, Nullable: true},
 		{Name: "task_id", Type: field.TypeInt64},
-		{Name: "active", Type: field.TypeBool},
+		{Name: "active", Type: field.TypeBool, Default: false},
 	}
-	// JobsTable holds the schema information for the "jobs" table.
-	JobsTable = &schema.Table{
-		Name:       "jobs",
-		Columns:    JobsColumns,
-		PrimaryKey: []*schema.Column{JobsColumns[0]},
+	// JobTable holds the schema information for the "job" table.
+	JobTable = &schema.Table{
+		Name:       "job",
+		Columns:    JobColumns,
+		PrimaryKey: []*schema.Column{JobColumns[0]},
 	}
 	// ProjectColumns holds the columns for the "project" table.
 	ProjectColumns = []*schema.Column{
@@ -364,9 +365,9 @@ var (
 		APIStatisticsTable,
 		APITagTable,
 		ContainerTable,
-		GroupsTable,
+		GroupTable,
 		GroupMemberTable,
-		JobsTable,
+		JobTable,
 		ProjectTable,
 		ProjectMemberTable,
 		TaskTable,
@@ -396,8 +397,14 @@ func init() {
 	ContainerTable.Annotation = &entsql.Annotation{
 		Table: "container",
 	}
+	GroupTable.Annotation = &entsql.Annotation{
+		Table: "group",
+	}
 	GroupMemberTable.Annotation = &entsql.Annotation{
 		Table: "group_member",
+	}
+	JobTable.Annotation = &entsql.Annotation{
+		Table: "job",
 	}
 	ProjectTable.Annotation = &entsql.Annotation{
 		Table: "project",

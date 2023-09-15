@@ -32,7 +32,7 @@ const (
 	// FieldHeadcount holds the string denoting the headcount field in the database.
 	FieldHeadcount = "headcount"
 	// Table holds the table name of the group in the database.
-	Table = "groups"
+	Table = "group"
 )
 
 // Columns holds all SQL columns for group fields.

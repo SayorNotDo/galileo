@@ -17,6 +17,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/wire"
 	consulAPI "github.com/hashicorp/consul/api"
 	"github.com/redis/go-redis/v9"
@@ -48,19 +49,19 @@ var (
 type Data struct {
 	entDB     *ent.Client
 	log       *log.Helper
-	redisCli  redis.Cmdable
+	redisCli  *redis.Client
 	ManageCli managementV1.ManagementClient
 	dockerCli *client.Client
 	asynqSrv  *asynq.Server
 }
 
 // NewData .
-func NewData(c *conf.Data, logger log.Logger, redisCli redis.Cmdable, ManageCli managementV1.ManagementClient, dockerCli *client.Client, srv *asynq.Server) (*Data, func(), error) {
+func NewData(c *conf.Data, db *ent.Client, logger log.Logger, redisCli *redis.Client, ManageCli managementV1.ManagementClient, dockerCli *client.Client, srv *asynq.Server) (*Data, func(), error) {
 	l := log.NewHelper(log.With(logger, "module", "engine.DataService"))
 	cleanup := func() {
 		l.Info("closing the data resources")
 	}
-	return &Data{log: l, redisCli: redisCli, ManageCli: ManageCli, dockerCli: dockerCli, asynqSrv: srv}, cleanup, nil
+	return &Data{entDB: db, log: l, redisCli: redisCli, ManageCli: ManageCli, dockerCli: dockerCli, asynqSrv: srv}, cleanup, nil
 }
 
 func NewEntDB(c *conf.Data) (*ent.Client, error) {
@@ -112,7 +113,7 @@ func NewTaskServiceClient(sr *conf.Service, rr registry.Discovery) managementV1.
 	return c
 }
 
-func NewRedis(conf *conf.Data, logger log.Logger) redis.Cmdable {
+func NewRedis(conf *conf.Data, logger log.Logger) *redis.Client {
 	logs := log.NewHelper(log.With(logger, "module", "engineService.data.redis"))
 	rdb := redis.NewClient(&redis.Options{
 		Addr:         conf.Redis.Addr,
@@ -185,4 +186,11 @@ func NewDockerClient(conf *conf.Service, logger log.Logger) *client.Client {
 		return nil
 	}
 	return cli
+}
+
+func rollback(tx *ent.Tx, err error) error {
+	if rErr := tx.Rollback(); rErr != nil {
+		err = fmt.Errorf("%w: %v", err, rErr)
+	}
+	return err
 }

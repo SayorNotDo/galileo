@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/google/uuid"
 )
 
 // Job is the model entity for the Job schema.
@@ -22,6 +21,10 @@ type Job struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// 执行人
 	CreatedBy uint32 `json:"created_by,omitempty"`
+	// Payload
+	Payload []byte `json:"payload,omitempty"`
+	// 任务类型
+	Type string `json:"type,omitempty"`
 	// 更新时间
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// 当前的工作节点, 存储格式为IP地址
@@ -30,12 +33,10 @@ type Job struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// 删除操作执行人
 	DeletedBy uint32 `json:"deleted_by,omitempty"`
-	// Job execute ID
-	UUID uuid.UUID `json:"uuid,omitempty"`
 	// Entry ID
 	EntryID string `json:"entry_id,omitempty"`
 	// 配置信息
-	Config string `json:"config,omitempty"`
+	Config []byte `json:"config,omitempty"`
 	// 关联的任务ID
 	TaskID int64 `json:"task_id,omitempty"`
 	// Job 执行情况
@@ -47,16 +48,16 @@ func (*Job) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case job.FieldPayload, job.FieldConfig:
+			values[i] = new([]byte)
 		case job.FieldActive:
 			values[i] = new(sql.NullBool)
 		case job.FieldID, job.FieldCreatedBy, job.FieldWorker, job.FieldDeletedBy, job.FieldTaskID:
 			values[i] = new(sql.NullInt64)
-		case job.FieldEntryID, job.FieldConfig:
+		case job.FieldType, job.FieldEntryID:
 			values[i] = new(sql.NullString)
 		case job.FieldCreatedAt, job.FieldUpdatedAt, job.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
-		case job.FieldUUID:
-			values[i] = new(uuid.UUID)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Job", columns[i])
 		}
@@ -90,6 +91,18 @@ func (j *Job) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				j.CreatedBy = uint32(value.Int64)
 			}
+		case job.FieldPayload:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field payload", values[i])
+			} else if value != nil {
+				j.Payload = *value
+			}
+		case job.FieldType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field type", values[i])
+			} else if value.Valid {
+				j.Type = value.String
+			}
 		case job.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
@@ -114,12 +127,6 @@ func (j *Job) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				j.DeletedBy = uint32(value.Int64)
 			}
-		case job.FieldUUID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field uuid", values[i])
-			} else if value != nil {
-				j.UUID = *value
-			}
 		case job.FieldEntryID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field entry_id", values[i])
@@ -127,10 +134,10 @@ func (j *Job) assignValues(columns []string, values []any) error {
 				j.EntryID = value.String
 			}
 		case job.FieldConfig:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field config", values[i])
-			} else if value.Valid {
-				j.Config = value.String
+			} else if value != nil {
+				j.Config = *value
 			}
 		case job.FieldTaskID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -178,6 +185,12 @@ func (j *Job) String() string {
 	builder.WriteString("created_by=")
 	builder.WriteString(fmt.Sprintf("%v", j.CreatedBy))
 	builder.WriteString(", ")
+	builder.WriteString("payload=")
+	builder.WriteString(fmt.Sprintf("%v", j.Payload))
+	builder.WriteString(", ")
+	builder.WriteString("type=")
+	builder.WriteString(j.Type)
+	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(j.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
@@ -190,14 +203,11 @@ func (j *Job) String() string {
 	builder.WriteString("deleted_by=")
 	builder.WriteString(fmt.Sprintf("%v", j.DeletedBy))
 	builder.WriteString(", ")
-	builder.WriteString("uuid=")
-	builder.WriteString(fmt.Sprintf("%v", j.UUID))
-	builder.WriteString(", ")
 	builder.WriteString("entry_id=")
 	builder.WriteString(j.EntryID)
 	builder.WriteString(", ")
 	builder.WriteString("config=")
-	builder.WriteString(j.Config)
+	builder.WriteString(fmt.Sprintf("%v", j.Config))
 	builder.WriteString(", ")
 	builder.WriteString("task_id=")
 	builder.WriteString(fmt.Sprintf("%v", j.TaskID))

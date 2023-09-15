@@ -4,6 +4,7 @@ import (
 	"context"
 	v1 "galileo/api/engine/v1"
 	"galileo/app/engine/internal/biz"
+	"galileo/pkg/ctxdata"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"time"
 )
@@ -39,6 +40,7 @@ func (s *EngineService) AddDefaultJob(ctx context.Context, req *v1.AddDefaultJob
 // AddDelayedJob
 /* 添加延时任务到delayed队列 */
 func (s *EngineService) AddDelayedJob(ctx context.Context, req *v1.AddDelayedJobRequest) (*emptypb.Empty, error) {
+	s.log.Debugf("--------->>>>> Adding delayed job request user: %v", ctxdata.UserIdFromMetaData(ctx))
 	/* 构建延迟任务的Payload */
 	delay := req.DelayedTime.AsTime().Sub(time.Now())
 	payload := biz.NewDelayedJobPayload(req.TaskID, req.Worker, req.Config, delay)

@@ -191,7 +191,27 @@ func NewFileServiceClient(sr *conf.Service, rr registry.Discovery) fileV1.FileCl
 
 func rollback(tx *ent.Tx, err error) error {
 	if rErr := tx.Rollback(); rErr != nil {
-		err = fmt.Errorf("%w: %v", err, rErr)
+		err = fmt.Errorf("%w: rolling back transaction: %v", err, rErr)
 	}
 	return err
+}
+
+func WithTx(ctx context.Context, client *ent.Client, fn func(tx *ent.Tx) error) error {
+	tx, err := client.Tx(ctx)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if v := recover(); v != nil {
+			_ = tx.Rollback()
+			panic(v)
+		}
+	}()
+	if err := fn(tx); err != nil {
+		return rollback(tx, err)
+	}
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("committing transaction: %v", err)
+	}
+	return nil
 }
