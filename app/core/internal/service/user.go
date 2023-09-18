@@ -12,20 +12,34 @@ import (
 	"go.opentelemetry.io/otel"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"net/http"
 )
 
 func (c *CoreService) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterReply, error) {
-	// add trace
-	tr := otel.Tracer("scheduler")
-	ctx, span := tr.Start(ctx, "get user info")
+	/* add trace */
+	tr := otel.Tracer("core.scheduler")
+	ctx, span := tr.Start(ctx, "new user registration")
 	span.SpanContext()
 	defer span.End()
-	return c.uc.CreateUser(ctx, req)
+	/* 创建新用户 */
+	newUser, err := biz.NewUser(req.Phone, req.Username, req.Password, req.Email)
+	if err != nil {
+		return nil, err
+	}
+	ret, err := c.uc.CreateUser(ctx, &newUser)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.RegisterReply{
+		Id:        ret.Id,
+		Username:  ret.Username,
+		CreatedAt: timestamppb.New(ret.CreatedAt),
+	}, nil
 }
 
 func (c *CoreService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginReply, error) {
 	// add trace
-	tr := otel.Tracer("scheduler")
+	tr := otel.Tracer("core.scheduler")
 	ctx, span := tr.Start(ctx, "login")
 	span.SpanContext()
 	defer span.End()
@@ -86,7 +100,7 @@ func (c *CoreService) UserInfo(ctx context.Context, req *v1.UserInfoRequest) (*v
 			LastLoginTime: timestamppb.New(ret.LastLoginTime),
 		}, nil
 	default:
-		return nil, errResponse.SetErrByReason(errResponse.ReasonSystemError)
+		return nil, errResponse.SetErrByReason(errResponse.ReasonUnsupportedMethod)
 	}
 	if err != nil {
 		return nil, err
@@ -116,16 +130,6 @@ func (c *CoreService) CurrentUserInfo(ctx context.Context, empty *empty.Empty) (
 
 func (c *CoreService) DeleteUser(ctx context.Context, req *v1.DeleteRequest) (*emptypb.Empty, error) {
 	return c.uc.DeleteUser(ctx, req.Id)
-}
-
-func (c *CoreService) ExecuteToken(ctx context.Context, req *v1.ExecuteTokenRequest) (*v1.ExecuteTokenReply, error) {
-	token, err := c.cc.ExecuteToken(ctx, req.Machine)
-	if err != nil {
-		return nil, err
-	}
-	return &v1.ExecuteTokenReply{
-		ExecuteToken: token,
-	}, nil
 }
 
 func (c *CoreService) GetUserProjectList(ctx context.Context, empty *empty.Empty) (*v1.UserProjectListReply, error) {
@@ -173,7 +177,7 @@ func (c *CoreService) ListUserGroups(ctx context.Context, request *v1.ListUserGr
 func (c *CoreService) UserGroup(ctx context.Context, req *v1.GroupInfoRequest) (*v1.GroupInfo, error) {
 	var reply *v1.GroupInfo
 	switch ctxdata.MethodFromContext(ctx) {
-	case "POST":
+	case http.MethodPost:
 		ret, err := c.uc.CreateUserGroup(ctx, &biz.Group{
 			Id:          req.Id,
 			Name:        req.Name,
@@ -184,8 +188,8 @@ func (c *CoreService) UserGroup(ctx context.Context, req *v1.GroupInfoRequest) (
 			return nil, err
 		}
 		return &v1.GroupInfo{Id: ret.Id}, nil
-	case "DELETE":
-	case "PUT":
+	case http.MethodDelete:
+	case http.MethodPut:
 		err := c.uc.UpdateUserGroup(ctx, &biz.Group{
 			Id:          req.Id,
 			Name:        req.Name,
@@ -196,7 +200,7 @@ func (c *CoreService) UserGroup(ctx context.Context, req *v1.GroupInfoRequest) (
 			return nil, err
 		}
 		return nil, nil
-	case "GET":
+	case http.MethodGet:
 		ret, err := c.uc.GetUserGroup(ctx, req.Id)
 		if err != nil {
 			return nil, err

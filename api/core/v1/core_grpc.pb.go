@@ -35,7 +35,6 @@ const (
 	Core_GetUserLatestActivity_FullMethodName = "/api.core.v1.Core/GetUserLatestActivity"
 	Core_TrackReportData_FullMethodName       = "/api.core.v1.Core/TrackReportData"
 	Core_ExecuteToken_FullMethodName          = "/api.core.v1.Core/ExecuteToken"
-	Core_InspectContainer_FullMethodName      = "/api.core.v1.Core/InspectContainer"
 )
 
 // CoreClient is the client API for Core service.
@@ -57,7 +56,6 @@ type CoreClient interface {
 	GetUserLatestActivity(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserLatestActivityReply, error)
 	TrackReportData(ctx context.Context, in *TrackReportDataRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ExecuteToken(ctx context.Context, in *ExecuteTokenRequest, opts ...grpc.CallOption) (*ExecuteTokenReply, error)
-	InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...grpc.CallOption) (*ContainerInfo, error)
 }
 
 type coreClient struct {
@@ -203,15 +201,6 @@ func (c *coreClient) ExecuteToken(ctx context.Context, in *ExecuteTokenRequest, 
 	return out, nil
 }
 
-func (c *coreClient) InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...grpc.CallOption) (*ContainerInfo, error) {
-	out := new(ContainerInfo)
-	err := c.cc.Invoke(ctx, Core_InspectContainer_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // CoreServer is the server API for Core service.
 // All implementations must embed UnimplementedCoreServer
 // for forward compatibility
@@ -231,7 +220,6 @@ type CoreServer interface {
 	GetUserLatestActivity(context.Context, *emptypb.Empty) (*UserLatestActivityReply, error)
 	TrackReportData(context.Context, *TrackReportDataRequest) (*emptypb.Empty, error)
 	ExecuteToken(context.Context, *ExecuteTokenRequest) (*ExecuteTokenReply, error)
-	InspectContainer(context.Context, *InspectContainerRequest) (*ContainerInfo, error)
 	mustEmbedUnimplementedCoreServer()
 }
 
@@ -283,9 +271,6 @@ func (UnimplementedCoreServer) TrackReportData(context.Context, *TrackReportData
 }
 func (UnimplementedCoreServer) ExecuteToken(context.Context, *ExecuteTokenRequest) (*ExecuteTokenReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExecuteToken not implemented")
-}
-func (UnimplementedCoreServer) InspectContainer(context.Context, *InspectContainerRequest) (*ContainerInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InspectContainer not implemented")
 }
 func (UnimplementedCoreServer) mustEmbedUnimplementedCoreServer() {}
 
@@ -570,24 +555,6 @@ func _Core_ExecuteToken_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Core_InspectContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(InspectContainerRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CoreServer).InspectContainer(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Core_InspectContainer_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).InspectContainer(ctx, req.(*InspectContainerRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Core_ServiceDesc is the grpc.ServiceDesc for Core service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -654,10 +621,6 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExecuteToken",
 			Handler:    _Core_ExecuteToken_Handler,
-		},
-		{
-			MethodName: "InspectContainer",
-			Handler:    _Core_InspectContainer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

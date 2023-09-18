@@ -14,7 +14,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	jwt2 "github.com/golang-jwt/jwt/v4"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"net/http"
 	"time"
 )
@@ -86,20 +85,8 @@ func newUserClaim(u *User) *auth.CustomClaims {
 	}
 }
 
-func (u *UserUseCase) CreateUser(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterReply, error) {
-	newUser, err := NewUser(req.Phone, req.Username, req.Password, req.Email)
-	if err != nil {
-		return nil, err
-	}
-	createUser, err := u.repo.CreateUser(ctx, &newUser)
-	if err != nil {
-		return nil, err
-	}
-	return &v1.RegisterReply{
-		Id:        createUser.Id,
-		Username:  createUser.Username,
-		CreatedAt: timestamppb.New(createUser.CreatedAt),
-	}, nil
+func (u *UserUseCase) CreateUser(ctx context.Context, user *User) (*User, error) {
+	return u.repo.CreateUser(ctx, user)
 }
 
 func (u *UserUseCase) UpdateUserInfo(ctx context.Context, req *v1.UserInfoRequest) (*v1.UserInfoReply, error) {

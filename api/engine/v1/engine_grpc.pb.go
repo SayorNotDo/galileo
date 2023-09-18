@@ -24,6 +24,8 @@ const (
 	Engine_AddPeriodicJob_FullMethodName   = "/api.engine.v1.Engine/AddPeriodicJob"
 	Engine_AddDelayedJob_FullMethodName    = "/api.engine.v1.Engine/AddDelayedJob"
 	Engine_RemoveJob_FullMethodName        = "/api.engine.v1.Engine/RemoveJob"
+	Engine_ListJobOnceTask_FullMethodName  = "/api.engine.v1.Engine/ListJobOnceTask"
+	Engine_ListScheduledJob_FullMethodName = "/api.engine.v1.Engine/ListScheduledJob"
 	Engine_CreateContainer_FullMethodName  = "/api.engine.v1.Engine/CreateContainer"
 	Engine_ListContainers_FullMethodName   = "/api.engine.v1.Engine/ListContainers"
 	Engine_InspectContainer_FullMethodName = "/api.engine.v1.Engine/InspectContainer"
@@ -38,6 +40,8 @@ type EngineClient interface {
 	AddPeriodicJob(ctx context.Context, in *AddPeriodicJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	AddDelayedJob(ctx context.Context, in *AddDelayedJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	RemoveJob(ctx context.Context, in *RemoveJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ListJobOnceTask(ctx context.Context, in *ListJobOnceTaskRequest, opts ...grpc.CallOption) (*ListJobReply, error)
+	ListScheduledJob(ctx context.Context, in *ListScheduledJobRequest, opts ...grpc.CallOption) (*ListJobReply, error)
 	// 容器相关
 	CreateContainer(ctx context.Context, in *CreateContainerRequest, opts ...grpc.CallOption) (*CreateContainerReply, error)
 	ListContainers(ctx context.Context, in *ListContainerRequest, opts ...grpc.CallOption) (*ListContainersReply, error)
@@ -88,6 +92,24 @@ func (c *engineClient) RemoveJob(ctx context.Context, in *RemoveJobRequest, opts
 	return out, nil
 }
 
+func (c *engineClient) ListJobOnceTask(ctx context.Context, in *ListJobOnceTaskRequest, opts ...grpc.CallOption) (*ListJobReply, error) {
+	out := new(ListJobReply)
+	err := c.cc.Invoke(ctx, Engine_ListJobOnceTask_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *engineClient) ListScheduledJob(ctx context.Context, in *ListScheduledJobRequest, opts ...grpc.CallOption) (*ListJobReply, error) {
+	out := new(ListJobReply)
+	err := c.cc.Invoke(ctx, Engine_ListScheduledJob_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *engineClient) CreateContainer(ctx context.Context, in *CreateContainerRequest, opts ...grpc.CallOption) (*CreateContainerReply, error) {
 	out := new(CreateContainerReply)
 	err := c.cc.Invoke(ctx, Engine_CreateContainer_FullMethodName, in, out, opts...)
@@ -124,6 +146,8 @@ type EngineServer interface {
 	AddPeriodicJob(context.Context, *AddPeriodicJobRequest) (*emptypb.Empty, error)
 	AddDelayedJob(context.Context, *AddDelayedJobRequest) (*emptypb.Empty, error)
 	RemoveJob(context.Context, *RemoveJobRequest) (*emptypb.Empty, error)
+	ListJobOnceTask(context.Context, *ListJobOnceTaskRequest) (*ListJobReply, error)
+	ListScheduledJob(context.Context, *ListScheduledJobRequest) (*ListJobReply, error)
 	// 容器相关
 	CreateContainer(context.Context, *CreateContainerRequest) (*CreateContainerReply, error)
 	ListContainers(context.Context, *ListContainerRequest) (*ListContainersReply, error)
@@ -146,6 +170,12 @@ func (UnimplementedEngineServer) AddDelayedJob(context.Context, *AddDelayedJobRe
 }
 func (UnimplementedEngineServer) RemoveJob(context.Context, *RemoveJobRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveJob not implemented")
+}
+func (UnimplementedEngineServer) ListJobOnceTask(context.Context, *ListJobOnceTaskRequest) (*ListJobReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListJobOnceTask not implemented")
+}
+func (UnimplementedEngineServer) ListScheduledJob(context.Context, *ListScheduledJobRequest) (*ListJobReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListScheduledJob not implemented")
 }
 func (UnimplementedEngineServer) CreateContainer(context.Context, *CreateContainerRequest) (*CreateContainerReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateContainer not implemented")
@@ -241,6 +271,42 @@ func _Engine_RemoveJob_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Engine_ListJobOnceTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListJobOnceTaskRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServer).ListJobOnceTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Engine_ListJobOnceTask_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServer).ListJobOnceTask(ctx, req.(*ListJobOnceTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Engine_ListScheduledJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListScheduledJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServer).ListScheduledJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Engine_ListScheduledJob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServer).ListScheduledJob(ctx, req.(*ListScheduledJobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Engine_CreateContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateContainerRequest)
 	if err := dec(in); err != nil {
@@ -317,6 +383,14 @@ var Engine_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveJob",
 			Handler:    _Engine_RemoveJob_Handler,
+		},
+		{
+			MethodName: "ListJobOnceTask",
+			Handler:    _Engine_ListJobOnceTask_Handler,
+		},
+		{
+			MethodName: "ListScheduledJob",
+			Handler:    _Engine_ListScheduledJob_Handler,
 		},
 		{
 			MethodName: "CreateContainer",

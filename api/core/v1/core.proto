@@ -104,11 +104,6 @@ service Core {
       body: "*"
     };
   }
-  rpc InspectContainer(InspectContainerRequest) returns (ContainerInfo) {
-    option(google.api.http) = {
-      get: "v1/api/engine/container/{id}",
-    };
-  }
 }
 
 message ResetPasswordReply {}
@@ -177,17 +172,6 @@ message ProjectInfo {
   google.protobuf.Timestamp deadline = 11;
   string description = 12;
   string remark = 13;
-}
-
-message InspectContainerRequest {
-  string id = 1;
-}
-
-message ContainerInfo {
-  string id = 1;
-  string name = 2;
-  string image = 3;
-  map<string, string> labels = 4;
 }
 
 message ExecuteTokenRequest {

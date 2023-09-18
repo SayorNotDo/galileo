@@ -3,8 +3,606 @@
 
 openapi: 3.0.3
 info:
-    title: ""
+    title: Core API
     version: 0.0.1
-paths: {}
+paths:
+    data/report:
+        post:
+            tags:
+                - Core
+            operationId: Core_TrackReportData
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/TrackReportDataRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/execute-token:
+        post:
+            tags:
+                - Core
+            operationId: Core_ExecuteToken
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ExecuteTokenRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ExecuteTokenReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/group:
+        post:
+            tags:
+                - Core
+            operationId: Core_UserGroups
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GroupInfoRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GroupInfo'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/groups:
+        get:
+            tags:
+                - Core
+            operationId: Core_ListUserGroups
+            parameters:
+                - name: parent
+                  in: query
+                  schema:
+                    type: string
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageToken
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserGroupListReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/info:
+        get:
+            tags:
+                - Core
+            operationId: Core_CurrentUserInfo
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserInfoReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/latest-activity:
+        get:
+            tags:
+                - Core
+            operationId: Core_GetUserLatestActivity
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserLatestActivityReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/list/{pageToken}/{pageSize}:
+        get:
+            tags:
+                - Core
+            operationId: Core_ListUsers
+            parameters:
+                - name: pageToken
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: pageSize
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListUserReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/login:
+        post:
+            tags:
+                - Core
+            operationId: Core_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LoginReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/logout:
+        post:
+            tags:
+                - Core
+            operationId: Core_Logout
+            requestBody:
+                content:
+                    application/json: {}
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/password:
+        put:
+            tags:
+                - Core
+            operationId: Core_UpdatePassword
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdatePasswordRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/project/list:
+        get:
+            tags:
+                - Core
+            operationId: Core_GetUserProjectList
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserProjectListReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/register:
+        post:
+            tags:
+                - Core
+            operationId: Core_Register
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RegisterRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RegisterReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/{id}:
+        delete:
+            tags:
+                - Core
+            operationId: Core_DeleteUser
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/{id}/info:
+        get:
+            tags:
+                - Core
+            operationId: Core_UserInfo
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: email
+                  in: query
+                  schema:
+                    type: string
+                - name: phone
+                  in: query
+                  schema:
+                    type: string
+                - name: avatar
+                  in: query
+                  schema:
+                    type: string
+                - name: location
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UserInfoReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
 components:
-    schemas: {}
+    schemas:
+        ExecuteTokenReply:
+            type: object
+            properties:
+                executeToken:
+                    type: string
+        ExecuteTokenRequest:
+            type: object
+            properties:
+                machine:
+                    type: string
+        GoogleProtobufAny:
+            type: object
+            properties:
+                '@type':
+                    type: string
+                    description: The type of the serialized message.
+            additionalProperties: true
+            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        GroupInfo:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int32
+                name:
+                    type: string
+                avatar:
+                    type: string
+                description:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                createdBy:
+                    type: integer
+                    format: uint32
+                updatedAt:
+                    type: string
+                    format: date-time
+                updatedBy:
+                    type: integer
+                    format: uint32
+                deletedAt:
+                    type: string
+                    format: date-time
+                deletedBy:
+                    type: integer
+                    format: uint32
+                headcount:
+                    type: integer
+                    format: int32
+                groupMemberList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GroupMember'
+        GroupInfoRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int32
+                name:
+                    type: string
+                avatar:
+                    type: string
+                description:
+                    type: string
+        GroupMember:
+            type: object
+            properties:
+                uid:
+                    type: integer
+                    format: uint32
+                username:
+                    type: string
+                role:
+                    type: integer
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+                createdBy:
+                    type: integer
+                    format: uint32
+        ListUserReply:
+            type: object
+            properties:
+                total:
+                    type: integer
+                    format: int32
+                userList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserDetail'
+        LoginReply:
+            type: object
+            properties:
+                token:
+                    type: string
+        LoginRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+        ProjectInfo:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int32
+                name:
+                    type: string
+                identifier:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                createdBy:
+                    type: integer
+                    format: uint32
+                updatedAt:
+                    type: string
+                    format: date-time
+                updatedBy:
+                    type: integer
+                    format: uint32
+                deletedAt:
+                    type: string
+                    format: date-time
+                deletedBy:
+                    type: integer
+                    format: uint32
+                startTime:
+                    type: string
+                    format: date-time
+                deadline:
+                    type: string
+                    format: date-time
+                description:
+                    type: string
+                remark:
+                    type: string
+        RegisterReply:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                username:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+        RegisterRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+                phone:
+                    type: string
+                email:
+                    type: string
+        Status:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+                    format: int32
+                message:
+                    type: string
+                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+                details:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GoogleProtobufAny'
+                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
+            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+        TrackReportDataRequest:
+            type: object
+            properties:
+                data:
+                    type: string
+        UpdatePasswordRequest:
+            type: object
+            properties:
+                password:
+                    type: string
+        UserDetail:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                nickname:
+                    type: string
+                chineseName:
+                    type: string
+                phone:
+                    type: string
+                email:
+                    type: string
+                role:
+                    type: integer
+                    format: int32
+        UserGroupListReply:
+            type: object
+            properties:
+                total:
+                    type: integer
+                    format: int32
+                groupList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GroupInfo'
+                nextPageToken:
+                    type: string
+        UserInfoReply:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                username:
+                    type: string
+                chineseName:
+                    type: string
+                email:
+                    type: string
+                phone:
+                    type: string
+                avatar:
+                    type: string
+                active:
+                    type: boolean
+                location:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                lastLoginTime:
+                    type: string
+                    format: date-time
+        UserLatestActivityReply:
+            type: object
+            properties: {}
+        UserProjectListReply:
+            type: object
+            properties:
+                total:
+                    type: integer
+                    format: int32
+                projectList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ProjectInfo'
+tags:
+    - name: Core

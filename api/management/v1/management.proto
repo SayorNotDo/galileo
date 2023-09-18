@@ -16,23 +16,19 @@ service Management {
       get: "v1/api/management/info"
     };
   }
-  rpc CreateTestPlan (CreateTestPlanRequest) returns (CreateTestPlanReply) {
+  rpc Testplan (TestplanRequest) returns (TestplanReply) {
     option (google.api.http) = {
       post: "v1/api/management/testplan"
       body: "*"
+      additional_bindings: {
+        get: "v1/api/management/testplan/{id}",
+      };
+      additional_bindings: {
+        put: "v1/api/management/testplan",
+        body: "*"
+      };
     };
   };
-  rpc UpdateTestPlan (UpdateTestPlanRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      put: "v1/api/management/testplan"
-      body: "*"
-    };
-  }
-  rpc GetTestPlan (GetTestPlanRequest) returns (GetTestPlanReply) {
-    option (google.api.http) = {
-      get: "v1/api/management/testplan/{id}"
-    };
-  }
 
   /* project module */
   rpc CreateProject (CreateProjectRequest) returns (CreateProjectReply) {
@@ -544,15 +540,16 @@ message BaseInfoReply {
 
 
 
-message CreateTestPlanRequest {
-  string name = 1;
-  string description = 2;
-  google.protobuf.Timestamp startTime = 3;
-  google.protobuf.Timestamp deadline = 4;
-  int32 projectId = 5;
-  repeated int32 tasks = 6;
+message TestplanRequest {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Timestamp startTime = 4;
+  google.protobuf.Timestamp deadline = 5;
+  int32 projectId = 6;
+  repeated int32 tasks = 7;
 }
 
-message CreateTestPlanReply {
+message TestplanReply {
   int64 id = 1;
 }

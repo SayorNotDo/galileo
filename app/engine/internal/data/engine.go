@@ -133,7 +133,7 @@ func (r *schedulerRepo) RemovePeriodicJob(ctx context.Context, entryId string) e
 }
 
 func (r *schedulerRepo) RemoveDelayedJob(ctx context.Context, qName, jobID string) error {
-	/* TODO：Redis通过删除对应的键值对实现延时任务的删除 */
+	/* Redis通过删除对应的键值对实现延时任务的删除 */
 	scheduledKey := biz.ScheduledKey(qName)
 	jobKey := biz.JobKey(qName, jobID)
 	/* Redis事务化操作 */
@@ -168,13 +168,41 @@ func (r *schedulerRepo) RemoveDelayedJob(ctx context.Context, qName, jobID strin
 	return errResponse.SetCustomizeErrMsg(errResponse.ReasonSystemError, "max retries exceeded")
 }
 
-func (r *schedulerRepo) ListDelayedJob(ctx context.Context) {}
-
-func (r *schedulerRepo) GetQueue(ctx context.Context) []string {
+func (r *schedulerRepo) syncScheduledJobList(ctx context.Context, qName string) error {
+	/* 同步scheduled作业队列 */
+	/* 获取type为job:delayed、active为false且未被删除的作业列表 */
+	jobList, err := r.data.entDB.Job.Query().
+		Where(job.And(
+			job.Type(biz.TypeDelayedJob),
+			job.Active(false),
+			job.DeletedAtIsNil(),
+			job.DeletedByIsNil(),
+		)).All(ctx)
+	if err != nil {
+		return err
+	}
+	r.log.Debugf("jobList: %v", jobList)
+	/* 获取Redis中的scheduled中的Member列表 */
+	scheduledKey := biz.ScheduledKey(qName)
+	ret, err := r.data.redisCli.ZRange(ctx, scheduledKey, 0, -1).Result()
+	r.log.Debugf("range list: %v", ret)
+	/* 对比两个列表是否存在缺失的作业，重新加入调度列表 */
 	return nil
 }
 
-func (r *schedulerRepo) ListTimingJob(ctx context.Context) ([]*biz.Job, error) {
+func (r *schedulerRepo) ListScheduledJob(ctx context.Context, qName string) ([]*biz.Job, error) {
+	/* 获取Redis中的scheduled下存在的作业 */
+	key := biz.ScheduledKey(qName)
+	/* Zrange */
+	res, err := r.data.redisCli.ZRange(ctx, key, 0, -1).Result()
+	if err != nil {
+		return nil, err
+	}
+	r.log.Debugf("redis result: %v", res)
+	return nil, nil
+}
+
+func (r *schedulerRepo) ListPeriodicJob(ctx context.Context) ([]*biz.Job, error) {
 	return nil, nil
 }
 

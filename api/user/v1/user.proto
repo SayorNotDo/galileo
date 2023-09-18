@@ -11,7 +11,7 @@ option java_multiple_files = true;
 option java_package = "api.user";
 
 service User {
-  rpc CreateUser (CreateUserRequest) returns (CreateUserReply);
+  rpc CreateUser (CreateUserRequest) returns (UserInfo);
   rpc UpdateUserInfo (UpdateUserRequest) returns (google.protobuf.Empty);
   rpc GetUserInfo (GetUserInfoRequest) returns (UserInfo);
   rpc ListUser (ListUserRequest) returns (ListUserReply);
@@ -44,7 +44,7 @@ message GetUserInfoRequest {
 }
 
 message UserInfo {
-  uint32 id = 1;
+  uint32 ID = 1;
   string username = 2;
   string chineseName = 3;
   string email = 4;
@@ -137,11 +137,7 @@ message CreateUserRequest {
   string email = 3;
   string phone = 4;
 }
-message CreateUserReply {
-  uint32 id = 1;
-  string username = 2;
-  google.protobuf.Timestamp createdAt = 3;
-}
+
 
 message UpdateUserRequest {
   uint32 id = 1;

@@ -17,6 +17,8 @@ service Engine {
   rpc AddPeriodicJob(AddPeriodicJobRequest) returns (google.protobuf.Empty);
   rpc AddDelayedJob(AddDelayedJobRequest) returns (google.protobuf.Empty);
   rpc RemoveJob(RemoveJobRequest) returns (google.protobuf.Empty);
+  rpc ListJobOnceTask(ListJobOnceTaskRequest) returns (ListJobReply);
+  rpc ListScheduledJob(ListScheduledJobRequest) returns (ListJobReply);
 
   /* 容器相关 */
   rpc CreateContainer(CreateContainerRequest) returns (CreateContainerReply);
@@ -26,6 +28,19 @@ service Engine {
 
 message Job {
   int64 taskId = 1;
+}
+
+message ListScheduledJobRequest {
+  string qName = 1;
+}
+
+message ListJobOnceTaskRequest {
+  int64 taskId = 1;
+}
+
+message ListJobReply {
+  repeated Job jobList = 1;
+  int64 total = 2;
 }
 
 message RemoveJobRequest {

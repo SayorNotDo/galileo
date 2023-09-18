@@ -6,7 +6,6 @@ import (
 )
 
 type SchedulerRepo interface {
-	ListTimingJob(ctx context.Context) ([]*Job, error)
 	AddPeriodicJob(ctx context.Context, payload *PeriodicJobPayload, expression string) (*Job, error)
 	AddDefaultJob(ctx context.Context, payload *DefaultJobPayload) (*Job, error)
 	AddDelayedJob(ctx context.Context, payload *DelayedJobPayload, delay time.Duration) (*Job, error)
@@ -33,6 +32,6 @@ func (sc *SchedulerUseCase) GetJob(ctx context.Context, jobID string) (*Job, err
 	return nil, nil
 }
 
-func (sc *SchedulerUseCase) ListTimingJob(ctx context.Context) ([]*Job, error) {
-	return sc.repo.ListTimingJob(ctx)
+func (sc *SchedulerUseCase) ListPeriodicJob(ctx context.Context) ([]*Job, error) {
+	return nil, nil
 }

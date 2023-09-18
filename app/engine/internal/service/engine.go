@@ -58,3 +58,11 @@ func (s *EngineService) RemoveJob(ctx context.Context, req *v1.RemoveJobRequest)
 	/* 基于对应的任务类型调用不同的biz方法 */
 	return nil, nil
 }
+
+func (s *EngineService) ListJobOnceTask(ctx context.Context, req *v1.ListJobOnceTaskRequest) (*v1.ListJobReply, error) {
+	return nil, nil
+}
+
+func (s *EngineService) ListScheduledJob(ctx context.Context, req *v1.ListScheduledJobRequest) (*v1.ListJobReply, error) {
+	return nil, nil
+}

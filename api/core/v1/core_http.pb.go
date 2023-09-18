@@ -25,7 +25,6 @@ const OperationCoreDeleteUser = "/api.core.v1.Core/DeleteUser"
 const OperationCoreExecuteToken = "/api.core.v1.Core/ExecuteToken"
 const OperationCoreGetUserLatestActivity = "/api.core.v1.Core/GetUserLatestActivity"
 const OperationCoreGetUserProjectList = "/api.core.v1.Core/GetUserProjectList"
-const OperationCoreInspectContainer = "/api.core.v1.Core/InspectContainer"
 const OperationCoreListUserGroups = "/api.core.v1.Core/ListUserGroups"
 const OperationCoreListUsers = "/api.core.v1.Core/ListUsers"
 const OperationCoreLogin = "/api.core.v1.Core/Login"
@@ -42,7 +41,6 @@ type CoreHTTPServer interface {
 	ExecuteToken(context.Context, *ExecuteTokenRequest) (*ExecuteTokenReply, error)
 	GetUserLatestActivity(context.Context, *emptypb.Empty) (*UserLatestActivityReply, error)
 	GetUserProjectList(context.Context, *emptypb.Empty) (*UserProjectListReply, error)
-	InspectContainer(context.Context, *InspectContainerRequest) (*ContainerInfo, error)
 	ListUserGroups(context.Context, *ListUserGroupsRequest) (*UserGroupListReply, error)
 	ListUsers(context.Context, *ListUserRequest) (*ListUserReply, error)
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
@@ -74,7 +72,6 @@ func RegisterCoreHTTPServer(s *http.Server, srv CoreHTTPServer) {
 	r.GET("v1/api/user/latest-activity", _Core_GetUserLatestActivity0_HTTP_Handler(srv))
 	r.POST("data/report", _Core_TrackReportData0_HTTP_Handler(srv))
 	r.POST("v1/api/execute-token", _Core_ExecuteToken0_HTTP_Handler(srv))
-	r.GET("v1/api/engine/container/{id}", _Core_InspectContainer0_HTTP_Handler(srv))
 }
 
 func _Core_Register0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
@@ -467,35 +464,12 @@ func _Core_ExecuteToken0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context)
 	}
 }
 
-func _Core_InspectContainer0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in InspectContainerRequest
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationCoreInspectContainer)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.InspectContainer(ctx, req.(*InspectContainerRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*ContainerInfo)
-		return ctx.Result(200, reply)
-	}
-}
-
 type CoreHTTPClient interface {
 	CurrentUserInfo(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *UserInfoReply, err error)
 	DeleteUser(ctx context.Context, req *DeleteRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	ExecuteToken(ctx context.Context, req *ExecuteTokenRequest, opts ...http.CallOption) (rsp *ExecuteTokenReply, err error)
 	GetUserLatestActivity(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *UserLatestActivityReply, err error)
 	GetUserProjectList(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *UserProjectListReply, err error)
-	InspectContainer(ctx context.Context, req *InspectContainerRequest, opts ...http.CallOption) (rsp *ContainerInfo, err error)
 	ListUserGroups(ctx context.Context, req *ListUserGroupsRequest, opts ...http.CallOption) (rsp *UserGroupListReply, err error)
 	ListUsers(ctx context.Context, req *ListUserRequest, opts ...http.CallOption) (rsp *ListUserReply, err error)
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *LoginReply, err error)
@@ -572,19 +546,6 @@ func (c *CoreHTTPClientImpl) GetUserProjectList(ctx context.Context, in *emptypb
 	pattern := "v1/api/user/project/list"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCoreGetUserProjectList))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, err
-}
-
-func (c *CoreHTTPClientImpl) InspectContainer(ctx context.Context, in *InspectContainerRequest, opts ...http.CallOption) (*ContainerInfo, error) {
-	var out ContainerInfo
-	pattern := "v1/api/engine/container/{id}"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationCoreInspectContainer))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

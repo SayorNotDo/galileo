@@ -2,7 +2,6 @@ package data
 
 import (
 	"context"
-	engineV1 "galileo/api/engine/v1"
 	fileV1 "galileo/api/file/v1"
 	"galileo/app/core/internal/biz"
 	"github.com/go-kratos/kratos/v2/log"
@@ -30,14 +29,4 @@ func (e *engineRepo) UploadEngineFile(ctx context.Context, fileName string, file
 		return "", err
 	}
 	return res.Url, err
-}
-
-func (e *engineRepo) InspectContainer(ctx context.Context, id string) (*engineV1.Container, error) {
-	res, err := e.data.engineCli.InspectContainer(ctx, &engineV1.InspectContainerRequest{
-		Id: id,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return res.Container, nil
 }

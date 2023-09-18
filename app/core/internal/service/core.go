@@ -13,6 +13,16 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
+func (c *CoreService) ExecuteToken(ctx context.Context, req *v1.ExecuteTokenRequest) (*v1.ExecuteTokenReply, error) {
+	token, err := c.cc.ExecuteToken(ctx, req.Machine)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.ExecuteTokenReply{
+		ExecuteToken: token,
+	}, nil
+}
+
 /*TrackReportData 数据上报后台接口 */
 func (c *CoreService) TrackReportData(ctx context.Context, req *v1.TrackReportDataRequest) (*emptypb.Empty, error) {
 	/* 数据上报接口单独鉴权逻辑 */

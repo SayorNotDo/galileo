@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest) (*v1.CreateUserReply, error) {
+func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest) (*v1.UserInfo, error) {
 	/* 对密码进行MD5加密 */
 	hashedPassword, err := util.HashPassword(req.Password)
 	if err != nil {
@@ -32,12 +32,17 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 	if err != nil {
 		return nil, err
 	}
-	userInfoRep := v1.CreateUserReply{
-		Id:        ret.Id,
-		Username:  ret.Username,
-		CreatedAt: timestamppb.New(ret.CreatedAt),
-	}
-	return &userInfoRep, nil
+	return &v1.UserInfo{
+		ID:            ret.Id,
+		Username:      ret.Username,
+		ChineseName:   ret.ChineseName,
+		Email:         ret.Email,
+		Phone:         ret.Phone,
+		Avatar:        ret.Avatar,
+		Location:      ret.Location,
+		CreatedAt:     timestamppb.New(ret.CreatedAt),
+		LastLoginTime: timestamppb.New(ret.LastLoginTime),
+	}, nil
 }
 
 func (s *UserService) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*emptypb.Empty, error) {
@@ -65,7 +70,7 @@ func (s *UserService) GetUserInfo(ctx context.Context, req *v1.GetUserInfoReques
 		return nil, err
 	}
 	return &v1.UserInfo{
-		Id:            user.Id,
+		ID:            user.Id,
 		Username:      user.Username,
 		ChineseName:   user.ChineseName,
 		Email:         user.Email,
@@ -86,7 +91,7 @@ func (s *UserService) ListUser(ctx context.Context, req *v1.ListUserRequest) (*v
 	var userList = make([]*v1.UserInfo, 0)
 	lo.ForEach(users, func(user *biz.User, _ int) {
 		userList = append(userList, &v1.UserInfo{
-			Id:            user.Id,
+			ID:            user.Id,
 			Username:      user.Username,
 			ChineseName:   user.ChineseName,
 			Email:         user.Email,
