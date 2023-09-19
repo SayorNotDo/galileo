@@ -45,9 +45,9 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 	}, nil
 }
 
-func (s *UserService) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest) (*emptypb.Empty, error) {
+func (s *UserService) UpdateUserInfo(ctx context.Context, req *v1.UpdateUserRequest) (*v1.UserInfo, error) {
 	_, err := s.uc.UpdateUser(ctx, &biz.User{
-		Id:          req.Id,
+		Id:          req.ID,
 		Username:    req.Username,
 		ChineseName: req.ChineseName,
 		Avatar:      req.Avatar,
@@ -58,7 +58,7 @@ func (s *UserService) UpdateUser(ctx context.Context, req *v1.UpdateUserRequest)
 	if err != nil {
 		return nil, err
 	}
-	return &emptypb.Empty{}, nil
+	return &v1.UserInfo{}, nil
 }
 
 func (s *UserService) GetUserInfo(ctx context.Context, req *v1.GetUserInfoRequest) (*v1.UserInfo, error) {

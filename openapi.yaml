@@ -6,7 +6,7 @@ info:
     title: Core API
     version: 0.0.1
 paths:
-    data/report:
+    v1/api/data-report:
         post:
             tags:
                 - Core
@@ -75,50 +75,48 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/user/groups:
-        get:
-            tags:
-                - Core
-            operationId: Core_ListUserGroups
-            parameters:
-                - name: parent
-                  in: query
-                  schema:
-                    type: string
-                - name: pageSize
-                  in: query
-                  schema:
-                    type: integer
-                    format: int32
-                - name: pageToken
-                  in: query
-                  schema:
-                    type: string
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/UserGroupListReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
     v1/api/user/info:
         get:
             tags:
                 - Core
             operationId: Core_CurrentUserInfo
+            parameters:
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: username
+                  in: query
+                  schema:
+                    type: string
+                - name: chineseName
+                  in: query
+                  schema:
+                    type: string
+                - name: email
+                  in: query
+                  schema:
+                    type: string
+                - name: phone
+                  in: query
+                  schema:
+                    type: string
+                - name: avatar
+                  in: query
+                  schema:
+                    type: string
+                - name: location
+                  in: query
+                  schema:
+                    type: string
             responses:
                 "200":
                     description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/UserInfoReply'
+                                $ref: '#/components/schemas/User'
                 default:
                     description: Default error response
                     content:
@@ -269,10 +267,7 @@ paths:
             responses:
                 "200":
                     description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/RegisterReply'
+                    content: {}
                 default:
                     description: Default error response
                     content:
@@ -313,6 +308,14 @@ paths:
                   schema:
                     type: integer
                     format: uint32
+                - name: username
+                  in: query
+                  schema:
+                    type: string
+                - name: chineseName
+                  in: query
+                  schema:
+                    type: string
                 - name: email
                   in: query
                   schema:
@@ -335,7 +338,41 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/UserInfoReply'
+                                $ref: '#/components/schemas/User'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/{user}/groups:
+        get:
+            tags:
+                - Core
+            operationId: Core_ListUserGroups
+            parameters:
+                - name: user
+                  in: path
+                  description: The user id.
+                  required: true
+                  schema:
+                    type: string
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageToken
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListUserGroupReply'
                 default:
                     description: Default error response
                     content:
@@ -428,6 +465,18 @@ components:
                 createdBy:
                     type: integer
                     format: uint32
+        ListUserGroupReply:
+            type: object
+            properties:
+                total:
+                    type: integer
+                    format: int32
+                groupList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GroupInfo'
+                nextPageToken:
+                    type: string
         ListUserReply:
             type: object
             properties:
@@ -437,7 +486,7 @@ components:
                 userList:
                     type: array
                     items:
-                        $ref: '#/components/schemas/UserDetail'
+                        $ref: '#/components/schemas/User'
         LoginReply:
             type: object
             properties:
@@ -488,17 +537,6 @@ components:
                     type: string
                 remark:
                     type: string
-        RegisterReply:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: uint32
-                username:
-                    type: string
-                createdAt:
-                    type: string
-                    format: date-time
         RegisterRequest:
             type: object
             properties:
@@ -536,39 +574,10 @@ components:
             properties:
                 password:
                     type: string
-        UserDetail:
+        User:
             type: object
             properties:
-                id:
-                    type: integer
-                    format: uint32
-                nickname:
-                    type: string
-                chineseName:
-                    type: string
-                phone:
-                    type: string
-                email:
-                    type: string
-                role:
-                    type: integer
-                    format: int32
-        UserGroupListReply:
-            type: object
-            properties:
-                total:
-                    type: integer
-                    format: int32
-                groupList:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/GroupInfo'
-                nextPageToken:
-                    type: string
-        UserInfoReply:
-            type: object
-            properties:
-                id:
+                ID:
                     type: integer
                     format: uint32
                 username:

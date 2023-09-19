@@ -10,7 +10,7 @@ import (
 var ProviderSet = wire.NewSet(NewCoreUseCase, NewEngineUseCase, NewUserUseCase)
 
 type User struct {
-	Id            uint32    `json:"id"`
+	ID            uint32    `json:"id"`
 	UUID          uuid.UUID `json:"uuid"`
 	Username      string    `json:"username"`
 	ChineseName   string    `json:"chinese_name"`

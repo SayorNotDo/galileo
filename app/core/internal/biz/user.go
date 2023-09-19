@@ -21,11 +21,12 @@ import (
 type UserRepo interface {
 	GetUserInfo(ctx context.Context, uid uint32) (*User, error)
 	CreateUser(ctx context.Context, u *User) (*User, error)
+	UpdateUserInfo(ctx context.Context, user *User) (*User, error)
 	UpdatePassword(ctx context.Context, password string) (bool, error)
 	SoftDeleteUser(ctx context.Context, uid uint32) (bool, error)
 	SetToken(ctx context.Context, token string) (string, error)
 	DestroyToken(ctx context.Context) error
-	ListUser(ctx context.Context, pageToken string, pageSize int32) ([]*v1.UserDetail, int32, error)
+	ListUser(ctx context.Context, pageToken string, pageSize int32) ([]*v1.User, int32, error)
 	GetUserProjectList(ctx context.Context) ([]*v1.ProjectInfo, error)
 	GetUserGroup(ctx context.Context, groupId int32) (*Group, error)
 	CreateUserGroup(ctx context.Context, group *Group) (*Group, error)
@@ -50,30 +51,24 @@ func NewUserUseCase(repo UserRepo, logger log.Logger, conf *conf.Auth) *UserUseC
 	}
 }
 
-func NewUser(phone, username, password, email string) (User, error) {
+func NewUser(phone, username, email string) (User, error) {
 	if len(phone) <= 0 {
-		return User{}, SetErrByReason(ReasonParamsError)
-	}
-	if len(username) <= 0 {
-		return User{}, SetErrByReason(ReasonParamsError)
-	}
-	if len(password) <= 0 {
-		return User{}, SetErrByReason(ReasonParamsError)
-	}
-	if len(email) <= 0 {
-		return User{}, SetErrByReason(ReasonParamsError)
+		return User{}, SetCustomizeErrMsg(ReasonParamsError, "phone's number can not be empty")
+	} else if len(username) <= 0 {
+		return User{}, SetCustomizeErrMsg(ReasonParamsError, "username can not be empty")
+	} else if len(email) <= 0 {
+		return User{}, SetCustomizeErrMsg(ReasonParamsError, "email value illegal")
 	}
 	return User{
 		Phone:    phone,
 		Username: username,
-		Password: password,
 		Email:    email,
 	}, nil
 }
 
 func newUserClaim(u *User) *auth.CustomClaims {
 	return &auth.CustomClaims{
-		ID:          u.Id,
+		ID:          u.ID,
 		Username:    u.Username,
 		AuthorityId: u.UUID,
 		RegisteredClaims: jwt2.RegisteredClaims{
@@ -89,14 +84,8 @@ func (u *UserUseCase) CreateUser(ctx context.Context, user *User) (*User, error)
 	return u.repo.CreateUser(ctx, user)
 }
 
-func (u *UserUseCase) UpdateUserInfo(ctx context.Context, req *v1.UserInfoRequest) (*v1.UserInfoReply, error) {
-	userClaim, ok := jwt.FromContext(ctx)
-	if !ok {
-		return nil, SetErrByReason(ReasonUnknownError)
-	}
-	uid := fmt.Sprintf("%v", userClaim.(jwt2.MapClaims)["ID"])
-	ctx = metadata.AppendToClientContext(ctx, "x-md-local-uid", uid)
-	return nil, nil
+func (u *UserUseCase) UpdateUserInfo(ctx context.Context, user *User) (*User, error) {
+	return u.repo.UpdateUserInfo(ctx, user)
 }
 
 func (u *UserUseCase) UpdatePassword(ctx context.Context, req *v1.UpdatePasswordRequest) (*emptypb.Empty, error) {
@@ -105,7 +94,7 @@ func (u *UserUseCase) UpdatePassword(ctx context.Context, req *v1.UpdatePassword
 		return nil, SetErrByReason(ReasonUnknownError)
 	}
 	uid := fmt.Sprintf("%v", userClaim.(jwt2.MapClaims)["ID"])
-	ctx = metadata.AppendToClientContext(ctx, "x-md-local-uid", uid)
+	ctx = metadata.AppendToClientContext(ctx, ctxdata.UserIdKey, uid)
 	if ok, _ := u.repo.UpdatePassword(ctx, req.Password); !ok {
 		return nil, SetErrByReason(ReasonUnknownError)
 	}
@@ -167,7 +156,7 @@ func (u *UserUseCase) GetUserInfo(ctx context.Context, uid uint32) (*User, error
 		return nil, err
 	}
 	return &User{
-		Id:            user.Id,
+		ID:            user.ID,
 		Username:      user.Username,
 		ChineseName:   user.ChineseName,
 		Phone:         user.Phone,

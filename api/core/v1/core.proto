@@ -12,7 +12,7 @@ option java_multiple_files = true;
 option java_package = "api.core.v1";
 
 service Core {
-  rpc Register (RegisterRequest) returns (RegisterReply){
+  rpc Register (RegisterRequest) returns (google.protobuf.Empty){
     option (google.api.http) = {
       post: "v1/api/user/register",
       body: "*"
@@ -30,18 +30,18 @@ service Core {
       body: "*"
     };
   };
-  rpc UserInfo(UserInfoRequest) returns (UserInfoReply) {
+  rpc UserInfo(UserInfoRequest) returns (User) {
     option(google.api.http) = {
       get: "v1/api/user/{id}/info",
-      additional_bindings {
-        put: "v1/api/user/{id}/info"
-        body: "*"
-      }
     };
   };
-  rpc CurrentUserInfo(google.protobuf.Empty) returns (UserInfoReply) {
+  rpc CurrentUserInfo(UserInfoRequest) returns (User) {
     option(google.api.http) = {
       get: "v1/api/user/info"
+      additional_bindings {
+        put: "v1/api/user/info"
+        body: "*"
+      }
     };
   }
   rpc UpdatePassword(UpdatePasswordRequest) returns (google.protobuf.Empty){
@@ -77,9 +77,9 @@ service Core {
       }
     };
   }
-  rpc ListUserGroups(ListUserGroupsRequest) returns (UserGroupListReply) {
+  rpc ListUserGroups(ListUserGroupsRequest) returns (ListUserGroupReply) {
     option(google.api.http) = {
-      get: "v1/api/user/groups"
+      get: "v1/api/{parent=user/*}/groups"
     };
   }
   rpc GetUserProjectList(google.protobuf.Empty) returns (UserProjectListReply){
@@ -94,7 +94,7 @@ service Core {
   }
   rpc TrackReportData(TrackReportDataRequest) returns (google.protobuf.Empty) {
     option(google.api.http) = {
-      post: "data/report"
+      post: "v1/api/data-report"
       body: "*"
     };
   }
@@ -115,7 +115,7 @@ message ListUserGroupsRequest {
   string pageToken = 3;
 }
 
-message UserGroupListReply {
+message ListUserGroupReply {
   int32 total = 1;
   repeated GroupInfo groupList = 2;
   string nextPageToken = 3;
@@ -203,19 +203,21 @@ message ListUserRequest {
 
 message ListUserReply {
   int32 total = 1;
-  repeated UserDetail userList = 2;
+  repeated User userList = 2;
 }
 
 message UserInfoRequest {
   uint32 id = 1;
+  string username = 2;
+  string chineseName = 7;
   string email = 3 [(validate.rules).string.email = true];
   string phone = 4 [(validate.rules).string.len = 11];
   string avatar = 5;
   string location = 6;
 }
 
-message UserInfoReply {
-  uint32 id = 1;
+message User {
+  uint32 ID = 1;
   string username = 2;
   string chineseName = 3;
   string email = 4;
@@ -232,12 +234,6 @@ message RegisterRequest {
   string password = 2 [(validate.rules).string = {min_len: 8}];
   string phone = 3 [(validate.rules).string.len = 11];
   string email = 4 [(validate.rules).string.email = true];
-}
-
-message RegisterReply {
-  uint32 id = 1;
-  string username = 2;
-  google.protobuf.Timestamp createdAt = 3;
 }
 
 message LoginRequest{
@@ -257,21 +253,3 @@ message TokenInfo{
 
 message UnregisterRequest {}
 message UnregisterReply {}
-
-message UserDetail {
-  uint32 id = 1;
-  string nickname = 3;
-  string chineseName = 4;
-  string phone = 5;
-  string email = 6;
-  int32 role = 7;
-}
-
-message UserDetailReply {
-  uint32 id = 1;
-  string nickname = 3;
-  string chineseName = 4;
-  string phone = 5;
-  string email = 6;
-  int32 role = 7;
-}

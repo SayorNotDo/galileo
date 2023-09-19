@@ -15,26 +15,22 @@ import (
 	"net/http"
 )
 
-func (c *CoreService) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterReply, error) {
+func (c *CoreService) Register(ctx context.Context, req *v1.RegisterRequest) (*emptypb.Empty, error) {
 	/* add trace */
 	tr := otel.Tracer("core.scheduler")
 	ctx, span := tr.Start(ctx, "new user registration")
 	span.SpanContext()
 	defer span.End()
 	/* 创建新用户 */
-	newUser, err := biz.NewUser(req.Phone, req.Username, req.Password, req.Email)
+	newUser, err := biz.NewUser(req.Phone, req.Username, req.Email)
+	newUser.Password = req.Password
 	if err != nil {
 		return nil, err
 	}
-	ret, err := c.uc.CreateUser(ctx, &newUser)
-	if err != nil {
+	if _, err := c.uc.CreateUser(ctx, &newUser); err != nil {
 		return nil, err
 	}
-	return &v1.RegisterReply{
-		Id:        ret.Id,
-		Username:  ret.Username,
-		CreatedAt: timestamppb.New(ret.CreatedAt),
-	}, nil
+	return nil, nil
 }
 
 func (c *CoreService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginReply, error) {
@@ -57,7 +53,7 @@ func (c *CoreService) Login(ctx context.Context, req *v1.LoginRequest) (*v1.Logi
 
 func (c *CoreService) Logout(ctx context.Context, empty *empty.Empty) (*emptypb.Empty, error) {
 	// add trace
-	tr := otel.Tracer("scheduler")
+	tr := otel.Tracer("core.scheduler")
 	ctx, span := tr.Start(ctx, "logout")
 	span.SpanContext()
 	defer span.End()
@@ -76,46 +72,13 @@ func (c *CoreService) ListUsers(ctx context.Context, req *v1.ListUserRequest) (*
 	return c.uc.ListUser(ctx, req.PageToken, req.PageSize)
 }
 
-func (c *CoreService) UserInfo(ctx context.Context, req *v1.UserInfoRequest) (*v1.UserInfoReply, error) {
-	var reply *v1.UserInfoReply
-	var err error
-	switch ctxdata.MethodFromContext(ctx) {
-	case "PUT":
-		reply, err = c.uc.UpdateUserInfo(ctx, req)
-	case "GET":
-		ret, err := c.uc.GetUserInfo(ctx, req.Id)
-		if err != nil {
-			return nil, err
-		}
-		return &v1.UserInfoReply{
-			Id:            ret.Id,
-			Username:      ret.Username,
-			ChineseName:   ret.ChineseName,
-			Email:         ret.Email,
-			Phone:         ret.Phone,
-			Avatar:        ret.Avatar,
-			Active:        ret.Active,
-			Location:      ret.Location,
-			CreatedAt:     timestamppb.New(ret.CreatedAt),
-			LastLoginTime: timestamppb.New(ret.LastLoginTime),
-		}, nil
-	default:
-		return nil, errResponse.SetErrByReason(errResponse.ReasonUnsupportedMethod)
-	}
+func (c *CoreService) UserInfo(ctx context.Context, req *v1.UserInfoRequest) (*v1.User, error) {
+	ret, err := c.uc.GetUserInfo(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
-	return reply, nil
-}
-
-func (c *CoreService) CurrentUserInfo(ctx context.Context, empty *empty.Empty) (*v1.UserInfoReply, error) {
-	uid := ctxdata.GetUserId(ctx)
-	ret, err := c.uc.GetUserInfo(ctx, uid)
-	if err != nil {
-		return nil, err
-	}
-	return &v1.UserInfoReply{
-		Id:            ret.Id,
+	return &v1.User{
+		ID:            ret.ID,
 		Username:      ret.Username,
 		ChineseName:   ret.ChineseName,
 		Email:         ret.Email,
@@ -126,6 +89,50 @@ func (c *CoreService) CurrentUserInfo(ctx context.Context, empty *empty.Empty) (
 		CreatedAt:     timestamppb.New(ret.CreatedAt),
 		LastLoginTime: timestamppb.New(ret.LastLoginTime),
 	}, nil
+}
+
+func (c *CoreService) CurrentUserInfo(ctx context.Context, req *v1.UserInfoRequest) (*v1.User, error) {
+	uid := ctxdata.GetUserId(ctx)
+	switch ctxdata.MethodFromContext(ctx) {
+	case http.MethodGet:
+		ret, err := c.uc.GetUserInfo(ctx, uid)
+		if err != nil {
+			return nil, err
+		}
+		return &v1.User{
+			ID:            ret.ID,
+			Username:      ret.Username,
+			ChineseName:   ret.ChineseName,
+			Email:         ret.Email,
+			Phone:         ret.Phone,
+			Avatar:        ret.Avatar,
+			Active:        ret.Active,
+			Location:      ret.Location,
+			CreatedAt:     timestamppb.New(ret.CreatedAt),
+			LastLoginTime: timestamppb.New(ret.LastLoginTime),
+		}, nil
+	case http.MethodPut:
+		user, err := biz.NewUser(req.Phone, req.Username, req.Email)
+		user.ID = uid
+		if err != nil {
+			return nil, err
+		}
+		ret, err := c.uc.UpdateUserInfo(ctx, &user)
+		if err != nil {
+			return nil, err
+		}
+		return &v1.User{
+			ID:          ret.ID,
+			Username:    ret.Username,
+			ChineseName: ret.ChineseName,
+			Email:       ret.Email,
+			Phone:       ret.Phone,
+			Avatar:      ret.Avatar,
+			Location:    ret.Location,
+		}, nil
+	default:
+		return nil, errResponse.SetErrByReason(errResponse.ReasonUnsupportedMethod)
+	}
 }
 
 func (c *CoreService) DeleteUser(ctx context.Context, req *v1.DeleteRequest) (*emptypb.Empty, error) {
@@ -147,7 +154,7 @@ func (c *CoreService) GetUserLatestActivity(ctx context.Context, empty *empty.Em
 	return nil, nil
 }
 
-func (c *CoreService) ListUserGroups(ctx context.Context, request *v1.ListUserGroupsRequest) (*v1.UserGroupListReply, error) {
+func (c *CoreService) ListUserGroups(ctx context.Context, request *v1.ListUserGroupsRequest) (*v1.ListUserGroupReply, error) {
 	var userGroupList = make([]*v1.GroupInfo, 0)
 	ret, err := c.uc.GetUserGroupList(ctx)
 	if err != nil {
@@ -168,13 +175,13 @@ func (c *CoreService) ListUserGroups(ctx context.Context, request *v1.ListUserGr
 			Headcount:   item.Headcount,
 		})
 	})
-	return &v1.UserGroupListReply{
+	return &v1.ListUserGroupReply{
 		Total:     int32(len(ret)),
 		GroupList: userGroupList,
 	}, nil
 }
 
-func (c *CoreService) UserGroup(ctx context.Context, req *v1.GroupInfoRequest) (*v1.GroupInfo, error) {
+func (c *CoreService) UserGroups(ctx context.Context, req *v1.GroupInfoRequest) (*v1.GroupInfo, error) {
 	var reply *v1.GroupInfo
 	switch ctxdata.MethodFromContext(ctx) {
 	case http.MethodPost:

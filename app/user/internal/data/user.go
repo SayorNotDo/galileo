@@ -132,6 +132,7 @@ func (repo *userRepo) UpdateUser(ctx context.Context, u *biz.User) (bool, error)
 		UpdateOneID(u.Id).
 		SetAvatar(u.Avatar).
 		SetLocation(u.Location).
+		SetChineseName(u.ChineseName).
 		Exec(ctx)
 	switch {
 	case ent.IsNotFound(err):

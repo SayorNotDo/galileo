@@ -10,41 +10,17 @@ paths:
         post:
             tags:
                 - Core
-            operationId: Core_DataReportTrack
+            operationId: Core_TrackReportData
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/DataReportTrackRequest'
+                            $ref: '#/components/schemas/TrackReportDataRequest'
                 required: true
             responses:
                 "200":
                     description: OK
                     content: {}
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    v1/api/engine/container/{id}:
-        get:
-            tags:
-                - Core
-            operationId: Core_InspectContainer
-            parameters:
-                - name: id
-                  in: path
-                  required: true
-                  schema:
-                    type: string
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/ContainerInfo'
                 default:
                     description: Default error response
                     content:
@@ -79,7 +55,7 @@ paths:
         post:
             tags:
                 - Core
-            operationId: Core_UserGroup
+            operationId: Core_UserGroups
             requestBody:
                 content:
                     application/json:
@@ -99,11 +75,25 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/user/group/list:
+    v1/api/user/groups:
         get:
             tags:
                 - Core
-            operationId: Core_GetUserGroupList
+            operationId: Core_ListUserGroups
+            parameters:
+                - name: parent
+                  in: query
+                  schema:
+                    type: string
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageToken
+                  in: query
+                  schema:
+                    type: string
             responses:
                 "200":
                     description: OK
@@ -121,27 +111,14 @@ paths:
         get:
             tags:
                 - Core
-            operationId: Core_UserInfo
-            parameters:
-                - name: nickname
-                  in: query
-                  schema:
-                    type: string
-                - name: email
-                  in: query
-                  schema:
-                    type: string
-                - name: phone
-                  in: query
-                  schema:
-                    type: string
+            operationId: Core_CurrentUserInfo
             responses:
                 "200":
                     description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/UserInfoReply'
+                                $ref: '#/components/schemas/User'
                 default:
                     description: Default error response
                     content:
@@ -166,18 +143,17 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/user/list/{pageNum}/{pageSize}:
+    v1/api/user/list/{pageToken}/{pageSize}:
         get:
             tags:
                 - Core
-            operationId: Core_ListUser
+            operationId: Core_ListUsers
             parameters:
-                - name: pageNum
+                - name: pageToken
                   in: path
                   required: true
                   schema:
-                    type: integer
-                    format: int32
+                    type: string
                 - name: pageSize
                   in: path
                   required: true
@@ -293,28 +269,7 @@ paths:
             responses:
                 "200":
                     description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/RegisterReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
-    v1/api/user/unregister:
-        delete:
-            tags:
-                - Core
-            operationId: Core_Unregister
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/UnregisterReply'
+                    content: {}
                 default:
                     description: Default error response
                     content:
@@ -336,10 +291,48 @@ paths:
             responses:
                 "200":
                     description: OK
+                    content: {}
+                default:
+                    description: Default error response
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/DeleteReply'
+                                $ref: '#/components/schemas/Status'
+    v1/api/user/{id}/info:
+        get:
+            tags:
+                - Core
+            operationId: Core_UserInfo
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: email
+                  in: query
+                  schema:
+                    type: string
+                - name: phone
+                  in: query
+                  schema:
+                    type: string
+                - name: avatar
+                  in: query
+                  schema:
+                    type: string
+                - name: location
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
                 default:
                     description: Default error response
                     content:
@@ -348,41 +341,6 @@ paths:
                                 $ref: '#/components/schemas/Status'
 components:
     schemas:
-        ContainerInfo:
-            type: object
-            properties:
-                id:
-                    type: string
-                name:
-                    type: string
-                image:
-                    type: string
-                labels:
-                    type: object
-                    additionalProperties:
-                        type: string
-        DataReportTrackRequest:
-            type: object
-            properties:
-                data:
-                    type: string
-        DeleteReply:
-            type: object
-            properties:
-                data:
-                    $ref: '#/components/schemas/DeleteReply_DeleteInfo'
-        DeleteReply_DeleteInfo:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: uint32
-                deleteAt:
-                    type: string
-                    format: date-time
-                deletedBy:
-                    type: integer
-                    format: uint32
         ExecuteTokenReply:
             type: object
             properties:
@@ -476,17 +434,12 @@ components:
                 userList:
                     type: array
                     items:
-                        $ref: '#/components/schemas/UserDetail'
+                        $ref: '#/components/schemas/User'
         LoginReply:
             type: object
             properties:
-                type:
-                    type: string
                 token:
                     type: string
-                expiresAt:
-                    type: string
-                    format: date-time
         LoginRequest:
             type: object
             properties:
@@ -532,17 +485,6 @@ components:
                     type: string
                 remark:
                     type: string
-        RegisterReply:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: uint32
-                username:
-                    type: string
-                createdAt:
-                    type: string
-                    format: date-time
         RegisterRequest:
             type: object
             properties:
@@ -570,31 +512,42 @@ components:
                         $ref: '#/components/schemas/GoogleProtobufAny'
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
-        UnregisterReply:
+        TrackReportDataRequest:
             type: object
-            properties: {}
+            properties:
+                data:
+                    type: string
         UpdatePasswordRequest:
             type: object
             properties:
                 password:
                     type: string
-        UserDetail:
+        User:
             type: object
             properties:
-                id:
+                ID:
                     type: integer
                     format: uint32
-                nickname:
+                username:
                     type: string
                 chineseName:
                     type: string
-                phone:
-                    type: string
                 email:
                     type: string
-                role:
-                    type: integer
-                    format: int32
+                phone:
+                    type: string
+                avatar:
+                    type: string
+                active:
+                    type: boolean
+                location:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                lastLoginTime:
+                    type: string
+                    format: date-time
         UserGroupListReply:
             type: object
             properties:
@@ -605,11 +558,8 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/GroupInfo'
-        UserInfoReply:
-            type: object
-            properties:
-                success:
-                    type: boolean
+                nextPageToken:
+                    type: string
         UserLatestActivityReply:
             type: object
             properties: {}

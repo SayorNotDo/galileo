@@ -41,17 +41,17 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CoreClient interface {
-	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
+	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserInfoReply, error)
-	CurrentUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfoReply, error)
+	UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*User, error)
+	CurrentUserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*User, error)
 	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ResetPassword(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ResetPasswordReply, error)
 	DeleteUser(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListUsers(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
 	UserGroups(ctx context.Context, in *GroupInfoRequest, opts ...grpc.CallOption) (*GroupInfo, error)
-	ListUserGroups(ctx context.Context, in *ListUserGroupsRequest, opts ...grpc.CallOption) (*UserGroupListReply, error)
+	ListUserGroups(ctx context.Context, in *ListUserGroupsRequest, opts ...grpc.CallOption) (*ListUserGroupReply, error)
 	GetUserProjectList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserProjectListReply, error)
 	GetUserLatestActivity(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserLatestActivityReply, error)
 	TrackReportData(ctx context.Context, in *TrackReportDataRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -66,8 +66,8 @@ func NewCoreClient(cc grpc.ClientConnInterface) CoreClient {
 	return &coreClient{cc}
 }
 
-func (c *coreClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error) {
-	out := new(RegisterReply)
+func (c *coreClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, Core_Register_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -93,8 +93,8 @@ func (c *coreClient) Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc
 	return out, nil
 }
 
-func (c *coreClient) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*UserInfoReply, error) {
-	out := new(UserInfoReply)
+func (c *coreClient) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
 	err := c.cc.Invoke(ctx, Core_UserInfo_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -102,8 +102,8 @@ func (c *coreClient) UserInfo(ctx context.Context, in *UserInfoRequest, opts ...
 	return out, nil
 }
 
-func (c *coreClient) CurrentUserInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserInfoReply, error) {
-	out := new(UserInfoReply)
+func (c *coreClient) CurrentUserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
 	err := c.cc.Invoke(ctx, Core_CurrentUserInfo_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -156,8 +156,8 @@ func (c *coreClient) UserGroups(ctx context.Context, in *GroupInfoRequest, opts 
 	return out, nil
 }
 
-func (c *coreClient) ListUserGroups(ctx context.Context, in *ListUserGroupsRequest, opts ...grpc.CallOption) (*UserGroupListReply, error) {
-	out := new(UserGroupListReply)
+func (c *coreClient) ListUserGroups(ctx context.Context, in *ListUserGroupsRequest, opts ...grpc.CallOption) (*ListUserGroupReply, error) {
+	out := new(ListUserGroupReply)
 	err := c.cc.Invoke(ctx, Core_ListUserGroups_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -205,17 +205,17 @@ func (c *coreClient) ExecuteToken(ctx context.Context, in *ExecuteTokenRequest, 
 // All implementations must embed UnimplementedCoreServer
 // for forward compatibility
 type CoreServer interface {
-	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
+	Register(context.Context, *RegisterRequest) (*emptypb.Empty, error)
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
-	UserInfo(context.Context, *UserInfoRequest) (*UserInfoReply, error)
-	CurrentUserInfo(context.Context, *emptypb.Empty) (*UserInfoReply, error)
+	UserInfo(context.Context, *UserInfoRequest) (*User, error)
+	CurrentUserInfo(context.Context, *UserInfoRequest) (*User, error)
 	UpdatePassword(context.Context, *UpdatePasswordRequest) (*emptypb.Empty, error)
 	ResetPassword(context.Context, *emptypb.Empty) (*ResetPasswordReply, error)
 	DeleteUser(context.Context, *DeleteRequest) (*emptypb.Empty, error)
 	ListUsers(context.Context, *ListUserRequest) (*ListUserReply, error)
 	UserGroups(context.Context, *GroupInfoRequest) (*GroupInfo, error)
-	ListUserGroups(context.Context, *ListUserGroupsRequest) (*UserGroupListReply, error)
+	ListUserGroups(context.Context, *ListUserGroupsRequest) (*ListUserGroupReply, error)
 	GetUserProjectList(context.Context, *emptypb.Empty) (*UserProjectListReply, error)
 	GetUserLatestActivity(context.Context, *emptypb.Empty) (*UserLatestActivityReply, error)
 	TrackReportData(context.Context, *TrackReportDataRequest) (*emptypb.Empty, error)
@@ -227,7 +227,7 @@ type CoreServer interface {
 type UnimplementedCoreServer struct {
 }
 
-func (UnimplementedCoreServer) Register(context.Context, *RegisterRequest) (*RegisterReply, error) {
+func (UnimplementedCoreServer) Register(context.Context, *RegisterRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
 func (UnimplementedCoreServer) Login(context.Context, *LoginRequest) (*LoginReply, error) {
@@ -236,10 +236,10 @@ func (UnimplementedCoreServer) Login(context.Context, *LoginRequest) (*LoginRepl
 func (UnimplementedCoreServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
-func (UnimplementedCoreServer) UserInfo(context.Context, *UserInfoRequest) (*UserInfoReply, error) {
+func (UnimplementedCoreServer) UserInfo(context.Context, *UserInfoRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserInfo not implemented")
 }
-func (UnimplementedCoreServer) CurrentUserInfo(context.Context, *emptypb.Empty) (*UserInfoReply, error) {
+func (UnimplementedCoreServer) CurrentUserInfo(context.Context, *UserInfoRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CurrentUserInfo not implemented")
 }
 func (UnimplementedCoreServer) UpdatePassword(context.Context, *UpdatePasswordRequest) (*emptypb.Empty, error) {
@@ -257,7 +257,7 @@ func (UnimplementedCoreServer) ListUsers(context.Context, *ListUserRequest) (*Li
 func (UnimplementedCoreServer) UserGroups(context.Context, *GroupInfoRequest) (*GroupInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserGroups not implemented")
 }
-func (UnimplementedCoreServer) ListUserGroups(context.Context, *ListUserGroupsRequest) (*UserGroupListReply, error) {
+func (UnimplementedCoreServer) ListUserGroups(context.Context, *ListUserGroupsRequest) (*ListUserGroupReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserGroups not implemented")
 }
 func (UnimplementedCoreServer) GetUserProjectList(context.Context, *emptypb.Empty) (*UserProjectListReply, error) {
@@ -358,7 +358,7 @@ func _Core_UserInfo_Handler(srv interface{}, ctx context.Context, dec func(inter
 }
 
 func _Core_CurrentUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(UserInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -370,7 +370,7 @@ func _Core_CurrentUserInfo_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: Core_CurrentUserInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).CurrentUserInfo(ctx, req.(*emptypb.Empty))
+		return srv.(CoreServer).CurrentUserInfo(ctx, req.(*UserInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

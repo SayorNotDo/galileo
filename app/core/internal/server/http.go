@@ -24,10 +24,6 @@ import (
 	"strings"
 )
 
-const (
-	tokenKey = "token"
-)
-
 // NewHTTPServer new an HTTP server.
 func NewHTTPServer(c *conf.Server, ac *conf.Auth, s *service.CoreService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
@@ -95,7 +91,7 @@ func setHeaderInfo() middleware.Middleware {
 					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
 				}
 				jwtToken := auth[1]
-				token, _ := data.RedisCli.Get(ctx, tokenKey+":"+jwtToken).Result()
+				token, _ := data.RedisCli.Get(ctx, ctxdata.Token+":"+jwtToken).Result()
 				if token == "" {
 					return nil, errResponse.SetErrByReason(errResponse.ReasonUnauthorizedUser)
 				}
@@ -128,7 +124,7 @@ func NewWhiteListMatcher() selector.MatchFunc {
 	whiteList := make(map[string]struct{})
 	whiteList["/api.core.v1.Core/Register"] = struct{}{}
 	whiteList["/api.core.v1.Core/Login"] = struct{}{}
-	whiteList["/api.core.v1.Core/DataReportTrack"] = struct{}{}
+	whiteList["/api.core.v1.Core/TrackReportData"] = struct{}{}
 	return func(ctx context.Context, operation string) bool {
 		if _, ok := whiteList[operation]; ok {
 			return false

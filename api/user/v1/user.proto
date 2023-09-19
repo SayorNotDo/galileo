@@ -12,7 +12,7 @@ option java_package = "api.user";
 
 service User {
   rpc CreateUser (CreateUserRequest) returns (UserInfo);
-  rpc UpdateUserInfo (UpdateUserRequest) returns (google.protobuf.Empty);
+  rpc UpdateUserInfo (UpdateUserRequest) returns (UserInfo);
   rpc GetUserInfo (GetUserInfoRequest) returns (UserInfo);
   rpc ListUser (ListUserRequest) returns (ListUserReply);
   rpc ValidateUser (ValidateUserRequest) returns (ValidateUserReply);
@@ -140,14 +140,13 @@ message CreateUserRequest {
 
 
 message UpdateUserRequest {
-  uint32 id = 1;
+  uint32 ID = 1;
   string username = 2;
   string chineseName = 3;
   string avatar = 4;
   string location = 5;
   string email = 6;
   string phone = 7;
-  google.protobuf.Timestamp lastLoginTime = 8;
 }
 
 message ListUserRequest {

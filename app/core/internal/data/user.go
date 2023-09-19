@@ -2,10 +2,12 @@ package data
 
 import (
 	"context"
+	"fmt"
 	v1 "galileo/api/core/v1"
 	userService "galileo/api/user/v1"
 	"galileo/app/core/internal/biz"
 	. "galileo/app/core/internal/pkg/middleware/auth"
+	"galileo/pkg/ctxdata"
 	"galileo/pkg/encryption"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
@@ -92,21 +94,24 @@ func (u *userRepo) ValidateUser(ctx context.Context, username, password string) 
 		return nil, err
 	}
 	return &biz.User{
-		Id:       res.Id,
+		ID:       res.Id,
 		UUID:     uuidObj,
 		Username: res.Username,
 	}, nil
 }
 
-func (u *userRepo) ListUser(c context.Context, PageToken string, pageSize int32) ([]*v1.UserDetail, int32, error) {
-	rsp, err := u.data.uc.ListUser(c, &userService.ListUserRequest{PageToken: PageToken, PageSize: pageSize})
+func (u *userRepo) ListUser(c context.Context, PageToken string, pageSize int32) ([]*v1.User, int32, error) {
+	rsp, err := u.data.uc.ListUser(c, &userService.ListUserRequest{
+		PageToken: PageToken,
+		PageSize:  pageSize,
+	})
 	if err != nil {
 		return nil, 0, err
 	}
-	rv := make([]*v1.UserDetail, 0)
+	rv := make([]*v1.User, 0)
 	for _, u := range rsp.Data {
-		rv = append(rv, &v1.UserDetail{
-			Id:          u.Id,
+		rv = append(rv, &v1.User{
+			ID:          u.ID,
 			ChineseName: u.ChineseName,
 			Phone:       u.Phone,
 			Email:       u.Email,
@@ -122,7 +127,7 @@ func (u *userRepo) GetUserInfo(ctx context.Context, uid uint32) (*biz.User, erro
 		return nil, err
 	}
 	return &biz.User{
-		Id:            user.Id,
+		ID:            user.ID,
 		Username:      user.Username,
 		ChineseName:   user.ChineseName,
 		Phone:         user.Phone,
@@ -146,7 +151,7 @@ func (u *userRepo) CreateUser(c context.Context, user *biz.User) (*biz.User, err
 		return nil, err
 	}
 	return &biz.User{
-		Id:        createUser.Id,
+		ID:        createUser.ID,
 		Username:  createUser.Username,
 		CreatedAt: createUser.CreatedAt.AsTime(),
 	}, nil
@@ -160,13 +165,36 @@ func (u *userRepo) SoftDeleteUser(c context.Context, uid uint32) (bool, error) {
 	return rsp.Deleted, nil
 }
 
-func (r *coreRepo) UpdateUserInfo(c context.Context, user *biz.User) (*biz.User, error) {
-	return nil, nil
+func (u *userRepo) UpdateUserInfo(ctx context.Context, user *biz.User) (*biz.User, error) {
+	res, err := u.data.uc.UpdateUserInfo(ctx, &userService.UpdateUserRequest{
+		ID:          user.ID,
+		Username:    user.Username,
+		ChineseName: user.ChineseName,
+		Avatar:      user.Avatar,
+		Location:    user.Location,
+		Email:       user.Email,
+		Phone:       user.Phone,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &biz.User{
+		ID:          res.ID,
+		Username:    res.Username,
+		ChineseName: res.ChineseName,
+		Avatar:      res.Avatar,
+		Phone:       res.Phone,
+		Location:    res.Location,
+	}, nil
+}
+
+func TokenKey(token string) string {
+	return fmt.Sprintf("%s:%s", ctxdata.Token, token)
 }
 
 func (u *userRepo) SetToken(ctx context.Context, token string) (string, error) {
 	key := encryption.EncodeMD5(token)
-	_, err := u.data.redisCli.Set(ctx, "token:"+key, token, TokenExpiration).Result()
+	_, err := u.data.redisCli.Set(ctx, TokenKey(key), token, TokenExpiration).Result()
 	if err != nil {
 		return "", err
 	}
@@ -175,9 +203,9 @@ func (u *userRepo) SetToken(ctx context.Context, token string) (string, error) {
 
 func (u *userRepo) DestroyToken(ctx context.Context) error {
 	tr, _ := transport.FromServerContext(ctx)
-	jwtToken := strings.SplitN(tr.RequestHeader().Get("Authorization"), " ", 2)[1]
+	jwtToken := strings.SplitN(tr.RequestHeader().Get(ctxdata.AuthorizationKey), " ", 2)[1]
 	key := encryption.EncodeMD5(jwtToken)
-	u.data.redisCli.Del(ctx, "token:"+key)
+	u.data.redisCli.Del(ctx, TokenKey(key))
 	return nil
 }
 

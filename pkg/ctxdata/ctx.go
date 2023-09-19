@@ -11,6 +11,7 @@ import (
 const (
 	UserIdKey         = "x-md-global-userId"
 	Username          = "x-md-global-username"
+	Token             = "user:basic.token"
 	AuthorizationKey  = "Authorization"
 	AuthorizationType = "Bearer"
 	Issuer            = "Galileo"
