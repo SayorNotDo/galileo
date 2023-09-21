@@ -22,6 +22,7 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationCoreCurrentUserInfo = "/api.core.v1.Core/CurrentUserInfo"
 const OperationCoreDeleteUser = "/api.core.v1.Core/DeleteUser"
+const OperationCoreDeleteUserGroup = "/api.core.v1.Core/DeleteUserGroup"
 const OperationCoreExecuteToken = "/api.core.v1.Core/ExecuteToken"
 const OperationCoreGetUserLatestActivity = "/api.core.v1.Core/GetUserLatestActivity"
 const OperationCoreGetUserProjectList = "/api.core.v1.Core/GetUserProjectList"
@@ -37,7 +38,8 @@ const OperationCoreUserInfo = "/api.core.v1.Core/UserInfo"
 
 type CoreHTTPServer interface {
 	CurrentUserInfo(context.Context, *UserInfoRequest) (*User, error)
-	DeleteUser(context.Context, *DeleteRequest) (*emptypb.Empty, error)
+	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
+	DeleteUserGroup(context.Context, *DeleteUserGroupRequest) (*emptypb.Empty, error)
 	ExecuteToken(context.Context, *ExecuteTokenRequest) (*ExecuteTokenReply, error)
 	GetUserLatestActivity(context.Context, *emptypb.Empty) (*UserLatestActivityReply, error)
 	GetUserProjectList(context.Context, *emptypb.Empty) (*UserProjectListReply, error)
@@ -61,12 +63,12 @@ func RegisterCoreHTTPServer(s *http.Server, srv CoreHTTPServer) {
 	r.PUT("v1/api/user/info", _Core_CurrentUserInfo0_HTTP_Handler(srv))
 	r.GET("v1/api/user/info", _Core_CurrentUserInfo1_HTTP_Handler(srv))
 	r.PUT("v1/api/user/password", _Core_UpdatePassword0_HTTP_Handler(srv))
-	r.DELETE("v1/api/user/{id}", _Core_DeleteUser0_HTTP_Handler(srv))
+	r.DELETE("v1/api/user/{ID}", _Core_DeleteUser0_HTTP_Handler(srv))
 	r.GET("v1/api/user/list/{pageToken}/{pageSize}", _Core_ListUsers0_HTTP_Handler(srv))
-	r.PUT("v1/api/user/groups/{id}", _Core_UserGroups0_HTTP_Handler(srv))
-	r.GET("v1/api/user/groups/{id}", _Core_UserGroups1_HTTP_Handler(srv))
-	r.DELETE("v1/api/user/groups/{id}", _Core_UserGroups2_HTTP_Handler(srv))
-	r.POST("v1/api/user/group", _Core_UserGroups3_HTTP_Handler(srv))
+	r.PUT("v1/api/user/groups/{ID}", _Core_UserGroups0_HTTP_Handler(srv))
+	r.GET("v1/api/user/groups/{ID}", _Core_UserGroups1_HTTP_Handler(srv))
+	r.POST("v1/api/user/group", _Core_UserGroups2_HTTP_Handler(srv))
+	r.DELETE("v1/api/user/groups/{ID}", _Core_DeleteUserGroup0_HTTP_Handler(srv))
 	r.GET("v1/api/{parent:user/.*}/groups", _Core_ListUserGroups0_HTTP_Handler(srv))
 	r.GET("v1/api/user/project/list", _Core_GetUserProjectList0_HTTP_Handler(srv))
 	r.GET("v1/api/user/latest-activity", _Core_GetUserLatestActivity0_HTTP_Handler(srv))
@@ -227,7 +229,7 @@ func _Core_UpdatePassword0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Contex
 
 func _Core_DeleteUser0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in DeleteRequest
+		var in DeleteUserRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
@@ -236,7 +238,7 @@ func _Core_DeleteUser0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) e
 		}
 		http.SetOperation(ctx, OperationCoreDeleteUser)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.DeleteUser(ctx, req.(*DeleteRequest))
+			return srv.DeleteUser(ctx, req.(*DeleteUserRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -319,28 +321,6 @@ func _Core_UserGroups1_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) e
 func _Core_UserGroups2_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GroupInfoRequest
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationCoreUserGroups)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.UserGroups(ctx, req.(*GroupInfoRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*GroupInfo)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _Core_UserGroups3_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in GroupInfoRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
@@ -356,6 +336,28 @@ func _Core_UserGroups3_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) e
 			return err
 		}
 		reply := out.(*GroupInfo)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Core_DeleteUserGroup0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DeleteUserGroupRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCoreDeleteUserGroup)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DeleteUserGroup(ctx, req.(*DeleteUserGroupRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
 		return ctx.Result(200, reply)
 	}
 }
@@ -466,7 +468,8 @@ func _Core_ExecuteToken0_HTTP_Handler(srv CoreHTTPServer) func(ctx http.Context)
 
 type CoreHTTPClient interface {
 	CurrentUserInfo(ctx context.Context, req *UserInfoRequest, opts ...http.CallOption) (rsp *User, err error)
-	DeleteUser(ctx context.Context, req *DeleteRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	DeleteUser(ctx context.Context, req *DeleteUserRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	DeleteUserGroup(ctx context.Context, req *DeleteUserGroupRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	ExecuteToken(ctx context.Context, req *ExecuteTokenRequest, opts ...http.CallOption) (rsp *ExecuteTokenReply, err error)
 	GetUserLatestActivity(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *UserLatestActivityReply, err error)
 	GetUserProjectList(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *UserProjectListReply, err error)
@@ -502,11 +505,24 @@ func (c *CoreHTTPClientImpl) CurrentUserInfo(ctx context.Context, in *UserInfoRe
 	return &out, err
 }
 
-func (c *CoreHTTPClientImpl) DeleteUser(ctx context.Context, in *DeleteRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+func (c *CoreHTTPClientImpl) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "v1/api/user/{id}"
+	pattern := "v1/api/user/{ID}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCoreDeleteUser))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *CoreHTTPClientImpl) DeleteUserGroup(ctx context.Context, in *DeleteUserGroupRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "v1/api/user/groups/{ID}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationCoreDeleteUserGroup))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
 	if err != nil {

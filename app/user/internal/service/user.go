@@ -33,7 +33,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 		return nil, err
 	}
 	return &v1.UserInfo{
-		ID:            ret.Id,
+		ID:            ret.ID,
 		Username:      ret.Username,
 		ChineseName:   ret.ChineseName,
 		Email:         ret.Email,
@@ -47,7 +47,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *v1.CreateUserRequest)
 
 func (s *UserService) UpdateUserInfo(ctx context.Context, req *v1.UpdateUserRequest) (*v1.UserInfo, error) {
 	_, err := s.uc.UpdateUser(ctx, &biz.User{
-		Id:          req.ID,
+		ID:          req.ID,
 		Username:    req.Username,
 		ChineseName: req.ChineseName,
 		Avatar:      req.Avatar,
@@ -70,7 +70,7 @@ func (s *UserService) GetUserInfo(ctx context.Context, req *v1.GetUserInfoReques
 		return nil, err
 	}
 	return &v1.UserInfo{
-		ID:            user.Id,
+		ID:            user.ID,
 		Username:      user.Username,
 		ChineseName:   user.ChineseName,
 		Email:         user.Email,
@@ -91,7 +91,7 @@ func (s *UserService) ListUser(ctx context.Context, req *v1.ListUserRequest) (*v
 	var userList = make([]*v1.UserInfo, 0)
 	lo.ForEach(users, func(user *biz.User, _ int) {
 		userList = append(userList, &v1.UserInfo{
-			ID:            user.Id,
+			ID:            user.ID,
 			Username:      user.Username,
 			ChineseName:   user.ChineseName,
 			Email:         user.Email,
@@ -132,7 +132,7 @@ func (s *UserService) ValidateUser(ctx context.Context, req *v1.ValidateUserRequ
 		return nil, err
 	}
 	return &v1.ValidateUserReply{
-		Id:       ret.Id,
+		Id:       ret.ID,
 		Username: ret.Username,
 		UUID:     ret.UUID.String(),
 	}, nil
@@ -192,7 +192,7 @@ func (s *UserService) GetUserGroupList(ctx context.Context, empty *empty.Empty) 
 	var userGroupList = make([]*v1.GroupInfo, 0)
 	lo.ForEach(res, func(item *biz.Group, _ int) {
 		userGroupList = append(userGroupList, &v1.GroupInfo{
-			Id:          item.Id,
+			ID:          item.ID,
 			Name:        item.Name,
 			Avatar:      item.Avatar,
 			Description: item.Description,
@@ -216,25 +216,37 @@ func (s *UserService) GetUserGroup(ctx context.Context, req *v1.UserGroupRequest
 	if err != nil {
 		return nil, err
 	}
+	var groupMemberList []*v1.GroupMember
+	lo.ForEach(ret.GroupMemberList, func(member *biz.GroupMember, _ int) {
+		groupMemberList = append(groupMemberList, &v1.GroupMember{
+			Uid:       member.Uid,
+			Username:  member.Username,
+			Role:      uint32(member.Role),
+			CreatedAt: timestamppb.New(member.CreatedAt),
+			CreatedBy: member.CreatedBy,
+		})
+	})
 	return &v1.GroupInfo{
-		Id:          ret.Id,
-		Name:        ret.Name,
-		Avatar:      ret.Avatar,
-		Description: ret.Description,
-		CreatedAt:   timestamppb.New(ret.CreatedAt),
-		CreatedBy:   ret.CreatedBy,
-		UpdatedAt:   timestamppb.New(ret.UpdatedAt),
-		UpdatedBy:   ret.UpdatedBy,
-		DeletedAt:   timestamppb.New(ret.DeletedAt),
-		DeletedBy:   ret.DeletedBy,
-		Headcount:   ret.Headcount,
+		ID:              ret.ID,
+		Name:            ret.Name,
+		Avatar:          ret.Avatar,
+		Description:     ret.Description,
+		CreatedAt:       timestamppb.New(ret.CreatedAt),
+		CreatedBy:       ret.CreatedBy,
+		UpdatedAt:       timestamppb.New(ret.UpdatedAt),
+		UpdatedBy:       ret.UpdatedBy,
+		DeletedAt:       timestamppb.New(ret.DeletedAt),
+		DeletedBy:       ret.DeletedBy,
+		Headcount:       ret.Headcount,
+		GroupMemberList: groupMemberList,
 	}, nil
+
 }
 
 func (s *UserService) UpdateUserGroup(ctx context.Context, req *v1.UserGroupRequest) (*emptypb.Empty, error) {
 	uid := ctxdata.UserIdFromMetaData(ctx)
 	group := &biz.Group{
-		Id:          req.Id,
+		ID:          req.Id,
 		Name:        req.Name,
 		Avatar:      req.Avatar,
 		Description: req.Description,
@@ -248,20 +260,34 @@ func (s *UserService) UpdateUserGroup(ctx context.Context, req *v1.UserGroupRequ
 }
 
 func (s *UserService) CreateUserGroup(ctx context.Context, req *v1.UserGroupRequest) (*v1.GroupInfo, error) {
+	uid := ctxdata.UserIdFromMetaData(ctx)
 	ret, err := s.uc.CreateUserGroup(ctx, &biz.Group{
 		Name:        req.Name,
 		Avatar:      req.Avatar,
+		CreatedBy:   uid,
 		Description: req.Description,
 	})
 	if err != nil {
 		return nil, err
 	}
+	var groupMemberList []*v1.GroupMember
+	lo.ForEach(ret.GroupMemberList, func(member *biz.GroupMember, _ int) {
+		groupMemberList = append(groupMemberList, &v1.GroupMember{
+			Uid:       member.Uid,
+			Username:  member.Username,
+			Role:      uint32(member.Role),
+			CreatedAt: timestamppb.New(member.CreatedAt),
+			CreatedBy: member.CreatedBy,
+		})
+	})
 	return &v1.GroupInfo{
-		Id:          ret.Id,
-		Name:        ret.Name,
-		Avatar:      ret.Avatar,
-		Description: ret.Description,
-		CreatedAt:   timestamppb.New(ret.CreatedAt),
-		CreatedBy:   ret.CreatedBy,
+		ID:              ret.ID,
+		Name:            ret.Name,
+		Avatar:          ret.Avatar,
+		Description:     ret.Description,
+		CreatedAt:       timestamppb.New(ret.CreatedAt),
+		CreatedBy:       ret.CreatedBy,
+		Headcount:       ret.Headcount,
+		GroupMemberList: groupMemberList,
 	}, nil
 }

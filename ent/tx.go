@@ -30,6 +30,8 @@ type Tx struct {
 	GroupMember *GroupMemberClient
 	// Job is the client for interacting with the Job builders.
 	Job *JobClient
+	// MetaEvent is the client for interacting with the MetaEvent builders.
+	MetaEvent *MetaEventClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
 	// ProjectMember is the client for interacting with the ProjectMember builders.
@@ -184,6 +186,7 @@ func (tx *Tx) init() {
 	tx.Group = NewGroupClient(tx.config)
 	tx.GroupMember = NewGroupMemberClient(tx.config)
 	tx.Job = NewJobClient(tx.config)
+	tx.MetaEvent = NewMetaEventClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
 	tx.ProjectMember = NewProjectMemberClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)

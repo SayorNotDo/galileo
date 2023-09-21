@@ -115,6 +115,8 @@ func setUserInfo() middleware.Middleware {
 			username := claimInfo["Username"].(string)
 			ctx = context.WithValue(ctx, ctxdata.UserIdKey, userId)
 			ctx = context.WithValue(ctx, ctxdata.Username, username)
+			ctx = ctxdata.UserIdToMetaData(ctx, userId)
+			ctx = ctxdata.UsernameToMetadata(ctx, username)
 			return handler(ctx, req)
 		}
 	}

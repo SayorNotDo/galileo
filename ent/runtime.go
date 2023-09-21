@@ -9,6 +9,7 @@ import (
 	"galileo/ent/group"
 	"galileo/ent/groupmember"
 	"galileo/ent/job"
+	"galileo/ent/metaevent"
 	"galileo/ent/project"
 	"galileo/ent/projectmember"
 	"galileo/ent/schema"
@@ -82,10 +83,6 @@ func init() {
 	container.IDValidator = containerDescID.Validators[0].(func(string) error)
 	groupFields := schema.Group{}.Fields()
 	_ = groupFields
-	// groupDescName is the schema descriptor for name field.
-	groupDescName := groupFields[1].Descriptor()
-	// group.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	group.NameValidator = groupDescName.Validators[0].(func(string) error)
 	// groupDescCreatedAt is the schema descriptor for created_at field.
 	groupDescCreatedAt := groupFields[5].Descriptor()
 	// group.DefaultCreatedAt holds the default value on creation for the created_at field.
@@ -118,6 +115,28 @@ func init() {
 	jobDescActive := jobFields[12].Descriptor()
 	// job.DefaultActive holds the default value on creation for the active field.
 	job.DefaultActive = jobDescActive.Default.(bool)
+	metaeventFields := schema.MetaEvent{}.Fields()
+	_ = metaeventFields
+	// metaeventDescEventName is the schema descriptor for event_name field.
+	metaeventDescEventName := metaeventFields[1].Descriptor()
+	// metaevent.EventNameValidator is a validator for the "event_name" field. It is called by the builders before save.
+	metaevent.EventNameValidator = metaeventDescEventName.Validators[0].(func(string) error)
+	// metaeventDescUUID is the schema descriptor for uuid field.
+	metaeventDescUUID := metaeventFields[2].Descriptor()
+	// metaevent.DefaultUUID holds the default value on creation for the uuid field.
+	metaevent.DefaultUUID = metaeventDescUUID.Default.(func() uuid.UUID)
+	// metaeventDescDisplayName is the schema descriptor for display_name field.
+	metaeventDescDisplayName := metaeventFields[3].Descriptor()
+	// metaevent.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
+	metaevent.DisplayNameValidator = metaeventDescDisplayName.Validators[0].(func(string) error)
+	// metaeventDescCreatedAt is the schema descriptor for created_at field.
+	metaeventDescCreatedAt := metaeventFields[6].Descriptor()
+	// metaevent.DefaultCreatedAt holds the default value on creation for the created_at field.
+	metaevent.DefaultCreatedAt = metaeventDescCreatedAt.Default.(func() time.Time)
+	// metaeventDescUpdatedAt is the schema descriptor for updated_at field.
+	metaeventDescUpdatedAt := metaeventFields[7].Descriptor()
+	// metaevent.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	metaevent.UpdateDefaultUpdatedAt = metaeventDescUpdatedAt.UpdateDefault.(func() time.Time)
 	projectFields := schema.Project{}.Fields()
 	_ = projectFields
 	// projectDescName is the schema descriptor for name field.

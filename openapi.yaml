@@ -75,6 +75,28 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    v1/api/user/groups/{ID}:
+        delete:
+            tags:
+                - Core
+            operationId: Core_DeleteUserGroup
+            parameters:
+                - name: ID
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int64
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     v1/api/user/info:
         get:
             tags:
@@ -274,13 +296,13 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    v1/api/user/{id}:
+    v1/api/user/{ID}:
         delete:
             tags:
                 - Core
             operationId: Core_DeleteUser
             parameters:
-                - name: id
+                - name: ID
                   in: path
                   required: true
                   schema:
@@ -402,9 +424,9 @@ components:
         GroupInfo:
             type: object
             properties:
-                id:
+                ID:
                     type: integer
-                    format: int32
+                    format: int64
                 name:
                     type: string
                 avatar:
@@ -417,18 +439,6 @@ components:
                 createdBy:
                     type: integer
                     format: uint32
-                updatedAt:
-                    type: string
-                    format: date-time
-                updatedBy:
-                    type: integer
-                    format: uint32
-                deletedAt:
-                    type: string
-                    format: date-time
-                deletedBy:
-                    type: integer
-                    format: uint32
                 headcount:
                     type: integer
                     format: int32
@@ -439,9 +449,9 @@ components:
         GroupInfoRequest:
             type: object
             properties:
-                id:
+                ID:
                     type: integer
-                    format: int32
+                    format: int64
                 name:
                     type: string
                 avatar:

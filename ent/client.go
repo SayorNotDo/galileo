@@ -19,6 +19,7 @@ import (
 	"galileo/ent/group"
 	"galileo/ent/groupmember"
 	"galileo/ent/job"
+	"galileo/ent/metaevent"
 	"galileo/ent/project"
 	"galileo/ent/projectmember"
 	"galileo/ent/task"
@@ -55,6 +56,8 @@ type Client struct {
 	GroupMember *GroupMemberClient
 	// Job is the client for interacting with the Job builders.
 	Job *JobClient
+	// MetaEvent is the client for interacting with the MetaEvent builders.
+	MetaEvent *MetaEventClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
 	// ProjectMember is the client for interacting with the ProjectMember builders.
@@ -91,6 +94,7 @@ func (c *Client) init() {
 	c.Group = NewGroupClient(c.config)
 	c.GroupMember = NewGroupMemberClient(c.config)
 	c.Job = NewJobClient(c.config)
+	c.MetaEvent = NewMetaEventClient(c.config)
 	c.Project = NewProjectClient(c.config)
 	c.ProjectMember = NewProjectMemberClient(c.config)
 	c.Task = NewTaskClient(c.config)
@@ -189,6 +193,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Group:         NewGroupClient(cfg),
 		GroupMember:   NewGroupMemberClient(cfg),
 		Job:           NewJobClient(cfg),
+		MetaEvent:     NewMetaEventClient(cfg),
 		Project:       NewProjectClient(cfg),
 		ProjectMember: NewProjectMemberClient(cfg),
 		Task:          NewTaskClient(cfg),
@@ -224,6 +229,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Group:         NewGroupClient(cfg),
 		GroupMember:   NewGroupMemberClient(cfg),
 		Job:           NewJobClient(cfg),
+		MetaEvent:     NewMetaEventClient(cfg),
 		Project:       NewProjectClient(cfg),
 		ProjectMember: NewProjectMemberClient(cfg),
 		Task:          NewTaskClient(cfg),
@@ -261,8 +267,8 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Api, c.ApiCategory, c.ApiHistory, c.ApiStatistics, c.ApiTag, c.Container,
-		c.Group, c.GroupMember, c.Job, c.Project, c.ProjectMember, c.Task, c.TestPlan,
-		c.Testcase, c.TestcaseSuite, c.User,
+		c.Group, c.GroupMember, c.Job, c.MetaEvent, c.Project, c.ProjectMember, c.Task,
+		c.TestPlan, c.Testcase, c.TestcaseSuite, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -273,8 +279,8 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Api, c.ApiCategory, c.ApiHistory, c.ApiStatistics, c.ApiTag, c.Container,
-		c.Group, c.GroupMember, c.Job, c.Project, c.ProjectMember, c.Task, c.TestPlan,
-		c.Testcase, c.TestcaseSuite, c.User,
+		c.Group, c.GroupMember, c.Job, c.MetaEvent, c.Project, c.ProjectMember, c.Task,
+		c.TestPlan, c.Testcase, c.TestcaseSuite, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -301,6 +307,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.GroupMember.mutate(ctx, m)
 	case *JobMutation:
 		return c.Job.mutate(ctx, m)
+	case *MetaEventMutation:
+		return c.MetaEvent.mutate(ctx, m)
 	case *ProjectMutation:
 		return c.Project.mutate(ctx, m)
 	case *ProjectMemberMutation:
@@ -1074,7 +1082,7 @@ func (c *GroupClient) UpdateOne(gr *Group) *GroupUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *GroupClient) UpdateOneID(id int32) *GroupUpdateOne {
+func (c *GroupClient) UpdateOneID(id int64) *GroupUpdateOne {
 	mutation := newGroupMutation(c.config, OpUpdateOne, withGroupID(id))
 	return &GroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1091,7 +1099,7 @@ func (c *GroupClient) DeleteOne(gr *Group) *GroupDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *GroupClient) DeleteOneID(id int32) *GroupDeleteOne {
+func (c *GroupClient) DeleteOneID(id int64) *GroupDeleteOne {
 	builder := c.Delete().Where(group.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1108,12 +1116,12 @@ func (c *GroupClient) Query() *GroupQuery {
 }
 
 // Get returns a Group entity by its id.
-func (c *GroupClient) Get(ctx context.Context, id int32) (*Group, error) {
+func (c *GroupClient) Get(ctx context.Context, id int64) (*Group, error) {
 	return c.Query().Where(group.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *GroupClient) GetX(ctx context.Context, id int32) *Group {
+func (c *GroupClient) GetX(ctx context.Context, id int64) *Group {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1192,7 +1200,7 @@ func (c *GroupMemberClient) UpdateOne(gm *GroupMember) *GroupMemberUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *GroupMemberClient) UpdateOneID(id int32) *GroupMemberUpdateOne {
+func (c *GroupMemberClient) UpdateOneID(id int64) *GroupMemberUpdateOne {
 	mutation := newGroupMemberMutation(c.config, OpUpdateOne, withGroupMemberID(id))
 	return &GroupMemberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1209,7 +1217,7 @@ func (c *GroupMemberClient) DeleteOne(gm *GroupMember) *GroupMemberDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *GroupMemberClient) DeleteOneID(id int32) *GroupMemberDeleteOne {
+func (c *GroupMemberClient) DeleteOneID(id int64) *GroupMemberDeleteOne {
 	builder := c.Delete().Where(groupmember.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1226,12 +1234,12 @@ func (c *GroupMemberClient) Query() *GroupMemberQuery {
 }
 
 // Get returns a GroupMember entity by its id.
-func (c *GroupMemberClient) Get(ctx context.Context, id int32) (*GroupMember, error) {
+func (c *GroupMemberClient) Get(ctx context.Context, id int64) (*GroupMember, error) {
 	return c.Query().Where(groupmember.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *GroupMemberClient) GetX(ctx context.Context, id int32) *GroupMember {
+func (c *GroupMemberClient) GetX(ctx context.Context, id int64) *GroupMember {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1382,6 +1390,124 @@ func (c *JobClient) mutate(ctx context.Context, m *JobMutation) (Value, error) {
 	}
 }
 
+// MetaEventClient is a client for the MetaEvent schema.
+type MetaEventClient struct {
+	config
+}
+
+// NewMetaEventClient returns a client for the MetaEvent from the given config.
+func NewMetaEventClient(c config) *MetaEventClient {
+	return &MetaEventClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `metaevent.Hooks(f(g(h())))`.
+func (c *MetaEventClient) Use(hooks ...Hook) {
+	c.hooks.MetaEvent = append(c.hooks.MetaEvent, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `metaevent.Intercept(f(g(h())))`.
+func (c *MetaEventClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MetaEvent = append(c.inters.MetaEvent, interceptors...)
+}
+
+// Create returns a builder for creating a MetaEvent entity.
+func (c *MetaEventClient) Create() *MetaEventCreate {
+	mutation := newMetaEventMutation(c.config, OpCreate)
+	return &MetaEventCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MetaEvent entities.
+func (c *MetaEventClient) CreateBulk(builders ...*MetaEventCreate) *MetaEventCreateBulk {
+	return &MetaEventCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MetaEvent.
+func (c *MetaEventClient) Update() *MetaEventUpdate {
+	mutation := newMetaEventMutation(c.config, OpUpdate)
+	return &MetaEventUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MetaEventClient) UpdateOne(me *MetaEvent) *MetaEventUpdateOne {
+	mutation := newMetaEventMutation(c.config, OpUpdateOne, withMetaEvent(me))
+	return &MetaEventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MetaEventClient) UpdateOneID(id int64) *MetaEventUpdateOne {
+	mutation := newMetaEventMutation(c.config, OpUpdateOne, withMetaEventID(id))
+	return &MetaEventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MetaEvent.
+func (c *MetaEventClient) Delete() *MetaEventDelete {
+	mutation := newMetaEventMutation(c.config, OpDelete)
+	return &MetaEventDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MetaEventClient) DeleteOne(me *MetaEvent) *MetaEventDeleteOne {
+	return c.DeleteOneID(me.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MetaEventClient) DeleteOneID(id int64) *MetaEventDeleteOne {
+	builder := c.Delete().Where(metaevent.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MetaEventDeleteOne{builder}
+}
+
+// Query returns a query builder for MetaEvent.
+func (c *MetaEventClient) Query() *MetaEventQuery {
+	return &MetaEventQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMetaEvent},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MetaEvent entity by its id.
+func (c *MetaEventClient) Get(ctx context.Context, id int64) (*MetaEvent, error) {
+	return c.Query().Where(metaevent.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MetaEventClient) GetX(ctx context.Context, id int64) *MetaEvent {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *MetaEventClient) Hooks() []Hook {
+	return c.hooks.MetaEvent
+}
+
+// Interceptors returns the client interceptors.
+func (c *MetaEventClient) Interceptors() []Interceptor {
+	return c.inters.MetaEvent
+}
+
+func (c *MetaEventClient) mutate(ctx context.Context, m *MetaEventMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MetaEventCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MetaEventUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MetaEventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MetaEventDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown MetaEvent mutation op: %q", m.Op())
+	}
+}
+
 // ProjectClient is a client for the Project schema.
 type ProjectClient struct {
 	config
@@ -1428,7 +1554,7 @@ func (c *ProjectClient) UpdateOne(pr *Project) *ProjectUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *ProjectClient) UpdateOneID(id int32) *ProjectUpdateOne {
+func (c *ProjectClient) UpdateOneID(id int64) *ProjectUpdateOne {
 	mutation := newProjectMutation(c.config, OpUpdateOne, withProjectID(id))
 	return &ProjectUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1445,7 +1571,7 @@ func (c *ProjectClient) DeleteOne(pr *Project) *ProjectDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *ProjectClient) DeleteOneID(id int32) *ProjectDeleteOne {
+func (c *ProjectClient) DeleteOneID(id int64) *ProjectDeleteOne {
 	builder := c.Delete().Where(project.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1462,12 +1588,12 @@ func (c *ProjectClient) Query() *ProjectQuery {
 }
 
 // Get returns a Project entity by its id.
-func (c *ProjectClient) Get(ctx context.Context, id int32) (*Project, error) {
+func (c *ProjectClient) Get(ctx context.Context, id int64) (*Project, error) {
 	return c.Query().Where(project.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *ProjectClient) GetX(ctx context.Context, id int32) *Project {
+func (c *ProjectClient) GetX(ctx context.Context, id int64) *Project {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -2212,12 +2338,12 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 type (
 	hooks struct {
 		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Container, Group,
-		GroupMember, Job, Project, ProjectMember, Task, TestPlan, Testcase,
+		GroupMember, Job, MetaEvent, Project, ProjectMember, Task, TestPlan, Testcase,
 		TestcaseSuite, User []ent.Hook
 	}
 	inters struct {
 		Api, ApiCategory, ApiHistory, ApiStatistics, ApiTag, Container, Group,
-		GroupMember, Job, Project, ProjectMember, Task, TestPlan, Testcase,
+		GroupMember, Job, MetaEvent, Project, ProjectMember, Task, TestPlan, Testcase,
 		TestcaseSuite, User []ent.Interceptor
 	}
 )

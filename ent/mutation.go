@@ -14,6 +14,7 @@ import (
 	"galileo/ent/group"
 	"galileo/ent/groupmember"
 	"galileo/ent/job"
+	"galileo/ent/metaevent"
 	"galileo/ent/predicate"
 	"galileo/ent/project"
 	"galileo/ent/projectmember"
@@ -48,6 +49,7 @@ const (
 	TypeGroup         = "Group"
 	TypeGroupMember   = "GroupMember"
 	TypeJob           = "Job"
+	TypeMetaEvent     = "MetaEvent"
 	TypeProject       = "Project"
 	TypeProjectMember = "ProjectMember"
 	TypeTask          = "Task"
@@ -5994,7 +5996,7 @@ type GroupMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int32
+	id            *int64
 	name          *string
 	avatar        *string
 	description   *string
@@ -6035,7 +6037,7 @@ func newGroupMutation(c config, op Op, opts ...groupOption) *GroupMutation {
 }
 
 // withGroupID sets the ID field of the mutation.
-func withGroupID(id int32) groupOption {
+func withGroupID(id int64) groupOption {
 	return func(m *GroupMutation) {
 		var (
 			err   error
@@ -6087,13 +6089,13 @@ func (m GroupMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Group entities.
-func (m *GroupMutation) SetID(id int32) {
+func (m *GroupMutation) SetID(id int64) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *GroupMutation) ID() (id int32, exists bool) {
+func (m *GroupMutation) ID() (id int64, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -6104,12 +6106,12 @@ func (m *GroupMutation) ID() (id int32, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *GroupMutation) IDs(ctx context.Context) ([]int32, error) {
+func (m *GroupMutation) IDs(ctx context.Context) ([]int64, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int32{id}, nil
+			return []int64{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -7066,9 +7068,9 @@ type GroupMemberMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int32
-	group_id      *int32
-	addgroup_id   *int32
+	id            *int64
+	group_id      *int64
+	addgroup_id   *int64
 	user_id       *uint32
 	adduser_id    *int32
 	role          *uint8
@@ -7105,7 +7107,7 @@ func newGroupMemberMutation(c config, op Op, opts ...groupmemberOption) *GroupMe
 }
 
 // withGroupMemberID sets the ID field of the mutation.
-func withGroupMemberID(id int32) groupmemberOption {
+func withGroupMemberID(id int64) groupmemberOption {
 	return func(m *GroupMemberMutation) {
 		var (
 			err   error
@@ -7157,13 +7159,13 @@ func (m GroupMemberMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of GroupMember entities.
-func (m *GroupMemberMutation) SetID(id int32) {
+func (m *GroupMemberMutation) SetID(id int64) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *GroupMemberMutation) ID() (id int32, exists bool) {
+func (m *GroupMemberMutation) ID() (id int64, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -7174,12 +7176,12 @@ func (m *GroupMemberMutation) ID() (id int32, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *GroupMemberMutation) IDs(ctx context.Context) ([]int32, error) {
+func (m *GroupMemberMutation) IDs(ctx context.Context) ([]int64, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int32{id}, nil
+			return []int64{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -7190,13 +7192,13 @@ func (m *GroupMemberMutation) IDs(ctx context.Context) ([]int32, error) {
 }
 
 // SetGroupID sets the "group_id" field.
-func (m *GroupMemberMutation) SetGroupID(i int32) {
+func (m *GroupMemberMutation) SetGroupID(i int64) {
 	m.group_id = &i
 	m.addgroup_id = nil
 }
 
 // GroupID returns the value of the "group_id" field in the mutation.
-func (m *GroupMemberMutation) GroupID() (r int32, exists bool) {
+func (m *GroupMemberMutation) GroupID() (r int64, exists bool) {
 	v := m.group_id
 	if v == nil {
 		return
@@ -7207,7 +7209,7 @@ func (m *GroupMemberMutation) GroupID() (r int32, exists bool) {
 // OldGroupID returns the old "group_id" field's value of the GroupMember entity.
 // If the GroupMember object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *GroupMemberMutation) OldGroupID(ctx context.Context) (v int32, err error) {
+func (m *GroupMemberMutation) OldGroupID(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldGroupID is only allowed on UpdateOne operations")
 	}
@@ -7222,7 +7224,7 @@ func (m *GroupMemberMutation) OldGroupID(ctx context.Context) (v int32, err erro
 }
 
 // AddGroupID adds i to the "group_id" field.
-func (m *GroupMemberMutation) AddGroupID(i int32) {
+func (m *GroupMemberMutation) AddGroupID(i int64) {
 	if m.addgroup_id != nil {
 		*m.addgroup_id += i
 	} else {
@@ -7231,7 +7233,7 @@ func (m *GroupMemberMutation) AddGroupID(i int32) {
 }
 
 // AddedGroupID returns the value that was added to the "group_id" field in this mutation.
-func (m *GroupMemberMutation) AddedGroupID() (r int32, exists bool) {
+func (m *GroupMemberMutation) AddedGroupID() (r int64, exists bool) {
 	v := m.addgroup_id
 	if v == nil {
 		return
@@ -7693,7 +7695,7 @@ func (m *GroupMemberMutation) OldField(ctx context.Context, name string) (ent.Va
 func (m *GroupMemberMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case groupmember.FieldGroupID:
-		v, ok := value.(int32)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -7792,7 +7794,7 @@ func (m *GroupMemberMutation) AddedField(name string) (ent.Value, bool) {
 func (m *GroupMemberMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	case groupmember.FieldGroupID:
-		v, ok := value.(int32)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -9145,12 +9147,728 @@ func (m *JobMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Job edge %s", name)
 }
 
+// MetaEventMutation represents an operation that mutates the MetaEvent nodes in the graph.
+type MetaEventMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int64
+	event_name    *string
+	uuid          *uuid.UUID
+	display_name  *string
+	event_desc    *string
+	remark        *string
+	created_at    *time.Time
+	updated_at    *time.Time
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*MetaEvent, error)
+	predicates    []predicate.MetaEvent
+}
+
+var _ ent.Mutation = (*MetaEventMutation)(nil)
+
+// metaeventOption allows management of the mutation configuration using functional options.
+type metaeventOption func(*MetaEventMutation)
+
+// newMetaEventMutation creates new mutation for the MetaEvent entity.
+func newMetaEventMutation(c config, op Op, opts ...metaeventOption) *MetaEventMutation {
+	m := &MetaEventMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeMetaEvent,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withMetaEventID sets the ID field of the mutation.
+func withMetaEventID(id int64) metaeventOption {
+	return func(m *MetaEventMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *MetaEvent
+		)
+		m.oldValue = func(ctx context.Context) (*MetaEvent, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().MetaEvent.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withMetaEvent sets the old MetaEvent of the mutation.
+func withMetaEvent(node *MetaEvent) metaeventOption {
+	return func(m *MetaEventMutation) {
+		m.oldValue = func(context.Context) (*MetaEvent, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m MetaEventMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m MetaEventMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of MetaEvent entities.
+func (m *MetaEventMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *MetaEventMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *MetaEventMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().MetaEvent.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetEventName sets the "event_name" field.
+func (m *MetaEventMutation) SetEventName(s string) {
+	m.event_name = &s
+}
+
+// EventName returns the value of the "event_name" field in the mutation.
+func (m *MetaEventMutation) EventName() (r string, exists bool) {
+	v := m.event_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEventName returns the old "event_name" field's value of the MetaEvent entity.
+// If the MetaEvent object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MetaEventMutation) OldEventName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEventName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEventName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEventName: %w", err)
+	}
+	return oldValue.EventName, nil
+}
+
+// ResetEventName resets all changes to the "event_name" field.
+func (m *MetaEventMutation) ResetEventName() {
+	m.event_name = nil
+}
+
+// SetUUID sets the "uuid" field.
+func (m *MetaEventMutation) SetUUID(u uuid.UUID) {
+	m.uuid = &u
+}
+
+// UUID returns the value of the "uuid" field in the mutation.
+func (m *MetaEventMutation) UUID() (r uuid.UUID, exists bool) {
+	v := m.uuid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUUID returns the old "uuid" field's value of the MetaEvent entity.
+// If the MetaEvent object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MetaEventMutation) OldUUID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUUID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUUID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUUID: %w", err)
+	}
+	return oldValue.UUID, nil
+}
+
+// ResetUUID resets all changes to the "uuid" field.
+func (m *MetaEventMutation) ResetUUID() {
+	m.uuid = nil
+}
+
+// SetDisplayName sets the "display_name" field.
+func (m *MetaEventMutation) SetDisplayName(s string) {
+	m.display_name = &s
+}
+
+// DisplayName returns the value of the "display_name" field in the mutation.
+func (m *MetaEventMutation) DisplayName() (r string, exists bool) {
+	v := m.display_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDisplayName returns the old "display_name" field's value of the MetaEvent entity.
+// If the MetaEvent object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MetaEventMutation) OldDisplayName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDisplayName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDisplayName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDisplayName: %w", err)
+	}
+	return oldValue.DisplayName, nil
+}
+
+// ResetDisplayName resets all changes to the "display_name" field.
+func (m *MetaEventMutation) ResetDisplayName() {
+	m.display_name = nil
+}
+
+// SetEventDesc sets the "event_desc" field.
+func (m *MetaEventMutation) SetEventDesc(s string) {
+	m.event_desc = &s
+}
+
+// EventDesc returns the value of the "event_desc" field in the mutation.
+func (m *MetaEventMutation) EventDesc() (r string, exists bool) {
+	v := m.event_desc
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEventDesc returns the old "event_desc" field's value of the MetaEvent entity.
+// If the MetaEvent object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MetaEventMutation) OldEventDesc(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEventDesc is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEventDesc requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEventDesc: %w", err)
+	}
+	return oldValue.EventDesc, nil
+}
+
+// ClearEventDesc clears the value of the "event_desc" field.
+func (m *MetaEventMutation) ClearEventDesc() {
+	m.event_desc = nil
+	m.clearedFields[metaevent.FieldEventDesc] = struct{}{}
+}
+
+// EventDescCleared returns if the "event_desc" field was cleared in this mutation.
+func (m *MetaEventMutation) EventDescCleared() bool {
+	_, ok := m.clearedFields[metaevent.FieldEventDesc]
+	return ok
+}
+
+// ResetEventDesc resets all changes to the "event_desc" field.
+func (m *MetaEventMutation) ResetEventDesc() {
+	m.event_desc = nil
+	delete(m.clearedFields, metaevent.FieldEventDesc)
+}
+
+// SetRemark sets the "remark" field.
+func (m *MetaEventMutation) SetRemark(s string) {
+	m.remark = &s
+}
+
+// Remark returns the value of the "remark" field in the mutation.
+func (m *MetaEventMutation) Remark() (r string, exists bool) {
+	v := m.remark
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRemark returns the old "remark" field's value of the MetaEvent entity.
+// If the MetaEvent object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MetaEventMutation) OldRemark(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRemark is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRemark requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRemark: %w", err)
+	}
+	return oldValue.Remark, nil
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (m *MetaEventMutation) ClearRemark() {
+	m.remark = nil
+	m.clearedFields[metaevent.FieldRemark] = struct{}{}
+}
+
+// RemarkCleared returns if the "remark" field was cleared in this mutation.
+func (m *MetaEventMutation) RemarkCleared() bool {
+	_, ok := m.clearedFields[metaevent.FieldRemark]
+	return ok
+}
+
+// ResetRemark resets all changes to the "remark" field.
+func (m *MetaEventMutation) ResetRemark() {
+	m.remark = nil
+	delete(m.clearedFields, metaevent.FieldRemark)
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *MetaEventMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *MetaEventMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the MetaEvent entity.
+// If the MetaEvent object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MetaEventMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *MetaEventMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *MetaEventMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *MetaEventMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the MetaEvent entity.
+// If the MetaEvent object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MetaEventMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *MetaEventMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[metaevent.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *MetaEventMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[metaevent.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *MetaEventMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, metaevent.FieldUpdatedAt)
+}
+
+// Where appends a list predicates to the MetaEventMutation builder.
+func (m *MetaEventMutation) Where(ps ...predicate.MetaEvent) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the MetaEventMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *MetaEventMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.MetaEvent, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *MetaEventMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *MetaEventMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (MetaEvent).
+func (m *MetaEventMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *MetaEventMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.event_name != nil {
+		fields = append(fields, metaevent.FieldEventName)
+	}
+	if m.uuid != nil {
+		fields = append(fields, metaevent.FieldUUID)
+	}
+	if m.display_name != nil {
+		fields = append(fields, metaevent.FieldDisplayName)
+	}
+	if m.event_desc != nil {
+		fields = append(fields, metaevent.FieldEventDesc)
+	}
+	if m.remark != nil {
+		fields = append(fields, metaevent.FieldRemark)
+	}
+	if m.created_at != nil {
+		fields = append(fields, metaevent.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, metaevent.FieldUpdatedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *MetaEventMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case metaevent.FieldEventName:
+		return m.EventName()
+	case metaevent.FieldUUID:
+		return m.UUID()
+	case metaevent.FieldDisplayName:
+		return m.DisplayName()
+	case metaevent.FieldEventDesc:
+		return m.EventDesc()
+	case metaevent.FieldRemark:
+		return m.Remark()
+	case metaevent.FieldCreatedAt:
+		return m.CreatedAt()
+	case metaevent.FieldUpdatedAt:
+		return m.UpdatedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *MetaEventMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case metaevent.FieldEventName:
+		return m.OldEventName(ctx)
+	case metaevent.FieldUUID:
+		return m.OldUUID(ctx)
+	case metaevent.FieldDisplayName:
+		return m.OldDisplayName(ctx)
+	case metaevent.FieldEventDesc:
+		return m.OldEventDesc(ctx)
+	case metaevent.FieldRemark:
+		return m.OldRemark(ctx)
+	case metaevent.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case metaevent.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown MetaEvent field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MetaEventMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case metaevent.FieldEventName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEventName(v)
+		return nil
+	case metaevent.FieldUUID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUUID(v)
+		return nil
+	case metaevent.FieldDisplayName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDisplayName(v)
+		return nil
+	case metaevent.FieldEventDesc:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEventDesc(v)
+		return nil
+	case metaevent.FieldRemark:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRemark(v)
+		return nil
+	case metaevent.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case metaevent.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MetaEvent field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *MetaEventMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *MetaEventMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MetaEventMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown MetaEvent numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *MetaEventMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(metaevent.FieldEventDesc) {
+		fields = append(fields, metaevent.FieldEventDesc)
+	}
+	if m.FieldCleared(metaevent.FieldRemark) {
+		fields = append(fields, metaevent.FieldRemark)
+	}
+	if m.FieldCleared(metaevent.FieldUpdatedAt) {
+		fields = append(fields, metaevent.FieldUpdatedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *MetaEventMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *MetaEventMutation) ClearField(name string) error {
+	switch name {
+	case metaevent.FieldEventDesc:
+		m.ClearEventDesc()
+		return nil
+	case metaevent.FieldRemark:
+		m.ClearRemark()
+		return nil
+	case metaevent.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown MetaEvent nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *MetaEventMutation) ResetField(name string) error {
+	switch name {
+	case metaevent.FieldEventName:
+		m.ResetEventName()
+		return nil
+	case metaevent.FieldUUID:
+		m.ResetUUID()
+		return nil
+	case metaevent.FieldDisplayName:
+		m.ResetDisplayName()
+		return nil
+	case metaevent.FieldEventDesc:
+		m.ResetEventDesc()
+		return nil
+	case metaevent.FieldRemark:
+		m.ResetRemark()
+		return nil
+	case metaevent.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case metaevent.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown MetaEvent field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *MetaEventMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *MetaEventMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *MetaEventMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *MetaEventMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *MetaEventMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *MetaEventMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *MetaEventMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown MetaEvent unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *MetaEventMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown MetaEvent edge %s", name)
+}
+
 // ProjectMutation represents an operation that mutates the Project nodes in the graph.
 type ProjectMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int32
+	id            *int64
 	name          *string
 	identifier    *string
 	created_at    *time.Time
@@ -9194,7 +9912,7 @@ func newProjectMutation(c config, op Op, opts ...projectOption) *ProjectMutation
 }
 
 // withProjectID sets the ID field of the mutation.
-func withProjectID(id int32) projectOption {
+func withProjectID(id int64) projectOption {
 	return func(m *ProjectMutation) {
 		var (
 			err   error
@@ -9246,13 +9964,13 @@ func (m ProjectMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Project entities.
-func (m *ProjectMutation) SetID(id int32) {
+func (m *ProjectMutation) SetID(id int64) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *ProjectMutation) ID() (id int32, exists bool) {
+func (m *ProjectMutation) ID() (id int64, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -9263,12 +9981,12 @@ func (m *ProjectMutation) ID() (id int32, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *ProjectMutation) IDs(ctx context.Context) ([]int32, error) {
+func (m *ProjectMutation) IDs(ctx context.Context) ([]int64, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int32{id}, nil
+			return []int64{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -10423,8 +11141,8 @@ type ProjectMemberMutation struct {
 	op            Op
 	typ           string
 	id            *int
-	project_id    *int32
-	addproject_id *int32
+	project_id    *int64
+	addproject_id *int64
 	user_id       *uint32
 	adduser_id    *int32
 	created_at    *time.Time
@@ -10544,13 +11262,13 @@ func (m *ProjectMemberMutation) IDs(ctx context.Context) ([]int, error) {
 }
 
 // SetProjectID sets the "project_id" field.
-func (m *ProjectMemberMutation) SetProjectID(i int32) {
+func (m *ProjectMemberMutation) SetProjectID(i int64) {
 	m.project_id = &i
 	m.addproject_id = nil
 }
 
 // ProjectID returns the value of the "project_id" field in the mutation.
-func (m *ProjectMemberMutation) ProjectID() (r int32, exists bool) {
+func (m *ProjectMemberMutation) ProjectID() (r int64, exists bool) {
 	v := m.project_id
 	if v == nil {
 		return
@@ -10561,7 +11279,7 @@ func (m *ProjectMemberMutation) ProjectID() (r int32, exists bool) {
 // OldProjectID returns the old "project_id" field's value of the ProjectMember entity.
 // If the ProjectMember object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ProjectMemberMutation) OldProjectID(ctx context.Context) (v int32, err error) {
+func (m *ProjectMemberMutation) OldProjectID(ctx context.Context) (v int64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldProjectID is only allowed on UpdateOne operations")
 	}
@@ -10576,7 +11294,7 @@ func (m *ProjectMemberMutation) OldProjectID(ctx context.Context) (v int32, err 
 }
 
 // AddProjectID adds i to the "project_id" field.
-func (m *ProjectMemberMutation) AddProjectID(i int32) {
+func (m *ProjectMemberMutation) AddProjectID(i int64) {
 	if m.addproject_id != nil {
 		*m.addproject_id += i
 	} else {
@@ -10585,7 +11303,7 @@ func (m *ProjectMemberMutation) AddProjectID(i int32) {
 }
 
 // AddedProjectID returns the value that was added to the "project_id" field in this mutation.
-func (m *ProjectMemberMutation) AddedProjectID() (r int32, exists bool) {
+func (m *ProjectMemberMutation) AddedProjectID() (r int64, exists bool) {
 	v := m.addproject_id
 	if v == nil {
 		return
@@ -11208,7 +11926,7 @@ func (m *ProjectMemberMutation) OldField(ctx context.Context, name string) (ent.
 func (m *ProjectMemberMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case projectmember.FieldProjectID:
-		v, ok := value.(int32)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -11333,7 +12051,7 @@ func (m *ProjectMemberMutation) AddedField(name string) (ent.Value, bool) {
 func (m *ProjectMemberMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	case projectmember.FieldProjectID:
-		v, ok := value.(int32)
+		v, ok := value.(int64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

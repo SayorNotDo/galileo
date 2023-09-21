@@ -7,7 +7,6 @@ import (
 )
 
 type UserRepo interface {
-	Save(context.Context, *User) (*User, error)
 	GetUserInfo(context.Context, uint32) (*User, error)
 	CreateUser(context.Context, *User) (*User, error)
 	ListUser(ctx context.Context, pageToken string, pageSize int32) ([]*User, int32, string, error)
@@ -18,7 +17,7 @@ type UserRepo interface {
 	SetToken(context.Context, string, string) (bool, error)
 	EmptyToken(context.Context, string) (bool, error)
 	GetUserGroupList(context.Context, uint32) ([]*Group, error)
-	GetUserGroup(ctx context.Context, groupId int32) (*Group, error)
+	GetUserGroup(ctx context.Context, groupId int64) (*Group, error)
 	UpdateUserGroup(context.Context, *Group) error
 	CreateUserGroup(context.Context, *Group) (*Group, error)
 }
@@ -30,7 +29,7 @@ type UserUseCase struct {
 }
 
 func NewUserUseCase(repo UserRepo, logger log.Logger) *UserUseCase {
-	helper := log.NewHelper(log.With(logger, "module", "useCase/user"))
+	helper := log.NewHelper(log.With(logger, "module", "UseCase.user"))
 	return &UserUseCase{repo: repo, log: helper}
 }
 
@@ -83,7 +82,7 @@ func (uc *UserUseCase) GetUserGroupList(ctx context.Context, uid uint32) ([]*Gro
 	return uc.repo.GetUserGroupList(ctx, uid)
 }
 
-func (uc *UserUseCase) GetUserGroup(ctx context.Context, groupId int32) (*Group, error) {
+func (uc *UserUseCase) GetUserGroup(ctx context.Context, groupId int64) (*Group, error) {
 	return uc.repo.GetUserGroup(ctx, groupId)
 }
 

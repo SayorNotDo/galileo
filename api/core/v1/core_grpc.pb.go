@@ -30,6 +30,7 @@ const (
 	Core_DeleteUser_FullMethodName            = "/api.core.v1.Core/DeleteUser"
 	Core_ListUsers_FullMethodName             = "/api.core.v1.Core/ListUsers"
 	Core_UserGroups_FullMethodName            = "/api.core.v1.Core/UserGroups"
+	Core_DeleteUserGroup_FullMethodName       = "/api.core.v1.Core/DeleteUserGroup"
 	Core_ListUserGroups_FullMethodName        = "/api.core.v1.Core/ListUserGroups"
 	Core_GetUserProjectList_FullMethodName    = "/api.core.v1.Core/GetUserProjectList"
 	Core_GetUserLatestActivity_FullMethodName = "/api.core.v1.Core/GetUserLatestActivity"
@@ -48,9 +49,10 @@ type CoreClient interface {
 	CurrentUserInfo(ctx context.Context, in *UserInfoRequest, opts ...grpc.CallOption) (*User, error)
 	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ResetPassword(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ResetPasswordReply, error)
-	DeleteUser(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListUsers(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
 	UserGroups(ctx context.Context, in *GroupInfoRequest, opts ...grpc.CallOption) (*GroupInfo, error)
+	DeleteUserGroup(ctx context.Context, in *DeleteUserGroupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ListUserGroups(ctx context.Context, in *ListUserGroupsRequest, opts ...grpc.CallOption) (*ListUserGroupReply, error)
 	GetUserProjectList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserProjectListReply, error)
 	GetUserLatestActivity(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*UserLatestActivityReply, error)
@@ -129,7 +131,7 @@ func (c *coreClient) ResetPassword(ctx context.Context, in *emptypb.Empty, opts 
 	return out, nil
 }
 
-func (c *coreClient) DeleteUser(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *coreClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, Core_DeleteUser_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -150,6 +152,15 @@ func (c *coreClient) ListUsers(ctx context.Context, in *ListUserRequest, opts ..
 func (c *coreClient) UserGroups(ctx context.Context, in *GroupInfoRequest, opts ...grpc.CallOption) (*GroupInfo, error) {
 	out := new(GroupInfo)
 	err := c.cc.Invoke(ctx, Core_UserGroups_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreClient) DeleteUserGroup(ctx context.Context, in *DeleteUserGroupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Core_DeleteUserGroup_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -212,9 +223,10 @@ type CoreServer interface {
 	CurrentUserInfo(context.Context, *UserInfoRequest) (*User, error)
 	UpdatePassword(context.Context, *UpdatePasswordRequest) (*emptypb.Empty, error)
 	ResetPassword(context.Context, *emptypb.Empty) (*ResetPasswordReply, error)
-	DeleteUser(context.Context, *DeleteRequest) (*emptypb.Empty, error)
+	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
 	ListUsers(context.Context, *ListUserRequest) (*ListUserReply, error)
 	UserGroups(context.Context, *GroupInfoRequest) (*GroupInfo, error)
+	DeleteUserGroup(context.Context, *DeleteUserGroupRequest) (*emptypb.Empty, error)
 	ListUserGroups(context.Context, *ListUserGroupsRequest) (*ListUserGroupReply, error)
 	GetUserProjectList(context.Context, *emptypb.Empty) (*UserProjectListReply, error)
 	GetUserLatestActivity(context.Context, *emptypb.Empty) (*UserLatestActivityReply, error)
@@ -248,7 +260,7 @@ func (UnimplementedCoreServer) UpdatePassword(context.Context, *UpdatePasswordRe
 func (UnimplementedCoreServer) ResetPassword(context.Context, *emptypb.Empty) (*ResetPasswordReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
 }
-func (UnimplementedCoreServer) DeleteUser(context.Context, *DeleteRequest) (*emptypb.Empty, error) {
+func (UnimplementedCoreServer) DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
 func (UnimplementedCoreServer) ListUsers(context.Context, *ListUserRequest) (*ListUserReply, error) {
@@ -256,6 +268,9 @@ func (UnimplementedCoreServer) ListUsers(context.Context, *ListUserRequest) (*Li
 }
 func (UnimplementedCoreServer) UserGroups(context.Context, *GroupInfoRequest) (*GroupInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserGroups not implemented")
+}
+func (UnimplementedCoreServer) DeleteUserGroup(context.Context, *DeleteUserGroupRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserGroup not implemented")
 }
 func (UnimplementedCoreServer) ListUserGroups(context.Context, *ListUserGroupsRequest) (*ListUserGroupReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserGroups not implemented")
@@ -412,7 +427,7 @@ func _Core_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _Core_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteRequest)
+	in := new(DeleteUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -424,7 +439,7 @@ func _Core_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: Core_DeleteUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServer).DeleteUser(ctx, req.(*DeleteRequest))
+		return srv.(CoreServer).DeleteUser(ctx, req.(*DeleteUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -461,6 +476,24 @@ func _Core_UserGroups_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CoreServer).UserGroups(ctx, req.(*GroupInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Core_DeleteUserGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServer).DeleteUserGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Core_DeleteUserGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServer).DeleteUserGroup(ctx, req.(*DeleteUserGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -601,6 +634,10 @@ var Core_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UserGroups",
 			Handler:    _Core_UserGroups_Handler,
+		},
+		{
+			MethodName: "DeleteUserGroup",
+			Handler:    _Core_DeleteUserGroup_Handler,
 		},
 		{
 			MethodName: "ListUserGroups",

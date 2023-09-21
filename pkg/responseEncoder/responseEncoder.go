@@ -37,7 +37,7 @@ func ResponseEncoder(w stdHttp.ResponseWriter, r *stdHttp.Request, v interface{}
 func ErrorEncoder(w stdHttp.ResponseWriter, r *stdHttp.Request, err error) {
 	codec, _ := http.CodecForRequest(r, "Accept")
 	w.Header().Set("Content-Type", "application/"+codec.Name())
-	// status code set 200
+	/* 设置状态码为200， 具体错误在响应体中进行描述 */
 	w.WriteHeader(stdHttp.StatusOK)
 	se := errors.FromError(err)
 	body, err := codec.Marshal(se)

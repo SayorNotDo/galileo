@@ -40,7 +40,7 @@ func (gmd *GroupMemberDelete) ExecX(ctx context.Context) int {
 }
 
 func (gmd *GroupMemberDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(groupmember.Table, sqlgraph.NewFieldSpec(groupmember.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewDeleteSpec(groupmember.Table, sqlgraph.NewFieldSpec(groupmember.FieldID, field.TypeInt64))
 	if ps := gmd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

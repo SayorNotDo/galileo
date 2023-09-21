@@ -28,7 +28,7 @@ type User struct {
 }
 
 type Group struct {
-	Id              int32          `json:"id"`
+	ID              int64          `json:"id"`
 	Name            string         `json:"name"`
 	Avatar          string         `json:"avatar"`
 	Description     string         `json:"description"`

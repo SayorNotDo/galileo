@@ -79,9 +79,9 @@ func NewEntDB(c *conf.Data) (*ent.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := client.Schema.Create(context.Background()); err != nil {
-		return nil, err
-	}
+	//if err := client.Schema.Create(context.Background()); err != nil {
+	//	return nil, err
+	//}
 	return client, nil
 }
 

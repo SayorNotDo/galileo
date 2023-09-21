@@ -29,14 +29,14 @@ func (gmu *GroupMemberUpdate) Where(ps ...predicate.GroupMember) *GroupMemberUpd
 }
 
 // SetGroupID sets the "group_id" field.
-func (gmu *GroupMemberUpdate) SetGroupID(i int32) *GroupMemberUpdate {
+func (gmu *GroupMemberUpdate) SetGroupID(i int64) *GroupMemberUpdate {
 	gmu.mutation.ResetGroupID()
 	gmu.mutation.SetGroupID(i)
 	return gmu
 }
 
 // AddGroupID adds i to the "group_id" field.
-func (gmu *GroupMemberUpdate) AddGroupID(i int32) *GroupMemberUpdate {
+func (gmu *GroupMemberUpdate) AddGroupID(i int64) *GroupMemberUpdate {
 	gmu.mutation.AddGroupID(i)
 	return gmu
 }
@@ -182,7 +182,7 @@ func (gmu *GroupMemberUpdate) ExecX(ctx context.Context) {
 }
 
 func (gmu *GroupMemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(groupmember.Table, groupmember.Columns, sqlgraph.NewFieldSpec(groupmember.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewUpdateSpec(groupmember.Table, groupmember.Columns, sqlgraph.NewFieldSpec(groupmember.FieldID, field.TypeInt64))
 	if ps := gmu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -191,10 +191,10 @@ func (gmu *GroupMemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if value, ok := gmu.mutation.GroupID(); ok {
-		_spec.SetField(groupmember.FieldGroupID, field.TypeInt32, value)
+		_spec.SetField(groupmember.FieldGroupID, field.TypeInt64, value)
 	}
 	if value, ok := gmu.mutation.AddedGroupID(); ok {
-		_spec.AddField(groupmember.FieldGroupID, field.TypeInt32, value)
+		_spec.AddField(groupmember.FieldGroupID, field.TypeInt64, value)
 	}
 	if value, ok := gmu.mutation.UserID(); ok {
 		_spec.SetField(groupmember.FieldUserID, field.TypeUint32, value)
@@ -253,14 +253,14 @@ type GroupMemberUpdateOne struct {
 }
 
 // SetGroupID sets the "group_id" field.
-func (gmuo *GroupMemberUpdateOne) SetGroupID(i int32) *GroupMemberUpdateOne {
+func (gmuo *GroupMemberUpdateOne) SetGroupID(i int64) *GroupMemberUpdateOne {
 	gmuo.mutation.ResetGroupID()
 	gmuo.mutation.SetGroupID(i)
 	return gmuo
 }
 
 // AddGroupID adds i to the "group_id" field.
-func (gmuo *GroupMemberUpdateOne) AddGroupID(i int32) *GroupMemberUpdateOne {
+func (gmuo *GroupMemberUpdateOne) AddGroupID(i int64) *GroupMemberUpdateOne {
 	gmuo.mutation.AddGroupID(i)
 	return gmuo
 }
@@ -419,7 +419,7 @@ func (gmuo *GroupMemberUpdateOne) ExecX(ctx context.Context) {
 }
 
 func (gmuo *GroupMemberUpdateOne) sqlSave(ctx context.Context) (_node *GroupMember, err error) {
-	_spec := sqlgraph.NewUpdateSpec(groupmember.Table, groupmember.Columns, sqlgraph.NewFieldSpec(groupmember.FieldID, field.TypeInt32))
+	_spec := sqlgraph.NewUpdateSpec(groupmember.Table, groupmember.Columns, sqlgraph.NewFieldSpec(groupmember.FieldID, field.TypeInt64))
 	id, ok := gmuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "GroupMember.id" for update`)}
@@ -445,10 +445,10 @@ func (gmuo *GroupMemberUpdateOne) sqlSave(ctx context.Context) (_node *GroupMemb
 		}
 	}
 	if value, ok := gmuo.mutation.GroupID(); ok {
-		_spec.SetField(groupmember.FieldGroupID, field.TypeInt32, value)
+		_spec.SetField(groupmember.FieldGroupID, field.TypeInt64, value)
 	}
 	if value, ok := gmuo.mutation.AddedGroupID(); ok {
-		_spec.AddField(groupmember.FieldGroupID, field.TypeInt32, value)
+		_spec.AddField(groupmember.FieldGroupID, field.TypeInt64, value)
 	}
 	if value, ok := gmuo.mutation.UserID(); ok {
 		_spec.SetField(groupmember.FieldUserID, field.TypeUint32, value)

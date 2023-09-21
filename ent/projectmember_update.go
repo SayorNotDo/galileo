@@ -29,14 +29,14 @@ func (pmu *ProjectMemberUpdate) Where(ps ...predicate.ProjectMember) *ProjectMem
 }
 
 // SetProjectID sets the "project_id" field.
-func (pmu *ProjectMemberUpdate) SetProjectID(i int32) *ProjectMemberUpdate {
+func (pmu *ProjectMemberUpdate) SetProjectID(i int64) *ProjectMemberUpdate {
 	pmu.mutation.ResetProjectID()
 	pmu.mutation.SetProjectID(i)
 	return pmu
 }
 
 // AddProjectID adds i to the "project_id" field.
-func (pmu *ProjectMemberUpdate) AddProjectID(i int32) *ProjectMemberUpdate {
+func (pmu *ProjectMemberUpdate) AddProjectID(i int64) *ProjectMemberUpdate {
 	pmu.mutation.AddProjectID(i)
 	return pmu
 }
@@ -225,10 +225,10 @@ func (pmu *ProjectMemberUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 	}
 	if value, ok := pmu.mutation.ProjectID(); ok {
-		_spec.SetField(projectmember.FieldProjectID, field.TypeInt32, value)
+		_spec.SetField(projectmember.FieldProjectID, field.TypeInt64, value)
 	}
 	if value, ok := pmu.mutation.AddedProjectID(); ok {
-		_spec.AddField(projectmember.FieldProjectID, field.TypeInt32, value)
+		_spec.AddField(projectmember.FieldProjectID, field.TypeInt64, value)
 	}
 	if value, ok := pmu.mutation.UserID(); ok {
 		_spec.SetField(projectmember.FieldUserID, field.TypeUint32, value)
@@ -296,14 +296,14 @@ type ProjectMemberUpdateOne struct {
 }
 
 // SetProjectID sets the "project_id" field.
-func (pmuo *ProjectMemberUpdateOne) SetProjectID(i int32) *ProjectMemberUpdateOne {
+func (pmuo *ProjectMemberUpdateOne) SetProjectID(i int64) *ProjectMemberUpdateOne {
 	pmuo.mutation.ResetProjectID()
 	pmuo.mutation.SetProjectID(i)
 	return pmuo
 }
 
 // AddProjectID adds i to the "project_id" field.
-func (pmuo *ProjectMemberUpdateOne) AddProjectID(i int32) *ProjectMemberUpdateOne {
+func (pmuo *ProjectMemberUpdateOne) AddProjectID(i int64) *ProjectMemberUpdateOne {
 	pmuo.mutation.AddProjectID(i)
 	return pmuo
 }
@@ -522,10 +522,10 @@ func (pmuo *ProjectMemberUpdateOne) sqlSave(ctx context.Context) (_node *Project
 		}
 	}
 	if value, ok := pmuo.mutation.ProjectID(); ok {
-		_spec.SetField(projectmember.FieldProjectID, field.TypeInt32, value)
+		_spec.SetField(projectmember.FieldProjectID, field.TypeInt64, value)
 	}
 	if value, ok := pmuo.mutation.AddedProjectID(); ok {
-		_spec.AddField(projectmember.FieldProjectID, field.TypeInt32, value)
+		_spec.AddField(projectmember.FieldProjectID, field.TypeInt64, value)
 	}
 	if value, ok := pmuo.mutation.UserID(); ok {
 		_spec.SetField(projectmember.FieldUserID, field.TypeUint32, value)

@@ -65,7 +65,7 @@ func (u *userRepo) GetUserGroupList(ctx context.Context) ([]*biz.Group, error) {
 	}
 	lo.ForEach(res.GroupList, func(item *userService.GroupInfo, index int) {
 		groupList = append(groupList, &biz.Group{
-			Id:          item.Id,
+			ID:          item.ID,
 			Name:        item.Name,
 			Avatar:      item.Avatar,
 			Description: item.Description,
@@ -222,7 +222,7 @@ func (u *userRepo) UpdatePassword(ctx context.Context, password string) (bool, e
 	return true, nil
 }
 
-func (u *userRepo) GetUserGroup(ctx context.Context, groupId int32) (*biz.Group, error) {
+func (u *userRepo) GetUserGroup(ctx context.Context, groupId int64) (*biz.Group, error) {
 	var groupMemberList []*biz.GroupMember
 	res, err := u.data.uc.GetUserGroup(ctx, &userService.UserGroupRequest{Id: groupId})
 	if err != nil {
@@ -238,7 +238,7 @@ func (u *userRepo) GetUserGroup(ctx context.Context, groupId int32) (*biz.Group,
 		})
 	})
 	return &biz.Group{
-		Id:              res.Id,
+		ID:              res.ID,
 		Name:            res.Name,
 		Avatar:          res.Avatar,
 		Description:     res.Description,
@@ -259,7 +259,7 @@ func (u *userRepo) UpdateUserGroup(ctx context.Context, group *biz.Group) error 
 
 func (u *userRepo) CreateUserGroup(ctx context.Context, group *biz.Group) (*biz.Group, error) {
 	res, err := u.data.uc.CreateUserGroup(ctx, &userService.UserGroupRequest{
-		Id:          group.Id,
+		Id:          group.ID,
 		Name:        group.Name,
 		Avatar:      group.Avatar,
 		Description: group.Description,
@@ -267,13 +267,24 @@ func (u *userRepo) CreateUserGroup(ctx context.Context, group *biz.Group) (*biz.
 	if err != nil {
 		return nil, err
 	}
+	var groupMemberList []*biz.GroupMember
+	lo.ForEach(res.GroupMemberList, func(member *userService.GroupMember, _ int) {
+		groupMemberList = append(groupMemberList, &biz.GroupMember{
+			Uid:       member.Uid,
+			Role:      uint8(member.Role),
+			Username:  member.Username,
+			CreatedAt: res.CreatedAt.AsTime(),
+			CreatedBy: member.CreatedBy,
+		})
+	})
 	return &biz.Group{
-		Id:          res.Id,
-		Name:        res.Name,
-		Avatar:      res.Avatar,
-		Description: res.Description,
-		CreatedBy:   res.CreatedBy,
-		CreatedAt:   res.CreatedAt.AsTime(),
-		Headcount:   res.Headcount,
+		ID:              res.ID,
+		Name:            res.Name,
+		Avatar:          res.Avatar,
+		Description:     res.Description,
+		CreatedBy:       res.CreatedBy,
+		CreatedAt:       res.CreatedAt.AsTime(),
+		Headcount:       res.Headcount,
+		GroupMemberList: groupMemberList,
 	}, nil
 }

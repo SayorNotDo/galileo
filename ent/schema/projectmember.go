@@ -24,7 +24,7 @@ func (ProjectMember) Annotations() []schema.Annotation {
 // Fields of the ProjectMember.
 func (ProjectMember) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int32("project_id"),
+		field.Int64("project_id"),
 		field.Uint32("user_id"),
 		field.Time("created_at").Default(time.Now).Immutable(),
 		field.Uint32("created_by").Immutable(),

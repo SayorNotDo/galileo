@@ -17,7 +17,7 @@ type ProjectMember struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// ProjectID holds the value of the "project_id" field.
-	ProjectID int32 `json:"project_id,omitempty"`
+	ProjectID int64 `json:"project_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID uint32 `json:"user_id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -74,7 +74,7 @@ func (pm *ProjectMember) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field project_id", values[i])
 			} else if value.Valid {
-				pm.ProjectID = int32(value.Int64)
+				pm.ProjectID = value.Int64
 			}
 		case projectmember.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

@@ -5,7 +5,6 @@ import (
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
-	"regexp"
 	"time"
 )
 
@@ -23,8 +22,8 @@ func (Group) Annotations() []schema.Annotation {
 // Fields of the Group.
 func (Group) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int32("id"),
-		field.String("name").Match(regexp.MustCompile("[a-zA-Z_]+$")),
+		field.Int64("id"),
+		field.String("name").Unique(),
 		field.Text("avatar").Optional(),
 		field.Text("description").Optional(),
 		field.Uint32("created_by"),

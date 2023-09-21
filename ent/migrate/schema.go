@@ -135,8 +135,8 @@ var (
 	}
 	// GroupColumns holds the columns for the "group" table.
 	GroupColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt32, Increment: true},
-		{Name: "name", Type: field.TypeString},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "avatar", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "created_by", Type: field.TypeUint32},
@@ -155,8 +155,8 @@ var (
 	}
 	// GroupMemberColumns holds the columns for the "group_member" table.
 	GroupMemberColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt32, Increment: true},
-		{Name: "group_id", Type: field.TypeInt32},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "group_id", Type: field.TypeInt64},
 		{Name: "user_id", Type: field.TypeUint32},
 		{Name: "role", Type: field.TypeUint8, Default: 0},
 		{Name: "created_at", Type: field.TypeTime},
@@ -199,9 +199,26 @@ var (
 		Columns:    JobColumns,
 		PrimaryKey: []*schema.Column{JobColumns[0]},
 	}
+	// MetaEventColumns holds the columns for the "meta_event" table.
+	MetaEventColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "event_name", Type: field.TypeString, Unique: true},
+		{Name: "uuid", Type: field.TypeUUID},
+		{Name: "display_name", Type: field.TypeString, Unique: true},
+		{Name: "event_desc", Type: field.TypeString, Nullable: true},
+		{Name: "remark", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+	}
+	// MetaEventTable holds the schema information for the "meta_event" table.
+	MetaEventTable = &schema.Table{
+		Name:       "meta_event",
+		Columns:    MetaEventColumns,
+		PrimaryKey: []*schema.Column{MetaEventColumns[0]},
+	}
 	// ProjectColumns holds the columns for the "project" table.
 	ProjectColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt32, Increment: true},
+		{Name: "id", Type: field.TypeInt64, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "identifier", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
@@ -225,7 +242,7 @@ var (
 	// ProjectMemberColumns holds the columns for the "project_member" table.
 	ProjectMemberColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "project_id", Type: field.TypeInt32},
+		{Name: "project_id", Type: field.TypeInt64},
 		{Name: "user_id", Type: field.TypeUint32},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeUint32},
@@ -368,6 +385,7 @@ var (
 		GroupTable,
 		GroupMemberTable,
 		JobTable,
+		MetaEventTable,
 		ProjectTable,
 		ProjectMemberTable,
 		TaskTable,
@@ -405,6 +423,9 @@ func init() {
 	}
 	JobTable.Annotation = &entsql.Annotation{
 		Table: "job",
+	}
+	MetaEventTable.Annotation = &entsql.Annotation{
+		Table: "meta_event",
 	}
 	ProjectTable.Annotation = &entsql.Annotation{
 		Table: "project",

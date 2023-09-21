@@ -20,15 +20,10 @@ service Analytics {
 }
 
 message EventAnalyticsRequest {
-  message Filter {}
   message Event {
     string analysis = 1;
-    string analysisDesc = 2;
-    string eventId = 3;
-    string eventName = 4;
-    string eventNameDisplay = 5;
-    string eventType = 6;
-    int32 relation = 7;
+    string eventUUID = 3;
+    string relation = 7;
     int32 type = 8;
     repeated Filter filters = 9;
   }
@@ -40,9 +35,17 @@ message EventAnalyticsRequest {
     repeated Filter filters = 5;
     string recentDay = 6;
   }
-  repeated Event events = 1;
+  message Filter {
+    string filterType = 1;
+    string relation = 2;
+    repeated Filter filters = 3;
+    string columnName = 4;
+    string tableName = 5;
+    string filterValue = 6;
+    string comparator = 7;
+  }
+  Event events = 1;
   EventsView eventsView = 2;
-  string origin = 3;
 }
 
 message EventAnalyticReply {

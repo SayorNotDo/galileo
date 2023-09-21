@@ -10,52 +10,52 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int32) predicate.GroupMember {
+func ID(id int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int32) predicate.GroupMember {
+func IDEQ(id int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int32) predicate.GroupMember {
+func IDNEQ(id int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int32) predicate.GroupMember {
+func IDIn(ids ...int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int32) predicate.GroupMember {
+func IDNotIn(ids ...int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int32) predicate.GroupMember {
+func IDGT(id int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int32) predicate.GroupMember {
+func IDGTE(id int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int32) predicate.GroupMember {
+func IDLT(id int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int32) predicate.GroupMember {
+func IDLTE(id int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldLTE(FieldID, id))
 }
 
 // GroupID applies equality check predicate on the "group_id" field. It's identical to GroupIDEQ.
-func GroupID(v int32) predicate.GroupMember {
+func GroupID(v int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldEQ(FieldGroupID, v))
 }
 
@@ -90,42 +90,42 @@ func DeletedBy(v uint32) predicate.GroupMember {
 }
 
 // GroupIDEQ applies the EQ predicate on the "group_id" field.
-func GroupIDEQ(v int32) predicate.GroupMember {
+func GroupIDEQ(v int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldEQ(FieldGroupID, v))
 }
 
 // GroupIDNEQ applies the NEQ predicate on the "group_id" field.
-func GroupIDNEQ(v int32) predicate.GroupMember {
+func GroupIDNEQ(v int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldNEQ(FieldGroupID, v))
 }
 
 // GroupIDIn applies the In predicate on the "group_id" field.
-func GroupIDIn(vs ...int32) predicate.GroupMember {
+func GroupIDIn(vs ...int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldIn(FieldGroupID, vs...))
 }
 
 // GroupIDNotIn applies the NotIn predicate on the "group_id" field.
-func GroupIDNotIn(vs ...int32) predicate.GroupMember {
+func GroupIDNotIn(vs ...int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldNotIn(FieldGroupID, vs...))
 }
 
 // GroupIDGT applies the GT predicate on the "group_id" field.
-func GroupIDGT(v int32) predicate.GroupMember {
+func GroupIDGT(v int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldGT(FieldGroupID, v))
 }
 
 // GroupIDGTE applies the GTE predicate on the "group_id" field.
-func GroupIDGTE(v int32) predicate.GroupMember {
+func GroupIDGTE(v int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldGTE(FieldGroupID, v))
 }
 
 // GroupIDLT applies the LT predicate on the "group_id" field.
-func GroupIDLT(v int32) predicate.GroupMember {
+func GroupIDLT(v int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldLT(FieldGroupID, v))
 }
 
 // GroupIDLTE applies the LTE predicate on the "group_id" field.
-func GroupIDLTE(v int32) predicate.GroupMember {
+func GroupIDLTE(v int64) predicate.GroupMember {
 	return predicate.GroupMember(sql.FieldLTE(FieldGroupID, v))
 }
 

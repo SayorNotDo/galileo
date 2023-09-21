@@ -21,7 +21,7 @@ type ProjectMemberCreate struct {
 }
 
 // SetProjectID sets the "project_id" field.
-func (pmc *ProjectMemberCreate) SetProjectID(i int32) *ProjectMemberCreate {
+func (pmc *ProjectMemberCreate) SetProjectID(i int64) *ProjectMemberCreate {
 	pmc.mutation.SetProjectID(i)
 	return pmc
 }
@@ -232,7 +232,7 @@ func (pmc *ProjectMemberCreate) createSpec() (*ProjectMember, *sqlgraph.CreateSp
 		_spec = sqlgraph.NewCreateSpec(projectmember.Table, sqlgraph.NewFieldSpec(projectmember.FieldID, field.TypeInt))
 	)
 	if value, ok := pmc.mutation.ProjectID(); ok {
-		_spec.SetField(projectmember.FieldProjectID, field.TypeInt32, value)
+		_spec.SetField(projectmember.FieldProjectID, field.TypeInt64, value)
 		_node.ProjectID = value
 	}
 	if value, ok := pmc.mutation.UserID(); ok {

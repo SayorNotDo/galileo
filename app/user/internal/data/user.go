@@ -31,17 +31,13 @@ func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
 	}
 }
 
-func (repo *userRepo) Save(ctx context.Context, user *biz.User) (*biz.User, error) {
-	return user, nil
-}
-
 func (repo *userRepo) GetUserInfo(ctx context.Context, id uint32) (*biz.User, error) {
 	u, err := repo.data.entDB.User.Query().Where(user.ID(id)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
 	return &biz.User{
-		Id:            u.ID,
+		ID:            u.ID,
 		Username:      u.Username,
 		ChineseName:   u.ChineseName,
 		Avatar:        u.Avatar,
@@ -88,7 +84,7 @@ func (repo *userRepo) ListUser(ctx context.Context, pageToken string, pageSize i
 	rv := make([]*biz.User, 0)
 	for _, u := range userList {
 		rv = append(rv, &biz.User{
-			Id:            u.ID,
+			ID:            u.ID,
 			Username:      u.Username,
 			ChineseName:   u.ChineseName,
 			Email:         u.Email,
@@ -121,7 +117,7 @@ func (repo *userRepo) CreateUser(ctx context.Context, u *biz.User) (*biz.User, e
 		return nil, err
 	}
 	return &biz.User{
-		Id:        createUser.ID,
+		ID:        createUser.ID,
 		Username:  createUser.Username,
 		CreatedAt: createUser.CreatedAt,
 	}, nil
@@ -129,7 +125,7 @@ func (repo *userRepo) CreateUser(ctx context.Context, u *biz.User) (*biz.User, e
 
 func (repo *userRepo) UpdateUser(ctx context.Context, u *biz.User) (bool, error) {
 	err := repo.data.entDB.User.
-		UpdateOneID(u.Id).
+		UpdateOneID(u.ID).
 		SetAvatar(u.Avatar).
 		SetLocation(u.Location).
 		SetChineseName(u.ChineseName).
@@ -158,7 +154,7 @@ func (repo *userRepo) ValidateUser(ctx context.Context, username, password strin
 		return nil, SetErrByReason(ReasonSystemError)
 	}
 	return &biz.User{
-		Id:       ret.ID,
+		ID:       ret.ID,
 		UUID:     ret.UUID,
 		Username: ret.Username,
 	}, nil
@@ -166,7 +162,7 @@ func (repo *userRepo) ValidateUser(ctx context.Context, username, password strin
 
 func (repo *userRepo) UpdatePassword(ctx context.Context, u *biz.User) (bool, error) {
 	err := repo.data.entDB.User.
-		UpdateOneID(u.Id).
+		UpdateOneID(u.ID).
 		SetPassword(u.Password).
 		Exec(ctx)
 	switch {
@@ -228,7 +224,7 @@ func (repo *userRepo) GetUserGroupList(ctx context.Context, uid uint32) ([]*biz.
 			return
 		}
 		groupList = append(groupList, &biz.Group{
-			Id:          queryGroup.ID,
+			ID:          queryGroup.ID,
 			Name:        queryGroup.Name,
 			Avatar:      queryGroup.Avatar,
 			Description: queryGroup.Description,
@@ -247,7 +243,7 @@ func (repo *userRepo) GetUserGroupList(ctx context.Context, uid uint32) ([]*biz.
 	return groupList, nil
 }
 
-func (repo *userRepo) GetUserGroup(ctx context.Context, groupId int32) (*biz.Group, error) {
+func (repo *userRepo) GetUserGroup(ctx context.Context, groupId int64) (*biz.Group, error) {
 	/* 获取指定的Group */
 	var err error
 	ret, err := repo.data.entDB.Group.Get(ctx, groupId)
@@ -264,10 +260,10 @@ func (repo *userRepo) GetUserGroup(ctx context.Context, groupId int32) (*biz.Gro
 		).All(ctx)
 	lo.ForEach(res, func(item *ent.GroupMember, _ int) {
 		var username string
-		err = repo.data.entDB.User.Query().
+		username, err = repo.data.entDB.User.Query().
 			Where(user.ID(item.UserID)).
-			Select(user.FieldUsername).
-			Scan(ctx, username)
+			Select(user.FieldUsername).String(ctx)
+		repo.log.Debugf("found: %v", username)
 		groupMemberList = append(groupMemberList, &biz.GroupMember{
 			Uid:       item.UserID,
 			Username:  username,
@@ -282,27 +278,28 @@ func (repo *userRepo) GetUserGroup(ctx context.Context, groupId int32) (*biz.Gro
 		return nil, err
 	}
 	return &biz.Group{
-		Id:          ret.ID,
-		Name:        ret.Name,
-		Avatar:      ret.Avatar,
-		Description: ret.Description,
-		Headcount:   ret.Headcount,
-		CreatedAt:   ret.CreatedAt,
-		CreatedBy:   ret.CreatedBy,
-		UpdatedAt:   ret.UpdatedAt,
-		UpdatedBy:   ret.UpdatedBy,
-		DeletedAt:   ret.DeletedAt,
-		DeletedBy:   ret.DeletedBy,
+		ID:              ret.ID,
+		Name:            ret.Name,
+		Avatar:          ret.Avatar,
+		Description:     ret.Description,
+		Headcount:       ret.Headcount,
+		CreatedAt:       ret.CreatedAt,
+		CreatedBy:       ret.CreatedBy,
+		UpdatedAt:       ret.UpdatedAt,
+		UpdatedBy:       ret.UpdatedBy,
+		DeletedAt:       ret.DeletedAt,
+		DeletedBy:       ret.DeletedBy,
+		GroupMemberList: groupMemberList,
 	}, nil
 }
 
 func (repo *userRepo) UpdateUserGroup(ctx context.Context, updateGroup *biz.Group) error {
 	/* 查询当前用户分组是否存在 */
-	if exist, _ := repo.data.entDB.Group.Query().Where(group.ID(updateGroup.Id)).Exist(ctx); !exist {
+	if exist, _ := repo.data.entDB.Group.Query().Where(group.ID(updateGroup.ID)).Exist(ctx); !exist {
 		return SetCustomizeErrInfoByReason(ReasonRecordNotFound)
 	}
 	/* 更新 */
-	if err := repo.data.entDB.Group.UpdateOneID(updateGroup.Id).
+	if err := repo.data.entDB.Group.UpdateOneID(updateGroup.ID).
 		SetName(updateGroup.Name).
 		SetAvatar(updateGroup.Avatar).
 		SetDescription(updateGroup.Description).
@@ -327,31 +324,39 @@ func (repo *userRepo) CreateUserGroup(ctx context.Context, group *biz.Group) (*b
 		SetName(group.Name).
 		SetAvatar(group.Avatar).
 		SetDescription(group.Description).
-		SetCreatedAt(group.CreatedAt).
 		SetCreatedBy(group.CreatedBy).
 		SetHeadcount(1).
 		Save(ctx)
 	if err != nil {
 		return nil, rollback(tx, err)
 	}
-	if err := tx.GroupMember.Create().
+	groupMember, err := tx.GroupMember.Create().
 		SetGroupID(ret.ID).
 		SetUserID(group.CreatedBy).
 		SetRole(constant.Leader).
-		Exec(ctx); err != nil {
+		Save(ctx)
+	if err != nil {
 		return nil, rollback(tx, err)
 	}
+	var groupMemberList []*biz.GroupMember
+	groupMemberList = append(groupMemberList, &biz.GroupMember{
+		Uid:       groupMember.UserID,
+		Role:      groupMember.Role,
+		CreatedBy: groupMember.CreatedBy,
+		CreatedAt: groupMember.CreatedAt,
+	})
 	/* 提交事务，失败则回滚 */
 	if err := tx.Commit(); err != nil {
 		return nil, rollback(tx, err)
 	}
 	return &biz.Group{
-		Id:          ret.ID,
-		Name:        ret.Name,
-		Avatar:      ret.Avatar,
-		Description: ret.Description,
-		Headcount:   ret.Headcount,
-		CreatedAt:   ret.CreatedAt,
-		CreatedBy:   ret.CreatedBy,
+		ID:              ret.ID,
+		Name:            ret.Name,
+		Avatar:          ret.Avatar,
+		Description:     ret.Description,
+		Headcount:       ret.Headcount,
+		CreatedAt:       ret.CreatedAt,
+		CreatedBy:       ret.CreatedBy,
+		GroupMemberList: groupMemberList,
 	}, nil
 }

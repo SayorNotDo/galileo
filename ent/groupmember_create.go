@@ -21,7 +21,7 @@ type GroupMemberCreate struct {
 }
 
 // SetGroupID sets the "group_id" field.
-func (gmc *GroupMemberCreate) SetGroupID(i int32) *GroupMemberCreate {
+func (gmc *GroupMemberCreate) SetGroupID(i int64) *GroupMemberCreate {
 	gmc.mutation.SetGroupID(i)
 	return gmc
 }
@@ -103,7 +103,7 @@ func (gmc *GroupMemberCreate) SetNillableDeletedBy(u *uint32) *GroupMemberCreate
 }
 
 // SetID sets the "id" field.
-func (gmc *GroupMemberCreate) SetID(i int32) *GroupMemberCreate {
+func (gmc *GroupMemberCreate) SetID(i int64) *GroupMemberCreate {
 	gmc.mutation.SetID(i)
 	return gmc
 }
@@ -183,7 +183,7 @@ func (gmc *GroupMemberCreate) sqlSave(ctx context.Context) (*GroupMember, error)
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int32(id)
+		_node.ID = int64(id)
 	}
 	gmc.mutation.id = &_node.ID
 	gmc.mutation.done = true
@@ -193,14 +193,14 @@ func (gmc *GroupMemberCreate) sqlSave(ctx context.Context) (*GroupMember, error)
 func (gmc *GroupMemberCreate) createSpec() (*GroupMember, *sqlgraph.CreateSpec) {
 	var (
 		_node = &GroupMember{config: gmc.config}
-		_spec = sqlgraph.NewCreateSpec(groupmember.Table, sqlgraph.NewFieldSpec(groupmember.FieldID, field.TypeInt32))
+		_spec = sqlgraph.NewCreateSpec(groupmember.Table, sqlgraph.NewFieldSpec(groupmember.FieldID, field.TypeInt64))
 	)
 	if id, ok := gmc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
 	if value, ok := gmc.mutation.GroupID(); ok {
-		_spec.SetField(groupmember.FieldGroupID, field.TypeInt32, value)
+		_spec.SetField(groupmember.FieldGroupID, field.TypeInt64, value)
 		_node.GroupID = value
 	}
 	if value, ok := gmc.mutation.UserID(); ok {
@@ -273,7 +273,7 @@ func (gmcb *GroupMemberCreateBulk) Save(ctx context.Context) ([]*GroupMember, er
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

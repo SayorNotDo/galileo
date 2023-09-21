@@ -135,8 +135,8 @@ func (c *CoreService) CurrentUserInfo(ctx context.Context, req *v1.UserInfoReque
 	}
 }
 
-func (c *CoreService) DeleteUser(ctx context.Context, req *v1.DeleteRequest) (*emptypb.Empty, error) {
-	return c.uc.DeleteUser(ctx, req.Id)
+func (c *CoreService) DeleteUser(ctx context.Context, req *v1.DeleteUserRequest) (*emptypb.Empty, error) {
+	return c.uc.DeleteUser(ctx, req.ID)
 }
 
 func (c *CoreService) GetUserProjectList(ctx context.Context, empty *empty.Empty) (*v1.UserProjectListReply, error) {
@@ -162,16 +162,12 @@ func (c *CoreService) ListUserGroups(ctx context.Context, request *v1.ListUserGr
 	}
 	lo.ForEach(ret, func(item *biz.Group, _ int) {
 		userGroupList = append(userGroupList, &v1.GroupInfo{
-			Id:          item.Id,
+			ID:          item.ID,
 			Name:        item.Name,
 			Avatar:      item.Avatar,
 			Description: item.Description,
 			CreatedAt:   timestamppb.New(item.CreatedAt),
 			CreatedBy:   item.CreatedBy,
-			UpdatedAt:   timestamppb.New(item.UpdatedAt),
-			UpdatedBy:   item.UpdatedBy,
-			DeletedAt:   timestamppb.New(item.DeletedAt),
-			DeletedBy:   item.DeletedBy,
 			Headcount:   item.Headcount,
 		})
 	})
@@ -181,12 +177,36 @@ func (c *CoreService) ListUserGroups(ctx context.Context, request *v1.ListUserGr
 	}, nil
 }
 
+func convertToGroupInfo(group *biz.Group) *v1.GroupInfo {
+	var groupMemberList []*v1.GroupMember
+	lo.ForEach(group.GroupMemberList, func(member *biz.GroupMember, _ int) {
+		groupMemberList = append(groupMemberList, &v1.GroupMember{
+			Uid:       member.Uid,
+			Username:  member.Username,
+			Role:      uint32(member.Role),
+			CreatedBy: member.CreatedBy,
+			CreatedAt: timestamppb.New(member.CreatedAt),
+		})
+	})
+	return &v1.GroupInfo{
+		ID:              group.ID,
+		Name:            group.Name,
+		Avatar:          group.Avatar,
+		Description:     group.Description,
+		CreatedBy:       group.CreatedBy,
+		CreatedAt:       timestamppb.New(group.CreatedAt),
+		Headcount:       group.Headcount,
+		GroupMemberList: groupMemberList,
+	}
+}
+
 func (c *CoreService) UserGroups(ctx context.Context, req *v1.GroupInfoRequest) (*v1.GroupInfo, error) {
-	var reply *v1.GroupInfo
 	switch ctxdata.MethodFromContext(ctx) {
 	case http.MethodPost:
+		if len(req.Name) <= 0 {
+			return nil, errResponse.SetCustomizeErrMsg(ReasonParamsError, "group's name can not be empty")
+		}
 		ret, err := c.uc.CreateUserGroup(ctx, &biz.Group{
-			Id:          req.Id,
 			Name:        req.Name,
 			Avatar:      req.Avatar,
 			Description: req.Description,
@@ -194,11 +214,10 @@ func (c *CoreService) UserGroups(ctx context.Context, req *v1.GroupInfoRequest) 
 		if err != nil {
 			return nil, err
 		}
-		return &v1.GroupInfo{Id: ret.Id}, nil
-	case http.MethodDelete:
+		return convertToGroupInfo(ret), nil
 	case http.MethodPut:
 		err := c.uc.UpdateUserGroup(ctx, &biz.Group{
-			Id:          req.Id,
+			ID:          req.ID,
 			Name:        req.Name,
 			Avatar:      req.Avatar,
 			Description: req.Description,
@@ -208,36 +227,12 @@ func (c *CoreService) UserGroups(ctx context.Context, req *v1.GroupInfoRequest) 
 		}
 		return nil, nil
 	case http.MethodGet:
-		ret, err := c.uc.GetUserGroup(ctx, req.Id)
+		ret, err := c.uc.GetUserGroup(ctx, req.ID)
 		if err != nil {
 			return nil, err
 		}
-		var groupMemberList []*v1.GroupMember
-		lo.ForEach(ret.GroupMemberList, func(item *biz.GroupMember, _ int) {
-			groupMemberList = append(groupMemberList, &v1.GroupMember{
-				Uid:       item.Uid,
-				Username:  item.Username,
-				Role:      uint32(item.Role),
-				CreatedAt: timestamppb.New(ret.CreatedAt),
-				CreatedBy: ret.CreatedBy,
-			})
-		})
-		return &v1.GroupInfo{
-			Id:              ret.Id,
-			Name:            ret.Name,
-			Avatar:          ret.Avatar,
-			Description:     ret.Description,
-			CreatedAt:       timestamppb.New(ret.CreatedAt),
-			CreatedBy:       ret.CreatedBy,
-			UpdatedAt:       timestamppb.New(ret.UpdatedAt),
-			UpdatedBy:       ret.UpdatedBy,
-			DeletedAt:       timestamppb.New(ret.DeletedAt),
-			DeletedBy:       ret.DeletedBy,
-			Headcount:       ret.Headcount,
-			GroupMemberList: groupMemberList,
-		}, nil
+		return convertToGroupInfo(ret), nil
 	default:
 		return nil, errResponse.SetErrByReason(errResponse.ReasonUnknownError)
 	}
-	return reply, nil
 }

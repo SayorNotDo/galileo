@@ -51,9 +51,9 @@ service Core {
     };
   }
   rpc ResetPassword(google.protobuf.Empty) returns (ResetPasswordReply);
-  rpc DeleteUser (DeleteRequest) returns (google.protobuf.Empty){
+  rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty){
     option (google.api.http) = {
-      delete: "v1/api/user/{id}"
+      delete: "v1/api/user/{ID}"
     };
   };
   rpc ListUsers (ListUserRequest) returns (ListUserReply){
@@ -66,15 +66,17 @@ service Core {
       post: "v1/api/user/group"
       body: "*"
       additional_bindings {
-        put: "v1/api/user/groups/{id}"
+        put: "v1/api/user/groups/{ID}"
         body: "*"
       }
       additional_bindings {
-        get: "v1/api/user/groups/{id}"
+        get: "v1/api/user/groups/{ID}"
       }
-      additional_bindings {
-        delete: "v1/api/user/groups/{id}"
-      }
+    };
+  }
+  rpc DeleteUserGroup(DeleteUserGroupRequest) returns (google.protobuf.Empty){
+    option(google.api.http) = {
+      delete: "v1/api/user/groups/{ID}"
     };
   }
   rpc ListUserGroups(ListUserGroupsRequest) returns (ListUserGroupReply) {
@@ -122,25 +124,25 @@ message ListUserGroupReply {
 }
 
 message GroupInfoRequest {
-  int32 id = 1;
+  int64 ID = 1;
   string name = 2;
   string avatar = 3;
   string description = 4;
 }
 
 message GroupInfo {
-  int32 id = 1;
+  int64 ID = 1;
   string name = 2;
   string avatar = 3;
   string description = 4;
   google.protobuf.Timestamp createdAt = 5;
   uint32 createdBy = 6;
-  google.protobuf.Timestamp updatedAt = 7;
-  uint32 updatedBy = 8;
-  google.protobuf.Timestamp deletedAt = 9;
-  uint32 deletedBy = 10;
   int32 headcount = 11;
   repeated GroupMember groupMemberList = 12;
+}
+
+message DeleteUserGroupRequest {
+  int64 ID = 1;
 }
 
 message GroupMember {
@@ -192,8 +194,8 @@ message UpdatePasswordRequest {
   string password = 1[(validate.rules).string = {min_len: 8}];
 }
 
-message DeleteRequest{
-  uint32 id = 1;
+message DeleteUserRequest{
+  uint32 ID = 1;
 }
 
 message ListUserRequest {

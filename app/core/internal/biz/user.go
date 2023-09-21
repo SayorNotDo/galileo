@@ -28,7 +28,7 @@ type UserRepo interface {
 	DestroyToken(ctx context.Context) error
 	ListUser(ctx context.Context, pageToken string, pageSize int32) ([]*v1.User, int32, error)
 	GetUserProjectList(ctx context.Context) ([]*v1.ProjectInfo, error)
-	GetUserGroup(ctx context.Context, groupId int32) (*Group, error)
+	GetUserGroup(ctx context.Context, groupId int64) (*Group, error)
 	CreateUserGroup(ctx context.Context, group *Group) (*Group, error)
 	UpdateUserGroup(ctx context.Context, group *Group) error
 	GetUserGroupList(ctx context.Context) ([]*Group, error)
@@ -188,7 +188,7 @@ func (u *UserUseCase) GetUserGroupList(ctx context.Context) ([]*Group, error) {
 	return u.repo.GetUserGroupList(ctx)
 }
 
-func (u *UserUseCase) GetUserGroup(ctx context.Context, groupId int32) (*Group, error) {
+func (u *UserUseCase) GetUserGroup(ctx context.Context, groupId int64) (*Group, error) {
 	return u.repo.GetUserGroup(ctx, groupId)
 }
 

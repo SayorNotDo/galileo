@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"galileo/app/user/internal/conf"
 	"galileo/ent"
+	"galileo/ent/migrate"
 	"github.com/go-kratos/kratos/v2/log"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/wire"
@@ -51,7 +52,13 @@ func NewEntDB(c *conf.Data) (*ent.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := client.Schema.Create(context.Background()); err != nil {
+	/* AutoMigrate */
+	if err := client.Debug().Schema.Create(
+		context.Background(),
+		migrate.WithForeignKeys(false), // 迁移时禁用外键生成
+		migrate.WithDropIndex(true),    // 迁移时删除索引
+		migrate.WithDropColumn(true),   // 迁移时删除列
+	); err != nil {
 		return nil, err
 	}
 	return client, nil
